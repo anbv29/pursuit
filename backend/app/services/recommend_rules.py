@@ -9,14 +9,14 @@ from app.models.enums import Decision, EvidenceKind, Stance, UseCase
 
 NEXT_STEPS = {
     Decision.CONTINUE: "Scale the experiment: widen the sample or move to the next riskiest assumption.",
-    Decision.ITERATE: "Adjust the weakest element (segment, message or offer) and rerun with the same criteria.",
+    Decision.ITERATE: "Adjust the weakest element (segment, message or offer) and rerun the test.",
     Decision.PIVOT: "Reframe the hypothesis around the strongest contradicting signal and design a new test.",
     Decision.STOP: "Stop investing in this hypothesis; document what you learned and redirect effort.",
     Decision.INCONCLUSIVE: "Collect more data until each success criterion reaches its minimum sample.",
 }
 
 USE_CASE_HINTS = {
-    UseCase.WILLINGNESS_TO_PAY: "Push for a concrete commitment (LOI, deposit or paid pilot) — verbal interest isn't proof.",
+    UseCase.WILLINGNESS_TO_PAY: "Ask for a real commitment (LOI, deposit, paid pilot).",
     UseCase.MESSAGING: "Keep sending until each variant reaches its minimum sample before picking a winner.",
     UseCase.FUNNEL_DIAGNOSIS: "Run the test that separates the competing explanations for the worst step.",
     UseCase.COMPETITIVE_RESEARCH: "Validate the positioning gap with 5 target-customer conversations.",

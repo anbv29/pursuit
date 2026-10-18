@@ -183,7 +183,12 @@ A commit cannot contain its own hash, so each entry's hash is filled in by the f
     - app/services/metrics.py: metrics computed only from persisted records - interview rates (problem confirmed, strong pain, budget owner) with Wilson intervals, verbal interest vs commitments kept separate, top pain points, per-variant sent/delivered/reply/positive-reply/meetings with sent as the denominator, evidence balance by stance, competitors profiled (competitor:<name> tags), latest funnel analysis; demo records excluded from live experiments and flagged on demo ones; criteria evaluated as met / not_met / insufficient_sample / no_data
 
 ----------------------------------------------------------------------
-#33  (hash recorded in next commit)  feat: add rule-based recommendation engine and upgrade Anthropic SDK
+#33  218ee9e  feat: add rule-based recommendation engine and upgrade Anthropic SDK
     - app/services/recommend_rules.py: explainable baseline decision (CONTINUE/ITERATE/PIVOT/STOP/INCONCLUSIVE) from criteria results and evidence balance; confidence from criteria coverage and evidence volume, capped at 0.85; collects counterevidence, assumptions, limitations (insufficient samples, missing data, demo data, unconfirmed actions) and use-case-specific next steps
     - requirements.txt: anthropic 0.72.0 -> 1.15.0 (current SDK with messages.parse structured outputs)
     - config + .env.example: default AI model claude-opus-5-5
+
+----------------------------------------------------------------------
+#34  (hash recorded in next commit)  feat: add optional Claude synthesis for recommendations
+    - app/services/ai.py: Claude (claude-opus-5-5 by default) returns a schema-validated recommendation via messages.parse; no tools granted; evidence passed as JSON inside a data block with a system rule to ignore embedded instructions (prompt-injection defence); only aggregate metrics and evidence claims sent, no prospect names or emails; typed error handling and refusal handling fall back to rules
+    - app/services/recommend_rules.py: shortened long strings (lint fix for previous commit)
