@@ -16,6 +16,7 @@ from app.api import (
     experiments,
     fo_oauth,
     overview,
+    payment_webhook,
     report_sharing,
     report_tools,
     reports,
@@ -90,6 +91,7 @@ def create_app() -> FastAPI:
 
     install_handlers(app)
     app.include_router(auth.router)
+    app.include_router(payment_webhook.router)
     app.include_router(concierge.router)
     app.include_router(workspaces.router)
     app.include_router(experiments.router)

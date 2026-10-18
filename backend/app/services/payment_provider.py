@@ -29,7 +29,7 @@ def client():
         bearer_token=s.dodo_api_key.get_secret_value(),
         webhook_key=s.dodo_webhook_key.get_secret_value(),
         environment=s.dodo_environment,
-        timeout=20,
+        timeout=8,
         max_retries=0,
     )
 

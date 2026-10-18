@@ -723,5 +723,9 @@ c212db0  feat: prepare verified paid plan checkout
     - Use allowlisted products owner bound orders and safe Dodo checkout links.
 
 ----------------------------------------------------------------------
-(hash recorded in next commit)  feat: fulfill verified billing resources
+40a4f8a  feat: fulfill verified billing resources
     - Grant paid allowances once and reconcile subscription refund and dispute states.
+
+----------------------------------------------------------------------
+(hash recorded in next commit)  feat: verify and deduplicate payment webhooks
+    - Verify raw signed payloads and commit billing events with entitlements atomically.
