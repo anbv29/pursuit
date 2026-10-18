@@ -25,7 +25,7 @@ const TOC = [
 ];
 const STEPS = ["Reading the company website", "Researching market, competitors and pricing", "Writing the report"];
 
-function Progress({ r }: { r: Report }) {
+function Progress({ r, onCancel, pending }: { r: Report; onCancel: () => void; pending: boolean }) {
   const step = r.progress.startsWith("Writing") ? 2 : r.progress.startsWith("Researching") ? 1 : 0;
   return (
     <Card className="mx-auto mt-6 max-w-xl p-8 text-center">
@@ -39,6 +39,8 @@ function Progress({ r }: { r: Report }) {
           </li>
         ))}
       </ol>
+      <Button className="mt-5" variant="secondary" loading={pending} onClick={onCancel}>Cancel report</Button>
+      <p className="mt-2 text-xs text-ink-3">Saved research can be resumed. An AI request already in progress may still incur charges.</p>
     </Card>
   );
 }
@@ -89,8 +91,14 @@ export default function ReportPage() {
   const advanced = useAdvanced();
   const { id } = useParams<{ id: string }>();
   const { workspace, base } = useWorkspace();
+  const { toast } = useFeedback();
   const [tick, setTick] = useState(0);
-  const { data: r, error } = useApi<Report>(`/workspaces/${workspace.id}/reports/${id}`, tick);
+  const reportPath = `/workspaces/${workspace.id}/reports/${id}`;
+  const { data: r, error, reload } = useApi<Report>(reportPath, tick);
+  const jobControl = useAction(async (command: "cancel" | "retry") => {
+    try { await api(`${reportPath}/${command}`, { method: "POST" }); await reload(); }
+    catch (e) { toast("error", errorMessage(e)); }
+  });
   const running = r?.status === "QUEUED" || r?.status === "RUNNING";
   useEffect(() => {
     if (!running) return;
@@ -100,13 +108,14 @@ export default function ReportPage() {
 
   if (error) return <Empty title="Report not found" body="It may belong to a workspace you can't access." />;
   if (!r) return <div className="space-y-4"><Skeleton className="h-10 w-72" /><Skeleton className="h-64" /></div>;
-  if (running) return <Progress r={r} />;
+  if (running) return <Progress r={r} pending={jobControl.pending} onCancel={() => void jobControl.run("cancel")} />;
   if (r.status === "FAILED" || !r.content) {
     return (
       <Card className="mx-auto mt-6 max-w-xl p-8 text-center">
         <AlertTriangle className="mx-auto size-8 text-d-stop" aria-hidden />
-        <h1 className="mt-3 text-lg font-semibold">The report couldn&apos;t be generated</h1>
-        <p className="mt-2 text-sm text-ink-2">{r.error ?? "Unknown error."}</p>
+        <h1 className="mt-3 text-lg font-semibold">{r.status === "CANCELLED" ? "Report cancelled" : "The report couldn't be generated"}</h1>
+        <p className="mt-2 text-sm text-ink-2">{r.status === "CANCELLED" ? "Your saved research is kept. Resume when you are ready." : r.error ?? "Unknown error."}</p>
+        <Button className="mt-4" loading={jobControl.pending} onClick={() => jobControl.run("retry")}>Resume saved progress</Button>
         <Link href={`${base}/reports/new`} className="mt-5 inline-flex items-center gap-1.5 rounded-lg bg-trail px-3.5 py-2 text-sm font-medium text-white hover:bg-trail-strong">
           <RotateCw className="size-4" /> Try again
         </Link>
