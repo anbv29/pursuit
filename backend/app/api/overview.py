@@ -121,7 +121,7 @@ def integrations(m: Membership = Depends(workspace_member), user: User = Depends
     limiter.check(f"integrations:{user.id}", limit=30, window_seconds=600)
     effective = "demo" if m.workspace.is_demo else s.fo_mode
     try:
-        fo = get_adapter(effective).health()
+        fo = get_adapter(effective, user_id=user.id).health()
     except FoUnavailable as exc:
         fo = {"mode": effective, "status": "not_configured", "detail": str(exc)}
     return {

@@ -75,7 +75,7 @@ def execute(action_id: uuid.UUID, poll_interval: float = 2.0) -> None:
         exp = db.get(Experiment, action.experiment_id)
         submitted = False
         try:
-            adapter = get_adapter(action.mode)
+            adapter = get_adapter(action.mode, user_id=action.requested_by)
             text = instructions.build(action.kind, action.target, action.payload)
             # Submit exactly once: re-submitting a send could duplicate a real email.
             result = adapter.submit(text, action.idempotency_key)

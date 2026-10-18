@@ -548,5 +548,9 @@ A commit cannot contain its own hash, so each entry's hash is filled in by the f
     - User-owned-OAuth-models-with-expiring-PKCE-state-and-encrypted-token-blobs.
 
 ----------------------------------------------------------------------
-#103  (hash recorded in next commit)  "feat:
+#103  ba67c45  "feat:
     - add
+
+----------------------------------------------------------------------
+#104  (hash recorded in next commit)  feat: connect Fo to user-owned accounts
+    - Add callback disconnect routes and user-scoped adapter credentials. Fixes cross-user credential sharing. Tokens are never sent to clients.

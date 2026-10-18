@@ -22,12 +22,23 @@ PROTOCOL_VERSION = "2025-06-18"
 class McpFoAdapter:
     mode = "live"
 
-    def __init__(self, client: httpx.Client | None = None) -> None:
+    def __init__(self, client: httpx.Client | None = None, user_id=None) -> None:
         s = get_settings()
-        if not s.fo_access_token or not s.fo_access_token.get_secret_value():
+        self._user_id = user_id
+        if user_id is not None:
+            from app.core.errors import AppError
+            from app.services.fo_oauth import access_token
+
+            try:
+                token = access_token(user_id)
+            except AppError as exc:
+                raise FoUnavailable(exc.message) from exc
+        elif s.fo_access_token and s.fo_access_token.get_secret_value():
+            token = s.fo_access_token.get_secret_value()
+        else:
             raise FoUnavailable("Fo live mode needs FO_ACCESS_TOKEN on the server.")
         self._url = s.fo_mcp_url
-        self._token = s.fo_access_token.get_secret_value()
+        self._token = token
         self._client = client or httpx.Client(timeout=s.fo_timeout_seconds)
         self._ids = itertools.count(1)
         self._session: str | None = None
