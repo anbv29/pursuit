@@ -85,3 +85,24 @@ def test_delete_workspace(api):
     ws = api.workspace()
     assert api.delete(f"/api/workspaces/{ws}").status_code == 204
     assert api.get(f"/api/workspaces/{ws}").status_code == 404
+
+
+def test_demo_workspace_is_seeded_and_labelled(api):
+    api.signup()
+    r = api.post("/api/workspaces", {"name": "Demo", "with_demo_data": True})
+    assert r.status_code == 201 and r.json()["is_demo"] is True
+    ws = r.json()["id"]
+    dash = api.get(f"/api/workspaces/{ws}/dashboard").json()
+    assert len(dash["experiments"]) == 4 and all(e["is_demo"] for e in dash["experiments"])
+    assert dash["recommendations"][0]["includes_demo_data"] is True
+    assert all(o["origin"] == "demo" for o in dash["recent_outcomes"])
+    integ = api.get(f"/api/workspaces/{ws}/integrations").json()
+    assert integ["fo"]["mode"] == "demo" and integ["fo"]["verified_live"] is False
+
+
+def test_export_is_owner_only(api, other):
+    api.signup()
+    ws = api.workspace()
+    api.post(f"/api/workspaces/{ws}/members", {"email": "intruder@example.com"})
+    assert api.get(f"/api/workspaces/{ws}/export").status_code == 200
+    assert other.get(f"/api/workspaces/{ws}/export").status_code == 403

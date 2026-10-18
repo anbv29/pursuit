@@ -207,6 +207,11 @@ A commit cannot contain its own hash, so each entry's hash is filled in by the f
     - Result: pytest 58 passed
 
 ----------------------------------------------------------------------
-#37  (hash recorded in next commit)  feat: add dashboard summary, integration status and workspace export
+#37  3705ea4  feat: add dashboard summary, integration status and workspace export
     - app/api/overview.py: dashboard built from persisted data only (active experiments with latest decision, actions awaiting approval or confirmation, recent outcomes with origin label, latest recommendations); integration status (Fo mode/health with verified_live=false until proven, demo workspaces forced to demo, AI enabled/model, no secrets returned, rate limited); owner-only JSON export of all workspace data, audited
     - app/main.py: register overview router
+
+----------------------------------------------------------------------
+#38  (hash recorded in next commit)  feat: seed clearly labelled demo workspaces
+    - app/services/demo_seed.py: optional demo workspace with four synthetic experiments (problem discovery with interviews, prospects, sourced evidence incl. counterevidence and a generated recommendation; messaging A/B with small samples; funnel diagnosis snapshot; competitive research with competitor-tagged evidence). All records origin=demo, URLs on reserved example.com, notes prefixed [DEMO]
+    - tests: demo workspace seeding and labelling, integration status reports demo mode with verified_live=false, export is owner-only (14 passed in file)
