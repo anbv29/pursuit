@@ -228,6 +228,12 @@ A commit cannot contain its own hash, so each entry's hash is filled in by the f
     - frontend/package.json: add lucide-react (icons) and zod (validation)
 
 ----------------------------------------------------------------------
-#41  (hash recorded in next commit)  feat: add typed API client and shared frontend types
+#41  fc8ddab  feat: add typed API client and shared frontend types
     - frontend/src/lib/api.ts: same-origin fetch wrapper (cookies, no-store), CSRF header on mutations, maps backend errors and 422 field errors to a typed ApiError, friendly network/server messages
     - frontend/src/lib/types.ts: TypeScript types mirroring every backend response (experiments, stages, evidence, prospects, interviews, variants, outcomes, actions, metrics, criteria results, funnel, recommendations, timeline)
+
+----------------------------------------------------------------------
+#42  (hash recorded in next commit)  feat: add UI kit and display labels
+    - frontend/src/components/ui.tsx: Button (variants, loading + aria-busy, disabled), accessible Field wrapper (label/hint/error wired via aria-describedby), Input/Textarea/Select, Card/CardHeader, tone Badge, DemoBadge, Empty state, Skeleton, Notice
+    - frontend/src/lib/labels.ts: use-case/stage/decision labels and styles, honest action-status labels with help text (Queued is explicitly 'not executed yet'; UNKNOWN reads 'Confirm outcome'), percent/time helpers
+    - tsc: no errors
