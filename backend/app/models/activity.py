@@ -94,6 +94,7 @@ class ActionRequest(IdMixin, TimestampMixin, Base):
     finished_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
     attempts: Mapped[int] = mapped_column(default=0)
     provider_ref: Mapped[str | None] = mapped_column(String(200))
+    fo_state: Mapped[str | None] = mapped_column(String(30))
     result_summary: Mapped[str | None] = mapped_column(Text)
     error: Mapped[str | None] = mapped_column(String(1000))
 

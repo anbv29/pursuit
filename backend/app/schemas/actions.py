@@ -6,6 +6,7 @@ from pydantic import BaseModel, EmailStr, Field, model_validator
 
 from app.models.enums import ActionKind, ActionStatus
 from app.schemas.common import ORM
+from app.schemas.concierge import Coordination
 
 
 class EmailPayload(BaseModel):
@@ -18,6 +19,7 @@ class MeetingPayload(BaseModel):
     window: str = Field(default="in the next 7 days", max_length=200)
     duration_minutes: int = Field(default=30, ge=15, le=120)
     note: str = Field(default="", max_length=2000)
+    coordination: Coordination | None = None
 
 
 class ResearchPayload(BaseModel):
@@ -41,7 +43,7 @@ class ActionIn(BaseModel):
             ActionKind.SCHEDULE_MEETING: MeetingPayload,
             ActionKind.RESEARCH_TASK: ResearchPayload,
         }[self.kind]
-        self.payload = model.model_validate(self.payload).model_dump()
+        self.payload = model.model_validate(self.payload).model_dump(mode="json", exclude_none=True)
         if self.kind in (ActionKind.SEND_EMAIL, ActionKind.SCHEDULE_MEETING):
             # Recipient must be a single valid email address.
             class _T(BaseModel):
@@ -81,5 +83,6 @@ class ActionOut(ORM):
     finished_at: datetime | None
     attempts: int
     result_summary: str | None
+    fo_state: str | None
     error: str | None
     created_at: datetime

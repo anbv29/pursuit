@@ -657,3 +657,7 @@ Runtime verification checkpoint: fix: verify running stack and document live blo
     - Fixed stale browser selector, test lint and standard Webpack build command.
     - Production dependency audits clean; live provider and production setup remain unverified.
     - Full evidence: docs/RUNTIME_VERIFICATION.md. Local commit only; no push.
+
+----------------------------------------------------------------------
+(hash recorded in next commit)  feat: define bounded interview coordination
+    - Add typed invitation limits and persistent action history schema.
