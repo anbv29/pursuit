@@ -804,3 +804,7 @@ Live API credential checkpoint (see git log for hash):
 Deployment preparation checkpoint (see git log for hash):
     - Fixed Ruff formatting/import/type-syntax issues in OAuth/interview migrations, migration helper and billing/report services. No schema or business behavior changed.
     - Checked GitHub main; deployment push awaits user response to earlier no-push restriction. Vercel signed in; Render and Neon sign-ins pending.
+
+Deployment migration lint checkpoint (see git log for hash):
+    - Completed modern type/import formatting in remaining report, usage and billing migrations without changing migration operations.
+    - Full backend Ruff lint and formatting checks now pass (138 files).
