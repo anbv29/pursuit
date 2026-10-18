@@ -4,7 +4,8 @@ import { AlertTriangle, ArrowRight, FlaskConical, Loader2, Printer, RotateCw } f
 import Link from "next/link";
 import { useParams, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
-import { isRate } from "@/components/criteria-editor";
+import { isRate, KNOWN_METRICS } from "@/components/criteria-editor";
+import { SECTION_HELP, useAdvanced } from "@/components/reading-mode";
 import { Personas, Problems, Segments, Snapshot, Summary } from "@/components/report/customer-sections";
 import { Competitors, FunnelRisks, Messaging, PositioningPricing, Prospecting, Risks } from "@/components/report/market-sections";
 import { Section, SourcesProvider } from "@/components/report/parts";
@@ -43,6 +44,7 @@ function Progress({ r }: { r: Report }) {
 }
 
 function Experiments({ c, reportId }: { c: ReportContent; reportId: string }) {
+  const advanced = useAdvanced();
   const { workspace, base } = useWorkspace();
   const { toast } = useFeedback();
   const router = useRouter();
@@ -69,12 +71,12 @@ function Experiments({ c, reportId }: { c: ReportContent; reportId: string }) {
               </div>
               <p className="mt-1 text-sm text-ink-2">{e.hypothesis}</p>
               <p className="mt-1.5 text-xs text-ink-3">
-                Success: {e.metric.replace(/_/g, " ")} {e.comparator} {isRate(e.metric) ? `${Math.round(e.target * 100)}%` : e.target}
-                {e.min_sample > 0 && ` (n ≥ ${e.min_sample})`} · Why first: {e.why_first}
+                Success: {KNOWN_METRICS.find((m) => m.value === e.metric)?.label ?? e.metric.replace(/_/g, " ")} {e.comparator} {isRate(e.metric) ? `${Math.round(e.target * 100)}%` : e.target}
+                {e.min_sample > 0 && (advanced ? ` (n ≥ ${e.min_sample})` : ` (minimum sample: ${e.min_sample})`)} · Why first: {e.why_first}
               </p>
             </div>
             <Button size="sm" variant={i === 0 ? "primary" : "secondary"} loading={start.pending} onClick={() => start.run(i)} className="print:hidden">
-              <FlaskConical className="size-3.5" /> Track this
+              <FlaskConical className="size-3.5" /> {advanced ? "Track this" : "Start this test"}
             </Button>
           </li>
         ))}
@@ -84,6 +86,7 @@ function Experiments({ c, reportId }: { c: ReportContent; reportId: string }) {
 }
 
 export default function ReportPage() {
+  const advanced = useAdvanced();
   const { id } = useParams<{ id: string }>();
   const { workspace, base } = useWorkspace();
   const [tick, setTick] = useState(0);
@@ -118,13 +121,13 @@ export default function ReportPage() {
         <nav aria-label="Report sections" className="sticky top-20 hidden h-fit w-44 shrink-0 xl:block print:hidden">
           <p className="mb-2 text-xs font-medium uppercase tracking-wider text-ink-3">On this page</p>
           <ul className="space-y-0.5 text-sm">
-            {TOC.map(([k, label]) => <li key={k}><a href={`#${k}`} className="block rounded-md px-2 py-1 text-ink-2 hover:bg-sunken hover:text-ink">{label}</a></li>)}
+            {TOC.map(([k, label]) => <li key={k}><a href={`#${k}`} className="block rounded-md px-2 py-1 text-ink-2 hover:bg-sunken hover:text-ink">{!advanced && SECTION_HELP[k]?.[0] ? SECTION_HELP[k][0] : label}</a></li>)}
           </ul>
         </nav>
         <div className="min-w-0 flex-1 space-y-6">
           <header className="flex flex-wrap items-end justify-between gap-3">
             <div>
-              <p className="text-xs font-medium uppercase tracking-wider text-ink-3">GTM report</p>
+              <p className="text-xs font-medium uppercase tracking-wider text-ink-3">{advanced ? "GTM report" : "Your customer and growth report"}</p>
               <h1 className="mt-1 text-2xl font-semibold tracking-tight">{r.company_name || r.company_url}</h1>
               <p className="mt-1 text-sm text-ink-3">
                 <a href={r.company_url} target="_blank" rel="noopener noreferrer" className="hover:text-trail">{r.company_url}</a>

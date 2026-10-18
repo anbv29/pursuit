@@ -4,6 +4,7 @@ import { ExternalLink } from "lucide-react";
 import { createContext, useContext, type ReactNode } from "react";
 import type { Claim, ReportSource } from "@/lib/types";
 import { Badge, cx } from "../ui";
+import { SECTION_HELP, SIMPLE_LABELS, useAdvanced } from "../reading-mode";
 
 const SourcesCtx = createContext<Map<string, ReportSource>>(new Map());
 export const SourcesProvider = ({ sources, children }: { sources: ReportSource[]; children: ReactNode }) => (
@@ -76,15 +77,21 @@ export function Bullets({ items, empty = "Nothing found." }: { items: string[]; 
 }
 
 export function Section({ id, title, kicker, children }: { id: string; title: string; kicker?: string; children: ReactNode }) {
+  const advanced = useAdvanced();
+  const help = SECTION_HELP[id];
   return (
     <section id={id} aria-labelledby={`${id}-h`} className="scroll-mt-20 rounded-xl border border-line bg-surface p-6 shadow-card print:break-inside-avoid print:shadow-none">
-      {kicker && <p className="text-xs font-medium uppercase tracking-wider text-trail">{kicker}</p>}
-      <h2 id={`${id}-h`} className="mt-0.5 text-lg font-semibold tracking-tight">{title}</h2>
+      <h2 id={`${id}-h`} className="text-lg font-semibold tracking-tight">{!advanced && help?.[0] ? help[0] : title}</h2>
+      {!advanced && help && <p className="mt-1 max-w-prose text-sm leading-relaxed text-ink-2">{help[1]}</p>}
+      {advanced && kicker && <p className="mt-1 text-sm text-ink-3">{kicker}</p>}
       <div className="mt-4">{children}</div>
     </section>
   );
 }
 
-export const Label = ({ children }: { children: ReactNode }) => (
-  <p className="mb-1.5 text-xs font-medium uppercase tracking-wide text-ink-3">{children}</p>
-);
+export function Label({ children }: { children: ReactNode }) {
+  const advanced = useAdvanced();
+  return <p className="mb-1.5 text-xs font-medium uppercase tracking-wide text-ink-3">
+    {!advanced && typeof children === "string" ? SIMPLE_LABELS[children] ?? children : children}
+  </p>;
+}

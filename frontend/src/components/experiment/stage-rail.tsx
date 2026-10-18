@@ -7,11 +7,28 @@ import { STAGE_LABEL } from "@/lib/labels";
 import { useFeedback } from "../feedback";
 import { Button, cx } from "../ui";
 import { useExperiment } from "./context";
+import { useAdvanced } from "../reading-mode";
+import { useWorkspace } from "../shell";
+import Link from "next/link";
+
+const NEXT_HELP: Record<string, string> = {
+  hypothesis: "Write down a belief you can test: who has the problem, and what you expect to happen.",
+  research: "Learn about your customers and alternatives before spending time on a test.",
+  evidence: "Save what you found, where it came from, and anything that challenges your idea.",
+  design: "Decide what to test and what result would count as success.",
+  approval: "Review any email, meeting, or research request before allowing it to run.",
+  action: "Follow the approved work and check whether it actually happened.",
+  outcomes: "Record real replies, interviews, commitments, or other results.",
+  analysis: "Compare your results with the goals you set before the test.",
+  recommendation: "Decide whether to keep going, improve the test, change direction, or gather more data.",
+};
 
 /** The shared lifecycle, with what's blocking the next step spelled out. */
 export function StageRail() {
   const { exp, path, reload, touch } = useExperiment();
   const { toast } = useFeedback();
+  const advanced = useAdvanced();
+  const { base } = useWorkspace();
   const idx = exp.stages.findIndex((s) => s.state === "current");
   const next = exp.stages[idx + 1];
   const prev = exp.stages[idx - 1];
@@ -28,6 +45,7 @@ export function StageRail() {
 
   return (
     <div className="rounded-xl border border-line bg-surface p-4 shadow-card">
+      {!advanced && <p className="mb-3 max-w-prose text-sm text-ink-2">{NEXT_HELP[exp.stage]}</p>}
       <ol className="flex gap-1 overflow-x-auto pb-1" aria-label="Experiment lifecycle">
         {exp.stages.map((s, i) => (
           <li key={s.stage} aria-current={s.state === "current" ? "step" : undefined}
@@ -64,6 +82,9 @@ export function StageRail() {
           )}
         </div>
       </div>
+      {next?.stage === "action" && !next.ready && <Link href={`${base}/experiments/${exp.id}?tab=actions`} className="mt-3 inline-block text-sm font-medium text-trail underline underline-offset-4">
+        Open Actions → request an action → review and approve it
+      </Link>}
     </div>
   );
 }

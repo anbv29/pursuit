@@ -74,3 +74,20 @@ export const SIMPLE_LABELS: Record<string, string> = {
   "In-market signals": "Clues someone may be ready to buy", "Channels": "Where to reach customers",
   "Evidence for": "What supports this idea", "Evidence against": "What challenges this idea",
 };
+
+export const SECTION_HELP: Record<string, [string, string]> = {
+  summary: ["Your report at a glance", "Start with the main findings and the first step worth taking."],
+  snapshot: ["", "What the company sells, how it earns money, and what public sources tell us."],
+  segments: ["Customers to focus on", "Groups most likely to benefit from your product. Fit scores are AI judgments, not measured sales results."],
+  personas: ["People you need to reach", "The buyers' roles, goals, concerns, and places you may find them."],
+  problems: ["Customer problems to check", "Ideas about what customers need. Conversations and real behavior can confirm or challenge them."],
+  competitors: ["Other options customers could choose", "Compare alternatives, including their prices and limitations. Missing information stays unknown."],
+  positioning: ["Why customers should choose you", "How to explain your value and what makes your product different."],
+  pricing: ["What customers might pay", "Compare public prices and test your own. A suggested price is not proof that someone will pay it."],
+  messaging: ["Messages to start a conversation", "Draft emails for different customer groups. Review and adapt them before sending."],
+  prospecting: ["Where to find potential customers", "Places to look and clues that someone might need your product now."],
+  funnel: ["Where people might drop out", "Possible reasons people stop between discovering your product and paying. These need real data to check."],
+  experiments: ["Small tests to run next", "Each test checks one belief. Track one to save evidence, set a goal, and record what happens."],
+  risks: ["What is still uncertain", "Gaps and risks to investigate before committing more time or money."],
+  sources: ["Sources you can check", "Open the original pages to check dates, context, and whether they support a claim."],
+};
