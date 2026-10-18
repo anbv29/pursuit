@@ -8,10 +8,19 @@ A commit cannot contain its own hash, so each entry's hash is filled in by the f
     - README.md with project title.
 
 ----------------------------------------------------------------------
-#1  (hash recorded in next commit)  chore: add repo foundations and local Postgres
+#1  6438fcb  chore: add repo foundations and local Postgres
     Added:
     - .gitignore (secrets, Python, Node/Next build output, editor files).
     - .env.example with placeholder-only config for backend and frontend.
     - docker-compose.yml: Postgres 16 on localhost:5433 for local dev.
     - backend/scripts/init-test-db.sql: creates a separate pursuit_test database.
     - aboutme.txt: this commit log.
+
+----------------------------------------------------------------------
+#2  (hash recorded in next commit)  chore: scaffold FastAPI backend config and database layer
+    - backend/requirements*.txt: pinned FastAPI, SQLAlchemy 2, Alembic, psycopg 3, pydantic, argon2, httpx, anthropic; dev tools pytest, ruff, pip-audit
+    - backend/app/core/config.py: env-based settings with production guards (strong SESSION_SECRET, secure cookies, no wildcard CORS)
+    - backend/app/core/db.py: SQLAlchemy engine/session factory and declarative Base
+    - backend/pyproject.toml: ruff (incl. security rules) and pytest config
+    - .gitattributes: normalise line endings to LF
+    - Empty package __init__ files for app/ and tests/
