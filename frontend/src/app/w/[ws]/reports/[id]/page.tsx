@@ -10,6 +10,7 @@ import { Personas, Problems, Segments, Snapshot, Summary } from "@/components/re
 import { Competitors, FunnelRisks, Messaging, PositioningPricing, Prospecting, Risks } from "@/components/report/market-sections";
 import { Section, SourcesProvider } from "@/components/report/parts";
 import { ReportQuestions } from "@/components/report/questions";
+import { ReportPlan } from "@/components/report/plan";
 import { useFeedback } from "@/components/feedback";
 import { useWorkspace } from "@/components/shell";
 import { Badge, Button, Card, Empty, Notice, Skeleton } from "@/components/ui";
@@ -151,6 +152,7 @@ export default function ReportPage() {
             {v && v.downgraded_facts + v.dropped_source_refs > 0 && ` Pursuit removed ${v.dropped_source_refs} unverifiable citation(s) and downgraded ${v.downgraded_facts} unsourced "fact(s)".`}
           </Notice>
           <Summary c={c} />
+          <ReportPlan path={reportPath} />
           <details className="print:hidden rounded-lg border border-line bg-surface p-4">
             <summary className="cursor-pointer font-medium text-trail">Ask about the report or explain a term</summary>
             <div className="mt-4"><ReportQuestions path={reportPath} /></div>

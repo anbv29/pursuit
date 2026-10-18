@@ -33,3 +33,17 @@ def test_questions_persist_and_drop_fake_citations(api, ws, fake_ai, monkeypatch
     assert api.get(path).json()[0]["payload"]["answer"].startswith("Ask clinics")
     assert other.get(path).status_code == 404
     assert api.post(path, {"question": ""}).status_code == 422
+
+
+def test_first_week_plan_is_idempotent_and_tasks_persist(api, ws, fake_ai, other):
+    rid = api.post(f"/api/workspaces/{ws}/reports", BODY).json()["id"]
+    path = f"/api/workspaces/{ws}/reports/{rid}/plan"
+    first = api.post(path).json()
+    assert len(first) == 7
+    assert api.post(path).json()[0]["id"] == first[0]["id"]
+    task = first[2]
+    assert len(task["payload"]["steps"]) == 5
+    response = api.patch(path + f"/{task['id']}", {"done": True, "notes": "Prepared interview questions"})
+    assert response.json()["payload"]["done"] is True
+    assert api.get(path).json()[2]["payload"]["notes"] == "Prepared interview questions"
+    assert other.get(path).status_code == 404
