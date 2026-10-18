@@ -201,7 +201,12 @@ A commit cannot contain its own hash, so each entry's hash is filled in by the f
     - app/main.py: register analysis router
 
 ----------------------------------------------------------------------
-#36  (hash recorded in next commit)  test: add end-to-end experiment flow and recommendation guard tests
+#36  5ab8fe4  test: add end-to-end experiment flow and recommendation guard tests
     - tests/test_e2e_flow.py: full path through real routes and DB: workspace -> experiment -> evidence with source -> criteria -> blocked action stage until approval -> approve demo action -> interviews/outcomes -> analysis (criterion met) -> rule-based CONTINUE -> logout/login persistence check -> other user gets 404 on read and approve; INCONCLUSIVE without data; a fake AI saying CONTINUE at 0.99 with fake evidence ids is overruled to INCONCLUSIVE, capped and filtered; funnel CSV import, bottleneck and row errors
     - app/services/metrics.py: simulated outcomes in live experiments are reported separately as excluded_simulated_outcomes (found by the E2E test: demo sends must not inflate live metrics)
     - Result: pytest 58 passed
+
+----------------------------------------------------------------------
+#37  (hash recorded in next commit)  feat: add dashboard summary, integration status and workspace export
+    - app/api/overview.py: dashboard built from persisted data only (active experiments with latest decision, actions awaiting approval or confirmation, recent outcomes with origin label, latest recommendations); integration status (Fo mode/health with verified_live=false until proven, demo workspaces forced to demo, AI enabled/model, no secrets returned, rate limited); owner-only JSON export of all workspace data, audited
+    - app/main.py: register overview router
