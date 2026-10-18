@@ -1,13 +1,12 @@
-# Render blueprint for the FastAPI backend. Secrets are set in the Render dashboard (sync: false).
+# Free preview only. Upgrade compute before treating report jobs as always-on production work.
 services:
   - type: web
-    name: pursuit-api
+    name: pursuit-preview-api
     runtime: python
     rootDir: backend
-    plan: starter
+    plan: free
     buildCommand: pip install -r requirements.txt
-    # Migrations run before each deploy starts serving; a failed migration fails the deploy.
-    preDeployCommand: alembic upgrade head
+    # Apply migrations separately with the owner role before deploying this limited runtime role.
     startCommand: uvicorn app.main:app --host 0.0.0.0 --port $PORT
     healthCheckPath: /api/health
     envVars:
@@ -27,7 +26,19 @@ services:
         sync: false # Neon connection string
       - key: CORS_ORIGINS
         sync: false # e.g. https://pursuit.vercel.app
-      - key: ANTHROPIC_API_KEY
-        sync: false
-      - key: FO_ACCESS_TOKEN
-        sync: false
+      - key: PUBLIC_APP_URL
+        sync: false # exact public frontend HTTPS origin for OAuth and checkout returns
+      - key: CONNECTION_ENCRYPTION_KEY
+        sync: false # stable Fernet key; provision privately, never regenerate on redeploy
+      - key: ANTHROPIC_MODEL
+        value: claude-haiku-5-5
+      - key: RESEARCH_MODEL
+        value: claude-haiku-5-5
+      - key: REPORT_WORKER_ENABLED
+        value: "true"
+      - key: DODO_PAYMENTS_ENVIRONMENT
+        value: test_mode
+      - key: DODO_PAYMENTS_API_KEY
+        value: ""
+      - key: DODO_PAYMENTS_WEBHOOK_KEY
+        value: "" # preview cannot create hosted checkout sessions

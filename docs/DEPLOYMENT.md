@@ -1,6 +1,19 @@
 # Deployment: Neon + Render + Vercel
 
-**Status: not deployed.** It needs your Neon, Render and Vercel accounts. Nothing was pushed or deployed.
+**Status: free preview deployment in progress.** No hosted application URL has been verified yet.
+
+## Current deployment preparation (2026-10-18)
+
+- User authorized pushing verified commits to `anbv29/pursuit` for deployment and chose **free preview with payments disabled**. No paid hosting plan or upgrade is authorized.
+- Vercel Hobby, Render and Neon account access is available. Created separate free Neon `Pursuit Preview` project (`muddy-grass-91348778`) in Singapore, migrated its schema, and tested its limited runtime login. Hosting forms are being prepared.
+- Commercial launch would require a suitable paid hosting plan; this preview is not a commercial payment launch. Do not buy or upgrade without separate spending approval.
+- Backend CI lint/format failures in generated migrations were corrected without changing operations. Test configuration explicitly excludes private live Dodo credentials and forces test mode.
+- `scripts/check_test_migrations.py` checks upgrade/downgrade/upgrade only on local `pursuit_test`; it refuses hosted URLs. This is never a production rollback command.
+- Live Dodo catalog/key remain local. The preview explicitly has empty Dodo API/webhook keys and test-mode configuration, so checkout is unavailable. Fo uses labelled demo mode. AI credentials are excluded, and the report polling worker is disabled to avoid continuously waking free Neon compute. Manual experiments and synthetic sample reports remain available.
+- On free Render compute, apply migrations separately using the locally held Neon owner connection before deploying. Only the limited runtime connection belongs in Render. There is no free pre-deploy migration hook. `scripts/provision_preview.py` handles the initial migration and role setup from ignored `.env.preview`.
+- A new Neon owner password appeared in a setup screenshot; that file was deleted and the user reset the credential before use. Never capture screenshots of visible credential dialogs. No connection strings or encryption keys belong in Git.
+
+Pricing/policy sources: [Vercel pricing](https://vercel.com/pricing), [Vercel Hobby scope](https://vercel.com/docs/plans/hobby), [Render Starter compute](https://render.com/articles/render-vs-railway). Confirm the final dashboard quote before any purchase.
 
 ```
 Browser ──► Vercel (Next.js) ──/api/* rewrite──► Render (FastAPI) ──► Neon (Postgres)
@@ -26,7 +39,7 @@ Use the blueprint `render.yaml` (New → Blueprint), or create a Python web serv
 |---|---|
 | Root directory | `backend` |
 | Build | `pip install -r requirements.txt` |
-| Pre-deploy | `alembic upgrade head` |
+| Migrations | apply separately with the owner role before deploying the free preview |
 | Start | `uvicorn app.main:app --host 0.0.0.0 --port $PORT` |
 | Health check | `/api/health` (returns 503 if the database is unreachable) |
 
@@ -38,9 +51,17 @@ Environment variables (set the secrets in the dashboard):
 | `DATABASE_URL` | Neon connection string |
 | `COOKIE_SECURE` | `true` |
 | `CORS_ORIGINS` | your Vercel URL, e.g. `https://pursuit.vercel.app` |
-| `ANTHROPIC_API_KEY` | optional |
-| `FO_MODE` / `FO_ACCESS_TOKEN` | `demo`, or `live` plus a token (see FO_INTEGRATION.md) |
+| `PUBLIC_APP_URL` | exact frontend HTTPS origin for OAuth and checkout returns |
+| `CONNECTION_ENCRYPTION_KEY` | stable privately provisioned Fernet key; preserve across redeploys |
+| `ANTHROPIC_API_KEY` | empty for this free preview |
+| `ANTHROPIC_MODEL` / `RESEARCH_MODEL` | `claude-haiku-5-5` |
+| `FO_MODE` | `demo` for labelled simulated actions, or `live` with verified per-user OAuth (see FO_INTEGRATION.md) |
 | `ACTIONS_DISABLED` | `false` (set `true` as an emergency stop) |
+| `DODO_PAYMENTS_ENVIRONMENT` | `test_mode` for the free preview; `live_mode` only for a future commercial launch |
+| `DODO_PAYMENTS_API_KEY` | empty for this free preview |
+| `DODO_PAYMENTS_WEBHOOK_KEY` | empty for this free preview |
+| `DODO_BUSINESS_ID` | merchant business identifier |
+| `DODO_SINGLE_PRODUCT` / `DODO_FOUNDER_PRODUCT` / `DODO_TEAM_PRODUCT` | live product IDs; see DODO_ACCOUNT_SETUP.md |
 
 Run a single instance. The rate limiter is in memory, so multiple instances would need a shared store
 (checklist #14).
@@ -68,6 +89,6 @@ Then sign up, create a demo workspace, and check **Settings → Integrations**.
 ## Manual steps still required
 
 - Neon project and connection string, Render service, and Vercel project.
-- A production Fo OAuth token if you want live actions.
+- A stable encryption key and verified Fo OAuth connection if you want live actions.
 - An `ANTHROPIC_API_KEY` for production, if you want AI synthesis.
 - A custom domain and TLS, if desired (both platforms provide TLS by default).

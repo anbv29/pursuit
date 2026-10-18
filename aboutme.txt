@@ -814,3 +814,8 @@ Preview database checkpoint (see git log for hash):
     - Created separate free Neon Pursuit Preview project in Singapore. User reset the owner password after a setup screenshot exposure; that image was removed.
     - Applied migrations to the new preview DB; provisioned a limited runtime login with table DML/schema usage but no owner role. Private .env.preview is ignored.
     - Tests explicitly clear live merchant credentials and select test mode. User authorized pushing to GitHub and selected a free preview with payments disabled.
+
+Free preview hosting checkpoint (see git log for hash):
+    - Updated Render blueprint to free Singapore-targeted preview setup, with no live payment credentials or paid AI key and no continuously polling worker.
+    - Owner migrations run separately; Render receives only a limited runtime database account. Preview credential transfer awaits explicit approval after automatic review rejection.
+    - Documented free-preview limitations, production upgrade boundaries, password-reset incident and current provider setup. No hosted URL verified yet.
