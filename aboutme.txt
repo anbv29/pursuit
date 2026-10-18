@@ -735,5 +735,9 @@ c212db0  feat: prepare verified paid plan checkout
     - Add owner only checkout portal balances and server enforced free workspace and team seat limits.
 
 ----------------------------------------------------------------------
-(hash recorded in next commit)  feat: bound included AI usage costs
+3c05c56  feat: bound included AI usage costs
     - Link AI spend to paid allowances and default included research to Haiku.
+
+----------------------------------------------------------------------
+(hash recorded in next commit)  feat: charge research allowances only for successful work
+    - Wire reports refresh questions discovery and AI recommendations to paid credits.

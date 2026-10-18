@@ -14,9 +14,8 @@ from app.core.config import get_settings
 from app.core.db import new_session, utcnow
 from app.core.errors import AppError, NotFound
 from app.models import Report, User, Workspace
-from app.models.usage import WorkspaceBudget
 from app.schemas.report import ReportIn
-from app.services import ai_usage, audit, fetcher, report_research, report_validate
+from app.services import ai_usage, audit, entitlements, fetcher, report_research, report_validate
 from app.services.report_worker import LEASE, eligible, heartbeat
 
 logger = logging.getLogger("pursuit.reports")
@@ -57,17 +56,17 @@ def create(db: Session, ws: Workspace, user: User, body: ReportIn) -> Report:
     if (today or 0) >= DAILY_LIMIT:
         raise AppError("Daily report limit reached for this workspace.", "budget_exceeded")
     inputs = body.model_dump(mode="json", exclude={"company_url", "company_name"})
-    budget = db.get(WorkspaceBudget, ws.id)
     report = Report(
         workspace_id=ws.id,
         created_by=user.id,
         company_url=str(body.company_url),
         company_name=body.company_name.strip(),
         inputs={k: v for k, v in inputs.items() if v},
-        model=budget.research_model if budget else get_settings().research_model,
+        model="claude-haiku-5-5",
     )
     db.add(report)
     db.flush()
+    report.billing_use_id = entitlements.reserve(db, ws.id, "research", f"report:{report.id}")
     audit.record(
         db,
         "report.request",
@@ -90,9 +89,12 @@ def _set(db: Session, report_id: uuid.UUID, owner=None, **values) -> None:
     if owner is not None:
         statement = statement.where(Report.lease_owner == owner, Report.status == "RUNNING")
     result = db.execute(statement.values(**values))
-    db.commit()
     if owner is not None and result.rowcount != 1:
+        db.rollback()
         raise JobStopped
+    if values.get("status") in ("FAILED", "CANCELLED"):
+        entitlements.finish(db, db.get(Report, report_id).billing_use_id, False)
+    db.commit()
 
 
 def run(report_id: uuid.UUID) -> None:
@@ -101,6 +103,7 @@ def run(report_id: uuid.UUID) -> None:
     owner = uuid.uuid4().hex
     stop = threading.Event()
     usage_token = None
+    billing_token = None
     try:
         claimed = db.execute(
             update(Report)
@@ -119,8 +122,12 @@ def run(report_id: uuid.UUID) -> None:
         if claimed.rowcount != 1:
             return
         report = db.get(Report, report_id)
+        if report.billing_use_id is None:
+            report.billing_use_id = entitlements.reserve(db, report.workspace_id, "research")
+            db.commit()
+        billing_token = ai_usage.BILLING_USE.set(report.billing_use_id)
         usage_token = ai_usage.CONTEXT.set(
-            (report.workspace_id, report.id, report.model or get_settings().research_model)
+            (report.workspace_id, report.id, "claude-haiku-5-5")
         )
         if report.attempts > 3:
             _set(
@@ -217,6 +224,7 @@ def run(report_id: uuid.UUID) -> None:
             target_id=report.id,
             detail={"sources": len(found.sources), **stats},
         )
+        entitlements.finish(db, report.billing_use_id, True)
         db.commit()
     except JobStopped:
         db.rollback()
@@ -245,6 +253,18 @@ def run(report_id: uuid.UUID) -> None:
             _set(
                 db, report_id, owner, status="FAILED", progress="Failed", error=str(exc), finished_at=utcnow()
             )
+    except AppError as exc:
+        db.rollback()
+        with suppress(JobStopped):
+            _set(
+                db,
+                report_id,
+                owner,
+                status="FAILED",
+                progress="Failed",
+                error=exc.message,
+                finished_at=utcnow(),
+            )
     except Exception:
         logger.exception("Report %s failed", report_id)
         db.rollback()
@@ -259,6 +279,8 @@ def run(report_id: uuid.UUID) -> None:
                 finished_at=utcnow(),
             )
     finally:
+        if billing_token is not None:
+            ai_usage.BILLING_USE.reset(billing_token)
         if usage_token is not None:
             ai_usage.CONTEXT.reset(usage_token)
         stop.set()
@@ -293,6 +315,7 @@ def cancel(db, report, user):
     )
     if not result.rowcount:
         raise Conflict("Only queued or running reports can be cancelled.")
+    entitlements.finish(db, report.billing_use_id, False)
     audit.record(db, "report.cancel", actor_id=user.id, workspace_id=report.workspace_id, target_id=report.id)
     db.commit()
     db.refresh(report)
@@ -303,10 +326,13 @@ def retry(db, report, user):
     from app.core.errors import Conflict
 
     db.execute(select(Workspace.id).where(Workspace.id == report.workspace_id).with_for_update())
+    if report.status not in ("FAILED", "CANCELLED"):
+        raise Conflict("Only failed or cancelled reports can be retried.")
     if db.scalar(
         select(Report.id).where(Report.workspace_id == report.workspace_id, Report.status.in_(ACTIVE))
     ):
         raise Conflict("A report is already running in this workspace.")
+    use_id = entitlements.reserve(db, report.workspace_id, "research")
     result = db.execute(
         update(Report)
         .where(Report.id == report.id, Report.status.in_(["FAILED", "CANCELLED"]))
@@ -318,6 +344,7 @@ def retry(db, report, user):
             lease_until=None,
             finished_at=None,
             error=None,
+            billing_use_id=use_id,
         )
     )
     if not result.rowcount:

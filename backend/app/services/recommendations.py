@@ -45,7 +45,7 @@ def generate(db: Session, exp: Experiment, user: User, use_ai: bool = True) -> R
             next_action=synth.next_action,
             evidence_ids=[i for i in synth.cited_evidence_ids if i in valid_ids] or base["evidence_ids"],
         )
-        generated_by = f"claude:{ai.get_settings().anthropic_model}"
+        generated_by = f"claude:{ai.ai_usage.model(ai.get_settings().anthropic_model)}"
     elif use_ai and ai.get_settings().ai_enabled:
         base["limitations"].append("AI synthesis was unavailable; this is the rule-based recommendation.")
 

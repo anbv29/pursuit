@@ -8,7 +8,15 @@ from app.api.deps import current_user, workspace_member
 from app.core.db import get_db
 from app.core.ratelimit import limiter
 from app.models import Membership, User
-from app.services import ai_usage, prospect_discovery, report_chat, report_plan, report_versions, reports
+from app.services import (
+    ai_usage,
+    entitlements,
+    prospect_discovery,
+    report_chat,
+    report_plan,
+    report_versions,
+    reports,
+)
 
 router = APIRouter(prefix="/api/workspaces/{workspace_id}/reports/{report_id}", tags=["Report tools"])
 
@@ -35,7 +43,11 @@ def prospects(report=Depends(owned_report), db: Session = Depends(get_db)):
 @router.post("/prospects/discover")
 def discover(report=Depends(owned_report), user: User = Depends(current_user), db: Session = Depends(get_db)):
     limiter.check(f"discover:{user.id}", limit=5, window_seconds=3600)
-    with ai_usage.scope(report.workspace_id, report.id, ai_usage.preferred_model(db, report.workspace_id)):
+    entitlements.require_feature(db, report.workspace_id)
+    with (
+        ai_usage.scope(report.workspace_id, report.id, ai_usage.preferred_model(db, report.workspace_id)),
+        entitlements.metered(db, report.workspace_id, "research"),
+    ):
         return [entry_out(row) for row in prospect_discovery.discover(db, report, user)]
 
 
@@ -79,7 +91,10 @@ def ask(
     db: Session = Depends(get_db),
 ):
     limiter.check(f"report-ask:{user.id}", limit=30, window_seconds=3600)
-    with ai_usage.scope(report.workspace_id, report.id, ai_usage.preferred_model(db, report.workspace_id)):
+    with (
+        ai_usage.scope(report.workspace_id, report.id, ai_usage.preferred_model(db, report.workspace_id)),
+        entitlements.metered(db, report.workspace_id, "question"),
+    ):
         return entry_out(report_chat.answer(db, report, user, body.question))
 
 

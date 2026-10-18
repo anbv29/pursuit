@@ -7,13 +7,14 @@ from sqlalchemy.orm import Session
 
 from app.api.deps import current_user
 from app.api.experiments import experiment_dep
+from app.core.config import get_settings
 from app.core.db import get_db
 from app.core.errors import AppError
 from app.core.ratelimit import limiter
 from app.models import Experiment, User
 from app.models.enums import DataOrigin, Decision
 from app.schemas.common import ORM
-from app.services import ai_usage, funnel, recommendations
+from app.services import ai_usage, entitlements, funnel, recommendations
 
 router = APIRouter(prefix="/api/workspaces/{workspace_id}/experiments/{experiment_id}", tags=["analysis"])
 
@@ -35,7 +36,7 @@ class RecommendationOut(ORM):
 
 
 class GenerateIn(BaseModel):
-    use_ai: bool = True
+    use_ai: bool = False
 
 
 class StageIn(BaseModel):
@@ -66,8 +67,16 @@ def generate(
     db: Session = Depends(get_db),
 ):
     limiter.check(f"recommend:{user.id}", limit=20, window_seconds=3600)
-    with ai_usage.scope(exp.workspace_id):
-        return recommendations.generate(db, exp, user, use_ai=body.use_ai)
+    if not body.use_ai or not get_settings().ai_enabled:
+        return recommendations.generate(db, exp, user, use_ai=False)
+    with (
+        ai_usage.scope(exp.workspace_id, selected_model="claude-haiku-5-5"),
+        entitlements.metered(db, exp.workspace_id, "question") as use_id,
+    ):
+        result = recommendations.generate(db, exp, user, use_ai=True)
+        if result.generated_by == "rules":
+            entitlements.finish(db, use_id, False)
+        return result
 
 
 def _store(db, exp, user, stages: list[dict], label: str, origin: DataOrigin, warnings: list[str]):

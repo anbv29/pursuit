@@ -75,7 +75,7 @@ def synthesize(exp, metrics: dict, criteria: list[dict], evidence: list) -> AISy
     try:
         response = ai_usage.parse(
             client,
-            model=s.anthropic_model,
+            model=ai_usage.model(s.anthropic_model),
             max_tokens=16000,
             system=SYSTEM,
             messages=[
