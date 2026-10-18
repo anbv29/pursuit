@@ -401,9 +401,14 @@ A commit cannot contain its own hash, so each entry's hash is filled in by the f
     - docs/DEPLOYMENT.md: Neon + Render + Vercel steps, env var tables, single-origin proxy design, verification commands, and the manual steps still required (states clearly that nothing is deployed)
 
 ----------------------------------------------------------------------
-#74  (hash recorded in next commit)  fix: derive rate-limit client IP from trusted proxy hops
+#74  1424099  fix: derive rate-limit client IP from trusted proxy hops
     - Found while auditing: behind Vercel -> Render the socket peer is a proxy, so per-IP sign-up/login limits would become one global limit; trusting X-Forwarded-For blindly would let clients spoof it
     - app/api/auth.py: TRUSTED_PROXY_HOPS=N takes the address N entries from the right of X-Forwarded-For (only proxy-appended entries), else the socket peer
     - render.yaml: TRUSTED_PROXY_HOPS=2 with a note that it must be verified against real headers after deploy
     - tests: spoofed left-most XFF entry is ignored
     - Result: pytest 63 passed
+
+----------------------------------------------------------------------
+#75  (hash recorded in next commit)  docs: add 45-point security checklist and incident response
+    - docs/SECURITY_CHECKLIST.md: all 45 items with file/test/command evidence; tally verified by script: 37 PASS (several with stated limits), 3 FAIL (#18 no frontend CSP, #38 no account deletion/password reset, #43 no monitoring/alerting), 5 UNKNOWN (#4 env isolation, #6 deploy permissions, #12 and #15 DB least privilege, #44 backup restore); production readiness explicitly NOT claimed
+    - docs/INCIDENT_RESPONSE.md: emergency agent stop (ACTIONS_DISABLED + revoking the Fo token), rotation table per credential, data exposure triage from audit_events, compromised-account SQL steps, post-incident note
