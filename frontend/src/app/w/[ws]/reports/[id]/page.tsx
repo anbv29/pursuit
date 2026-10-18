@@ -12,6 +12,7 @@ import { Section, SourcesProvider } from "@/components/report/parts";
 import { ReportQuestions } from "@/components/report/questions";
 import { ReportPlan } from "@/components/report/plan";
 import { ReportVersions } from "@/components/report/versions";
+import { ReportProspects } from "@/components/report/prospects";
 import { useFeedback } from "@/components/feedback";
 import { useWorkspace } from "@/components/shell";
 import { Badge, Button, Card, Empty, Notice, Skeleton } from "@/components/ui";
@@ -166,6 +167,7 @@ export default function ReportPage() {
           <PositioningPricing c={c} />
           <Messaging c={c} />
           <Prospecting c={c} />
+          <ReportProspects path={reportPath} />
           <FunnelRisks c={c} />
           <Experiments c={c} reportId={r.id} />
           <Risks c={c} />

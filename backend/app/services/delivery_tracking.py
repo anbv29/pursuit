@@ -65,6 +65,8 @@ def sync(db, exp, action, message_id):
     row.last_event = str(data.get("last_event") or "unknown")[:40]
     row.checked_at, row.error = utcnow(), None
     verified_sent = row.last_event in {"sent", "delivered", "opened", "clicked", "bounced", "complained"}
+    if verified_sent:
+        action.status = ActionStatus.SUCCEEDED
     kinds = [OutcomeKind.SENT] if verified_sent else []
     if row.last_event in {"delivered", "opened", "clicked"}:
         kinds.append(OutcomeKind.DELIVERED)

@@ -10,6 +10,7 @@ import { useFeedback } from "../feedback";
 import { useWorkspace } from "../shell";
 import { Badge, Button, Card, CardHeader, DemoBadge, Empty, Field, Input, Notice, Select, Skeleton, Textarea } from "../ui";
 import { useExperiment } from "./context";
+import { DeliveryTracking } from "./tracking";
 
 const ICON = { send_email: Mail, schedule_meeting: CalendarClock, research_task: Search };
 const KIND_LABEL = { send_email: "Send email", schedule_meeting: "Schedule meeting", research_task: "Research task" };
@@ -108,7 +109,7 @@ function RequestForm({ kinds, onDone }: { kinds: Action["kind"][]; onDone: () =>
 
 function ActionRow({ a, onChange }: { a: Action; onChange: () => void }) {
   const { path, touch } = useExperiment();
-  const { refreshApprovals } = useWorkspace();
+  const { refreshApprovals, workspace } = useWorkspace();
   const { confirm, toast } = useFeedback();
   const st = ACTION_STATUS[a.status];
   const I = ICON[a.kind];
@@ -158,6 +159,8 @@ function ActionRow({ a, onChange }: { a: Action; onChange: () => void }) {
       <p className="mt-1 text-xs text-ink-3">{st.help}</p>
       {a.result_summary && <p className="mt-1.5 rounded-md bg-sunken px-2 py-1.5 text-xs text-ink-2">Fo: {a.result_summary}</p>}
       {a.error && <p className="mt-1.5 rounded-md bg-flag-soft px-2 py-1.5 text-xs text-d-stop">{a.error}</p>}
+      {workspace.role === "owner" && a.kind === "send_email" && a.mode === "live" && ["SUCCEEDED", "UNKNOWN"].includes(a.status) &&
+        <DeliveryTracking path={`${path}/actions/${a.id}`} refresh={() => { onChange(); touch(); }} />}
       <div className="mt-2 flex flex-wrap gap-2">
         {a.status === "PENDING_APPROVAL" && <>
           <Button size="sm" onClick={approve} loading={call.pending}>Review & approve</Button>
