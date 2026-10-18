@@ -1,5 +1,8 @@
 # Eight-feature verification — 2026-10-18
 
+For the subsequent running-stack audit (93 backend passes, eight browser passes and one
+missing-key live research skip), see `RUNTIME_VERIFICATION.md`. Live configuration is incomplete.
+
 Implementation and automated verification are complete. Live provider verification and deployment
 remain outstanding; this document does not claim production readiness.
 

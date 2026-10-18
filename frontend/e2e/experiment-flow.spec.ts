@@ -80,7 +80,7 @@ test("founder runs a full experiment loop and an outsider is locked out", async 
   await page.reload();
   await expect(page.getByText(/confidence ·/)).toBeVisible();
   await expect(page.getByRole("heading", { name: "Claims reconciliation pain" })).toBeVisible();
-  await expect(page.locator("dd").first()).toHaveText("1"); // evidence count persisted
+  await expect(page.getByRole("tabpanel").locator("dd").first()).toHaveText("1"); // persisted evidence
 
   // An unrelated user cannot open the experiment
   const ctx = await browser.newContext();

@@ -120,7 +120,9 @@ def _fake_fo(tool_result: dict | None = None, status: int = 200):
             200, json={"jsonrpc": "2.0", "id": msg["id"], "result": result}, headers={"mcp-session-id": "s1"}
         )
 
-    return lambda mode=None, user_id=None: McpFoAdapter(client=httpx.Client(transport=httpx.MockTransport(handler)))
+    return lambda mode=None, user_id=None: McpFoAdapter(
+        client=httpx.Client(transport=httpx.MockTransport(handler))
+    )
 
 
 def test_live_completion_requires_human_confirmation(api, exp_url, live, monkeypatch):

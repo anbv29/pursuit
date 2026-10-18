@@ -648,5 +648,12 @@ A commit cannot contain its own hash, so each entry's hash is filled in by the f
     - Use standard Tailwind PostCSS and audit verified delivery events.
 
 ----------------------------------------------------------------------
-#128  (hash recorded in next commit)  docs: record final feature verification
+#128  4b09d1e  docs: record final feature verification
     - Record 92 backend passes three browser passes and provider setup limits.
+
+----------------------------------------------------------------------
+Runtime verification checkpoint: fix: verify running stack and document live blockers
+    - 93 backend tests and eight browser tests passed; one live research test skipped for missing API key.
+    - Fixed stale browser selector, test lint and standard Webpack build command.
+    - Production dependency audits clean; live provider and production setup remain unverified.
+    - Full evidence: docs/RUNTIME_VERIFICATION.md. Local commit only; no push.

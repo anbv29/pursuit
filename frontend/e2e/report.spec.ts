@@ -18,6 +18,11 @@ test("website + description -> full sourced report -> tracked experiment", async
   await page.getByText("Analyze my company").click();
   await page.getByRole("button", { name: "Create workspace" }).click();
   await expect(page.getByRole("heading", { name: "Analyze your company" })).toBeVisible({ timeout: 60_000 });
+  const workspaceId = new URL(page.url()).pathname.split("/")[2];
+  const integrations = await page.request.get(`/api/workspaces/${workspaceId}/integrations`);
+  expect(integrations.ok()).toBeTruthy();
+  test.skip(!(await integrations.json()).ai.enabled,
+    "Live report verification requires ANTHROPIC_API_KEY on the backend; research is unavailable without it.");
   // This integration test verifies detailed terminology; guided mode is tested separately.
   await page.getByLabel("Reading style").selectOption("advanced");
 
