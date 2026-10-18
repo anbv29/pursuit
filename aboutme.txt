@@ -312,5 +312,9 @@ A commit cannot contain its own hash, so each entry's hash is filled in by the f
     - frontend/src/components/experiment/messaging.tsx: side-by-side variants with sent, delivered ('not reported' when the provider doesn't expose it), reply and positive-reply rates always shown with numerator/denominator and 95% intervals, interval bar against the target, meetings; plain-language verdict that refuses to pick a winner below the minimum sample or when intervals overlap; add-variant form
 
 ----------------------------------------------------------------------
-#59  (hash recorded in next commit)  feat: add outcome recording panel
+#59  a021195  feat: add outcome recording panel
     - frontend/src/components/experiment/outcomes.tsx: record real outcomes (sent, delivered, replied, positive reply, meeting, interview, pricing feedback, verbal interest vs commitment, other) linked to variant/prospect with optional amount; outcome log with origin labels (demo / fo / manual / import); delete with confirmation and metric recalculation
+
+----------------------------------------------------------------------
+#60  (hash recorded in next commit)  feat: add funnel diagnosis panel with CSV import
+    - frontend/src/components/experiment/funnel.tsx: accessible funnel visualisation with per-step conversion, drop-off counts and the biggest leak highlighted; overall conversion with n and 95% CI; competing explanations each paired with a distinguishing test; CSV upload (server-validated, row errors and warnings shown) and manual stage entry with validation
