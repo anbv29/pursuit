@@ -292,5 +292,9 @@ A commit cannot contain its own hash, so each entry's hash is filled in by the f
     - frontend/src/components/experiment/recommendation.tsx: latest recommendation with decision, confidence, who generated it (rule-based vs Claude model), rationale, highlighted next action, counterevidence, assumptions and limitations, demo label, cited evidence count and history count; generate/re-analyse with loading state; honest empty state; warns when no success criteria exist
 
 ----------------------------------------------------------------------
-#54  (hash recorded in next commit)  feat: add experiment overview, criteria results and activity timeline
+#54  57459fd  feat: add experiment overview, criteria results and activity timeline
     - frontend/src/components/experiment/overview.tsx: hypothesis card with record counts; success-criteria results (met / not met / too few samples / no data, with current value and n of min-sample); notice listing simulated outcomes excluded from results; chronological activity timeline in plain language from the audit trail; overview layout with recommendation panel
+
+----------------------------------------------------------------------
+#55  (hash recorded in next commit)  feat: add research and evidence panel
+    - frontend/src/components/experiment/evidence.tsx: add sources by server-side fetch or link-only, list with retrieval timestamps; add evidence (claim, fact/interpretation/assumption, stance, source, relevance, tags incl. competitor:Name); evidence shown in three separate columns (observed facts / interpretations / unverified assumptions) with stance filter and contradicting items highlighted; source links open with noopener/nofollow; delete with confirmation; demo labels
