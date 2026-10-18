@@ -17,10 +17,17 @@ A commit cannot contain its own hash, so each entry's hash is filled in by the f
     - aboutme.txt: this commit log.
 
 ----------------------------------------------------------------------
-#2  (hash recorded in next commit)  chore: scaffold FastAPI backend config and database layer
+#2  11ba5c4  chore: scaffold FastAPI backend config and database layer
     - backend/requirements*.txt: pinned FastAPI, SQLAlchemy 2, Alembic, psycopg 3, pydantic, argon2, httpx, anthropic; dev tools pytest, ruff, pip-audit
     - backend/app/core/config.py: env-based settings with production guards (strong SESSION_SECRET, secure cookies, no wildcard CORS)
     - backend/app/core/db.py: SQLAlchemy engine/session factory and declarative Base
     - backend/pyproject.toml: ruff (incl. security rules) and pytest config
     - .gitattributes: normalise line endings to LF
     - Empty package __init__ files for app/ and tests/
+
+----------------------------------------------------------------------
+#3  (hash recorded in next commit)  feat: add domain enums and identity models
+    - app/models/enums.py: use cases, 9-stage lifecycle, decisions, evidence kinds/stances, action statuses (PENDING_APPROVAL..UNKNOWN), outcome kinds, data origin (demo vs live), roles
+    - app/models/base.py: UUID id and timestamp mixins
+    - app/models/identity.py: User, AuthSession (hashed token + CSRF), Workspace (is_demo flag), Membership (unique per workspace/user), IntegrationConfig (no secrets stored), AuditEvent
+    - Verified local Postgres container healthy with pursuit and pursuit_test databases
