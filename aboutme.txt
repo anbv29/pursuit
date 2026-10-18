@@ -414,6 +414,12 @@ A commit cannot contain its own hash, so each entry's hash is filled in by the f
     - docs/INCIDENT_RESPONSE.md: emergency agent stop (ACTIONS_DISABLED + revoking the Fo token), rotation table per credential, data exposure triage from audit_events, compromised-account SQL steps, post-incident note
 
 ----------------------------------------------------------------------
-#76  (hash recorded in next commit)  test: run E2E serially with headroom for real AI calls
+#76  1239a0c  test: run E2E serially with headroom for real AI calls
     - frontend/playwright.config.ts: workers 1 and 180s timeout. A full-suite run had one load-related timeout (3 parallel workers on one dev server plus a real Claude call); the same test passed alone in 29s
     - Final verification: ruff + format check clean; pip-audit no known vulnerabilities; pytest 63 passed; tsc clean; eslint clean; next build OK; Playwright 5/5 passed (desktop + mobile)
+
+----------------------------------------------------------------------
+#77  (hash recorded in next commit)  feat: add report model and migration for company GTM reports
+    - Context: the Next dev server crashed (render workers died: 'Jest worker encountered 2 child process exceptions') so every page after onboarding returned HTTP 500; likely caused by running 'next build' in the same folder while 'next dev' ran. Fixed by restarting dev with a clean .next. User asked to replace the pick-one-of-six-experiments start with a URL + description -> full report flow
+    - backend/app/models/report.py: Report (workspace-scoped, company URL/name, inputs, status QUEUED/RUNNING/SUCCEEDED/FAILED, progress line, validated content, retrieved sources, model, error, timings)
+    - migrations/versions/f9fde6eadbca_add_reports.py: verified upgrade -> downgrade -> upgrade on dev and upgrade on test DB

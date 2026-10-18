@@ -23,3 +23,4 @@ from app.models.identity import (  # noqa: F401
     User,
     Workspace,
 )
+from app.models.report import Report  # noqa: F401
