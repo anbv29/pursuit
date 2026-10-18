@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { useState, type FormEvent } from "react";
 import { useFeedback } from "@/components/feedback";
 import { useWorkspace } from "@/components/shell";
+import { UsagePanel } from "@/components/usage";
 import { Badge, Button, Card, CardHeader, Field, Input, Notice, Skeleton } from "@/components/ui";
 import { api, errorMessage } from "@/lib/api";
 import { useAction, useApi } from "@/lib/hooks";
@@ -84,6 +85,7 @@ export default function SettingsPage() {
   return (
     <div className="mx-auto max-w-3xl space-y-6">
       <h1 className="text-2xl font-semibold tracking-tight">Settings</h1>
+      <UsagePanel path={base} owner={isOwner} />
 
       <Card>
         <CardHeader title="Integrations" description="Credentials live on the server only and are never shown here." action={<Button size="sm" variant="secondary" onClick={() => integ.reload()} loading={integ.loading}>Re-check</Button>} />

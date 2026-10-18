@@ -18,6 +18,7 @@ from app.api import (
     report_sharing,
     report_tools,
     reports,
+    usage,
     workspaces,
 )
 from app.core.config import get_settings
@@ -97,6 +98,7 @@ def create_app() -> FastAPI:
     app.include_router(fo_oauth.router)
     app.include_router(report_tools.router)
     app.include_router(report_sharing.router)
+    app.include_router(usage.router)
 
     @app.get("/api/health", tags=["ops"])
     def health():
