@@ -679,5 +679,9 @@ e8ac5b3  feat: continue approved Fo conversations
     - Expose owner scoped history replies and confirmed booking capture without fabricated attendance.
 
 ----------------------------------------------------------------------
-(hash recorded in next commit)  feat: add interview invitation review flow
+73954fb  feat: add interview invitation review flow
     - Add owner only prospect selection scheduling limits and individual approval preview.
+
+----------------------------------------------------------------------
+(hash recorded in next commit)  feat: add Fo attention and booking controls
+    - Add scoped history clarification approval and human confirmed booking UI.

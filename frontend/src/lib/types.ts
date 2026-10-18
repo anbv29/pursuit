@@ -76,6 +76,7 @@ export interface Outcome {
   value: number | null; note: string; origin: Origin; occurred_at: string;
 }
 export interface Action {
+  fo_state?: string | null;
   id: string; experiment_id: string; kind: "send_email" | "schedule_meeting" | "research_task";
   mode: "demo" | "live"; target: string; payload: Record<string, unknown>; status: ActionStatus;
   prospect_id: string | null; variant_id: string | null; decided_at: string | null;

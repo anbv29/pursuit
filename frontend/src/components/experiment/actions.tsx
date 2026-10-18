@@ -11,6 +11,7 @@ import { useWorkspace } from "../shell";
 import { Badge, Button, Card, CardHeader, DemoBadge, Empty, Field, Input, Notice, Select, Skeleton, Textarea } from "../ui";
 import { useExperiment } from "./context";
 import { DeliveryTracking } from "./tracking";
+import { FoTask } from "./fo-task";
 
 const ICON = { send_email: Mail, schedule_meeting: CalendarClock, research_task: Search };
 const KIND_LABEL = { send_email: "Send email", schedule_meeting: "Schedule meeting", research_task: "Research task" };
@@ -113,6 +114,7 @@ function ActionRow({ a, onChange }: { a: Action; onChange: () => void }) {
   const { confirm, toast } = useFeedback();
   const st = ACTION_STATUS[a.status];
   const I = ICON[a.kind];
+  const coordination = a.payload.coordination as { subject: string; invitation: string; timezone: string; deadline: string; max_followups: number } | undefined;
 
   const call = useAction(async (suffix: string, json: unknown, ok: string) => {
     try {
@@ -140,6 +142,12 @@ function ActionRow({ a, onChange }: { a: Action; onChange: () => void }) {
           {"subject" in a.payload && <p className="text-ink-3">Subject: {String(a.payload.subject)}</p>}
           {"body" in a.payload && <pre className="max-h-40 overflow-auto whitespace-pre-wrap rounded-md bg-sunken p-2 font-sans text-xs">{String(a.payload.body)}</pre>}
           {"question" in a.payload && <p className="text-ink-3">{String(a.payload.question)}</p>}
+          {coordination && <div className="space-y-2 text-sm">
+            <p>{String(a.payload.duration_minutes)} minutes · {String(a.payload.window)} · {coordination.timezone}</p>
+            <p>Stop by {new Date(coordination.deadline).toLocaleString()} · At most {coordination.max_followups} reminder(s) after 48 hours without a reply.</p>
+            <p><b>{coordination.subject}</b></p><p className="whitespace-pre-wrap">{coordination.invitation}</p>
+            <p>Approves invitation and scheduling with this one recipient. Fo must stop on refusal.</p>
+          </div>}
         </div>
       ),
     });
@@ -150,7 +158,7 @@ function ActionRow({ a, onChange }: { a: Action; onChange: () => void }) {
     <li className="px-4 py-3">
       <div className="flex flex-wrap items-center gap-2">
         <I className="size-4 text-ink-3" aria-hidden />
-        <span className="text-sm font-medium">{KIND_LABEL[a.kind]}</span>
+        <span className="text-sm font-medium">{coordination ? "Interview concierge" : KIND_LABEL[a.kind]}</span>
         <span className="truncate text-sm text-ink-2">→ {a.target}</span>
         <Badge tone={st.tone} title={st.help}>{st.label}</Badge>
         {a.mode === "demo" ? <DemoBadge label="Simulated" /> : <Badge tone="trail">Live · Fo</Badge>}
@@ -168,12 +176,13 @@ function ActionRow({ a, onChange }: { a: Action; onChange: () => void }) {
         </>}
         {(a.status === "PENDING_APPROVAL" || a.status === "QUEUED") &&
           <Button size="sm" variant="ghost" disabled={call.pending} onClick={() => call.run("cancel", {}, "Cancelled.")}>Cancel</Button>}
-        {a.status === "UNKNOWN" && <>
+        {a.status === "UNKNOWN" && !coordination && <>
           <span className="flex items-center gap-1 text-xs text-flag"><ShieldAlert className="size-3.5" /> Check your inbox/calendar, then confirm:</span>
           <Button size="sm" variant="secondary" disabled={call.pending} onClick={() => call.run("confirm", { outcome: "succeeded" }, "Marked as succeeded.")}>It happened</Button>
           <Button size="sm" variant="danger" disabled={call.pending} onClick={() => call.run("confirm", { outcome: "failed" }, "Marked as failed.")}>It did not happen</Button>
         </>}
       </div>
+      {coordination && workspace.role === "owner" && <FoTask action={a} refresh={() => { onChange(); touch(); refreshApprovals(); }} />}
     </li>
   );
 }
