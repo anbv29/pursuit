@@ -102,6 +102,11 @@ A commit cannot contain its own hash, so each entry's hash is filled in by the f
     - app/main.py: register experiment routers
 
 ----------------------------------------------------------------------
-#17  (hash recorded in next commit)  test: cover experiment CRUD, lifecycle gates and cross-tenant access
+#17  3e74a85  test: cover experiment CRUD, lifecycle gates and cross-tenant access
     - tests/test_experiments.py: 8 tests - six use-case templates, create/get with criteria and stage checklist, invalid input incl. injection-shaped metric names (422), gated/ordered transitions and backward moves, timeline ordering, criteria CRUD, archive, cross-tenant experiment read/patch/transition return 404
     - Result: pytest 21 passed
+
+----------------------------------------------------------------------
+#18  (hash recorded in next commit)  feat: add evidence and source provenance service
+    - app/schemas/evidence.py: source (http/https URLs only) and evidence models; evidence kind separates observed facts, interpretations and assumptions; stance supports/contradicts/neutral; relevance 0-1; tags sanitised
+    - app/services/evidence.py: add/list sources with retrieval timestamp and content hash, add/list/delete evidence; a source can only be linked from the same experiment; records in demo workspaces are forced to origin=demo
