@@ -35,18 +35,16 @@ SECURITY_HEADERS = {
 
 @asynccontextmanager
 async def lifespan(_: FastAPI):
-    """On startup, fail report jobs orphaned by a previous restart."""
-    from app.core.db import new_session
-    from app.services.reports import recover_stale
+    """A bounded worker claims durable jobs; expired leases resume after a restart."""
+    from app.services.report_worker import start
 
-    db = new_session()
+    settings = get_settings()
+    stop = start() if settings.report_worker_enabled and settings.app_env != "test" else None
     try:
-        recover_stale(db)
-    except Exception:
-        logger.exception("Could not recover stale reports")
+        yield
     finally:
-        db.close()
-    yield
+        if stop:
+            stop.set()
 
 
 def create_app() -> FastAPI:

@@ -560,5 +560,9 @@ A commit cannot contain its own hash, so each entry's hash is filled in by the f
     - Settings connect/reconnect/disconnect controls. Single-use user-bound callback tests, encrypted storage, rotating refresh and cross-user access tests. Add local migration.
 
 ----------------------------------------------------------------------
-#106  (hash recorded in next commit)  feat: add durable report queue and job controls
+#106  31c967b  feat: add durable report queue and job controls
     - Postgres queue eligibility, leases, heartbeat, worker lifecycle and cancel/retry routes. Report API queues jobs outside test mode.
+
+----------------------------------------------------------------------
+#107  (hash recorded in next commit)  feat: resume reports from durable checkpoints
+    - Jobs claim expiring leases and heartbeat. Persist site and research checkpoints, resume after crash, bound provider retries, cancel/retry with owner fencing. Worker starts with API lifespan.

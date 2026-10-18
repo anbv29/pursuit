@@ -1,9 +1,12 @@
 """Company report lifecycle: request -> background generation -> validated report."""
 
 import logging
+import threading
 import uuid
+from contextlib import suppress
 from datetime import timedelta
 
+import anthropic
 from sqlalchemy import func, select, update
 from sqlalchemy.orm import Session
 
@@ -13,6 +16,7 @@ from app.core.errors import AppError, NotFound
 from app.models import Report, User, Workspace
 from app.schemas.report import ReportIn
 from app.services import audit, fetcher, report_research, report_validate
+from app.services.report_worker import LEASE, eligible, heartbeat
 
 logger = logging.getLogger("pursuit.reports")
 ACTIVE = ("QUEUED", "RUNNING")
@@ -34,6 +38,7 @@ def list_for_workspace(db: Session, workspace_id: uuid.UUID):
 
 
 def create(db: Session, ws: Workspace, user: User, body: ReportIn) -> Report:
+    db.execute(select(Workspace.id).where(Workspace.id == ws.id).with_for_update())
     if not get_settings().ai_enabled:
         raise AppError(
             "Reports need AI research, but ANTHROPIC_API_KEY isn't set on the server.", "ai_disabled"
@@ -73,53 +78,104 @@ def create(db: Session, ws: Workspace, user: User, body: ReportIn) -> Report:
     return report
 
 
-def _set(db: Session, report_id: uuid.UUID, **values) -> None:
-    db.execute(update(Report).where(Report.id == report_id).values(**values))
+class JobStopped(Exception):
+    pass
+
+
+def _set(db: Session, report_id: uuid.UUID, owner=None, **values) -> None:
+    statement = update(Report).where(Report.id == report_id)
+    if owner is not None:
+        statement = statement.where(Report.lease_owner == owner, Report.status == "RUNNING")
+    result = db.execute(statement.values(**values))
     db.commit()
+    if owner is not None and result.rowcount != 1:
+        raise JobStopped
 
 
 def run(report_id: uuid.UUID) -> None:
     """Background job. Uses its own session; never raises."""
     db = new_session()
+    owner = uuid.uuid4().hex
+    stop = threading.Event()
     try:
         claimed = db.execute(
             update(Report)
-            .where(Report.id == report_id, Report.status == "QUEUED")
-            .values(status="RUNNING", started_at=utcnow(), progress="Reading the company website…")
+            .where(Report.id == report_id, eligible())
+            .values(
+                status="RUNNING",
+                started_at=utcnow(),
+                lease_owner=owner,
+                lease_until=utcnow() + LEASE,
+                attempts=Report.attempts + 1,
+                progress="Reading the company website…",
+                error=None,
+            )
         )
         db.commit()
         if claimed.rowcount != 1:
             return
         report = db.get(Report, report_id)
+        if report.attempts > 3:
+            _set(
+                db,
+                report_id,
+                owner,
+                status="FAILED",
+                error="Repeated interruptions. Please retry this report.",
+            )
+            return
+        threading.Thread(target=heartbeat, args=(report_id, owner, stop), daemon=True).start()
+        checkpoint = dict(report.checkpoint or {})
         inputs = dict(report.inputs, company_name=report.company_name)
 
-        site_text, site_source = "", None
-        try:
-            page = fetcher.fetch(report.company_url)
-            site_text = f"{page.title}\n{page.text}"
-            site_source = {
-                "id": "S0",
-                "url": page.url,
-                "title": page.title or "Company website",
-                "via": "pursuit_fetch",
-            }
-        except fetcher.FetchError as exc:
-            inputs["website_note"] = f"Pursuit could not read the website directly: {exc.message}"
-
-        found = report_research.research(
-            report.company_url, site_text, inputs, on_progress=lambda p: _set(db, report_id, progress=p)
-        )
-        if site_source:
-            found.sources.insert(0, site_source)
-        _set(db, report_id, progress=f"Writing the report from {len(found.sources)} sources…")
+        if "site" not in checkpoint:
+            try:
+                page = fetcher.fetch(report.company_url)
+                checkpoint["site"] = {
+                    "text": f"{page.title}\n{page.text}",
+                    "source": {
+                        "id": "S0",
+                        "url": page.url,
+                        "title": page.title or "Company website",
+                        "via": "pursuit_fetch",
+                    },
+                }
+            except fetcher.FetchError as exc:
+                checkpoint["site"] = {
+                    "text": "",
+                    "note": f"Pursuit could not read the website directly: {exc.message}",
+                }
+            _set(db, report_id, owner, checkpoint=checkpoint)
+        site = checkpoint["site"]
+        site_text = site["text"]
+        if site.get("note"):
+            inputs["website_note"] = site["note"]
+        if "research" not in checkpoint:
+            found = report_research.research(
+                report.company_url,
+                site_text,
+                inputs,
+                on_progress=lambda p: _set(db, report_id, owner, progress=p),
+            )
+            if site.get("source"):
+                found.sources.insert(0, site["source"])
+            checkpoint["research"] = {"notes": found.notes, "sources": found.sources}
+            _set(db, report_id, owner, checkpoint=checkpoint)
+        found = report_research.Research(**checkpoint["research"])
+        _set(db, report_id, owner, progress=f"Writing the report from {len(found.sources)} sources…")
         content = report_research.synthesize(report.company_url, site_text, inputs, found)
         data, stats = report_validate.validate(content, found.sources)
+        # A cancelled or reclaimed job must never overwrite its replacement.
+        db.refresh(report)
+        if report.status != "RUNNING" or report.lease_owner != owner:
+            return
         if not report.company_name:
             report.company_name = data["snapshot"]["name"][:160]
         report.content = data
         report.sources = found.sources
         report.model = get_settings().research_model
         report.status, report.progress, report.finished_at = "SUCCEEDED", "Done", utcnow()
+        report.lease_until = None
         audit.record(
             db,
             "report.complete",
@@ -130,21 +186,48 @@ def run(report_id: uuid.UUID) -> None:
             detail={"sources": len(found.sources), **stats},
         )
         db.commit()
+    except JobStopped:
+        db.rollback()
+    except (anthropic.APIConnectionError, anthropic.RateLimitError):
+        db.rollback()
+        if report.attempts < 3:
+            _set(
+                db,
+                report_id,
+                owner,
+                status="QUEUED",
+                progress="Temporary provider problem. Retrying…",
+                lease_until=None,
+            )
+        else:
+            _set(
+                db,
+                report_id,
+                owner,
+                status="FAILED",
+                error="The AI service is unavailable. Please retry later.",
+            )
     except report_research.ResearchError as exc:
         db.rollback()
-        _set(db, report_id, status="FAILED", progress="Failed", error=str(exc), finished_at=utcnow())
+        with suppress(JobStopped):
+            _set(
+                db, report_id, owner, status="FAILED", progress="Failed", error=str(exc), finished_at=utcnow()
+            )
     except Exception:
         logger.exception("Report %s failed", report_id)
         db.rollback()
-        _set(
-            db,
-            report_id,
-            status="FAILED",
-            progress="Failed",
-            error="Something went wrong while generating the report. Please try again.",
-            finished_at=utcnow(),
-        )
+        with suppress(JobStopped):
+            _set(
+                db,
+                report_id,
+                owner,
+                status="FAILED",
+                progress="Failed",
+                error="Something went wrong while generating the report. Please try again.",
+                finished_at=utcnow(),
+            )
     finally:
+        stop.set()
         db.close()
 
 
@@ -162,6 +245,53 @@ def recover_stale(db: Session) -> int:
     )
     db.commit()
     return res.rowcount
+
+
+def cancel(db, report, user):
+    from app.core.errors import Conflict
+
+    result = db.execute(
+        update(Report)
+        .where(Report.id == report.id, Report.status.in_(ACTIVE))
+        .values(
+            status="CANCELLED", progress="Cancelled", lease_owner=None, lease_until=None, finished_at=utcnow()
+        )
+    )
+    if not result.rowcount:
+        raise Conflict("Only queued or running reports can be cancelled.")
+    audit.record(db, "report.cancel", actor_id=user.id, workspace_id=report.workspace_id, target_id=report.id)
+    db.commit()
+    db.refresh(report)
+    return report
+
+
+def retry(db, report, user):
+    from app.core.errors import Conflict
+
+    db.execute(select(Workspace.id).where(Workspace.id == report.workspace_id).with_for_update())
+    if db.scalar(
+        select(Report.id).where(Report.workspace_id == report.workspace_id, Report.status.in_(ACTIVE))
+    ):
+        raise Conflict("A report is already running in this workspace.")
+    result = db.execute(
+        update(Report)
+        .where(Report.id == report.id, Report.status.in_(["FAILED", "CANCELLED"]))
+        .values(
+            status="QUEUED",
+            progress="Queued to resume saved progress",
+            attempts=0,
+            lease_owner=None,
+            lease_until=None,
+            finished_at=None,
+            error=None,
+        )
+    )
+    if not result.rowcount:
+        raise Conflict("Only failed or cancelled reports can be retried.")
+    audit.record(db, "report.retry", actor_id=user.id, workspace_id=report.workspace_id, target_id=report.id)
+    db.commit()
+    db.refresh(report)
+    return report
 
 
 def _min_len(text: str, n: int, prefix: str) -> str:

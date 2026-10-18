@@ -135,7 +135,7 @@ export interface ReportContent {
 }
 export interface Report {
   id: string; company_url: string; company_name: string; inputs: Record<string, string>;
-  status: "QUEUED" | "RUNNING" | "SUCCEEDED" | "FAILED"; progress: string; content: ReportContent | null;
+  status: "QUEUED" | "RUNNING" | "SUCCEEDED" | "FAILED" | "CANCELLED"; progress: string; content: ReportContent | null;
   sources: ReportSource[]; model: string | null; error: string | null;
   created_at: string; started_at: string | null; finished_at: string | null;
 }

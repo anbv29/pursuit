@@ -8,7 +8,7 @@ import { useApi } from "@/lib/hooks";
 import { timeAgo } from "@/lib/labels";
 import type { ReportListItem } from "@/lib/types";
 
-const TONE = { QUEUED: "neutral", RUNNING: "neutral", SUCCEEDED: "good", FAILED: "bad" } as const;
+const TONE = { QUEUED: "neutral", RUNNING: "neutral", SUCCEEDED: "good", FAILED: "bad", CANCELLED: "muted" } as const;
 
 export default function ReportsPage() {
   const { workspace, base } = useWorkspace();
@@ -41,7 +41,7 @@ export default function ReportsPage() {
                           <p className="truncate font-medium">{r.company_name || r.company_url}</p>
                           <p className="truncate text-xs text-ink-3">{r.company_url} · {timeAgo(r.created_at)}</p>
                         </div>
-                        <Badge tone={TONE[r.status]}>{r.status === "RUNNING" || r.status === "QUEUED" ? "Generating…" : r.status === "SUCCEEDED" ? "Ready" : "Failed"}</Badge>
+                        <Badge tone={TONE[r.status]}>{r.status === "RUNNING" || r.status === "QUEUED" ? "Generating…" : r.status === "SUCCEEDED" ? "Ready" : r.status === "CANCELLED" ? "Cancelled" : "Failed"}</Badge>
                       </Link>
                     </li>
                   ))}
