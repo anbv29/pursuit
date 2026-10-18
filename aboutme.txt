@@ -719,5 +719,9 @@ e6d1031  feat: migrate paid plan storage
     - Add reproducible billing schema with named reversible report credit reference.
 
 ----------------------------------------------------------------------
-(hash recorded in next commit)  feat: prepare verified paid plan checkout
+c212db0  feat: prepare verified paid plan checkout
     - Use allowlisted products owner bound orders and safe Dodo checkout links.
+
+----------------------------------------------------------------------
+(hash recorded in next commit)  feat: fulfill verified billing resources
+    - Grant paid allowances once and reconcile subscription refund and dispute states.
