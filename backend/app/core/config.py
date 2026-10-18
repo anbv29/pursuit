@@ -19,7 +19,7 @@ class Settings(BaseSettings):
     cookie_secure: bool = False
 
     anthropic_api_key: SecretStr | None = None
-    anthropic_model: str = "claude-sonnet-5-5"
+    anthropic_model: str = "claude-opus-5-5"
     ai_timeout_seconds: float = 45.0
 
     fo_mode: Literal["demo", "live"] = "demo"

@@ -179,5 +179,11 @@ A commit cannot contain its own hash, so each entry's hash is filled in by the f
     - tests/test_funnel_unit.py: 5 tests (valid analysis, row errors, header/size, warnings, empty funnel)
 
 ----------------------------------------------------------------------
-#32  (hash recorded in next commit)  feat: add experiment metrics and success-criteria evaluation
+#32  fd3dd44  feat: add experiment metrics and success-criteria evaluation
     - app/services/metrics.py: metrics computed only from persisted records - interview rates (problem confirmed, strong pain, budget owner) with Wilson intervals, verbal interest vs commitments kept separate, top pain points, per-variant sent/delivered/reply/positive-reply/meetings with sent as the denominator, evidence balance by stance, competitors profiled (competitor:<name> tags), latest funnel analysis; demo records excluded from live experiments and flagged on demo ones; criteria evaluated as met / not_met / insufficient_sample / no_data
+
+----------------------------------------------------------------------
+#33  (hash recorded in next commit)  feat: add rule-based recommendation engine and upgrade Anthropic SDK
+    - app/services/recommend_rules.py: explainable baseline decision (CONTINUE/ITERATE/PIVOT/STOP/INCONCLUSIVE) from criteria results and evidence balance; confidence from criteria coverage and evidence volume, capped at 0.85; collects counterevidence, assumptions, limitations (insufficient samples, missing data, demo data, unconfirmed actions) and use-case-specific next steps
+    - requirements.txt: anthropic 0.72.0 -> 1.15.0 (current SDK with messages.parse structured outputs)
+    - config + .env.example: default AI model claude-opus-5-5
