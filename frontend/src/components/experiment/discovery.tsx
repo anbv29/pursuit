@@ -1,5 +1,7 @@
 "use client";
 
+import { InterviewConcierge } from "./concierge";
+
 import { UserPlus, Users } from "lucide-react";
 import { useState, type FormEvent } from "react";
 import { api, ApiError, errorMessage } from "@/lib/api";
@@ -110,6 +112,7 @@ export function DiscoveryPanel() {
           <Card className="p-4"><p className="text-xs text-ink-3">Willingness to pay</p><p className="mt-1 text-sm"><b className="text-lg tabular-nums">{m.commitments}</b> commitments · <span className="text-ink-3">{m.verbal_interest} verbal only</span></p></Card>
         </div>
       )}
+      <InterviewConcierge prospects={prospects.data ?? []} />
       <div className="grid gap-6 xl:grid-cols-2">
         <Card>
           <CardHeader title={`Prospects (${prospects.data?.length ?? 0})`} description="Contact details are visible to workspace owners only." />

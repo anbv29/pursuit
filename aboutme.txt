@@ -675,5 +675,9 @@ e8ac5b3  feat: continue approved Fo conversations
     - Bind clarifications to saved conversations and preserve uncertain submission states.
 
 ----------------------------------------------------------------------
-(hash recorded in next commit)  feat: add interview concierge API and results
+614c259  feat: add interview concierge API and results
     - Expose owner scoped history replies and confirmed booking capture without fabricated attendance.
+
+----------------------------------------------------------------------
+(hash recorded in next commit)  feat: add interview invitation review flow
+    - Add owner only prospect selection scheduling limits and individual approval preview.
