@@ -107,6 +107,11 @@ A commit cannot contain its own hash, so each entry's hash is filled in by the f
     - Result: pytest 21 passed
 
 ----------------------------------------------------------------------
-#18  (hash recorded in next commit)  feat: add evidence and source provenance service
+#18  9e2cdee  feat: add evidence and source provenance service
     - app/schemas/evidence.py: source (http/https URLs only) and evidence models; evidence kind separates observed facts, interpretations and assumptions; stance supports/contradicts/neutral; relevance 0-1; tags sanitised
     - app/services/evidence.py: add/list sources with retrieval timestamp and content hash, add/list/delete evidence; a source can only be linked from the same experiment; records in demo workspaces are forced to origin=demo
+
+----------------------------------------------------------------------
+#19  (hash recorded in next commit)  feat: add SSRF-hardened research fetcher
+    - app/services/fetcher.py: fetches research pages with http/https + default ports only, every hop (max 3 redirects) must resolve to public IPs only, byte cap, timeouts, text/HTML content types only; strips scripts/styles and extracts title + text; content stored as untrusted excerpt with SHA-256. DNS-rebinding gap documented
+    - tests/test_fetcher.py: blocks loopback, localhost, cloud metadata IP, private ranges, IPv6 loopback, file:/ftp: schemes, non-standard ports; extraction drops script content (9 passed)
