@@ -136,6 +136,10 @@ A commit cannot contain its own hash, so each entry's hash is filled in by the f
     - app/schemas/actions.py: per-kind payload validation, recipient must be one valid email, optional client idempotency key (restricted charset), approve/reject and human outcome confirmation models, action output model
 
 ----------------------------------------------------------------------
-#23  (hash recorded in next commit)  feat: add action request, approval and cancellation service
+#23  da0b38c  feat: add action request, approval and cancellation service
     - app/services/actions.py: request validates use-case allowed kinds, prospect/variant ownership, archived state; idempotency key (client or content fingerprint, namespaced per experiment) blocks duplicate sends; mode forced to demo for demo workspaces or FO_MODE=demo; approval/rejection and cancellation use atomic compare-and-set updates so concurrent clicks can't double-approve; 24h per-workspace action budget; documented status semantics
     - app/core/db.py: new_session() for background execution
+
+----------------------------------------------------------------------
+#24  (hash recorded in next commit)  feat: add action executor with honest status tracking
+    - app/services/executor.py: background execution claims QUEUED->RUNNING atomically (no double runs), builds the deterministic instruction, submits to Fo exactly once (no blind resubmits that could duplicate emails), polls with a deadline and bounded poll errors; demo completions become SUCCEEDED and log a demo-labelled 'sent' outcome; live completions, Fo questions and timeouts become UNKNOWN until a human confirms; provider outages before submit = FAILED, after submit = UNKNOWN; human confirm endpoint logic records a live 'sent' outcome
