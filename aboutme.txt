@@ -556,5 +556,9 @@ A commit cannot contain its own hash, so each entry's hash is filled in by the f
     - Add callback disconnect routes and user-scoped adapter credentials. Fixes cross-user credential sharing. Tokens are never sent to clients.
 
 ----------------------------------------------------------------------
-#105  (hash recorded in next commit)  feat: add Fo connection controls and refresh tests
+#105  b297056  feat: add Fo connection controls and refresh tests
     - Settings connect/reconnect/disconnect controls. Single-use user-bound callback tests, encrypted storage, rotating refresh and cross-user access tests. Add local migration.
+
+----------------------------------------------------------------------
+#106  (hash recorded in next commit)  feat: add durable report queue and job controls
+    - Postgres queue eligibility, leases, heartbeat, worker lifecycle and cancel/retry routes. Report API queues jobs outside test mode.

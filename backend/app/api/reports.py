@@ -4,6 +4,7 @@ from fastapi import APIRouter, BackgroundTasks, Depends
 from sqlalchemy.orm import Session
 
 from app.api.deps import current_user, workspace_member
+from app.core.config import get_settings
 from app.core.db import get_db
 from app.core.ratelimit import limiter
 from app.models import Membership, User
@@ -29,7 +30,8 @@ def create_report(
 ):
     limiter.check(f"report:{user.id}", limit=10, window_seconds=3600)
     report = reports.create(db, m.workspace, user, body)
-    background.add_task(reports.run, report.id)
+    if get_settings().app_env == "test":
+        background.add_task(reports.run, report.id)
     return report
 
 
@@ -50,3 +52,23 @@ def create_experiment(
 ):
     report = reports.get(db, m.workspace_id, report_id)
     return reports.to_experiment(db, m.workspace, user, report, index)
+
+
+@router.post("/{report_id}/cancel", response_model=ReportOut)
+def cancel_report(
+    report_id: uuid.UUID,
+    m: Membership = Depends(workspace_member),
+    user: User = Depends(current_user),
+    db: Session = Depends(get_db),
+):
+    return reports.cancel(db, reports.get(db, m.workspace_id, report_id), user)
+
+
+@router.post("/{report_id}/retry", response_model=ReportOut)
+def retry_report(
+    report_id: uuid.UUID,
+    m: Membership = Depends(workspace_member),
+    user: User = Depends(current_user),
+    db: Session = Depends(get_db),
+):
+    return reports.retry(db, reports.get(db, m.workspace_id, report_id), user)
