@@ -371,7 +371,14 @@ A commit cannot contain its own hash, so each entry's hash is filled in by the f
     - Result: pytest 61 passed
 
 ----------------------------------------------------------------------
-#69  (hash recorded in next commit)  feat: add emergency stop for all external actions
+#69  7f56dab  feat: add emergency stop for all external actions
     - ACTIONS_DISABLED setting (env) blocks approvals with a clear error and makes the executor refuse already-queued actions (marked FAILED, 'not executed'), for incident response and emergency agent shutdown
     - tests: approval blocked while the stop is on and the action stays PENDING_APPROVAL
     - .env.example: documents ACTIONS_DISABLED
+
+----------------------------------------------------------------------
+#70  (hash recorded in next commit)  chore: upgrade backend dependencies to clear known vulnerabilities
+    - pip-audit found 8 advisories (starlette 0.48.0 x6, python-multipart 0.0.20 x2) and pytest 8.4.2 in dev. Upgraded fastapi 0.143.3, starlette 1.8.0 (pinned explicitly; FastAPI allows >=0.46 so pip had kept the vulnerable one), python-multipart 0.0.32, uvicorn 0.54.0, alembic 1.20.0, psycopg 3.3.6, pydantic 2.14.1, pydantic-settings 2.16.0, pytest 9.0.3
+    - Result: pip-audit (installed env) 'No known vulnerabilities found'; pytest 62 passed
+    - npm: 0 production vulnerabilities; 5 high in dev-only tooling (braces via eslint-config-next); npm's only fix downgrades to eslint-config-next 14, so accepted and documented
+    - Secret scan: no API keys/private keys/tokens in git history; only .env.example tracked
