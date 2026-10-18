@@ -10,6 +10,7 @@ from app.api import (
     actions,
     analysis,
     auth,
+    concierge,
     discovery,
     evidence,
     experiments,
@@ -89,6 +90,7 @@ def create_app() -> FastAPI:
 
     install_handlers(app)
     app.include_router(auth.router)
+    app.include_router(concierge.router)
     app.include_router(workspaces.router)
     app.include_router(experiments.router)
     app.include_router(experiments.templates_router)

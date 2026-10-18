@@ -671,5 +671,9 @@ ffe7c96  feat: prepare approved interview tasks
     - Save scoped progress and recheck owner prospect and deadline before execution.
 
 ----------------------------------------------------------------------
-(hash recorded in next commit)  feat: continue approved Fo conversations
+e8ac5b3  feat: continue approved Fo conversations
     - Bind clarifications to saved conversations and preserve uncertain submission states.
+
+----------------------------------------------------------------------
+(hash recorded in next commit)  feat: add interview concierge API and results
+    - Expose owner scoped history replies and confirmed booking capture without fabricated attendance.
