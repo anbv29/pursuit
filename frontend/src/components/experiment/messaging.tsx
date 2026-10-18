@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState, type FormEvent } from "react";
+import { useState, type FormEvent } from "react";
 import { api, errorMessage } from "@/lib/api";
 import { useAction, useApi } from "@/lib/hooks";
 import type { Analysis, Variant } from "@/lib/types";
@@ -21,9 +21,7 @@ function verdict(a: Analysis["metrics"]["variants"], minSample: number): string 
 export function MessagingPanel() {
   const { exp, path, version, touch } = useExperiment();
   const variants = useApi<Variant[]>(`${path}/variants`);
-  const analysis = useApi<Analysis>(`${path}/analysis`);
-  const { reload: ra } = analysis;
-  useEffect(() => { void ra(); }, [version, ra]);
+  const analysis = useApi<Analysis>(`${path}/analysis`, version);
   const [f, setF] = useState({ label: "", subject: "", body: "", angle: "" });
   const [err, setErr] = useState<string | null>(null);
   const add = useAction(async () => {

@@ -1,7 +1,6 @@
 "use client";
 
 import { ExternalLink } from "lucide-react";
-import { useEffect } from "react";
 import { useApi } from "@/lib/hooks";
 import type { Evidence } from "@/lib/types";
 import { Badge, Card, CardHeader, Empty } from "../ui";
@@ -13,9 +12,7 @@ const ASPECTS = ["pricing", "features", "audience", "positioning"];
 /** Competitor matrix derived from evidence tagged `competitor:Name` (+ aspect tags). */
 export function CompetitivePanel() {
   const { path, version } = useExperiment();
-  const ev = useApi<Evidence[]>(`${path}/evidence`);
-  const { reload } = ev;
-  useEffect(() => { void reload(); }, [version, reload]);
+  const ev = useApi<Evidence[]>(`${path}/evidence`, version);
 
   const byCompetitor = new Map<string, Evidence[]>();
   for (const e of ev.data ?? []) {

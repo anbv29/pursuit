@@ -3,14 +3,26 @@
 import { ChevronsLeft, ChevronsRight, Inbox, LayoutDashboard, LogOut, Plus, Settings } from "lucide-react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
-import { createContext, useContext, useEffect, useState, type ReactNode } from "react";
+import { createContext, useContext, useSyncExternalStore, type ReactNode } from "react";
 import { useApi } from "@/lib/hooks";
 import type { Workspace } from "@/lib/types";
 import { Logo } from "./brand";
 import { useSession } from "./session";
 import { Badge, cx, DemoBadge, Empty, Skeleton } from "./ui";
 
-type WsCtx = { workspace: Workspace; base: string; refreshApprovals: () => void };
+// Sidebar preference lives in localStorage; read it as an external store (SSR renders expanded).
+const SIDEBAR_KEY = "pursuit.sidebar";
+const readSidebar = () => localStorage.getItem(SIDEBAR_KEY) === "1";
+const subscribeSidebar = (cb: () => void) => {
+  window.addEventListener(SIDEBAR_KEY, cb);
+  window.addEventListener("storage", cb);
+  return () => {
+    window.removeEventListener(SIDEBAR_KEY, cb);
+    window.removeEventListener("storage", cb);
+  };
+};
+
+type WsCtx ={ workspace: Workspace; base: string; refreshApprovals: () => void };
 const WorkspaceCtx = createContext<WsCtx | null>(null);
 export function useWorkspace() {
   const c = useContext(WorkspaceCtx);
@@ -22,18 +34,14 @@ export function WorkspaceShell({ wsId, children }: { wsId: string; children: Rea
   const ws = useApi<Workspace>(`/workspaces/${wsId}`);
   const all = useApi<Workspace[]>("/workspaces");
   const approvals = useApi<unknown[]>(`/workspaces/${wsId}/approvals`);
-  const [collapsed, setCollapsed] = useState(false);
+  const collapsed = useSyncExternalStore(subscribeSidebar, readSidebar, () => false);
   const path = usePathname();
   const router = useRouter();
   const { user, logout } = useSession();
   const base = `/w/${wsId}`;
-
-  useEffect(() => {
-    setCollapsed(localStorage.getItem("pursuit.sidebar") === "1");
-  }, []);
   const toggle = () => {
-    localStorage.setItem("pursuit.sidebar", collapsed ? "0" : "1");
-    setCollapsed(!collapsed);
+    localStorage.setItem(SIDEBAR_KEY, collapsed ? "0" : "1");
+    window.dispatchEvent(new Event(SIDEBAR_KEY));
   };
 
   if (ws.error) {

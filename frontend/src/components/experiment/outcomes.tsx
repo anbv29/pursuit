@@ -1,7 +1,7 @@
 "use client";
 
 import { Trash2 } from "lucide-react";
-import { useEffect, useState, type FormEvent } from "react";
+import { useState, type FormEvent } from "react";
 import { api, errorMessage } from "@/lib/api";
 import { useAction, useApi } from "@/lib/hooks";
 import { timeAgo } from "@/lib/labels";
@@ -20,11 +20,10 @@ const label = (k: string) => KINDS.find(([v]) => v === k)?.[1] ?? k;
 export function OutcomesPanel() {
   const { path, version, touch } = useExperiment();
   const { confirm, toast } = useFeedback();
-  const list = useApi<Outcome[]>(`${path}/outcomes`);
+  const list = useApi<Outcome[]>(`${path}/outcomes`, version);
   const variants = useApi<Variant[]>(`${path}/variants`);
   const prospects = useApi<Prospect[]>(`${path}/prospects`);
   const { reload } = list;
-  useEffect(() => { void reload(); }, [version, reload]);
   const [f, setF] = useState({ kind: "replied", variant_id: "", prospect_id: "", value: "", note: "" });
   const [err, setErr] = useState<string | null>(null);
 

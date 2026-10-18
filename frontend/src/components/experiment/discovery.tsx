@@ -1,7 +1,7 @@
 "use client";
 
 import { UserPlus, Users } from "lucide-react";
-import { useEffect, useState, type FormEvent } from "react";
+import { useState, type FormEvent } from "react";
 import { api, ApiError, errorMessage } from "@/lib/api";
 import { useAction, useApi } from "@/lib/hooks";
 import type { Analysis, Interview, Prospect } from "@/lib/types";
@@ -86,9 +86,7 @@ export function DiscoveryPanel() {
   const { toast } = useFeedback();
   const prospects = useApi<Prospect[]>(`${path}/prospects`);
   const interviews = useApi<Interview[]>(`${path}/interviews`);
-  const analysis = useApi<Analysis>(`${path}/analysis`);
-  const { reload: ra } = analysis;
-  useEffect(() => { void ra(); }, [version, ra]);
+  const analysis = useApi<Analysis>(`${path}/analysis`, version);
   const name = (id: string | null) => prospects.data?.find((p) => p.id === id)?.name ?? "Unlinked";
 
   const setStatus = async (p: Prospect, status: string) => {

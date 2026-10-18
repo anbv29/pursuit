@@ -97,7 +97,7 @@ function RequestForm({ kinds, onDone }: { kinds: Action["kind"][]; onDone: () =>
         </div>
       )}
       {kind === "research_task" && (
-        <Field label="Research question" error={errors.question} hint="Fo reads public information only; it won't contact anyone.">
+        <Field label="Research question" error={errors.question} hint="Fo reads public information only; it will not contact anyone.">
           {(id) => <Textarea id={id} rows={3} value={f.question} onChange={set("question")} />}</Field>
       )}
       {err && <Notice tone="bad">{err}</Notice>}
@@ -133,7 +133,7 @@ function ActionRow({ a, onChange }: { a: Action; onChange: () => void }) {
       body: (
         <div className="space-y-2">
           {a.mode === "live"
-            ? <Notice tone="flag">Fo will act from your real account. This can't be undone once sent.</Notice>
+            ? <Notice tone="flag">Fo will act from your real account. This can&apos;t be undone once sent.</Notice>
             : <Notice tone="demo">Demo mode: nothing will actually be sent.</Notice>}
           <p><b>{KIND_LABEL[a.kind]}</b> → {a.target}</p>
           {"subject" in a.payload && <p className="text-ink-3">Subject: {String(a.payload.subject)}</p>}
@@ -168,7 +168,7 @@ function ActionRow({ a, onChange }: { a: Action; onChange: () => void }) {
         {a.status === "UNKNOWN" && <>
           <span className="flex items-center gap-1 text-xs text-flag"><ShieldAlert className="size-3.5" /> Check your inbox/calendar, then confirm:</span>
           <Button size="sm" variant="secondary" disabled={call.pending} onClick={() => call.run("confirm", { outcome: "succeeded" }, "Marked as succeeded.")}>It happened</Button>
-          <Button size="sm" variant="danger" disabled={call.pending} onClick={() => call.run("confirm", { outcome: "failed" }, "Marked as failed.")}>It didn't</Button>
+          <Button size="sm" variant="danger" disabled={call.pending} onClick={() => call.run("confirm", { outcome: "failed" }, "Marked as failed.")}>It did not happen</Button>
         </>}
       </div>
     </li>
@@ -178,9 +178,8 @@ function ActionRow({ a, onChange }: { a: Action; onChange: () => void }) {
 export function ActionsPanel() {
   const { exp, path, version } = useExperiment();
   const tpl = useApi<Template[]>("/use-cases");
-  const list = useApi<Action[]>(`${path}/actions`);
+  const list = useApi<Action[]>(`${path}/actions`, version);
   const { reload } = list;
-  useEffect(() => { void reload(); }, [version, reload]);
   const inFlight = list.data?.some((a) => a.status === "QUEUED" || a.status === "RUNNING");
   useEffect(() => {
     if (!inFlight) return;

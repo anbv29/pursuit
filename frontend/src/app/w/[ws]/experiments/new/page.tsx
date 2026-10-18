@@ -2,7 +2,7 @@
 
 import { ArrowLeft, Check } from "lucide-react";
 import { useRouter, useSearchParams } from "next/navigation";
-import { Suspense, useEffect, useState, type FormEvent } from "react";
+import { Suspense, useState, type FormEvent } from "react";
 import { z } from "zod";
 import { CriteriaEditor, isRate, KNOWN_METRICS, type CriterionDraft } from "@/components/criteria-editor";
 import { useWorkspace } from "@/components/shell";
@@ -27,14 +27,13 @@ function NewExperiment() {
   const templates = useApi<Template[]>("/use-cases");
   const [useCase, setUseCase] = useState<UseCase | null>(preset);
   const [form, setForm] = useState({ title: "", hypothesis: "", target_audience: "" });
-  const [criteria, setCriteria] = useState<CriterionDraft[]>([]);
+  // Edited criteria per use case; until edited, the template's defaults apply.
+  const [edited, setEdited] = useState<Partial<Record<UseCase, CriterionDraft[]>>>({});
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [formError, setFormError] = useState<string | null>(null);
   const tpl = templates.data?.find((t) => t.use_case === useCase);
-
-  useEffect(() => {
-    if (tpl) setCriteria(tpl.default_criteria.map((c) => ({ ...c })));
-  }, [tpl]);
+  const criteria: CriterionDraft[] = (useCase && edited[useCase]) || tpl?.default_criteria || [];
+  const setCriteria = (c: CriterionDraft[]) => useCase && setEdited((e) => ({ ...e, [useCase]: c }));
 
   const create = useAction(async () => {
     const parsed = schema.safeParse(form);
@@ -63,7 +62,7 @@ function NewExperiment() {
     return (
       <div className="mx-auto max-w-4xl">
         <h1 className="text-2xl font-semibold tracking-tight">What do you want to find out?</h1>
-        <p className="mt-1 text-sm text-ink-3">Every experiment follows the same loop. Pick the question you're answering.</p>
+        <p className="mt-1 text-sm text-ink-3">Every experiment follows the same loop. Pick the question you are answering.</p>
         <div className="mt-6 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
           {templates.data?.map((t) => (
             <button key={t.use_case} onClick={() => setUseCase(t.use_case)}
@@ -120,7 +119,7 @@ function NewExperiment() {
             {form.target_audience && <p className="mt-2 text-xs text-ink-3">Audience: {form.target_audience}</p>}
             <p className="mt-4 text-xs font-medium text-ink-3">It succeeds if</p>
             <ul className="mt-1.5 space-y-1">
-              {criteria.length === 0 && <li className="text-sm text-flag">No criteria — results can't be judged.</li>}
+              {criteria.length === 0 && <li className="text-sm text-flag">No criteria — results cannot be judged.</li>}
               {criteria.map((c, i) => (
                 <li key={i} className="flex gap-2 text-sm"><Check className="mt-0.5 size-3.5 shrink-0 text-trail" />
                   <span>{label(c.metric)} {c.comparator} {isRate(c.metric) ? `${Math.round(c.target * 100)}%` : c.target}

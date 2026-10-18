@@ -1,7 +1,7 @@
 "use client";
 
 import { Plus, Trash2, Upload } from "lucide-react";
-import { useEffect, useRef, useState } from "react";
+import { useRef, useState } from "react";
 import { api, errorMessage } from "@/lib/api";
 import { useAction, useApi } from "@/lib/hooks";
 import { pct } from "@/lib/labels";
@@ -47,9 +47,8 @@ function FunnelChart({ f }: { f: FunnelAnalysis }) {
 export function FunnelPanel() {
   const { exp, path, version, touch } = useExperiment();
   const { toast } = useFeedback();
-  const analysis = useApi<Analysis>(`${path}/analysis`);
+  const analysis = useApi<Analysis>(`${path}/analysis`, version);
   const { reload } = analysis;
-  useEffect(() => { void reload(); }, [version, reload]);
   const fileRef = useRef<HTMLInputElement>(null);
   const [rows, setRows] = useState([{ name: "Visitors", count: "" }, { name: "Signups", count: "" }, { name: "Paid", count: "" }]);
   const [errors, setErrors] = useState<string | null>(null);

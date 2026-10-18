@@ -1,7 +1,6 @@
 "use client";
 
 import { AlertTriangle, Bot, Compass, ListChecks, Sparkles } from "lucide-react";
-import { useEffect } from "react";
 import { api, errorMessage } from "@/lib/api";
 import { useAction, useApi } from "@/lib/hooks";
 import { DECISION_STYLE, timeAgo } from "@/lib/labels";
@@ -26,9 +25,7 @@ function List({ icon: Icon, title, items, tone }: { icon: typeof Compass; title:
 export function RecommendationPanel() {
   const { exp, path, reload, version, touch } = useExperiment();
   const { toast } = useFeedback();
-  const recs = useApi<Recommendation[]>(`${path}/recommendations`);
-  const { reload: reloadRecs } = recs;
-  useEffect(() => { void reloadRecs(); }, [version, reloadRecs]);
+  const recs = useApi<Recommendation[]>(`${path}/recommendations`, version);
 
   const generate = useAction(async () => {
     try {

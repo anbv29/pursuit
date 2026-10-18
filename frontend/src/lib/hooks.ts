@@ -3,14 +3,32 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { api, ApiError } from "./api";
 
-/** Load data from the API with loading / error state and a reload function. */
-export function useApi<T>(path: string | null) {
+const toApiError = (e: unknown) => (e instanceof ApiError ? e : new ApiError(0, "unknown", "Failed to load."));
+
+/**
+ * Load data from the API with loading / error state.
+ * `refreshKey` refetches when it changes (e.g. a sibling panel saved something).
+ */
+export function useApi<T>(path: string | null, refreshKey: unknown = 0) {
   const [data, setData] = useState<T | null>(null);
   const [error, setError] = useState<ApiError | null>(null);
   const [loading, setLoading] = useState(Boolean(path));
   const seq = useRef(0);
 
-  const load = useCallback(async () => {
+  useEffect(() => {
+    if (!path) return;
+    const mine = ++seq.current;
+    api<T>(path)
+      .then((d) => {
+        if (mine !== seq.current) return;
+        setData(d);
+        setError(null);
+      })
+      .catch((e) => mine === seq.current && setError(toApiError(e)))
+      .finally(() => mine === seq.current && setLoading(false));
+  }, [path, refreshKey]);
+
+  const reload = useCallback(async () => {
     if (!path) return;
     const mine = ++seq.current;
     setLoading(true);
@@ -21,17 +39,13 @@ export function useApi<T>(path: string | null) {
         setError(null);
       }
     } catch (e) {
-      if (mine === seq.current) setError(e instanceof ApiError ? e : new ApiError(0, "unknown", "Failed to load."));
+      if (mine === seq.current) setError(toApiError(e));
     } finally {
       if (mine === seq.current) setLoading(false);
     }
   }, [path]);
 
-  useEffect(() => {
-    void load();
-  }, [load]);
-
-  return { data, error, loading, reload: load, setData };
+  return { data, error, loading, reload, setData };
 }
 
 /** Wrap a mutation so it can't be double-submitted and exposes a pending flag. */

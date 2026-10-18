@@ -1,6 +1,5 @@
 "use client";
 
-import { useEffect } from "react";
 import { useApi } from "@/lib/hooks";
 import { timeAgo } from "@/lib/labels";
 import type { Analysis, CriterionResult, TimelineItem } from "@/lib/types";
@@ -21,9 +20,7 @@ const fmt = (metric: string, v: number | null) =>
 
 export function CriteriaResults() {
   const { path, version } = useExperiment();
-  const a = useApi<Analysis>(`${path}/analysis`);
-  const { reload } = a;
-  useEffect(() => { void reload(); }, [version, reload]);
+  const a = useApi<Analysis>(`${path}/analysis`, version);
   if (!a.data) return <Skeleton className="h-40" />;
   const sim = a.data.metrics.excluded_simulated_outcomes;
   return (
@@ -58,9 +55,7 @@ export function CriteriaResults() {
 
 export function Timeline() {
   const { path, version } = useExperiment();
-  const t = useApi<TimelineItem[]>(`${path}/timeline`);
-  const { reload } = t;
-  useEffect(() => { void reload(); }, [version, reload]);
+  const t = useApi<TimelineItem[]>(`${path}/timeline`, version);
   return (
     <Card>
       <CardHeader title="Activity" />
