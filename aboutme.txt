@@ -468,5 +468,9 @@ A commit cannot contain its own hash, so each entry's hash is filled in by the f
     - frontend/src/lib/types.ts: report, claim, source and content types
 
 ----------------------------------------------------------------------
-#86  (hash recorded in next commit)  feat: add report building blocks with claim labels and citations
+#86  717128c  feat: add report building blocks with claim labels and citations
     - frontend/src/components/report/parts.tsx: citation chips resolve source ids to the retrieved URLs (hostname, title on hover, open in new tab with noopener/nofollow); every claim shows 'Sourced fact' / 'Interpretation' / 'Assumption' or 'Unsourced' (when the server downgraded a fact) plus non-high confidence; section, bullet and label primitives with print-friendly styles
+
+----------------------------------------------------------------------
+#87  (hash recorded in next commit)  feat: add report sections for company, segments, personas and problems
+    - frontend/src/components/report/customer-sections.tsx: executive summary with focus-first callout; company snapshot (offering, model, stage, observed pricing and key facts as labelled, cited claims); ICP segments ranked by fit (1-5 bar), pains, buying trigger, decision maker and cited rationale; personas (goals, pains, objections, where to find them); problem hypotheses with evidence for and against and how to validate
