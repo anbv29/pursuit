@@ -56,7 +56,12 @@ A commit cannot contain its own hash, so each entry's hash is filled in by the f
     - app/core/ratelimit.py: thread-safe sliding-window rate limiter (single-instance; limitation documented)
 
 ----------------------------------------------------------------------
-#8  (hash recorded in next commit)  feat: add auth service, audit trail and request authorization deps
+#8  f1140de  feat: add auth service, audit trail and request authorization deps
     - app/services/audit.py: append-only audit event helper
     - app/services/auth.py: register (case-insensitive unique email), login issuing hashed session + CSRF token, session resolution (expiry, revocation, inactive users), logout
     - app/api/deps.py: cookie session auth, CSRF header check on all non-GET requests, workspace membership resolution returning 404 to non-members (no ID enumeration), owner-only guard
+
+----------------------------------------------------------------------
+#9  (hash recorded in next commit)  feat: add auth API routes and shared schemas
+    - app/schemas/common.py: validated request/response models for auth, workspaces, members, audit (email validation, 10+ char passwords)
+    - app/api/auth.py: register, login, me, logout. httpOnly SameSite=Lax session cookie (Secure in prod), CSRF token returned in body, per-IP and per-email login rate limits, register rate limit
