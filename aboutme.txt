@@ -304,5 +304,9 @@ A commit cannot contain its own hash, so each entry's hash is filled in by the f
     - frontend/src/components/experiment/actions.tsx: request email / meeting / research actions (kinds limited by use case), prefill from prospect or message variant, single-recipient validation errors from server; action list with honest status badges + help text, demo 'Simulated' vs 'Live - Fo' labels, Fo summary and errors; review-and-approve dialog shows the exact recipient and message and warns that live actions use the real account; reject/cancel; UNKNOWN outcomes require 'It happened' / 'It didn't' confirmation; polls while actions are queued or running
 
 ----------------------------------------------------------------------
-#57  (hash recorded in next commit)  feat: add prospects and customer discovery panel
+#57  1da0011  feat: add prospects and customer discovery panel
     - frontend/src/components/experiment/discovery.tsx: discovery metrics (interviews completed, problem confirmed and budget owner rates with n and 95% CI, commitments vs verbal interest kept separate); prospects with role/company/segment, provenance link, inline status pipeline, owner-only contact details note; add prospect form with server validation; behaviour-based interview capture (pain points, current solution, frequency, cost, budget owner, WTP signal with commitment defined, contradictions, notes) and interview list highlighting contradictions
+
+----------------------------------------------------------------------
+#58  (hash recorded in next commit)  feat: add messaging variant comparison panel
+    - frontend/src/components/experiment/messaging.tsx: side-by-side variants with sent, delivered ('not reported' when the provider doesn't expose it), reply and positive-reply rates always shown with numerator/denominator and 95% intervals, interval bar against the target, meetings; plain-language verdict that refuses to pick a winner below the minimum sample or when intervals overlap; add-variant form
