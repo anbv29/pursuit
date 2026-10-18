@@ -14,7 +14,14 @@ LEASE = timedelta(seconds=90)
 
 
 def eligible():
-    return or_(Report.status == "QUEUED", (Report.status == "RUNNING") & (Report.lease_until < utcnow()))
+    return or_(
+        Report.status == "QUEUED",
+        (Report.status == "RUNNING")
+        & or_(
+            Report.lease_until < utcnow(),
+            Report.lease_until.is_(None) & (Report.updated_at < utcnow() - LEASE),
+        ),
+    )
 
 
 def heartbeat(report_id, owner, stop):

@@ -1,6 +1,8 @@
 """Discover organizations; check their public sites before saving candidates."""
 
+import hashlib
 import json
+from urllib.parse import urlsplit
 
 import anthropic
 from pydantic import BaseModel, Field, HttpUrl
@@ -69,15 +71,18 @@ def discover(db, report, user):
     if result.parsed_output is None:
         raise AppError("No verified company suggestions were returned.")
     by_id = {x["id"]: x for x in found.sources}
+    own_host = urlsplit(report.company_url).hostname
     for candidate in result.parsed_output.companies:
         citations = [by_id[x] for x in candidate.source_ids if x in by_id]
         if not citations:
+            continue
+        if urlsplit(str(candidate.website)).hostname == own_host:
             continue
         try:
             page = fetcher.fetch(str(candidate.website))
         except fetcher.FetchError:
             continue
-        key = page.url.rstrip("/")[:100]
+        key = hashlib.sha256(page.url.rstrip("/").encode()).hexdigest()
         exists = db.scalar(
             select(ReportEntry.id).where(
                 ReportEntry.report_id == report.id, ReportEntry.kind == "prospect", ReportEntry.key == key

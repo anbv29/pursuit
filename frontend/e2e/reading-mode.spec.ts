@@ -29,7 +29,8 @@ for (const width of [1280, 390]) {
       const ws = { id: "workspace", name: "Reading test", is_demo: true, role: "owner" };
       const data = path.endsWith("/auth/me") ? { user: { id: "user", email: "reader@example.com", name: "Reader" }, csrf_token: "fixture" }
         : path.endsWith("/reports/report") ? report
-          : path === "/api/workspaces" ? [ws] : path.endsWith("/approvals") ? [] : ws;
+          : path === "/api/workspaces" ? [ws]
+            : /\/(approvals|questions|plan|versions|prospects|shares)$/.test(path) ? [] : ws;
       await route.fulfill({ json: data });
     });
     await page.goto("/w/workspace/reports/report");

@@ -187,13 +187,27 @@ def run(report_id: uuid.UUID) -> None:
         db.refresh(report)
         if report.status != "RUNNING" or report.lease_owner != owner:
             return
-        if not report.company_name:
-            report.company_name = data["snapshot"]["name"][:160]
-        report.content = data
-        report.sources = found.sources
-        report.model = ai_usage.model(get_settings().research_model)
-        report.status, report.progress, report.finished_at = "SUCCEEDED", "Done", utcnow()
-        report.lease_until = None
+        completed = db.execute(
+            update(Report)
+            .where(
+                Report.id == report_id,
+                Report.status == "RUNNING",
+                Report.lease_owner == owner,
+            )
+            .values(
+                company_name=report.company_name or data["snapshot"]["name"][:160],
+                content=data,
+                sources=found.sources,
+                model=ai_usage.model(get_settings().research_model),
+                status="SUCCEEDED",
+                progress="Done",
+                finished_at=utcnow(),
+                lease_until=None,
+            )
+        )
+        if completed.rowcount != 1:
+            db.rollback()
+            return
         audit.record(
             db,
             "report.complete",

@@ -628,5 +628,9 @@ A commit cannot contain its own hash, so each entry's hash is filled in by the f
     - Complete workspace exports and redact share links from access logs.
 
 ----------------------------------------------------------------------
-#123  (hash recorded in next commit)  feat: migrate tracking shares and AI usage
+#123  511fcf5  feat: migrate tracking shares and AI usage
     - Add reproducible schema and isolated test migration runner.
+
+----------------------------------------------------------------------
+#124  (hash recorded in next commit)  test: verify sharing budgets and recovery
+    - Add permission expiry usage tests and atomic job completion.
