@@ -1,11 +1,11 @@
 import uuid
 from datetime import datetime
 
-from sqlalchemy import JSON, Boolean, DateTime, Enum, ForeignKey, Index, String, UniqueConstraint
+from sqlalchemy import JSON, Boolean, DateTime, ForeignKey, Index, String, UniqueConstraint
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from app.core.db import Base, utcnow
-from app.models.base import IdMixin, TimestampMixin
+from app.models.base import IdMixin, TimestampMixin, enum_col
 from app.models.enums import Role
 
 
@@ -48,7 +48,7 @@ class Membership(IdMixin, Base):
         ForeignKey("workspaces.id", ondelete="CASCADE"), index=True
     )
     user_id: Mapped[uuid.UUID] = mapped_column(ForeignKey("users.id", ondelete="CASCADE"), index=True)
-    role: Mapped[Role] = mapped_column(Enum(Role, native_enum=False, length=20), default=Role.MEMBER)
+    role: Mapped[Role] = mapped_column(enum_col(Role), default=Role.MEMBER)
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=utcnow)
 
     workspace: Mapped[Workspace] = relationship()
@@ -75,9 +75,7 @@ class AuditEvent(IdMixin, Base):
     __tablename__ = "audit_events"
     __table_args__ = (Index("ix_audit_ws_created", "workspace_id", "created_at"),)
 
-    workspace_id: Mapped[uuid.UUID | None] = mapped_column(
-        ForeignKey("workspaces.id", ondelete="CASCADE")
-    )
+    workspace_id: Mapped[uuid.UUID | None] = mapped_column(ForeignKey("workspaces.id", ondelete="CASCADE"))
     actor_id: Mapped[uuid.UUID | None] = mapped_column(ForeignKey("users.id", ondelete="SET NULL"))
     action: Mapped[str] = mapped_column(String(80))
     target_type: Mapped[str | None] = mapped_column(String(40))

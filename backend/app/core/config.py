@@ -12,9 +12,7 @@ class Settings(BaseSettings):
 
     app_env: Literal["development", "test", "production"] = "development"
     database_url: str = "postgresql+psycopg://pursuit:pursuit_local_only@localhost:5433/pursuit"
-    test_database_url: str = (
-        "postgresql+psycopg://pursuit:pursuit_local_only@localhost:5433/pursuit_test"
-    )
+    test_database_url: str = "postgresql+psycopg://pursuit:pursuit_local_only@localhost:5433/pursuit_test"
     session_secret: SecretStr = SecretStr("dev-only-insecure-secret")
     session_ttl_hours: int = 72
     cors_origins: str = "http://localhost:3000"
@@ -46,7 +44,7 @@ class Settings(BaseSettings):
     def _production_guards(self) -> "Settings":
         if self.app_env == "production":
             secret = self.session_secret.get_secret_value()
-            if secret == "dev-only-insecure-secret" or len(secret) < 32:
+            if secret == "dev-only-insecure-secret" or len(secret) < 32:  # noqa: S105
                 raise ValueError("SESSION_SECRET must be set to a strong value in production")
             if not self.cookie_secure:
                 raise ValueError("COOKIE_SECURE must be true in production")

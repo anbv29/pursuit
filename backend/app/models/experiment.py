@@ -5,7 +5,6 @@ from sqlalchemy import (
     JSON,
     CheckConstraint,
     DateTime,
-    Enum,
     Float,
     ForeignKey,
     Index,
@@ -15,12 +14,8 @@ from sqlalchemy import (
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from app.core.db import Base, utcnow
-from app.models.base import IdMixin, TimestampMixin
+from app.models.base import IdMixin, TimestampMixin, enum_col
 from app.models.enums import DataOrigin, Decision, EvidenceKind, Stage, Stance, UseCase
-
-
-def _enum(cls):
-    return Enum(cls, native_enum=False, length=40, values_callable=lambda e: [m.value for m in e])
 
 
 class Experiment(IdMixin, TimestampMixin, Base):
@@ -31,11 +26,11 @@ class Experiment(IdMixin, TimestampMixin, Base):
         ForeignKey("workspaces.id", ondelete="CASCADE"), index=True
     )
     created_by: Mapped[uuid.UUID | None] = mapped_column(ForeignKey("users.id", ondelete="SET NULL"))
-    use_case: Mapped[UseCase] = mapped_column(_enum(UseCase))
+    use_case: Mapped[UseCase] = mapped_column(enum_col(UseCase))
     title: Mapped[str] = mapped_column(String(160))
     hypothesis: Mapped[str] = mapped_column(Text)
     target_audience: Mapped[str] = mapped_column(Text, default="")
-    stage: Mapped[Stage] = mapped_column(_enum(Stage), default=Stage.HYPOTHESIS)
+    stage: Mapped[Stage] = mapped_column(enum_col(Stage), default=Stage.HYPOTHESIS)
     config: Mapped[dict] = mapped_column(JSON, default=dict)
     is_demo: Mapped[bool] = mapped_column(default=False)
     archived_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
@@ -77,7 +72,7 @@ class Source(IdMixin, Base):
     excerpt: Mapped[str] = mapped_column(Text, default="")
     content_sha256: Mapped[str | None] = mapped_column(String(64))
     retrieved_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=utcnow)
-    origin: Mapped[DataOrigin] = mapped_column(_enum(DataOrigin), default=DataOrigin.MANUAL)
+    origin: Mapped[DataOrigin] = mapped_column(enum_col(DataOrigin), default=DataOrigin.MANUAL)
 
 
 class Evidence(IdMixin, Base):
@@ -89,12 +84,12 @@ class Evidence(IdMixin, Base):
     )
     source_id: Mapped[uuid.UUID | None] = mapped_column(ForeignKey("sources.id", ondelete="SET NULL"))
     created_by: Mapped[uuid.UUID | None] = mapped_column(ForeignKey("users.id", ondelete="SET NULL"))
-    kind: Mapped[EvidenceKind] = mapped_column(_enum(EvidenceKind))
-    stance: Mapped[Stance] = mapped_column(_enum(Stance), default=Stance.NEUTRAL)
+    kind: Mapped[EvidenceKind] = mapped_column(enum_col(EvidenceKind))
+    stance: Mapped[Stance] = mapped_column(enum_col(Stance), default=Stance.NEUTRAL)
     claim: Mapped[str] = mapped_column(Text)
     relevance: Mapped[float] = mapped_column(Float, default=0.5)
     tags: Mapped[list] = mapped_column(JSON, default=list)
-    origin: Mapped[DataOrigin] = mapped_column(_enum(DataOrigin), default=DataOrigin.MANUAL)
+    origin: Mapped[DataOrigin] = mapped_column(enum_col(DataOrigin), default=DataOrigin.MANUAL)
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=utcnow)
 
     source: Mapped[Source | None] = relationship()
@@ -106,7 +101,7 @@ class Recommendation(IdMixin, Base):
     experiment_id: Mapped[uuid.UUID] = mapped_column(
         ForeignKey("experiments.id", ondelete="CASCADE"), index=True
     )
-    decision: Mapped[Decision] = mapped_column(_enum(Decision))
+    decision: Mapped[Decision] = mapped_column(enum_col(Decision))
     confidence: Mapped[float] = mapped_column(Float)
     rationale: Mapped[str] = mapped_column(Text)
     assumptions: Mapped[list] = mapped_column(JSON, default=list)

@@ -33,5 +33,12 @@ A commit cannot contain its own hash, so each entry's hash is filled in by the f
     - Verified local Postgres container healthy with pursuit and pursuit_test databases
 
 ----------------------------------------------------------------------
-#4  (hash recorded in next commit)  feat: add experiment, evidence and recommendation models
+#4  4481529  feat: add experiment, evidence and recommendation models
     - app/models/experiment.py: Experiment (use case, hypothesis, lifecycle stage, config, demo flag), SuccessCriterion (metric/comparator/target/min sample), Source (URL provenance + retrieval timestamp + content hash), Evidence (fact/interpretation/assumption, supports/contradicts, relevance 0-1 check constraint, origin), Recommendation (decision, confidence, assumptions, counterevidence, limitations, next action, linked evidence ids, metrics snapshot, demo-data flag)
+
+----------------------------------------------------------------------
+#5  (hash recorded in next commit)  feat: add prospect, interview, messaging, action and outcome models
+    - app/models/activity.py: Prospect (provenance URL, sensitive email), Interview (pain points, current solution, frequency, cost, budget owner, WTP signal, contradictions), MessageVariant, ActionRequest (approval gate, demo/live mode, unique idempotency key, attempts, provider ref, error), OutcomeEvent (origin-tagged so demo never mixes with live), FunnelSnapshot (raw stage counts only)
+    - app/models/base.py: shared enum_col helper storing enum values
+    - app/models/__init__.py: registers all models for Alembic
+    - Lint fixes: ruff line length 110, assert replaced with explicit error, formatted with ruff

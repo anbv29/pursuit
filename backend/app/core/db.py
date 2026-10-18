@@ -38,7 +38,8 @@ def get_engine():
 def get_db() -> Iterator[Session]:
     if _SessionLocal is None:
         configure()
-    assert _SessionLocal is not None
+    if _SessionLocal is None:
+        raise RuntimeError("Database session factory not configured")
     db = _SessionLocal()
     try:
         yield db
