@@ -24,7 +24,7 @@ export function Button({
       disabled={disabled || loading}
       aria-busy={loading || undefined}
       className={cx(
-        "inline-flex items-center justify-center gap-1.5 rounded-lg font-medium transition-colors",
+        "inline-flex items-center justify-center gap-1.5 whitespace-nowrap rounded-lg font-medium transition-colors",
         "disabled:cursor-not-allowed disabled:opacity-50",
         size === "sm" ? "h-8 px-2.5 text-[13px]" : "h-9 px-3.5 text-sm",
         BTN[variant], className,

@@ -17,6 +17,9 @@ class Settings(BaseSettings):
     session_ttl_hours: int = 72
     cors_origins: str = "http://localhost:3000"
     cookie_secure: bool = False
+    # Abuse limits (per client IP). Raise only for local E2E runs.
+    register_limit_per_hour: int = Field(default=10, ge=1)
+    login_limit_per_10min: int = Field(default=20, ge=1)
 
     anthropic_api_key: SecretStr | None = None
     anthropic_model: str = "claude-opus-5-5"

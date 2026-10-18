@@ -32,7 +32,9 @@ def _set_cookie(response: Response, token: str) -> None:
 
 @router.post("/register", response_model=SessionOut, status_code=201)
 def register(body: RegisterIn, request: Request, response: Response, db: Session = Depends(get_db)):
-    limiter.check(f"register:{_client_ip(request)}", limit=10, window_seconds=3600)
+    limiter.check(
+        f"register:{_client_ip(request)}", limit=get_settings().register_limit_per_hour, window_seconds=3600
+    )
     auth.register(db, body.email, body.name, body.password)
     issued = auth.login(db, body.email, body.password)
     _set_cookie(response, issued.token)
@@ -41,7 +43,9 @@ def register(body: RegisterIn, request: Request, response: Response, db: Session
 
 @router.post("/login", response_model=SessionOut)
 def login(body: LoginIn, request: Request, response: Response, db: Session = Depends(get_db)):
-    limiter.check(f"login:{_client_ip(request)}", limit=20, window_seconds=600)
+    limiter.check(
+        f"login:{_client_ip(request)}", limit=get_settings().login_limit_per_10min, window_seconds=600
+    )
     limiter.check(f"login-email:{body.email.lower()}", limit=8, window_seconds=600)
     issued = auth.login(db, body.email, body.password)
     _set_cookie(response, issued.token)

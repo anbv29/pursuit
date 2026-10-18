@@ -29,7 +29,7 @@ function FunnelChart({ f }: { f: FunnelAnalysis }) {
               <div className="flex items-center gap-3">
                 <span className="w-36 shrink-0 truncate text-sm">{s.name}</span>
                 <div className="h-7 flex-1 rounded-md bg-sunken">
-                  <div className={cx("flex h-full items-center rounded-md px-2 text-xs font-medium text-white", worst ? "bg-flag" : "bg-trail")}
+                  <div className="flex h-full items-center rounded-md bg-trail px-2 text-xs font-medium text-white"
                     style={{ width: `${Math.max((s.count / top) * 100, 2)}%` }}>
                   </div>
                 </div>

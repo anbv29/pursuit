@@ -15,6 +15,8 @@ const STATUS: Record<CriterionResult["status"], { label: string; tone: "good" | 
   no_data: { label: "No data", tone: "muted" },
 };
 
+const SYMBOL: Record<string, string> = { ">=": "≥", "<=": "≤", ">": ">", "<": "<" };
+
 const fmt = (metric: string, v: number | null) =>
   v === null ? "—" : isRate(metric) ? `${Math.round(v * 100)}%` : String(Math.round(v * 100) / 100);
 
@@ -33,8 +35,8 @@ export function CriteriaResults() {
               <div className="min-w-0 flex-1">
                 <p className="text-sm font-medium">{KNOWN_METRICS.find((k) => k.value === c.metric)?.label ?? c.metric}</p>
                 <p className="text-xs text-ink-3">
-                  Target {c.comparator} {fmt(c.metric, c.target)} · current <b className="text-ink-2">{fmt(c.metric, c.value)}</b>
-                  {" "}· n = {c.sample}{c.min_sample > 0 && ` of ${c.min_sample} needed`}
+                  Target {SYMBOL[c.comparator] ?? c.comparator} {fmt(c.metric, c.target)} · current <b className="text-ink-2">{fmt(c.metric, c.value)}</b>
+                  {" "}· n = {c.sample}{c.sample < c.min_sample && ` of ${c.min_sample} needed`}
                 </p>
               </div>
               <Badge tone={STATUS[c.status].tone}>{STATUS[c.status].label}</Badge>
@@ -60,7 +62,7 @@ export function Timeline() {
     <Card>
       <CardHeader title="Activity" />
       {!t.data ? <div className="p-4"><Skeleton className="h-32" /></div> : (
-        <ol className="max-h-[32rem] space-y-0 overflow-y-auto px-5 py-3">
+        t.data.length === 0 ? <Empty title="No activity yet" body="Changes to this experiment will appear here." /> : <ol className="max-h-[32rem] space-y-0 overflow-y-auto px-5 py-3">
           {t.data.map((e) => (
             <li key={e.id} className="relative border-l border-line pb-3 pl-4 last:pb-0">
               <span className="absolute -left-[4.5px] top-1.5 size-2 rounded-full bg-line-strong" />

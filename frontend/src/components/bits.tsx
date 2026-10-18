@@ -32,11 +32,14 @@ export function RateView({ rate, label }: { rate: Rate; label?: string }) {
   if (rate.value === null) {
     return <span className="text-sm text-ink-3">No data yet{label ? ` for ${label}` : ""}</span>;
   }
+  // Small rates get a decimal so 0.3% never reads as "0%".
+  const d = rate.value < 0.1 ? 1 : 0;
+  const p = (v: number | null) => ((v ?? 0) * 100).toFixed(d);
   return (
     <span className="inline-flex flex-wrap items-baseline gap-x-1.5">
-      <span className="text-base font-semibold tabular-nums">{(rate.value * 100).toFixed(0)}%</span>
+      <span className="text-base font-semibold tabular-nums">{p(rate.value)}%</span>
       <span className="text-xs tabular-nums text-ink-3">
-        {rate.numerator}/{rate.denominator} · 95% CI {Math.round((rate.ci_low ?? 0) * 100)}–{Math.round((rate.ci_high ?? 0) * 100)}%
+        {rate.numerator.toLocaleString()}/{rate.denominator.toLocaleString()} · 95% CI {p(rate.ci_low)}–{p(rate.ci_high)}%
       </span>
     </span>
   );

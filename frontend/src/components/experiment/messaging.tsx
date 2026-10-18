@@ -46,11 +46,11 @@ export function MessagingPanel() {
         <CardHeader title="Variant comparison" description="Positive replies ÷ messages actually recorded as sent." />
         {!variants.data?.length ? <Empty title="No variants yet" body="Write two or more messages with different angles below." /> : (
           <>
-            <div className="grid gap-px bg-line md:grid-cols-2 xl:grid-cols-3">
+            <div className="grid md:grid-cols-2 xl:grid-cols-3">
               {variants.data.map((v) => {
                 const s = stats.find((x) => x.variant_id === v.id);
                 return (
-                  <div key={v.id} className="bg-surface p-5">
+                  <div key={v.id} className="border-b border-line p-5 md:border-r">
                     <div className="flex items-center gap-2">
                       <span className="grid size-7 place-items-center rounded-md bg-ink text-sm font-semibold text-white">{v.label}</span>
                       <p className="truncate font-medium">{v.subject || v.angle || "Untitled"}</p>

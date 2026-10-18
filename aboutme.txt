@@ -348,8 +348,15 @@ A commit cannot contain its own hash, so each entry's hash is filled in by the f
     - Result: next build succeeds (13 routes; workspace routes partially prerendered); grep of .next/static finds no ANTHROPIC/FO_ACCESS_TOKEN/SESSION_SECRET/BACKEND_URL/backend host strings
 
 ----------------------------------------------------------------------
-#66  (hash recorded in next commit)  test: add Playwright end-to-end tests and fix stale stage gates
+#66  f38bd2d  test: add Playwright end-to-end tests and fix stale stage gates
     - frontend/e2e/experiment-flow.spec.ts: browser E2E against the real stack - sign up, create workspace, create experiment with hypothesis + criteria (preview checked), blocked stage until evidence exists, add evidence, advance stages, request action, approve in dialog (demo warning shown), SUCCEEDED + Simulated labels, record outcome, generate recommendation, full reload persistence, outsider sees 'Workspace not available'; anonymous redirect to sign-in; client-side sign-up validation
     - frontend/playwright.config.ts: desktop + mobile projects
     - fix (found by E2E): adding evidence/outcomes did not refresh the stage rail, so 'Advance' stayed disabled; touch() now reloads the experiment detail too
     - Result: Playwright 3 passed. The live run used real Claude synthesis (ANTHROPIC_API_KEY present in the backend environment)
+
+----------------------------------------------------------------------
+#67  (hash recorded in next commit)  fix: polish issues found in visual review and make auth limits configurable
+    - Visual review of Playwright screenshots (desktop + Pixel 7) found and fixed: criteria said 'n = 12400 of 100 needed' even when the minimum was met (now only shown while below it); comparators shown as >= instead of ≥; empty activity panel had no empty state; gray filler cell in variant grid; buttons wrapping on mobile; funnel highlighted the destination bar instead of the leaking step; small rates rounded to '0% · CI 0-0%' (now one decimal under 10%)
+    - frontend/e2e/responsive.spec.ts: screenshots + no-horizontal-overflow checks for dashboard, experiment overview, discovery, messaging, funnel and settings on desktop and mobile; waits for real navigation (earlier version screenshotted the wrong page)
+    - backend: REGISTER_LIMIT_PER_HOUR / LOGIN_LIMIT_PER_10MIN settings (defaults unchanged 10 and 20) so local E2E runs aren't blocked by the abuse limiter, which correctly returned 429 during repeated runs
+    - Result: Playwright responsive 2 passed (desktop + mobile)
