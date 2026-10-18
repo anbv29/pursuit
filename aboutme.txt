@@ -429,6 +429,11 @@ A commit cannot contain its own hash, so each entry's hash is filled in by the f
     - backend/app/schemas/report.py: ReportIn (website URL required, http(s) only; optional name, description, target customers, stage, business model, pricing, known competitors, geography, goal) and ReportContent - the structured-output contract for Claude: executive summary, snapshot with observed pricing, ICP segments with fit score, personas, problem hypotheses with evidence for/against, competitors, positioning gaps, pricing/WTP, messaging angles with drafts, prospecting signals, funnel risks, prioritised experiments mapped to Pursuit use cases and metrics, risks/unknowns, focus-first. Every claim carries kind (fact/interpretation/assumption), confidence and source ids
 
 ----------------------------------------------------------------------
-#79  (hash recorded in next commit)  feat: add two-pass Claude research for company reports
+#79  8d1df00  feat: add two-pass Claude research for company reports
     - backend/app/services/report_research.py: pass 1 streams Claude (ANTHROPIC_MODEL, default claude-opus-5-5, effort medium) with Anthropic server tools web_search_20260209 (max 10) and web_fetch_20260209 (max 6), resumes pause_turn up to 4 times, and records only URLs that actually came back in tool results as citable sources S1..Sn; pass 2 streams a structured ReportContent via output_format. Prompts treat site text, founder inputs and web content as data, forbid inventing prices/numbers and researching private individuals; refusal / max_tokens / unparseable output raise user-safe errors
     - Verified SDK 1.15 messages.stream accepts output_format and output_config
+
+----------------------------------------------------------------------
+#80  (hash recorded in next commit)  feat: validate generated reports against retrieved sources
+    - backend/app/services/report_validate.py: walks every claim in the report; source ids not in the retrieved-source list are dropped; a 'fact' left without a valid source is downgraded to a low-confidence unsourced interpretation; competitor citations filtered and flagged unsourced; experiment metrics outside Pursuit's real metrics are replaced by the use-case default; rate targets normalised to 0-1 (e.g. 12 -> 0.12), samples clamped; fit scores clamped 1-5; lists capped; counts recorded in content.validation
+    - tests/test_report_validate.py: 4 tests (kept sourced fact, invented/missing sources downgraded, competitor filtering, metric/target/score clamping)
