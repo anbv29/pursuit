@@ -326,9 +326,13 @@ A commit cannot contain its own hash, so each entry's hash is filled in by the f
     - Known: eslint react-hooks/set-state-in-effect errors to fix next
 
 ----------------------------------------------------------------------
-#62  (hash recorded in next commit)  fix: resolve React hook lint errors and duplicate fetches
+#62  28d8733  fix: resolve React hook lint errors and duplicate fetches
     - frontend/src/lib/hooks.ts: useApi now takes a refresh key and fetches inside the effect's promise chain (no synchronous setState in effects); panels pass the experiment change counter instead of a second reload effect, removing duplicate requests on mount
     - frontend/src/components/shell.tsx: sidebar preference read via useSyncExternalStore (no hydration mismatch, syncs across tabs)
     - new experiment page: criteria defaults derived from the template until edited, instead of set in an effect
     - copy: removed unescaped apostrophes flagged by react/no-unescaped-entities
     - Result: tsc clean, eslint clean
+
+----------------------------------------------------------------------
+#63  (hash recorded in next commit)  feat: add workspace approvals queue
+    - frontend/src/app/w/[ws]/approvals/page.tsx: workspace-wide queue split into 'waiting for approval' and 'outcome unconfirmed', with simulated vs live labels; each item opens the experiment's actions tab so decisions are made next to the evidence
