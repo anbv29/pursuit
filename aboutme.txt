@@ -568,5 +568,9 @@ A commit cannot contain its own hash, so each entry's hash is filled in by the f
     - Jobs claim expiring leases and heartbeat. Persist site and research checkpoints, resume after crash, bound provider retries, cancel/retry with owner fencing. Worker starts with API lifespan.
 
 ----------------------------------------------------------------------
-#108  (hash recorded in next commit)  feat: add report cancellation controls and recovery tests
+#108  ac557f5  feat: add report cancellation controls and recovery tests
     - Cancel/resume controls, durable job migration with backfill defaults for existing reports, and tests for resume and cancel during research.
+
+----------------------------------------------------------------------
+#109  (hash recorded in next commit)  feat: add saved report questions with citations
+    - Bounded Haiku answers use saved report only, filter citations and persist question history. Workspace isolation and rate limits apply.

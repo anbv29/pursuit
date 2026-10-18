@@ -1,0 +1,43 @@
+import uuid
+
+from fastapi import APIRouter, Depends
+from pydantic import BaseModel, Field
+from sqlalchemy.orm import Session
+
+from app.api.deps import current_user, workspace_member
+from app.core.db import get_db
+from app.core.ratelimit import limiter
+from app.models import Membership, User
+from app.services import report_chat, reports
+
+router = APIRouter(prefix="/api/workspaces/{workspace_id}/reports/{report_id}", tags=["Report tools"])
+
+
+def owned_report(
+    report_id: uuid.UUID, m: Membership = Depends(workspace_member), db: Session = Depends(get_db)
+):
+    return reports.get(db, m.workspace_id, report_id)
+
+
+def entry_out(entry):
+    return {"id": str(entry.id), "kind": entry.kind, "payload": entry.payload, "created_at": entry.created_at}
+
+
+class Question(BaseModel):
+    question: str = Field(min_length=3, max_length=2000)
+
+
+@router.get("/questions")
+def questions(report=Depends(owned_report), db: Session = Depends(get_db)):
+    return [entry_out(row) for row in report_chat.history(db, report)]
+
+
+@router.post("/questions", status_code=201)
+def ask(
+    body: Question,
+    report=Depends(owned_report),
+    user: User = Depends(current_user),
+    db: Session = Depends(get_db),
+):
+    limiter.check(f"report-ask:{user.id}", limit=30, window_seconds=3600)
+    return entry_out(report_chat.answer(db, report, user, body.question))
