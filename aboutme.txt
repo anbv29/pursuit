@@ -274,6 +274,10 @@ A commit cannot contain its own hash, so each entry's hash is filled in by the f
     - frontend/src/app/w/[ws]/page.tsx: dashboard from persisted data only - active experiments with stage + latest verdict, items needing approval/confirmation (simulated ones labelled), latest recommendations with confidence, recently recorded outcomes with demo labels; distinct empty state for new workspaces; skeleton and error states
 
 ----------------------------------------------------------------------
-#50  (hash recorded in next commit)  feat: add success criteria editor
+#50  87f051c  feat: add success criteria editor
     - frontend/src/components/criteria-editor.tsx: edit success criteria with known metrics, comparator, target (rates entered as %), and minimum sample size before a criterion is judged; add/remove rows (max 10); accessible labels
     - Smoke test (manual): backend + Next dev servers running, /api proxy works, register -> demo workspace -> dashboard verified with curl through the proxy
+
+----------------------------------------------------------------------
+#51  (hash recorded in next commit)  feat: add experiment creation flow with live preview
+    - frontend/src/app/w/[ws]/experiments/new/page.tsx: step 1 pick a use case (six template cards, showing which Fo actions each can use); step 2 name, hypothesis (template hint), audience, prefilled editable success criteria; zod validation mirrors server; live preview card showing exactly what will be created and warning when there are no criteria; input preserved on server errors; double-submit protected
