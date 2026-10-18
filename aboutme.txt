@@ -169,6 +169,11 @@ A commit cannot contain its own hash, so each entry's hash is filled in by the f
     - app/main.py: register discovery router
 
 ----------------------------------------------------------------------
-#30  (hash recorded in next commit)  feat: add deterministic stats helpers with conservative comparisons
+#30  19fb1d6  feat: add deterministic stats helpers with conservative comparisons
     - app/services/stats.py: Wilson 95% score intervals for rates, conservative variant comparison (insufficient_sample / not_distinguishable / clear_difference; never claims 'significance'), criterion evaluation
     - tests/test_stats.py: known Wilson values, small-sample edge cases, comparison thresholds, comparator evaluation (4 passed)
+
+----------------------------------------------------------------------
+#31  (hash recorded in next commit)  feat: add funnel CSV validation and deterministic analysis
+    - app/services/funnel.py: CSV parser (100 KB cap, UTF-8, required stage,count header, per-row errors, rejects formula-injection prefixes, unique names, 2-12 stages, warns on increasing counts), stage-to-stage conversion with Wilson intervals, drop-offs, overall conversion, bottleneck detection, and four competing explanations each paired with a test that distinguishes it
+    - tests/test_funnel_unit.py: 5 tests (valid analysis, row errors, header/size, warnings, empty funnel)
