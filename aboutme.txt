@@ -124,8 +124,13 @@ A commit cannot contain its own hash, so each entry's hash is filled in by the f
     - Result: pytest 35 passed
 
 ----------------------------------------------------------------------
-#21  (hash recorded in next commit)  feat: add Fo adapter interface with demo and MCP implementations
+#21  dfe5b04  feat: add Fo adapter interface with demo and MCP implementations
     - app/adapters/fo/base.py: FoAdapter protocol, FoResult (working/complete/failed/needs_input), FoUnavailable for credential/outage/rate-limit errors
     - app/adapters/fo/demo.py: clearly labelled [DEMO] simulator, idempotent per key, .invalid targets simulate failure
     - app/adapters/fo/mcp.py: minimal MCP streamable-HTTP client (initialize, session id, JSON or SSE bodies) calling ask_fo/get_fo_reply with server-side bearer token; 401/403/429/5xx mapped to FoUnavailable; unrecognised replies map to needs_input, never success. Marked UNVERIFIED until a server token exists
     - app/adapters/fo/factory.py: picks adapter by mode
+
+----------------------------------------------------------------------
+#22  (hash recorded in next commit)  feat: add action schemas and deterministic Fo instruction builder
+    - app/services/instructions.py: builds narrow Fo instructions for send_email, schedule_meeting and research_task from validated fields only; strips control characters, fences user content and tells Fo to treat it as content (prompt-injection defence), forbids any extra action
+    - app/schemas/actions.py: per-kind payload validation, recipient must be one valid email, optional client idempotency key (restricted charset), approve/reject and human outcome confirmation models, action output model
