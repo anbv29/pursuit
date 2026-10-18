@@ -604,5 +604,9 @@ A commit cannot contain its own hash, so each entry's hash is filled in by the f
     - Read-only provider adapter uses documented email retrieval, requires configured workspace, matches recipient and subject, and deduplicates persisted sent/delivered events. No reply or meeting events are invented.
 
 ----------------------------------------------------------------------
-#117  (hash recorded in next commit)  feat: add company discovery and delivery verification controls
+#117  e8df887  feat: add company discovery and delivery verification controls
     - Source-backed company suggestions with verification dates and fit limits. Owner-only Resend message verification records real delivery and never invents reply or meeting metrics.
+
+----------------------------------------------------------------------
+#118  (hash recorded in next commit)  feat: add expiring revocable read-only report links
+    - Owner-only shares store a report snapshot and hash of a 256-bit token. Public read has no workspace access, excludes inputs/chats/credentials, and enforces expiry and revocation.

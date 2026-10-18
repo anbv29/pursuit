@@ -15,6 +15,7 @@ from app.api import (
     experiments,
     fo_oauth,
     overview,
+    report_sharing,
     report_tools,
     reports,
     workspaces,
@@ -95,6 +96,7 @@ def create_app() -> FastAPI:
     app.include_router(reports.router)
     app.include_router(fo_oauth.router)
     app.include_router(report_tools.router)
+    app.include_router(report_sharing.router)
 
     @app.get("/api/health", tags=["ops"])
     def health():
