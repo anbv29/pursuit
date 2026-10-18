@@ -472,5 +472,9 @@ A commit cannot contain its own hash, so each entry's hash is filled in by the f
     - frontend/src/components/report/parts.tsx: citation chips resolve source ids to the retrieved URLs (hostname, title on hover, open in new tab with noopener/nofollow); every claim shows 'Sourced fact' / 'Interpretation' / 'Assumption' or 'Unsourced' (when the server downgraded a fact) plus non-high confidence; section, bullet and label primitives with print-friendly styles
 
 ----------------------------------------------------------------------
-#87  (hash recorded in next commit)  feat: add report sections for company, segments, personas and problems
+#87  b9ec292  feat: add report sections for company, segments, personas and problems
     - frontend/src/components/report/customer-sections.tsx: executive summary with focus-first callout; company snapshot (offering, model, stage, observed pricing and key facts as labelled, cited claims); ICP segments ranked by fit (1-5 bar), pains, buying trigger, decision maker and cited rationale; personas (goals, pains, objections, where to find them); problem hypotheses with evidence for and against and how to validate
+
+----------------------------------------------------------------------
+#88  (hash recorded in next commit)  feat: add report sections for market, messaging and prospecting
+    - frontend/src/components/report/market-sections.tsx: competitor table (positioning, target, pricing or 'Unknown', strengths, weaknesses, citations or 'Unsourced' flag); positioning statement, gaps (cited claims) and differentiators; pricing benchmarks, hypotheses and willingness-to-pay questions; outreach angles with draft subject/body and copy button (labelled as drafts to edit); prospecting signals, channels and search queries; funnel leak hypotheses (labelled as hypotheses until real data); risks and unknowns
