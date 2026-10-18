@@ -106,3 +106,23 @@ def test_export_is_owner_only(api, other):
     api.post(f"/api/workspaces/{ws}/members", {"email": "intruder@example.com"})
     assert api.get(f"/api/workspaces/{ws}/export").status_code == 200
     assert other.get(f"/api/workspaces/{ws}/export").status_code == 403
+
+
+def test_client_ip_uses_trusted_hop_not_spoofable_left_entry(monkeypatch):
+    from starlette.requests import Request
+
+    from app.api.auth import _client_ip
+    from app.core.config import get_settings
+
+    monkeypatch.setenv("TRUSTED_PROXY_HOPS", "1")
+    get_settings.cache_clear()
+    try:
+        scope = {
+            "type": "http",
+            "client": ("10.0.0.1", 1),
+            "headers": [(b"x-forwarded-for", b"6.6.6.6, 203.0.113.9")],
+        }
+        assert _client_ip(Request(scope)) == "203.0.113.9"  # spoofed 6.6.6.6 ignored
+    finally:
+        monkeypatch.delenv("TRUSTED_PROXY_HOPS")
+        get_settings.cache_clear()

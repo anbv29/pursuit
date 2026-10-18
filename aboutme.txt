@@ -396,6 +396,14 @@ A commit cannot contain its own hash, so each entry's hash is filled in by the f
     - Verified: ruff format --check passes (as CI runs it)
 
 ----------------------------------------------------------------------
-#73  (hash recorded in next commit)  docs: document Fo integration status and deployment
+#73  26c6851  docs: document Fo integration status and deployment
     - docs/FO_INTEGRATION.md: exactly what was verified against the live Fo endpoint (read-only: initialize, OAuth metadata, tools/list, output schema) and what was not (no authenticated tool call; token must come from Wajo OAuth scope 'mcp'), the deterministic-instruction design, status mapping table, live-mode enablement, token rotation, emergency stop
     - docs/DEPLOYMENT.md: Neon + Render + Vercel steps, env var tables, single-origin proxy design, verification commands, and the manual steps still required (states clearly that nothing is deployed)
+
+----------------------------------------------------------------------
+#74  (hash recorded in next commit)  fix: derive rate-limit client IP from trusted proxy hops
+    - Found while auditing: behind Vercel -> Render the socket peer is a proxy, so per-IP sign-up/login limits would become one global limit; trusting X-Forwarded-For blindly would let clients spoof it
+    - app/api/auth.py: TRUSTED_PROXY_HOPS=N takes the address N entries from the right of X-Forwarded-For (only proxy-appended entries), else the socket peer
+    - render.yaml: TRUSTED_PROXY_HOPS=2 with a note that it must be verified against real headers after deploy
+    - tests: spoofed left-most XFF entry is ignored
+    - Result: pytest 63 passed

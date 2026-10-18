@@ -19,6 +19,8 @@ services:
         value: "true"
       - key: FO_MODE
         value: demo
+      - key: TRUSTED_PROXY_HOPS
+        value: "2" # Vercel rewrite + Render edge; VERIFY against real X-Forwarded-For before relying on it
       - key: ACTIONS_DISABLED
         value: "false"
       - key: DATABASE_URL

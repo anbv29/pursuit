@@ -19,6 +19,8 @@ class Settings(BaseSettings):
     # Abuse limits (per client IP). Raise only for local E2E runs.
     register_limit_per_hour: int = Field(default=10, ge=1)
     login_limit_per_10min: int = Field(default=20, ge=1)
+    # Number of trusted reverse proxies that append to X-Forwarded-For (0 = use socket peer).
+    trusted_proxy_hops: int = Field(default=0, ge=0, le=5)
 
     anthropic_api_key: SecretStr | None = None
     anthropic_model: str = "claude-opus-5-5"

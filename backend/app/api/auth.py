@@ -14,6 +14,17 @@ router = APIRouter(prefix="/api/auth", tags=["auth"])
 
 
 def _client_ip(request: Request) -> str:
+    """Client IP for rate limiting.
+
+    With TRUSTED_PROXY_HOPS=N, take the address N entries from the right of
+    X-Forwarded-For (the part our own proxies appended), so a client can't spoof
+    it by sending its own header. With 0, use the socket peer.
+    """
+    hops = get_settings().trusted_proxy_hops
+    if hops > 0:
+        chain = [p.strip() for p in request.headers.get("x-forwarded-for", "").split(",") if p.strip()]
+        if len(chain) >= hops:
+            return chain[-hops]
     return request.client.host if request.client else "unknown"
 
 
