@@ -150,7 +150,11 @@ A commit cannot contain its own hash, so each entry's hash is filled in by the f
     - app/main.py: register actions router
 
 ----------------------------------------------------------------------
-#26  (hash recorded in next commit)  test: cover approval gate, idempotency, prompt injection and Fo failure states
+#26  1a38ec5  test: cover approval gate, idempotency, prompt injection and Fo failure states
     - tests/test_actions.py: 10 tests - demo lifecycle (PENDING_APPROVAL -> QUEUED -> SUCCEEDED, demo-labelled), nothing runs before approval, rejection, duplicate action + double approval blocked (409), multi-recipient/invalid payload rejected, action kinds restricted per use case, other tenant can't request/approve, simulated provider failure stays FAILED, injected fence markers and control chars stripped, live adapter against a fake MCP server: completion lands in UNKNOWN until human confirmation, revoked credentials (401) -> FAILED with no false success
     - app/adapters/fo/demo.py: failure simulation marker is now '+simulate-failure@' (reserved .invalid domains are rejected by email validation)
     - Result: pytest 45 passed
+
+----------------------------------------------------------------------
+#27  (hash recorded in next commit)  feat: add prospect, interview, variant and outcome schemas
+    - app/schemas/discovery.py: validated models for prospects (email, provenance URL, status workflow), behaviour-based interviews (pain points, current solution, frequency, cost, budget owner, WTP signal none/verbal/commitment, contradictions), messaging variants, and manually recorded outcomes
