@@ -112,6 +112,13 @@ A commit cannot contain its own hash, so each entry's hash is filled in by the f
     - app/services/evidence.py: add/list sources with retrieval timestamp and content hash, add/list/delete evidence; a source can only be linked from the same experiment; records in demo workspaces are forced to origin=demo
 
 ----------------------------------------------------------------------
-#19  (hash recorded in next commit)  feat: add SSRF-hardened research fetcher
+#19  f7d2129  feat: add SSRF-hardened research fetcher
     - app/services/fetcher.py: fetches research pages with http/https + default ports only, every hop (max 3 redirects) must resolve to public IPs only, byte cap, timeouts, text/HTML content types only; strips scripts/styles and extracts title + text; content stored as untrusted excerpt with SHA-256. DNS-rebinding gap documented
     - tests/test_fetcher.py: blocks loopback, localhost, cloud metadata IP, private ranges, IPv6 loopback, file:/ftp: schemes, non-standard ports; extraction drops script content (9 passed)
+
+----------------------------------------------------------------------
+#20  (hash recorded in next commit)  feat: add evidence and research source API with tests
+    - app/api/evidence.py: list/add sources, server-side fetch of a public page into a source (rate limited per user), list/add/delete evidence; all scoped through the experiment's workspace
+    - app/main.py: register evidence router
+    - tests/test_evidence.py: provenance (URL, timestamp, stance) persisted, invalid kinds/relevance/javascript: URLs rejected, SSRF blocked through the API, cannot link another tenant's source, evidence unlocks the EVIDENCE stage
+    - Result: pytest 35 passed
