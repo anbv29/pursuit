@@ -612,5 +612,9 @@ A commit cannot contain its own hash, so each entry's hash is filled in by the f
     - Owner-only shares store a report snapshot and hash of a 256-bit token. Public read has no workspace access, excludes inputs/chats/credentials, and enforces expiry and revocation.
 
 ----------------------------------------------------------------------
-#119  (hash recorded in next commit)  feat: add read-only shared report pages
+#119  cd5c466  feat: add read-only shared report pages
     - Owner share controls require review, expire in 1-30 days and support revocation. Public view contains only snapshot content and sources, with no workspace mutations.
+
+----------------------------------------------------------------------
+#120  (hash recorded in next commit)  feat: meter AI usage and reserve workspace budgets
+    - Token-ledger and monthly-budget models. Serialize reservations before calls, record provider token counts, estimate tiered Haiku pricing and search fees, retain unknown-call reservations.
