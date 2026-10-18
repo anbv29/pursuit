@@ -91,11 +91,11 @@ export function WorkspaceShell({ wsId, children }: { wsId: string; children: Rea
       </aside>
 
       <div className="flex min-w-0 flex-1 flex-col">
-        <header className="sticky top-0 z-20 flex h-14 print:hidden items-center gap-3 border-b border-line bg-paper/90 px-4 backdrop-blur md:px-6">
+        <header className="sticky top-0 z-20 flex min-h-14 flex-wrap py-2 print:hidden items-center gap-3 border-b border-line bg-paper/90 px-4 backdrop-blur md:h-14 md:flex-nowrap md:py-0 md:px-6">
           <div className="md:hidden"><Logo href={base} compact /></div>
           {ws.data ? (
             <select aria-label="Switch workspace" value={wsId} onChange={(e) => router.push(e.target.value === "new" ? "/onboarding" : `/w/${e.target.value}`)}
-              className="h-8 max-w-[14rem] truncate rounded-lg border border-transparent bg-transparent px-2 text-sm font-medium hover:border-line focus:border-trail">
+              className="h-8 max-w-[10rem] truncate rounded-lg border border-transparent bg-transparent px-2 text-sm font-medium hover:border-line focus:border-trail sm:max-w-[14rem]">
               {(all.data ?? [ws.data]).map((w) => <option key={w.id} value={w.id}>{w.name}</option>)}
               <option value="new">+ New workspace…</option>
             </select>
