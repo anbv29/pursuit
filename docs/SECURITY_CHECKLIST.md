@@ -1,5 +1,22 @@
 # Pursuit security checklist (45 points)
 
+## Paid-plan addendum (2026-10-18)
+
+This addendum does not change historical production UNKNOWN/FAIL findings below.
+
+| Checks | Status | New evidence / limits |
+| --- | --- | --- |
+| 2, 3 | PASS (local) | Dodo keys are SecretStr server configuration; production rejects configured test-mode billing (`core/config.py`). Placeholder-only additions in `.env.example`. No frontend key variables. Merchant rotation/permissions remain unverified. |
+| 8–11, 14, 16 | PASS (local) | Owner-only checkout/portal, member-only allowance summary, fixed server product allowlist and endpoint rate limits (`api/billing.py`). `test_billing_payments.py` exercises cross-workspace denial and invalid plans. |
+| 19, 21, 28 | PASS (local billing scope) | Webhook endpoint checks bounded raw-body size and real SDK signature verification; returns generic errors. Hosted redirect destinations require HTTPS on Dodo domains (`payment_provider.py`, `payment_webhook.py`). Checkout is CSRF-protected; signed webhook is intentionally exempt. |
+| 23, 25, 30 | PASS (local) | Paid operations reserve database allowances before AI. Model selection cannot bypass included Haiku/cost limits. Revoked/expired grants stop queued provider calls (`ai_usage.py`, `entitlements.py`, `test_billing_allowances.py`). Cost estimates need provider-side limits; no guarantee of actual gross margin is claimed. |
+| 31, 35, 36, 39 | PASS (local) | Verified provider resources are bound to stored orders/customer/environment. Webhook claims and grants share a transaction; duplicate IDs/cycles are unique. Refund/dispute suspension survives late paid events. Current subscription state is retrieved under workspace lock (`billing_fulfillment.py`, `billing_webhooks.py`; payment/subscription tests). |
+| 37, 40, 41 | PASS (local) | Billing tests use signed synthetic events and isolated Postgres, never real payment credentials. Free sample report is explicitly synthetic. Full existing backend regression suite and desktop/mobile browser checks were executed; final counts are in `docs/BILLING_VERIFICATION.md`. |
+| 4, 6, 12, 15, 44 | UNKNOWN | Merchant live configuration, deployment account permissions, production DB privileges and backup restoration are not verified by local tests. |
+| 18, 38, 43 | FAIL (existing) | Historical CSP, complete account erasure/recovery, and operational alerting gaps remain. Billing adds no claim that these are resolved. |
+
+Real hosted checkout, subscription renewal, customer-portal policy and live merchant webhook delivery remain **UNKNOWN** until configured and tested with the merchant account. This blocks a claim of live-payment or production readiness. See `docs/BILLING.md` for required setup and reconciliation responsibilities.
+
 ## Eight-feature addendum (2026-10-18)
 
 The original matrix below is historical evidence, not a fresh production certification.

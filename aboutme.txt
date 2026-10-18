@@ -775,5 +775,9 @@ bc59919  test: verify paid credit enforcement
     - Four allowance tests pass including concurrent last credit and failed report credit release.
 
 ----------------------------------------------------------------------
-(hash recorded in next commit)  docs: document paid plans and billing setup
+2d3c322  docs: document paid plans and billing setup
     - Add billing browser checks and merchant setup; production build and frontend lint pass.
+
+----------------------------------------------------------------------
+(hash recorded in next commit)  test: verify billing access and record results
+    - Add three passing access tests; record 125 backend and 12 browser passes with live payment limits.
