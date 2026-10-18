@@ -2,7 +2,7 @@
 
 from app.adapters.fo.base import FoResult
 
-FAIL_MARKER = ".invalid"  # targets on the reserved .invalid TLD simulate a provider failure
+FAIL_MARKER = "+simulate-failure@"  # e.g. dana+simulate-failure@x.com simulates a provider failure
 
 
 class DemoFoAdapter:

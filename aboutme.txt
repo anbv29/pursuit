@@ -145,6 +145,12 @@ A commit cannot contain its own hash, so each entry's hash is filled in by the f
     - app/services/executor.py: background execution claims QUEUED->RUNNING atomically (no double runs), builds the deterministic instruction, submits to Fo exactly once (no blind resubmits that could duplicate emails), polls with a deadline and bounded poll errors; demo completions become SUCCEEDED and log a demo-labelled 'sent' outcome; live completions, Fo questions and timeouts become UNKNOWN until a human confirms; provider outages before submit = FAILED, after submit = UNKNOWN; human confirm endpoint logic records a live 'sent' outcome
 
 ----------------------------------------------------------------------
-#25  (hash recorded in next commit)  feat: add action approval API routes
+#25  89c0500  feat: add action approval API routes
     - app/api/actions.py: workspace approval queue (pending + unknown-outcome actions), list/request actions per experiment (rate limited), approve/reject (approval schedules background execution), cancel, and human confirmation of unknown outcomes
     - app/main.py: register actions router
+
+----------------------------------------------------------------------
+#26  (hash recorded in next commit)  test: cover approval gate, idempotency, prompt injection and Fo failure states
+    - tests/test_actions.py: 10 tests - demo lifecycle (PENDING_APPROVAL -> QUEUED -> SUCCEEDED, demo-labelled), nothing runs before approval, rejection, duplicate action + double approval blocked (409), multi-recipient/invalid payload rejected, action kinds restricted per use case, other tenant can't request/approve, simulated provider failure stays FAILED, injected fence markers and control chars stripped, live adapter against a fake MCP server: completion lands in UNKNOWN until human confirmation, revoked credentials (401) -> FAILED with no false success
+    - app/adapters/fo/demo.py: failure simulation marker is now '+simulate-failure@' (reserved .invalid domains are rejected by email validation)
+    - Result: pytest 45 passed
