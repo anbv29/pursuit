@@ -355,8 +355,17 @@ A commit cannot contain its own hash, so each entry's hash is filled in by the f
     - Result: Playwright 3 passed. The live run used real Claude synthesis (ANTHROPIC_API_KEY present in the backend environment)
 
 ----------------------------------------------------------------------
-#67  (hash recorded in next commit)  fix: polish issues found in visual review and make auth limits configurable
+#67  2e5d970  fix: polish issues found in visual review and make auth limits configurable
     - Visual review of Playwright screenshots (desktop + Pixel 7) found and fixed: criteria said 'n = 12400 of 100 needed' even when the minimum was met (now only shown while below it); comparators shown as >= instead of ≥; empty activity panel had no empty state; gray filler cell in variant grid; buttons wrapping on mobile; funnel highlighted the destination bar instead of the leaking step; small rates rounded to '0% · CI 0-0%' (now one decimal under 10%)
     - frontend/e2e/responsive.spec.ts: screenshots + no-horizontal-overflow checks for dashboard, experiment overview, discovery, messaging, funnel and settings on desktop and mobile; waits for real navigation (earlier version screenshotted the wrong page)
     - backend: REGISTER_LIMIT_PER_HOUR / LOGIN_LIMIT_PER_10MIN settings (defaults unchanged 10 and 20) so local E2E runs aren't blocked by the abuse limiter, which correctly returned 429 during repeated runs
     - Result: Playwright responsive 2 passed (desktop + mobile)
+
+----------------------------------------------------------------------
+#68  (hash recorded in next commit)  fix: align Fo adapter with Fo's verified MCP output schema
+    - Verified against the live Fo endpoint with read-only calls only (initialize + tools/list; no ask_fo, nothing sent): server wajo-fo 0.1.0, SSE responses, no session id, OAuth resource metadata with scope 'mcp', tools ask_fo/get_fo_reply/list_fo_conversations/get_fo_conversation/start_fo_call, ask_fo/get_fo_reply output {response, status complete
+    - working
+    - failed, conversationId, progress, elapsedSeconds}
+    - app/adapters/fo/mcp.py: read the real 'response' field (previously looked for 'reply', which would have lost Fo's summary); docstring records exactly what is and isn't verified (an authenticated tool call from the server is still unverified)
+    - tests/test_actions.py: interpret() pinned to the published schema
+    - Result: pytest 61 passed

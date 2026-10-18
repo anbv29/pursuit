@@ -141,3 +141,26 @@ def test_revoked_credentials_fail_without_false_success(api, exp_url, live, monk
     api.post(f"{exp_url}/actions/{a['id']}/decision", {"decision": "approve"})
     got = api.get(f"{exp_url}/actions").json()[0]
     assert got["status"] == "FAILED" and "credentials" in got["error"]
+
+
+def test_interpret_matches_verified_fo_schema():
+    # Shape copied from Fo's published outputSchema (tools/list).
+    done = {
+        "structuredContent": {
+            "status": "complete",
+            "response": "Email sent to Dana.",
+            "conversationId": "c1",
+        },
+        "content": [{"type": "text", "text": "Email sent to Dana."}],
+    }
+    r = McpFoAdapter.interpret(done)
+    assert r.state == "complete" and r.summary == "Email sent to Dana." and r.conversation_ref == "c1"
+    working = {
+        "structuredContent": {"status": "working", "progress": "Drafting the email", "elapsedSeconds": 4}
+    }
+    assert McpFoAdapter.interpret(working).state == "working"
+    assert (
+        McpFoAdapter.interpret({"structuredContent": {"status": "failed", "response": "No"}}).state
+        == "failed"
+    )
+    assert McpFoAdapter.interpret({"content": [{"type": "text", "text": "???"}]}).state == "needs_input"

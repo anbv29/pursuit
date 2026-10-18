@@ -1,8 +1,11 @@
 """Live adapter: minimal MCP (streamable HTTP) client for Fo's `ask_fo` / `get_fo_reply`.
 
-UNVERIFIED against production until a server-side FO_ACCESS_TOKEN is available —
-see docs/FO_INTEGRATION.md. Any response we can't confidently parse becomes
-`needs_input`/`working`-free UNKNOWN territory upstream, never a success.
+Verified against https://mcp.api.wajo.ai/fo on 2026-10-18 with read-only calls
+(initialize, tools/list): SSE responses, no session id, tool output schema
+{response, status: complete|working|failed, conversationId, progress, elapsedSeconds}.
+NOT verified: an authenticated tool call from this server (needs FO_ACCESS_TOKEN from
+Wajo's OAuth, scope "mcp"). Fo's free-text completion is never treated as proof of
+success; upstream maps it to UNKNOWN until a human confirms.
 """
 
 import itertools
@@ -107,7 +110,8 @@ class McpFoAdapter:
             except (json.JSONDecodeError, TypeError):
                 data = {}
         status = str(data.get("status", "")).lower()
-        summary = str(data.get("reply") or data.get("progress") or data.get("message") or text)[:2000]
+        # Verified output schema (tools/list, 2026-10-18); see module docstring.
+        summary = str(data.get("response") or data.get("progress") or text)[:2000]
         ref = data.get("conversationId")
         if result.get("isError") or status == "failed":
             return FoResult(state="failed", summary=summary or "Fo reported a failure.", conversation_ref=ref)
