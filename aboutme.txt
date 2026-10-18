@@ -755,5 +755,9 @@ fd19a14  feat: add workspace pricing and billing screen
     - Seed a readable report and first week plan without paid AI calls.
 
 ----------------------------------------------------------------------
-(hash recorded in next commit)  feat: clarify paid allowances and subscription safety
+5b0aeb0  feat: clarify paid allowances and subscription safety
     - Add visible credit costs free analysis choice member removal and billing aware data controls.
+
+----------------------------------------------------------------------
+(hash recorded in next commit)  test: add offline signed payment test provider
+    - Use real SDK signature verification with synthetic resources and no external charges.
