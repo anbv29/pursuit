@@ -1,4 +1,5 @@
 import logging
+from contextlib import asynccontextmanager
 
 from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
@@ -21,11 +22,28 @@ SECURITY_HEADERS = {
 }
 
 
+@asynccontextmanager
+async def lifespan(_: FastAPI):
+    """On startup, fail report jobs orphaned by a previous restart."""
+    from app.core.db import new_session
+    from app.services.reports import recover_stale
+
+    db = new_session()
+    try:
+        recover_stale(db)
+    except Exception:
+        logger.exception("Could not recover stale reports")
+    finally:
+        db.close()
+    yield
+
+
 def create_app() -> FastAPI:
     settings = get_settings()
     is_prod = settings.app_env == "production"
     app = FastAPI(
         title="Pursuit API",
+        lifespan=lifespan,
         version="0.1.0",
         docs_url=None if is_prod else "/docs",
         redoc_url=None,
@@ -65,19 +83,6 @@ def create_app() -> FastAPI:
     app.include_router(analysis.router)
     app.include_router(overview.router)
     app.include_router(reports.router)
-
-    @app.on_event("startup")
-    def _recover_reports() -> None:
-        from app.core.db import new_session
-        from app.services.reports import recover_stale
-
-        db = new_session()
-        try:
-            recover_stale(db)
-        except Exception:
-            logger.exception("Could not recover stale reports")
-        finally:
-            db.close()
 
     @app.get("/api/health", tags=["ops"])
     def health():
