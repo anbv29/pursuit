@@ -222,7 +222,12 @@ A commit cannot contain its own hash, so each entry's hash is filled in by the f
     - frontend/AGENTS.md: Next.js-generated agent notes (kept, since next dev re-adds it)
 
 ----------------------------------------------------------------------
-#40  (hash recorded in next commit)  feat: add Pursuit design tokens and same-origin API proxy
+#40  a80a53c  feat: add Pursuit design tokens and same-origin API proxy
     - frontend/src/app/globals.css: Pursuit identity - warm paper neutrals, ink text, single spruce-green 'trail' accent, flag and demo colours, semantic decision colours (continue/iterate/pivot/stop/inconclusive), card/pop shadows, visible focus ring, reduced-motion support, skeleton loader
     - frontend/next.config.ts: /api/* proxied to FastAPI via server-only BACKEND_URL so the session cookie stays first-party and no backend URL ships to the browser; security headers; x-powered-by off
     - frontend/package.json: add lucide-react (icons) and zod (validation)
+
+----------------------------------------------------------------------
+#41  (hash recorded in next commit)  feat: add typed API client and shared frontend types
+    - frontend/src/lib/api.ts: same-origin fetch wrapper (cookies, no-store), CSRF header on mutations, maps backend errors and 422 field errors to a typed ApiError, friendly network/server messages
+    - frontend/src/lib/types.ts: TypeScript types mirroring every backend response (experiments, stages, evidence, prospects, interviews, variants, outcomes, actions, metrics, criteria results, funnel, recommendations, timeline)
