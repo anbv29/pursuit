@@ -164,6 +164,11 @@ A commit cannot contain its own hash, so each entry's hash is filled in by the f
     - app/services/discovery.py: prospect CRUD with provenance, create/update behaviour-based interviews, messaging variants (unique label per experiment), manual outcome recording/deletion; every linked prospect/variant must belong to the same experiment; records in demo workspaces are origin=demo; email masking helper for non-owner views; all changes logged to the timeline
 
 ----------------------------------------------------------------------
-#29  (hash recorded in next commit)  feat: add discovery API routes with prospect privacy
+#29  e57d51d  feat: add discovery API routes with prospect privacy
     - app/api/discovery.py: prospects (list/add/patch/delete), interviews (list/add/update), variants (list/add), outcomes (list/record/delete); prospect emails masked for non-owner members
     - app/main.py: register discovery router
+
+----------------------------------------------------------------------
+#30  (hash recorded in next commit)  feat: add deterministic stats helpers with conservative comparisons
+    - app/services/stats.py: Wilson 95% score intervals for rates, conservative variant comparison (insufficient_sample / not_distinguishable / clear_difference; never claims 'significance'), criterion evaluation
+    - tests/test_stats.py: known Wilson values, small-sample edge cases, comparison thresholds, comparator evaluation (4 passed)
