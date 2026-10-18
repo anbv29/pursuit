@@ -391,6 +391,11 @@ A commit cannot contain its own hash, so each entry's hash is filled in by the f
     - Note: CI is written but not executed (nothing pushed, per instructions)
 
 ----------------------------------------------------------------------
-#72  (hash recorded in next commit)  docs: write README with architecture, setup, demo mode and testing
+#72  03139c1  docs: write README with architecture, setup, demo mode and testing
     - README.md: replaced the one-line UTF-16 README (title kept) with product overview, six use cases on one lifecycle, architecture, security model summary, local setup with Docker Postgres, demo mode, AI synthesis, test commands (pytest, ruff, pip-audit, tsc, lint, build, Playwright) and doc links
     - Verified: ruff format --check passes (as CI runs it)
+
+----------------------------------------------------------------------
+#73  (hash recorded in next commit)  docs: document Fo integration status and deployment
+    - docs/FO_INTEGRATION.md: exactly what was verified against the live Fo endpoint (read-only: initialize, OAuth metadata, tools/list, output schema) and what was not (no authenticated tool call; token must come from Wajo OAuth scope 'mcp'), the deterministic-instruction design, status mapping table, live-mode enablement, token rotation, emergency stop
+    - docs/DEPLOYMENT.md: Neon + Render + Vercel steps, env var tables, single-origin proxy design, verification commands, and the manual steps still required (states clearly that nothing is deployed)
