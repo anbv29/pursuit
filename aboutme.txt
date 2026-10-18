@@ -62,6 +62,11 @@ A commit cannot contain its own hash, so each entry's hash is filled in by the f
     - app/api/deps.py: cookie session auth, CSRF header check on all non-GET requests, workspace membership resolution returning 404 to non-members (no ID enumeration), owner-only guard
 
 ----------------------------------------------------------------------
-#9  (hash recorded in next commit)  feat: add auth API routes and shared schemas
+#9  11703ed  feat: add auth API routes and shared schemas
     - app/schemas/common.py: validated request/response models for auth, workspaces, members, audit (email validation, 10+ char passwords)
     - app/api/auth.py: register, login, me, logout. httpOnly SameSite=Lax session cookie (Secure in prod), CSRF token returned in body, per-IP and per-email login rate limits, register rate limit
+
+----------------------------------------------------------------------
+#10  (hash recorded in next commit)  feat: add workspace service and routes with membership checks
+    - app/services/workspaces.py: create (creator becomes owner), list for user, list/add members (existing accounts only), hard delete with FK cascade for data-deletion requests
+    - app/api/workspaces.py: workspace CRUD, members, owner-only audit log; all routes require membership; demo seeding hook (service added in a later commit)
