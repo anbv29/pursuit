@@ -1,3 +1,4 @@
+from datetime import timedelta
 from typing import Literal
 
 import dodopayments
@@ -8,7 +9,7 @@ from sqlalchemy.orm import Session
 
 from app.api.deps import current_user, workspace_owner
 from app.core.config import get_settings
-from app.core.db import get_db
+from app.core.db import get_db, utcnow
 from app.core.errors import AppError
 from app.core.ratelimit import limiter
 from app.models import BillingAccount, CheckoutOrder, Membership, User
@@ -57,7 +58,16 @@ def status(m: Membership = Depends(workspace_owner), db: Session = Depends(get_d
             select(func.count(Membership.id)).where(Membership.workspace_id == m.workspace_id)
         ),
         "orders": [
-            {"id": str(o.id), "plan": o.plan, "status": o.state, "created_at": o.created_at} for o in orders
+            {
+                "id": str(o.id),
+                "plan": o.plan,
+                "status": "EXPIRED"
+                if o.state in ("CREATING", "OPEN", "UNKNOWN")
+                and o.created_at < utcnow() - timedelta(hours=24)
+                else o.state,
+                "created_at": o.created_at,
+            }
+            for o in orders
         ],
     }
 

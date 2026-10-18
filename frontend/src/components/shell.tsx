@@ -1,6 +1,6 @@
 "use client";
 
-import { ChevronsLeft, ChevronsRight, FileText, Inbox, LayoutDashboard, LogOut, Plus, Settings } from "lucide-react";
+import { ChevronsLeft, ChevronsRight, CreditCard, FileText, Inbox, LayoutDashboard, LogOut, Plus, Settings } from "lucide-react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { createContext, useContext, useSyncExternalStore, type ReactNode } from "react";
@@ -59,6 +59,7 @@ export function WorkspaceShell({ wsId, children }: { wsId: string; children: Rea
     { href: `${base}/reports`, label: "Company reports", icon: FileText },
     { href: `${base}/experiments/new`, label: "New experiment", icon: Plus },
     { href: `${base}/approvals`, label: "Approvals", icon: Inbox, count: approvals.data?.length },
+    ...(ws.data?.role === "owner" ? [{ href: `${base}/billing`, label: "Plans & billing", icon: CreditCard }] : []),
     { href: `${base}/settings`, label: "Settings", icon: Settings },
   ];
 
@@ -102,7 +103,7 @@ export function WorkspaceShell({ wsId, children }: { wsId: string; children: Rea
           ) : <Skeleton className="h-5 w-32" />}
           {ws.data?.is_demo ? <DemoBadge label="Demo workspace" /> : ws.data && <Badge tone="trail">Live workspace</Badge>}
           <nav aria-label="Mobile" className="ml-2 flex gap-1 md:hidden">
-            {nav.slice(1, 4).map(({ href, icon: Icon, label }) => (
+            {nav.filter((item) => item.href !== base).map(({ href, icon: Icon, label }) => (
               <Link key={href} href={href} aria-label={label} className="rounded-lg p-2 text-ink-2 hover:bg-sunken"><Icon className="size-4" /></Link>
             ))}
           </nav>
