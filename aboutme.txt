@@ -683,5 +683,9 @@ e8ac5b3  feat: continue approved Fo conversations
     - Add owner only prospect selection scheduling limits and individual approval preview.
 
 ----------------------------------------------------------------------
-(hash recorded in next commit)  feat: add Fo attention and booking controls
+9ddd3a3  feat: add Fo attention and booking controls
     - Add scoped history clarification approval and human confirmed booking UI.
+
+----------------------------------------------------------------------
+(hash recorded in next commit)  test: cover interview request boundaries
+    - Verify atomic batches individual approval deadlines and invalid inputs.
