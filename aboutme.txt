@@ -636,5 +636,9 @@ A commit cannot contain its own hash, so each entry's hash is filled in by the f
     - Add permission expiry usage tests and atomic job completion.
 
 ----------------------------------------------------------------------
-#125  (hash recorded in next commit)  test: cover verified prospect and delivery paths
+#125  160d7b8  test: cover verified prospect and delivery paths
     - Verify source checks recipient matching and provider idempotency.
+
+----------------------------------------------------------------------
+#126  (hash recorded in next commit)  docs: describe new features and connection setup
+    - Document all eight additions and external verification limits.

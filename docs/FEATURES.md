@@ -31,7 +31,36 @@
 - Request email, calendar and public-research actions through Fo, then approve them explicitly.
 - Use clearly labelled simulated actions in demo workspaces.
 - Keep simulated outcomes out of live metrics.
-- Export workspace experiment records as JSON and delete a workspace as an owner.
+- Export workspace records as JSON and delete a workspace as an owner.
+
+## Eight implemented additions
+
+1. **Fo account connection:** connect/reconnect from Settings, encrypted per-user tokens,
+   expiring state and PKCE, automatic token refresh, and disconnect. Live account authorization
+   still needs the founder's browser consent and a working provider callback registration.
+2. **Recoverable report jobs:** PostgreSQL queue, exclusive leases, heartbeat, saved website
+   and research checkpoints, bounded retry, cancellation and manual resume. A restarted API
+   resumes expired jobs. The queue worker runs with the API; keep one instance running.
+3. **Ask your report:** saved question history, source-linked answers, plain-English prompts,
+   and limitations. Answers use existing findings; they do not silently conduct new research.
+4. **First-week plan:** seven persistent tasks, behavior-based interview questions, notes,
+   completion criteria and checkboxes. Completing a task does not create customer evidence.
+5. **Corrections and history:** founder-supplied corrections, selective section regeneration,
+   immutable earlier snapshots, and comparison against the current report.
+6. **Company discovery and delivery checks:** source-backed organization suggestions with
+   reachable public websites; fit and buying intent remain unverified. Optional Resend lookup
+   checks an executed email against its approved recipient and subject, then records verified
+   sends/delivery idempotently. Enter the provider message ID and sync again for newer status.
+   This is manual provider reconciliation; reply and meeting synchronization is unsupported.
+7. **Sharing and exports:** expiring, revocable, read-only report snapshots. Anyone holding
+   the link can read it; review private content before sharing. Workspace exports include
+   reports, questions, plans, versions, prospects, sources, criteria, variants, funnel snapshots,
+   actions, outcomes, recommendations, usage, budgets and share metadata. OAuth credentials,
+   share secrets, password hashes and session tokens are excluded.
+8. **AI usage and budgets:** per-workspace model selection for new research, provider token
+   records, estimated spend, pre-call budget reservations and historical report-cost ranges.
+   Missing usage retains a conservative reservation. Prices are application estimates, not
+   provider invoices or a guaranteed billing cap. Haiku 5.5 remains the research default.
 
 ## Models
 
@@ -45,39 +74,21 @@
 
 - A citation means a retrieved source is linked; the validator does not independently prove that
   the page supports the claim. Founders should inspect important sources themselves.
-- Report and action execution runs inside the API process; it is not a durable worker queue.
-- Fo uses a server-wide credential. An in-app OAuth callback, automatic refresh and per-user
-  credential isolation are not implemented yet.
+- External actions still use the API's background executor; the durable queue covers reports.
 - Live Fo action execution has not been verified end to end. A free-text completion needs human confirmation.
-- Message delivery/reply events are not automatically synced from an email provider.
-- Reports give prospecting ideas, not a verified database of prospect contact details.
-- Workspace export does not yet include reports, source records, variants or funnel snapshots.
+- Resend reconciliation requires server credentials and an explicit workspace binding.
+- Company discovery does not collect personal contact details or prove purchase intent.
 - Password reset, account deletion, monitoring and a frontend Content-Security-Policy remain open work.
 
-## Potential additions, in suggested order
+## Further opportunities
 
-1. **Reliable jobs and recovery:** a durable queue, cancellation, retries, resumable reports,
-   clear progress and a link to the existing job when someone submits twice.
-2. **Fo connection inside the app:** sign in, refresh tokens automatically, reconnect on expiry,
-   and isolate credentials per user or workspace.
-3. **Ask about your report:** source-linked answers and a one-click explanation of unfamiliar text,
-   with a visible distinction between the saved report and a new answer.
-4. **A guided first-week plan:** turn recommendations into small daily tasks with examples,
-   interview scripts and clear completion criteria.
-5. **Report editing and history:** correct company facts, rerun selected sections, compare versions,
-   and show which evidence changed a recommendation.
-6. **Complete data controls:** export all records, delete accounts, reset passwords,
-   and configure retention periods.
-7. **Prospect discovery:** source-backed company searches, fit explanations and an approval queue;
-   any contact enrichment needs a verified provider and privacy/access controls.
-8. **Real outreach tracking:** delivery, replies and meetings from verified providers,
-   with duplicate protection and clear unsupported metrics.
-9. **Report sharing:** view-only links with expiry, access controls and revocation.
-10. **Cost controls:** report usage, spend limits, model selection and estimates based on measured usage.
-11. **Research refresh:** scheduled competitor or pricing updates with source dates and change summaries.
-12. **Regional and language support:** local currencies, market context and translated guidance.
+1. Password recovery, account deletion and configurable retention.
+2. Verified provider webhooks for delivery/replies and calendar outcomes.
+3. Scheduled competitor/pricing refresh with alerts.
+4. Contact enrichment only through an authorized provider with provenance.
+5. Regional currencies and translated guidance.
 
-These additions are proposals, not currently available features.
+These further opportunities are proposals, not currently available features.
 
 ## Verification for the reading-mode update
 

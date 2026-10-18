@@ -23,10 +23,31 @@ for (const width of [1280, 390]) {
   test(`reading modes preserve evidence, persist and fit at ${width}px`, async ({ page }) => {
     await page.setViewportSize({ width, height: 900 });
     const errors: string[] = [];
+    let planCreated = false;
+    let done = false;
+    let asked = false;
     page.on("pageerror", (e) => errors.push(e.message));
     await page.route("**/api/**", async (route) => {
       const path = new URL(route.request().url()).pathname;
       const ws = { id: "workspace", name: "Reading test", is_demo: true, role: "owner" };
+      if (path.endsWith("/plan/day-1")) {
+        done = route.request().postDataJSON().done;
+        return route.fulfill({ json: {} });
+      }
+      if (path.endsWith("/plan")) {
+        if (route.request().method() === "POST") planCreated = true;
+        return route.fulfill({ json: planCreated ? [{ id: "day-1", payload: {
+          day: 1, title: "Choose your customer", goal: "Pick one group", steps: ["Read the source"],
+          completion: "One group selected", done, notes: "",
+        } }] : [] });
+      }
+      if (path.endsWith("/questions")) {
+        if (route.request().method() === "POST") asked = true;
+        return route.fulfill({ json: asked ? [{ id: "answer", payload: {
+          question: "What should I do first and why?", answer: "Talk to five potential customers first.",
+          source_ids: ["S0"], limitations: ["Buying intent is unverified."],
+        } }] : [] });
+      }
       const data = path.endsWith("/auth/me") ? { user: { id: "user", email: "reader@example.com", name: "Reader" }, csrf_token: "fixture" }
         : path.endsWith("/reports/report") ? report
           : path === "/api/workspaces" ? [ws]
@@ -35,6 +56,14 @@ for (const width of [1280, 390]) {
     });
     await page.goto("/w/workspace/reports/report");
     await expect(page.getByRole("heading", { name: "Your report at a glance" })).toBeVisible();
+    await page.getByRole("button", { name: "Create my first-week plan" }).click();
+    const task = page.getByRole("checkbox", { name: "Day 1: Choose your customer" });
+    await task.click();
+    await expect(task).toBeChecked();
+    await page.getByText("Ask about this report", { exact: true }).first().click();
+    await page.getByRole("button", { name: "What should I do first and why?" }).click();
+    await page.getByRole("button", { name: "Ask report", exact: true }).click();
+    await expect(page.getByText("Talk to five potential customers first.", { exact: true })).toBeVisible();
     await expect(page.getByRole("heading", { name: "Customers to focus on" })).toBeVisible();
     await expect(page.getByText("This claim keeps its original source.")).toBeVisible();
     await expect(page.getByRole("button", { name: "Start this test" })).toBeVisible();
@@ -45,6 +74,7 @@ for (const width of [1280, 390]) {
     await expect(page.getByRole("button", { name: "Track this" })).toBeVisible();
     await expect(page.getByText("Sourced fact", { exact: true })).toBeVisible();
     await page.reload();
+    await expect(page.getByRole("checkbox", { name: "Day 1: Choose your customer" })).toBeChecked();
     await expect(page.getByLabel("Reading style")).toHaveValue("advanced");
     await expect(page.getByRole("heading", { name: "Executive summary" })).toBeVisible();
     await page.getByLabel("Reading style").selectOption("guided");
