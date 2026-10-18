@@ -727,5 +727,9 @@ c212db0  feat: prepare verified paid plan checkout
     - Grant paid allowances once and reconcile subscription refund and dispute states.
 
 ----------------------------------------------------------------------
-(hash recorded in next commit)  feat: verify and deduplicate payment webhooks
+7c4f6fb  feat: verify and deduplicate payment webhooks
     - Verify raw signed payloads and commit billing events with entitlements atomically.
+
+----------------------------------------------------------------------
+(hash recorded in next commit)  feat: add billing management and seat limits
+    - Add owner only checkout portal balances and server enforced free workspace and team seat limits.
