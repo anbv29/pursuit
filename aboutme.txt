@@ -254,6 +254,10 @@ A commit cannot contain its own hash, so each entry's hash is filled in by the f
     - frontend/src/app/page.tsx: landing page explaining the value in one screen, the 9-stage lifecycle strip (approval highlighted), three product pillars, session-aware CTAs (sign in / start free / open workspace)
 
 ----------------------------------------------------------------------
-#46  (hash recorded in next commit)  feat: add sign-in and sign-up pages with validation
+#46  c278f8f  feat: add sign-in and sign-up pages with validation
     - frontend/src/components/auth-form.tsx: shared auth form with zod client validation mirroring server rules, server field errors mapped back to inputs, form-level error notice, double-submit protection, correct autocomplete attributes; redirects to onboarding after sign-up
     - frontend/src/app/login, signup: pages
+
+----------------------------------------------------------------------
+#47  (hash recorded in next commit)  feat: add workspace app shell with collapsible sidebar
+    - frontend/src/components/shell.tsx: persistent collapsible sidebar (state remembered), primary nav with live approvals count, sticky header with workspace switcher, demo/live workspace indicator, mobile nav, sign out; workspace context for child pages; 'not available' state for foreign or missing workspaces
