@@ -60,7 +60,11 @@ def list_for_experiment(db: Session, exp: Experiment):
     ).all()
 
 
-def request(db: Session, exp: Experiment, user: User, body: ActionIn, *, commit=True) -> ActionRequest:
+def request(
+    db: Session, exp: Experiment, user: User, body: ActionIn, *, commit=True, coordination_allowed=False
+) -> ActionRequest:
+    if body.payload.get("coordination") and not coordination_allowed:
+        raise AppError("Use the interview concierge to request bounded coordination.")
     if exp.archived_at:
         raise AppError("This experiment is archived.", code="archived")
     allowed = set(use_cases.template(exp.use_case)["actions"]) | {ActionKind.RESEARCH_TASK}

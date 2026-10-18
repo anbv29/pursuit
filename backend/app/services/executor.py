@@ -14,7 +14,7 @@ from app.core.db import new_session, utcnow
 from app.core.errors import Conflict
 from app.models import ActionRequest, Experiment, OutcomeEvent, User
 from app.models.enums import ActionKind, ActionStatus, DataOrigin, OutcomeKind
-from app.services import instructions
+from app.services import action_history, instructions
 from app.services.experiments import log
 
 logger = logging.getLogger("pursuit.executor")
@@ -39,8 +39,9 @@ def _record_sent(db: Session, action: ActionRequest, origin: DataOrigin, user_id
 
 
 def _finish(db: Session, action: ActionRequest, exp: Experiment, result: FoResult) -> None:
+    action_history.remember(db, action, result.state, result.summary)
     action.result_summary = result.summary[:2000]
-    action.provider_ref = result.conversation_ref
+    action.provider_ref = result.conversation_ref or action.provider_ref
     if result.state == "failed":
         action.status = ActionStatus.FAILED
     elif result.state == "complete" and result.simulated:
@@ -75,28 +76,39 @@ def execute(action_id: uuid.UUID, poll_interval: float = 2.0) -> None:
         exp = db.get(Experiment, action.experiment_id)
         submitted = False
         try:
+            if action.payload.get("coordination"):
+                from app.services.concierge import check_execution
+
+                check_execution(db, exp, action)
             adapter = get_adapter(action.mode, user_id=action.requested_by)
             text = instructions.build(action.kind, action.target, action.payload)
             # Submit exactly once: re-submitting a send could duplicate a real email.
             result = adapter.submit(text, action.idempotency_key)
             submitted = True
+            action_history.progress(db, action, result)
             deadline = time.monotonic() + get_settings().fo_max_poll_seconds
             errors = 0
             while result.state == "working" and time.monotonic() < deadline:
                 time.sleep(poll_interval)
                 try:
                     result = adapter.poll(result.conversation_ref)
+                    action_history.progress(db, action, result)
                 except FoUnavailable:
                     errors += 1
                     if errors >= MAX_POLL_ERRORS:
                         raise
             if result.state == "working":
-                result = FoResult(state="needs_input", summary="Fo did not finish in time; outcome unknown.")
+                result = FoResult(
+                    state="needs_input",
+                    summary="Fo did not finish in time; outcome unknown.",
+                    conversation_ref=action.provider_ref,
+                )
             _finish(db, action, exp, result)
         except FoUnavailable as exc:
             action.status = ActionStatus.UNKNOWN if submitted else ActionStatus.FAILED
             action.error = str(exc)[:1000]
             action.finished_at = utcnow()
+            action_history.remember(db, action, "unknown" if submitted else "failed", action.error)
             log(db, exp, None, "action.result", action_id=str(action.id), status=action.status.value)
         except Exception:
             logger.exception("Action %s crashed", action_id)
@@ -121,6 +133,7 @@ def confirm(db: Session, exp: Experiment, user: User, action: ActionRequest, suc
     db.refresh(action)
     if succeeded:
         _record_sent(db, action, DataOrigin.FO, user.id)
+    action_history.remember(db, action, "confirmed" if succeeded else "confirmed_failed", note, user.id)
     log(db, exp, user, "action.confirm", action_id=str(action.id), succeeded=succeeded, note=note)
     db.commit()
     return action
