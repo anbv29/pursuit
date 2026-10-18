@@ -707,5 +707,9 @@ a19a472  fix: preserve uncertain Fo submission results
     - Record 108 backend and 10 browser passes plus live Fo verification requirements.
 
 ----------------------------------------------------------------------
-(hash recorded in next commit)  feat: define paid plans and billing records
+eb1f58a  feat: define paid plans and billing records
     - Add workspace billing orders credit grants and persistent usage reservations.
+
+----------------------------------------------------------------------
+(hash recorded in next commit)  feat: enforce paid research allowances
+    - Add atomic credit reservations feature checks and failure credit release.

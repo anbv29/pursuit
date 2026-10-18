@@ -35,6 +35,11 @@ class Conflict(AppError):
     code = "conflict"
 
 
+class PaymentRequired(AppError):
+    status_code = 402
+    code = "upgrade_required"
+
+
 class RateLimited(AppError):
     status_code = 429
     code = "rate_limited"
