@@ -279,5 +279,10 @@ A commit cannot contain its own hash, so each entry's hash is filled in by the f
     - Smoke test (manual): backend + Next dev servers running, /api proxy works, register -> demo workspace -> dashboard verified with curl through the proxy
 
 ----------------------------------------------------------------------
-#51  (hash recorded in next commit)  feat: add experiment creation flow with live preview
+#51  055992f  feat: add experiment creation flow with live preview
     - frontend/src/app/w/[ws]/experiments/new/page.tsx: step 1 pick a use case (six template cards, showing which Fo actions each can use); step 2 name, hypothesis (template hint), audience, prefilled editable success criteria; zod validation mirrors server; live preview card showing exactly what will be created and warning when there are no criteria; input preserved on server errors; double-submit protected
+
+----------------------------------------------------------------------
+#52  (hash recorded in next commit)  feat: add experiment context and lifecycle stage rail
+    - frontend/src/components/experiment/context.tsx: experiment context (detail, API path, reload, change counter for sibling panels)
+    - frontend/src/components/experiment/stage-rail.tsx: 9-step lifecycle rail with done/current/upcoming states, the exact blocker for the next stage shown in plain language, advance (disabled until the server gate is satisfied) and back-to-iterate buttons; errors surfaced as toasts
