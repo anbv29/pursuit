@@ -83,6 +83,11 @@ A commit cannot contain its own hash, so each entry's hash is filled in by the f
     - Result: pytest 12 passed
 
 ----------------------------------------------------------------------
-#13  (hash recorded in next commit)  feat: add shared experiment lifecycle state machine
+#13  dcca966  feat: add shared experiment lifecycle state machine
     - app/services/lifecycle.py: 9-stage lifecycle shared by all use cases; forward moves are one step at a time with evidence-based gates (evidence before EVIDENCE, success criteria before APPROVAL, an approved action before ACTION, outcomes or funnel data before ANALYSIS, a recommendation before RECOMMENDATION); backward moves always allowed for iteration; competitive research and funnel diagnosis can proceed without external actions; per-stage checklist for the UI
     - tests/test_lifecycle_unit.py: stage order matches the documented lifecycle
+
+----------------------------------------------------------------------
+#14  (hash recorded in next commit)  feat: add experiment schemas and per-use-case templates
+    - app/schemas/experiments.py: validated experiment create/patch/transition models, success criteria (snake_case metric names, bounded targets), detail model with stage checklist and counts, timeline items
+    - app/services/use_cases.py: templates for all six use cases (segment, WTP, messaging, discovery, competitive, funnel) with hypothesis hints, default success criteria, and the external action kinds each may request (competitive and funnel request none)
