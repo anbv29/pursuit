@@ -308,5 +308,9 @@ A commit cannot contain its own hash, so each entry's hash is filled in by the f
     - frontend/src/components/experiment/discovery.tsx: discovery metrics (interviews completed, problem confirmed and budget owner rates with n and 95% CI, commitments vs verbal interest kept separate); prospects with role/company/segment, provenance link, inline status pipeline, owner-only contact details note; add prospect form with server validation; behaviour-based interview capture (pain points, current solution, frequency, cost, budget owner, WTP signal with commitment defined, contradictions, notes) and interview list highlighting contradictions
 
 ----------------------------------------------------------------------
-#58  (hash recorded in next commit)  feat: add messaging variant comparison panel
+#58  4a1ba67  feat: add messaging variant comparison panel
     - frontend/src/components/experiment/messaging.tsx: side-by-side variants with sent, delivered ('not reported' when the provider doesn't expose it), reply and positive-reply rates always shown with numerator/denominator and 95% intervals, interval bar against the target, meetings; plain-language verdict that refuses to pick a winner below the minimum sample or when intervals overlap; add-variant form
+
+----------------------------------------------------------------------
+#59  (hash recorded in next commit)  feat: add outcome recording panel
+    - frontend/src/components/experiment/outcomes.tsx: record real outcomes (sent, delivered, replied, positive reply, meeting, interview, pricing feedback, verbal interest vs commitment, other) linked to variant/prospect with optional amount; outcome log with origin labels (demo / fo / manual / import); delete with confirmation and metric recalculation
