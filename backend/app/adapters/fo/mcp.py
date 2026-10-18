@@ -89,7 +89,14 @@ class McpFoAdapter:
         self._session = r.headers.get("mcp-session-id", self._session)
         if notify:
             return {}
-        payload = self._parse_body(r, msg["id"])
+        try:
+            payload = self._parse_body(r, msg["id"])
+        except FoUnavailable as exc:
+            if method == "tools/call" and (params or {}).get("name") == "ask_fo":
+                raise FoSubmissionUnknown(
+                    "Fo received a request but its response could not be read."
+                ) from exc
+            raise
         if "error" in payload:
             raise FoUnavailable(f"Fo returned an error: {str(payload['error'].get('message', ''))[:200]}")
         return payload.get("result", {})
@@ -139,6 +146,8 @@ class McpFoAdapter:
         # Verified output schema (tools/list, 2026-10-18); see module docstring.
         summary = str(data.get("response") or data.get("progress") or text)[:2000]
         ref = data.get("conversationId")
+        if not isinstance(ref, str) or not 0 < len(ref) <= 200:
+            ref = None
         if result.get("isError") or status == "failed":
             return FoResult(state="failed", summary=summary or "Fo reported a failure.", conversation_ref=ref)
         if status == "complete":

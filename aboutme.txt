@@ -691,5 +691,9 @@ e8ac5b3  feat: continue approved Fo conversations
     - Verify atomic batches individual approval deadlines and invalid inputs.
 
 ----------------------------------------------------------------------
-(hash recorded in next commit)  fix: isolate concierge contacts and controls
+ebd034a  fix: isolate concierge contacts and controls
     - Verify saved conversations owner permissions and idempotent demo booking results.
+
+----------------------------------------------------------------------
+(hash recorded in next commit)  fix: preserve uncertain Fo submission results
+    - Verify progress persistence conversation binding and safe provider failure handling.

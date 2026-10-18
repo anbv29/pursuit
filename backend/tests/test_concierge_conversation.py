@@ -1,9 +1,10 @@
 # ruff: noqa: F811
+import pytest
 from sqlalchemy import func, select
 
 from app.adapters.fo.base import FoResult
 from app.core.db import new_session, utcnow
-from app.models import Interview, OutcomeEvent
+from app.models import ActionRequest, Interview, OutcomeEvent
 from app.models.enums import DataOrigin
 from app.services import executor, fo_conversation
 from tests.test_concierge import setup  # noqa: F401
@@ -27,9 +28,13 @@ class FakeFo:
         return FoResult(state="needs_input", summary="Which day works best?", conversation_ref=ref)
 
 
-def test_history_clarification_and_booking_are_scoped_and_honest(api, setup, monkeypatch, other):
+@pytest.mark.parametrize("mode", ["demo", "live"])
+def test_history_clarification_and_booking_are_scoped_and_honest(api, setup, monkeypatch, other, mode):
     path, _, body = setup
     action = api.post(path + "/concierge", body).json()[0]
+    with new_session() as db:
+        db.get(ActionRequest, action["id"]).mode = mode
+        db.commit()
     fo = FakeFo()
     monkeypatch.setattr(executor, "get_adapter", lambda *a, **kw: fo)
     monkeypatch.setattr(fo_conversation, "get_adapter", lambda *a, **kw: fo)
@@ -53,7 +58,8 @@ def test_history_clarification_and_booking_are_scoped_and_honest(api, setup, mon
     assert api.post(task + "/interview-result", result).status_code == 409
     with new_session() as db:
         interview = db.scalar(select(Interview))
-        assert interview.status == "planned" and interview.origin == DataOrigin.DEMO
+        assert interview.status == "planned"
+        assert interview.origin == (DataOrigin.DEMO if mode == "demo" else DataOrigin.MANUAL)
         assert db.scalar(select(func.count(OutcomeEvent.id))) == 1
 
 
@@ -66,3 +72,5 @@ def test_members_cannot_see_contacts_or_control_concierge(api, setup, other):
     assert other.get(f"/api/workspaces/{ws}/approvals").json() == []
     assert other.get(path + f"/actions/{action['id']}/conversation").status_code == 403
     assert other.post(path + f"/actions/{action['id']}/decision", {"decision": "approve"}).status_code == 403
+    assert other.post(path + f"/actions/{action['id']}/decision", {"decision": "reject"}).status_code == 403
+    assert other.post(path + f"/actions/{action['id']}/cancel").status_code == 403
