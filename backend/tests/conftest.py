@@ -5,6 +5,14 @@ import os
 os.environ["APP_ENV"] = "test"
 os.environ["FO_MODE"] = "demo"
 os.environ["ANTHROPIC_API_KEY"] = ""  # tests must never call the real model
+os.environ["DODO_PAYMENTS_ENVIRONMENT"] = "test_mode"
+# Never inherit merchant credentials or product mappings from a private .env.
+os.environ["DODO_PAYMENTS_API_KEY"] = ""
+os.environ["DODO_PAYMENTS_WEBHOOK_KEY"] = ""
+os.environ["DODO_BUSINESS_ID"] = ""
+os.environ["DODO_SINGLE_PRODUCT"] = ""
+os.environ["DODO_FOUNDER_PRODUCT"] = ""
+os.environ["DODO_TEAM_PRODUCT"] = ""
 
 import pytest
 from fastapi.testclient import TestClient
