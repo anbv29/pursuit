@@ -1,20 +1,37 @@
 import uuid
 
 from fastapi import APIRouter, BackgroundTasks, Depends
+from pydantic import BaseModel
 from sqlalchemy import select
 from sqlalchemy.orm import Session
 
-from app.api.deps import current_user, workspace_member
+from app.api.deps import current_user, workspace_member, workspace_owner
 from app.api.experiments import experiment_dep
 from app.core.db import get_db
 from app.core.ratelimit import limiter
 from app.models import ActionRequest, Experiment, Membership, User
 from app.models.enums import ActionStatus
 from app.schemas.actions import ActionIn, ActionOut, ConfirmIn, DecisionIn
-from app.services import actions, executor
+from app.services import actions, delivery_tracking, executor
 
 router = APIRouter(prefix="/api/workspaces/{workspace_id}", tags=["actions"])
 EXP = "/experiments/{experiment_id}/actions"
+
+
+class TrackEmail(BaseModel):
+    provider_message_id: uuid.UUID
+
+
+@router.post(EXP + "/{action_id}/tracking")
+def track_email(
+    action_id: uuid.UUID,
+    body: TrackEmail,
+    exp: Experiment = Depends(experiment_dep),
+    owner: Membership = Depends(workspace_owner),
+    db: Session = Depends(get_db),
+):
+    limiter.check(f"tracking:{owner.user_id}", limit=30, window_seconds=600)
+    return delivery_tracking.sync(db, exp, actions.get(db, exp, action_id), str(body.provider_message_id))
 
 
 @router.get("/approvals", response_model=list[ActionOut])

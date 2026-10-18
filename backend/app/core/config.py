@@ -26,6 +26,8 @@ class Settings(BaseSettings):
     anthropic_model: str = "claude-opus-5-5"
     research_model: str = "claude-haiku-5-5"
     report_worker_enabled: bool = True
+    resend_api_key: SecretStr | None = None
+    resend_workspace_id: str = ""
     ai_timeout_seconds: float = 45.0
 
     fo_mode: Literal["demo", "live"] = "demo"

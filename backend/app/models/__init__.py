@@ -26,3 +26,4 @@ from app.models.identity import (  # noqa: F401
 )
 from app.models.report import Report  # noqa: F401
 from app.models.report_entry import ReportEntry  # noqa: F401
+from app.models.tracking import DeliveryTracking  # noqa: F401

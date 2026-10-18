@@ -596,5 +596,9 @@ A commit cannot contain its own hash, so each entry's hash is filled in by the f
     - Section refresh picker, founder corrections, saved history and before/after comparisons. Regression tests check snapshot persistence and old-source namespacing.
 
 ----------------------------------------------------------------------
-#115  (hash recorded in next commit)  feat: discover source-backed company prospects
+#115  1b8d519  feat: discover source-backed company prospects
     - Discover up to five organizations matching saved segments, filter real retrieved citations, fetch public websites and persist candidates. Website reachability is verified; fit and buying intent are explicitly not proven.
+
+----------------------------------------------------------------------
+#116  (hash recorded in next commit)  feat: verify email delivery against Resend
+    - Read-only provider adapter uses documented email retrieval, requires configured workspace, matches recipient and subject, and deduplicates persisted sent/delivered events. No reply or meeting events are invented.
