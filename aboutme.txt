@@ -342,7 +342,14 @@ A commit cannot contain its own hash, so each entry's hash is filled in by the f
     - frontend/src/app/w/[ws]/settings/page.tsx: integration status for Fo (demo/live mode, connection status, 'not yet verified end-to-end' flag, tools, scope used) and Claude (enabled/model, what data it receives) with re-check; no secrets displayed; member list and owner-only add-member; owner-only JSON export and permanent workspace deletion behind a confirmation
 
 ----------------------------------------------------------------------
-#65  (hash recorded in next commit)  fix: stream workspace shell behind Suspense for production build
+#65  85dc76c  fix: stream workspace shell behind Suspense for production build
     - frontend/src/app/w/[ws]/layout.tsx: now a server layout wrapping a client shell in Suspense, required by Next 16 Cache Components because route params are request-time data
     - frontend/src/app/w/[ws]/workspace-client.tsx: client part using useParams
     - Result: next build succeeds (13 routes; workspace routes partially prerendered); grep of .next/static finds no ANTHROPIC/FO_ACCESS_TOKEN/SESSION_SECRET/BACKEND_URL/backend host strings
+
+----------------------------------------------------------------------
+#66  (hash recorded in next commit)  test: add Playwright end-to-end tests and fix stale stage gates
+    - frontend/e2e/experiment-flow.spec.ts: browser E2E against the real stack - sign up, create workspace, create experiment with hypothesis + criteria (preview checked), blocked stage until evidence exists, add evidence, advance stages, request action, approve in dialog (demo warning shown), SUCCEEDED + Simulated labels, record outcome, generate recommendation, full reload persistence, outsider sees 'Workspace not available'; anonymous redirect to sign-in; client-side sign-up validation
+    - frontend/playwright.config.ts: desktop + mobile projects
+    - fix (found by E2E): adding evidence/outcomes did not refresh the stage rail, so 'Advance' stayed disabled; touch() now reloads the experiment detail too
+    - Result: Playwright 3 passed. The live run used real Claude synthesis (ANTHROPIC_API_KEY present in the backend environment)

@@ -50,7 +50,11 @@ function ExperimentPage() {
   const path = `/workspaces/${workspace.id}/experiments/${id}`;
   const { data: exp, error, reload } = useApi<ExperimentDetail>(path);
   const [version, setVersion] = useState(0);
-  const touch = useCallback(() => setVersion((v) => v + 1), []);
+  // Any change refreshes sibling panels *and* the detail, whose stage gates depend on it.
+  const touch = useCallback(() => {
+    setVersion((v) => v + 1);
+    void reload();
+  }, [reload]);
 
   if (error) return <Empty title="Experiment not found" body="It may have been deleted, or it belongs to a workspace you can't access." />;
   if (!exp) return <div className="space-y-4"><Skeleton className="h-10 w-80" /><Skeleton className="h-28" /><Skeleton className="h-64" /></div>;
