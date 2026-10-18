@@ -32,7 +32,10 @@ def current_user(session: AuthSession = Depends(current_session)) -> User:
 
 
 def workspace_member(
-    workspace_id: uuid.UUID, user: User = Depends(current_user), db: Session = Depends(get_db)
+    workspace_id: uuid.UUID,
+    request: Request,
+    user: User = Depends(current_user),
+    db: Session = Depends(get_db),
 ) -> Membership:
     """Resolve the caller's membership. Non-members get 404 so IDs don't leak existence."""
     membership = db.scalar(
@@ -40,6 +43,13 @@ def workspace_member(
     )
     if membership is None:
         raise NotFound("Workspace not found.")
+    if membership.role != Role.OWNER and request.method not in SAFE_METHODS:
+        from app.services.entitlements import plan
+
+        if plan(db, workspace_id) != "team":
+            raise Forbidden(
+                "An active Team plan is required for members to make changes. Existing data stays readable."
+            )
     return membership
 
 

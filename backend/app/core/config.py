@@ -29,9 +29,11 @@ class Settings(BaseSettings):
     resend_api_key: SecretStr | None = None
     resend_workspace_id: str = ""
     ai_timeout_seconds: float = 45.0
-    dodo_api_key: SecretStr | None = None
-    dodo_webhook_key: SecretStr | None = None
-    dodo_environment: Literal["test_mode", "live_mode"] = "test_mode"
+    dodo_api_key: SecretStr | None = Field(default=None, validation_alias="DODO_PAYMENTS_API_KEY")
+    dodo_webhook_key: SecretStr | None = Field(default=None, validation_alias="DODO_PAYMENTS_WEBHOOK_KEY")
+    dodo_environment: Literal["test_mode", "live_mode"] = Field(
+        default="test_mode", validation_alias="DODO_PAYMENTS_ENVIRONMENT"
+    )
     dodo_business_id: str = ""
     dodo_single_product: str = ""
     dodo_founder_product: str = ""
@@ -73,7 +75,7 @@ class Settings(BaseSettings):
     def _production_guards(self) -> "Settings":
         if self.app_env == "production":
             if self.dodo_api_key and self.dodo_environment != "live_mode":
-                raise ValueError("Production billing requires DODO_ENVIRONMENT=live_mode")
+                raise ValueError("Production billing requires DODO_PAYMENTS_ENVIRONMENT=live_mode")
             if not self.cookie_secure:
                 raise ValueError("COOKIE_SECURE must be true in production")
             if "*" in self.cors_origin_list:

@@ -739,5 +739,9 @@ c212db0  feat: prepare verified paid plan checkout
     - Link AI spend to paid allowances and default included research to Haiku.
 
 ----------------------------------------------------------------------
-(hash recorded in next commit)  feat: charge research allowances only for successful work
+c7da358  feat: charge research allowances only for successful work
     - Wire reports refresh questions discovery and AI recommendations to paid credits.
+
+----------------------------------------------------------------------
+(hash recorded in next commit)  feat: separate payment configuration and team access
+    - Add private Dodo configuration and preserve read access when team access expires.
