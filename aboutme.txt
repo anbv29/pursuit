@@ -26,8 +26,12 @@ A commit cannot contain its own hash, so each entry's hash is filled in by the f
     - Empty package __init__ files for app/ and tests/
 
 ----------------------------------------------------------------------
-#3  (hash recorded in next commit)  feat: add domain enums and identity models
+#3  3566910  feat: add domain enums and identity models
     - app/models/enums.py: use cases, 9-stage lifecycle, decisions, evidence kinds/stances, action statuses (PENDING_APPROVAL..UNKNOWN), outcome kinds, data origin (demo vs live), roles
     - app/models/base.py: UUID id and timestamp mixins
     - app/models/identity.py: User, AuthSession (hashed token + CSRF), Workspace (is_demo flag), Membership (unique per workspace/user), IntegrationConfig (no secrets stored), AuditEvent
     - Verified local Postgres container healthy with pursuit and pursuit_test databases
+
+----------------------------------------------------------------------
+#4  (hash recorded in next commit)  feat: add experiment, evidence and recommendation models
+    - app/models/experiment.py: Experiment (use case, hypothesis, lifecycle stage, config, demo flag), SuccessCriterion (metric/comparator/target/min sample), Source (URL provenance + retrieval timestamp + content hash), Evidence (fact/interpretation/assumption, supports/contradicts, relevance 0-1 check constraint, origin), Recommendation (decision, confidence, assumptions, counterevidence, limitations, next action, linked evidence ids, metrics snapshot, demo-data flag)
