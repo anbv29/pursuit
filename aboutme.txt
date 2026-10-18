@@ -476,5 +476,9 @@ A commit cannot contain its own hash, so each entry's hash is filled in by the f
     - frontend/src/components/report/customer-sections.tsx: executive summary with focus-first callout; company snapshot (offering, model, stage, observed pricing and key facts as labelled, cited claims); ICP segments ranked by fit (1-5 bar), pains, buying trigger, decision maker and cited rationale; personas (goals, pains, objections, where to find them); problem hypotheses with evidence for and against and how to validate
 
 ----------------------------------------------------------------------
-#88  (hash recorded in next commit)  feat: add report sections for market, messaging and prospecting
+#88  cf8d49f  feat: add report sections for market, messaging and prospecting
     - frontend/src/components/report/market-sections.tsx: competitor table (positioning, target, pricing or 'Unknown', strengths, weaknesses, citations or 'Unsourced' flag); positioning statement, gaps (cited claims) and differentiators; pricing benchmarks, hypotheses and willingness-to-pay questions; outreach angles with draft subject/body and copy button (labelled as drafts to edit); prospecting signals, channels and search queries; funnel leak hypotheses (labelled as hypotheses until real data); risks and unknowns
+
+----------------------------------------------------------------------
+#89  (hash recorded in next commit)  feat: add report page with live progress, experiments and sources
+    - frontend/src/app/w/[ws]/reports/[id]/page.tsx: polls every 3s while generating and shows the three real steps (read site, research web, write report) with the server's progress line; failure state shows the server's user-safe error and a retry; finished report has a sticky table of contents, header with source count, timestamp and model, a legend explaining fact / interpretation / assumption and how many citations Pursuit removed or downgraded, all sections, ordered experiments with 'Track this' (creates a tracked experiment with sourced evidence and opens it), the full numbered source list, and Print / PDF
