@@ -1,6 +1,6 @@
 "use client";
 
-import { ArrowRight, FlaskConical, Inbox, Plus } from "lucide-react";
+import { ArrowRight, FileText, FlaskConical, Inbox, Plus } from "lucide-react";
 import Link from "next/link";
 import { useEffect } from "react";
 import { DecisionChip, StageBar } from "@/components/bits";
@@ -9,7 +9,7 @@ import { useSession } from "@/components/session";
 import { Badge, Card, CardHeader, DemoBadge, Empty, Skeleton } from "@/components/ui";
 import { useApi } from "@/lib/hooks";
 import { ACTION_STATUS, timeAgo, USE_CASE_LABEL } from "@/lib/labels";
-import type { ActionStatus, Decision, Stage, UseCase } from "@/lib/types";
+import type { ActionStatus, Decision, ReportListItem, Stage, UseCase } from "@/lib/types";
 
 type Dash = {
   experiments: { id: string; title: string; use_case: UseCase; stage: Stage; is_demo: boolean; updated_at: string; latest_decision: Decision | null }[];
@@ -22,6 +22,7 @@ export default function Dashboard() {
   const { workspace, base } = useWorkspace();
   const { user } = useSession();
   const { data, loading, error } = useApi<Dash>(`/workspaces/${workspace.id}/dashboard`);
+  const reports = useApi<ReportListItem[]>(`/workspaces/${workspace.id}/reports`);
 
   useEffect(() => localStorage.setItem("pursuit.lastWorkspace", workspace.id), [workspace.id]);
 
@@ -31,17 +32,45 @@ export default function Dashboard() {
   }
 
   const newBtn = (
-    <Link href={`${base}/experiments/new`} className="inline-flex h-9 items-center gap-1.5 rounded-lg bg-trail px-3.5 text-sm font-medium text-white shadow-card hover:bg-trail-strong">
+    <Link href={`${base}/experiments/new`} className="inline-flex h-9 items-center gap-1.5 rounded-lg border border-line bg-surface px-3.5 text-sm font-medium text-ink shadow-card hover:bg-sunken">
       <Plus className="size-4" /> New experiment
     </Link>
   );
 
+  const analyzeBtn = (
+    <Link href={`${base}/reports/new`} className="inline-flex h-9 items-center gap-1.5 rounded-lg bg-trail px-3.5 text-sm font-medium text-white shadow-card hover:bg-trail-strong">
+      <FileText className="size-4" /> Analyze your company
+    </Link>
+  );
+  const reportCard = reports.data && reports.data.length > 0 && (
+    <Card>
+      <CardHeader title="Company reports" action={<Link href={`${base}/reports`} className="text-xs font-medium text-trail">All</Link>} />
+      <ul className="divide-y divide-line">
+        {reports.data.slice(0, 3).map((r) => (
+          <li key={r.id}>
+            <Link href={`${base}/reports/${r.id}`} className="flex items-center gap-3 px-5 py-3 hover:bg-paper">
+              <FileText className="size-4 shrink-0 text-ink-3" aria-hidden />
+              <span className="min-w-0 flex-1 truncate text-sm font-medium">{r.company_name || r.company_url}</span>
+              <Badge tone={r.status === "SUCCEEDED" ? "good" : r.status === "FAILED" ? "bad" : "neutral"}>
+                {r.status === "SUCCEEDED" ? "Ready" : r.status === "FAILED" ? "Failed" : "Generating…"}
+              </Badge>
+            </Link>
+          </li>
+        ))}
+      </ul>
+    </Card>
+  );
+
   if (data.experiments.length === 0) {
     return (
-      <Card className="mx-auto mt-6 max-w-xl">
-        <Empty icon={<FlaskConical className="size-5" />} title="No experiments yet"
-          body="Pick the assumption that would hurt most if it were wrong, and turn it into your first experiment." action={newBtn} />
-      </Card>
+      <div className="mx-auto mt-6 max-w-xl space-y-6">
+        {reportCard}
+        <Card>
+          <Empty icon={<FlaskConical className="size-5" />} title={reports.data?.length ? "No experiments yet" : "Start with a company report"}
+            body={reports.data?.length ? "Open your report and click “Track this” on a recommended experiment." : "Enter your website and Pursuit researches your market, competitors and customers, then recommends experiments."}
+            action={reports.data?.length ? newBtn : analyzeBtn} />
+        </Card>
+      </div>
     );
   }
 
@@ -55,8 +84,9 @@ export default function Dashboard() {
             {data.pending_actions.length > 0 && ` · ${data.pending_actions.length} waiting on you`}
           </p>
         </div>
-        {newBtn}
+        <div className="flex gap-2">{analyzeBtn}{newBtn}</div>
       </div>
+      {reportCard}
 
       <div className="grid gap-6 lg:grid-cols-3">
         <Card className="lg:col-span-2">
