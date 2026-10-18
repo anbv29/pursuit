@@ -1,0 +1,31 @@
+# Render blueprint for the FastAPI backend. Secrets are set in the Render dashboard (sync: false).
+services:
+  - type: web
+    name: pursuit-api
+    runtime: python
+    rootDir: backend
+    plan: starter
+    buildCommand: pip install -r requirements.txt
+    # Migrations run before each deploy starts serving; a failed migration fails the deploy.
+    preDeployCommand: alembic upgrade head
+    startCommand: uvicorn app.main:app --host 0.0.0.0 --port $PORT
+    healthCheckPath: /api/health
+    envVars:
+      - key: PYTHON_VERSION
+        value: "3.12.8"
+      - key: APP_ENV
+        value: production
+      - key: COOKIE_SECURE
+        value: "true"
+      - key: FO_MODE
+        value: demo
+      - key: ACTIONS_DISABLED
+        value: "false"
+      - key: DATABASE_URL
+        sync: false # Neon connection string
+      - key: CORS_ORIGINS
+        sync: false # e.g. https://pursuit.vercel.app
+      - key: ANTHROPIC_API_KEY
+        sync: false
+      - key: FO_ACCESS_TOKEN
+        sync: false

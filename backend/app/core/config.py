@@ -3,7 +3,7 @@
 from functools import lru_cache
 from typing import Literal
 
-from pydantic import Field, SecretStr, model_validator
+from pydantic import Field, SecretStr, field_validator, model_validator
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
@@ -13,7 +13,6 @@ class Settings(BaseSettings):
     app_env: Literal["development", "test", "production"] = "development"
     database_url: str = "postgresql+psycopg://pursuit:pursuit_local_only@localhost:5433/pursuit"
     test_database_url: str = "postgresql+psycopg://pursuit:pursuit_local_only@localhost:5433/pursuit_test"
-    session_secret: SecretStr = SecretStr("dev-only-insecure-secret")
     session_ttl_hours: int = 72
     cors_origins: str = "http://localhost:3000"
     cookie_secure: bool = False
@@ -45,12 +44,18 @@ class Settings(BaseSettings):
     def ai_enabled(self) -> bool:
         return bool(self.anthropic_api_key and self.anthropic_api_key.get_secret_value())
 
+    @field_validator("database_url", "test_database_url")
+    @classmethod
+    def _psycopg_driver(cls, v: str) -> str:
+        # Neon/Render hand out postgres:// or postgresql:// URLs; use the psycopg 3 driver.
+        for prefix in ("postgres://", "postgresql://"):
+            if v.startswith(prefix):
+                return "postgresql+psycopg://" + v[len(prefix) :]
+        return v
+
     @model_validator(mode="after")
     def _production_guards(self) -> "Settings":
         if self.app_env == "production":
-            secret = self.session_secret.get_secret_value()
-            if secret == "dev-only-insecure-secret" or len(secret) < 32:  # noqa: S105
-                raise ValueError("SESSION_SECRET must be set to a strong value in production")
             if not self.cookie_secure:
                 raise ValueError("COOKIE_SECURE must be true in production")
             if "*" in self.cors_origin_list:
