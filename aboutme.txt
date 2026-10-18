@@ -494,6 +494,13 @@ A commit cannot contain its own hash, so each entry's hash is filled in by the f
     - frontend/src/app/w/[ws]/page.tsx: latest reports card with Ready/Generating/Failed status; empty workspace now leads with 'Analyze your company' (or, once a report exists, points to 'Track this' on its experiments); header has 'Analyze your company' as the primary action and 'New experiment' as secondary
 
 ----------------------------------------------------------------------
-#92  (hash recorded in next commit)  test: add real end-to-end report generation test
+#92  c1ad4ed  test: add real end-to-end report generation test
     - frontend/e2e/report.spec.ts: browser test with real Claude research - sign up, 'Analyze my company', enter linear.app + description + goal, watch progress, wait for the finished report, check all 10 main sections, a 'Sourced fact' label and the source list, reload for persistence, then 'Track this' on experiment 1 and land on its Hypothesis stage; fails on any uncaught page error. Skippable with E2E_SKIP_AI=1
     - Result: passed in 2.4 min (74 sources); screenshots reviewed (summary, snapshot, competitor table with citations, funnel risks, ordered experiments)
+
+----------------------------------------------------------------------
+#93  (hash recorded in next commit)  fix: keep builds and tests from breaking the dev server or sending real actions
+    - frontend/next.config.ts: distDir from NEXT_DIST_DIR so verification builds (NEXT_DIST_DIR=.next-build) never write into the running dev server's .next - building into it crashed the dev render workers and caused the site-wide 500s
+    - .gitignore: .next-build/
+    - e2e/experiment-flow.spec.ts: onboarding now lands on the report form, so the test reaches 'New experiment' via the sidebar; if the approval dialog says it is a real (live Fo) action, the test cancels and skips instead of ever sending a real email
+    - Results: backend ruff/format/pip-audit clean, pytest 75 passed; next build OK while dev kept serving; Playwright against demo-mode backend 5 passed (+ report test passed earlier with real Claude in 2.4 min); live-mode backend restored afterwards

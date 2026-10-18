@@ -13,6 +13,9 @@ const securityHeaders = [
 ];
 
 const nextConfig: NextConfig = {
+  // Lets a verification build (NEXT_DIST_DIR=.next-build) run while `next dev` uses .next;
+  // building into the dev server's folder crashed its render workers.
+  distDir: process.env.NEXT_DIST_DIR ?? ".next",
   poweredByHeader: false,
   cacheComponents: true,
   partialPrefetching: true,

@@ -19,6 +19,9 @@ test("founder runs a full experiment loop and an outsider is locked out", async 
   // Workspace
   await page.getByLabel("Workspace name", { exact: true }).filter({ visible: true }).fill("Clinic Startup");
   await page.getByRole("button", { name: "Create workspace" }).click();
+  // Onboarding now opens the company report form; manual experiments are one click away.
+  await expect(page).toHaveURL(/reports\/new/);
+  await page.getByRole("link", { name: "New experiment" }).filter({ visible: true }).first().click();
   await expect(page).toHaveURL(/experiments\/new/);
 
   // Experiment with hypothesis + default criteria
@@ -52,6 +55,12 @@ test("founder runs a full experiment loop and an outsider is locked out", async 
   await expect(page.getByText("Needs approval")).toBeVisible();
   await page.getByRole("button", { name: "Review & approve" }).click();
   const dialog = page.getByRole("dialog");
+  await expect(dialog).toBeVisible();
+  if ((await dialog.textContent())?.includes("Approve a real action")) {
+    // Backend is in live Fo mode: never send a real email from a test.
+    await dialog.getByRole("button", { name: "Cancel" }).click();
+    test.skip(true, "Backend runs FO_MODE=live; this flow test only runs against demo mode.");
+  }
   await expect(dialog).toContainText("Demo mode: nothing will actually be sent.");
   await dialog.getByRole("button", { name: "Approve (demo)" }).click();
   await expect(page.getByText("Succeeded", { exact: true })).toBeVisible();
