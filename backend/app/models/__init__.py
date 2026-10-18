@@ -1,7 +1,6 @@
 """Import all models so Alembic autogenerate sees the full metadata."""
 
 from app.models.action_update import ActionUpdate  # noqa: F401
-
 from app.models.activity import (  # noqa: F401
     ActionRequest,
     FunnelSnapshot,

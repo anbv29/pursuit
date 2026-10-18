@@ -659,5 +659,9 @@ Runtime verification checkpoint: fix: verify running stack and document live blo
     - Full evidence: docs/RUNTIME_VERIFICATION.md. Local commit only; no push.
 
 ----------------------------------------------------------------------
-(hash recorded in next commit)  feat: define bounded interview coordination
+ef387c2  feat: define bounded interview coordination
     - Add typed invitation limits and persistent action history schema.
+
+----------------------------------------------------------------------
+(hash recorded in next commit)  feat: prepare approved interview tasks
+    - Add atomic prospect selection and bounded Fo coordination instructions.

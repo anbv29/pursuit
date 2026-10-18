@@ -60,7 +60,7 @@ def list_for_experiment(db: Session, exp: Experiment):
     ).all()
 
 
-def request(db: Session, exp: Experiment, user: User, body: ActionIn) -> ActionRequest:
+def request(db: Session, exp: Experiment, user: User, body: ActionIn, *, commit=True) -> ActionRequest:
     if exp.archived_at:
         raise AppError("This experiment is archived.", code="archived")
     allowed = set(use_cases.template(exp.use_case)["actions"]) | {ActionKind.RESEARCH_TASK}
@@ -91,7 +91,8 @@ def request(db: Session, exp: Experiment, user: User, body: ActionIn) -> ActionR
     db.add(action)
     db.flush()
     log(db, exp, user, "action.request", action_id=str(action.id), kind=body.kind.value, mode=mode)
-    db.commit()
+    if commit:
+        db.commit()
     return action
 
 
