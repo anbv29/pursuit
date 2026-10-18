@@ -129,7 +129,9 @@ def _collect_sources(blocks, seen: dict[str, dict]) -> None:
                 seen[url] = {"url": url, "title": getattr(doc, "title", "") or "", "via": "web_fetch"}
 
 
-def research(company_url: str, site_text: str, inputs: dict, on_progress) -> Research:
+def research(
+    company_url: str, site_text: str, inputs: dict, on_progress, task: str | None = None
+) -> Research:
     s = get_settings()
     client = _client()
     user = NL.join(
@@ -137,7 +139,7 @@ def research(company_url: str, site_text: str, inputs: dict, on_progress) -> Res
             f"Company website: {company_url}",
             f"<company_site>{site_text[:12000]}</company_site>",
             f"<founder_inputs>{json.dumps(inputs, ensure_ascii=False)}</founder_inputs>",
-            "Research this company's market, customers, competitors and pricing.",
+            task or "Research this company's market, customers, competitors and pricing.",
         ]
     )
     messages: list[dict] = [{"role": "user", "content": user}]

@@ -8,7 +8,7 @@ from app.api.deps import current_user, workspace_member
 from app.core.db import get_db
 from app.core.ratelimit import limiter
 from app.models import Membership, User
-from app.services import report_chat, report_plan, report_versions, reports
+from app.services import prospect_discovery, report_chat, report_plan, report_versions, reports
 
 router = APIRouter(prefix="/api/workspaces/{workspace_id}/reports/{report_id}", tags=["Report tools"])
 
@@ -25,6 +25,17 @@ def entry_out(entry):
 
 class Question(BaseModel):
     question: str = Field(min_length=3, max_length=2000)
+
+
+@router.get("/prospects")
+def prospects(report=Depends(owned_report), db: Session = Depends(get_db)):
+    return [entry_out(row) for row in prospect_discovery.list_candidates(db, report)]
+
+
+@router.post("/prospects/discover")
+def discover(report=Depends(owned_report), user: User = Depends(current_user), db: Session = Depends(get_db)):
+    limiter.check(f"discover:{user.id}", limit=5, window_seconds=3600)
+    return [entry_out(row) for row in prospect_discovery.discover(db, report, user)]
 
 
 class Refresh(BaseModel):
