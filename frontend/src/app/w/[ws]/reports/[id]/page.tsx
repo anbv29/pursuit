@@ -13,6 +13,7 @@ import { ReportQuestions } from "@/components/report/questions";
 import { ReportPlan } from "@/components/report/plan";
 import { ReportVersions } from "@/components/report/versions";
 import { ReportProspects } from "@/components/report/prospects";
+import { ReportSharing } from "@/components/report/sharing";
 import { useFeedback } from "@/components/feedback";
 import { useWorkspace } from "@/components/shell";
 import { Badge, Button, Card, Empty, Notice, Skeleton } from "@/components/ui";
@@ -154,6 +155,7 @@ export default function ReportPage() {
             {v && v.downgraded_facts + v.dropped_source_refs > 0 && ` Pursuit removed ${v.dropped_source_refs} unverifiable citation(s) and downgraded ${v.downgraded_facts} unsourced "fact(s)".`}
           </Notice>
           <Summary c={c} />
+          {workspace.role === "owner" && <ReportSharing path={reportPath} />}
           <ReportPlan path={reportPath} />
           <details className="print:hidden rounded-lg border border-line bg-surface p-4">
             <summary className="cursor-pointer font-medium text-trail">Ask about the report or explain a term</summary>
