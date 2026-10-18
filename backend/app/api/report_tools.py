@@ -8,7 +8,7 @@ from app.api.deps import current_user, workspace_member
 from app.core.db import get_db
 from app.core.ratelimit import limiter
 from app.models import Membership, User
-from app.services import report_chat, reports
+from app.services import report_chat, report_plan, reports
 
 router = APIRouter(prefix="/api/workspaces/{workspace_id}/reports/{report_id}", tags=["Report tools"])
 
@@ -41,3 +41,31 @@ def ask(
 ):
     limiter.check(f"report-ask:{user.id}", limit=30, window_seconds=3600)
     return entry_out(report_chat.answer(db, report, user, body.question))
+
+
+class TaskUpdate(BaseModel):
+    done: bool
+    notes: str = Field(default="", max_length=3000)
+
+
+@router.get("/plan")
+def plan(report=Depends(owned_report), db: Session = Depends(get_db)):
+    return [entry_out(row) for row in report_plan.list_tasks(db, report)]
+
+
+@router.post("/plan")
+def create_plan(
+    report=Depends(owned_report), user: User = Depends(current_user), db: Session = Depends(get_db)
+):
+    return [entry_out(row) for row in report_plan.create(db, report, user)]
+
+
+@router.patch("/plan/{task_id}")
+def update_plan(
+    task_id: uuid.UUID,
+    body: TaskUpdate,
+    report=Depends(owned_report),
+    user: User = Depends(current_user),
+    db: Session = Depends(get_db),
+):
+    return entry_out(report_plan.update_task(db, report, user, task_id, body.done, body.notes))

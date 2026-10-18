@@ -576,5 +576,9 @@ A commit cannot contain its own hash, so each entry's hash is filled in by the f
     - Bounded Haiku answers use saved report only, filter citations and persist question history. Workspace isolation and rate limits apply.
 
 ----------------------------------------------------------------------
-#110  (hash recorded in next commit)  feat: add report question history and plain-English help
+#110  284acb9  feat: add report question history and plain-English help
     - Report question UI with suggested prompts, source links, persistent answers and errors. Tests use mocked AI and verify foreign-workspace denial.
+
+----------------------------------------------------------------------
+#111  (hash recorded in next commit)  feat: build a persistent first-week action plan
+    - Seven report-specific days with interview scripts, completion criteria, notes and checkoffs. Idempotent plan creation and workspace-scoped updates.
