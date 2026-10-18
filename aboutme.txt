@@ -334,5 +334,9 @@ A commit cannot contain its own hash, so each entry's hash is filled in by the f
     - Result: tsc clean, eslint clean
 
 ----------------------------------------------------------------------
-#63  (hash recorded in next commit)  feat: add workspace approvals queue
+#63  8485c61  feat: add workspace approvals queue
     - frontend/src/app/w/[ws]/approvals/page.tsx: workspace-wide queue split into 'waiting for approval' and 'outcome unconfirmed', with simulated vs live labels; each item opens the experiment's actions tab so decisions are made next to the evidence
+
+----------------------------------------------------------------------
+#64  (hash recorded in next commit)  feat: add settings with integration status, members and data controls
+    - frontend/src/app/w/[ws]/settings/page.tsx: integration status for Fo (demo/live mode, connection status, 'not yet verified end-to-end' flag, tools, scope used) and Claude (enabled/model, what data it receives) with re-check; no secrets displayed; member list and owner-only add-member; owner-only JSON export and permanent workspace deletion behind a confirmation
