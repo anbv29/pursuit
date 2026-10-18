@@ -338,5 +338,11 @@ A commit cannot contain its own hash, so each entry's hash is filled in by the f
     - frontend/src/app/w/[ws]/approvals/page.tsx: workspace-wide queue split into 'waiting for approval' and 'outcome unconfirmed', with simulated vs live labels; each item opens the experiment's actions tab so decisions are made next to the evidence
 
 ----------------------------------------------------------------------
-#64  (hash recorded in next commit)  feat: add settings with integration status, members and data controls
+#64  69c0026  feat: add settings with integration status, members and data controls
     - frontend/src/app/w/[ws]/settings/page.tsx: integration status for Fo (demo/live mode, connection status, 'not yet verified end-to-end' flag, tools, scope used) and Claude (enabled/model, what data it receives) with re-check; no secrets displayed; member list and owner-only add-member; owner-only JSON export and permanent workspace deletion behind a confirmation
+
+----------------------------------------------------------------------
+#65  (hash recorded in next commit)  fix: stream workspace shell behind Suspense for production build
+    - frontend/src/app/w/[ws]/layout.tsx: now a server layout wrapping a client shell in Suspense, required by Next 16 Cache Components because route params are request-time data
+    - frontend/src/app/w/[ws]/workspace-client.tsx: client part using useParams
+    - Result: next build succeeds (13 routes; workspace routes partially prerendered); grep of .next/static finds no ANTHROPIC/FO_ACCESS_TOKEN/SESSION_SECRET/BACKEND_URL/backend host strings

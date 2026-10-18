@@ -1,15 +1,12 @@
-"use client";
+import { Suspense } from "react";
+import { WorkspaceClient } from "./workspace-client";
 
-import { useParams } from "next/navigation";
-import type { ReactNode } from "react";
-import { RequireAuth } from "@/components/session";
-import { WorkspaceShell } from "@/components/shell";
-
-export default function WorkspaceLayout({ children }: { children: ReactNode }) {
-  const { ws } = useParams<{ ws: string }>();
+// Route params are only known at request time, so the client shell streams in
+// behind a Suspense boundary (required by Cache Components).
+export default function WorkspaceLayout({ children }: LayoutProps<"/w/[ws]">) {
   return (
-    <RequireAuth>
-      <WorkspaceShell wsId={ws}>{children}</WorkspaceShell>
-    </RequireAuth>
+    <Suspense fallback={<div className="min-h-screen bg-paper" aria-busy />}>
+      <WorkspaceClient>{children}</WorkspaceClient>
+    </Suspense>
   );
 }
