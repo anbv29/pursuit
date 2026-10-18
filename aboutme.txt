@@ -703,5 +703,9 @@ a19a472  fix: preserve uncertain Fo submission results
     - Add real stack demo booking checks and document provider boundaries.
 
 ----------------------------------------------------------------------
-(hash recorded in next commit)  docs: record verified interview concierge
+6c07b51  docs: record verified interview concierge
     - Record 108 backend and 10 browser passes plus live Fo verification requirements.
+
+----------------------------------------------------------------------
+(hash recorded in next commit)  feat: define paid plans and billing records
+    - Add workspace billing orders credit grants and persistent usage reservations.

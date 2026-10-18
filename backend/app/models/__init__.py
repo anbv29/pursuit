@@ -9,6 +9,13 @@ from app.models.activity import (  # noqa: F401
     OutcomeEvent,
     Prospect,
 )
+from app.models.billing import (  # noqa: F401
+    BillingAccount,
+    BillingEvent,
+    BillingUse,
+    CheckoutOrder,
+    CreditGrant,
+)
 from app.models.connection import FoAuthorization, FoConnection  # noqa: F401
 from app.models.experiment import (  # noqa: F401
     Evidence,

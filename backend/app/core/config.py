@@ -29,6 +29,13 @@ class Settings(BaseSettings):
     resend_api_key: SecretStr | None = None
     resend_workspace_id: str = ""
     ai_timeout_seconds: float = 45.0
+    dodo_api_key: SecretStr | None = None
+    dodo_webhook_key: SecretStr | None = None
+    dodo_environment: Literal["test_mode", "live_mode"] = "test_mode"
+    dodo_business_id: str = ""
+    dodo_single_product: str = ""
+    dodo_founder_product: str = ""
+    dodo_team_product: str = ""
 
     fo_mode: Literal["demo", "live"] = "demo"
     # Emergency stop: when true, no external action can be approved or executed.
@@ -65,6 +72,8 @@ class Settings(BaseSettings):
     @model_validator(mode="after")
     def _production_guards(self) -> "Settings":
         if self.app_env == "production":
+            if self.dodo_api_key and self.dodo_environment != "live_mode":
+                raise ValueError("Production billing requires DODO_ENVIRONMENT=live_mode")
             if not self.cookie_secure:
                 raise ValueError("COOKIE_SECURE must be true in production")
             if "*" in self.cors_origin_list:
