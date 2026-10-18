@@ -434,6 +434,10 @@ A commit cannot contain its own hash, so each entry's hash is filled in by the f
     - Verified SDK 1.15 messages.stream accepts output_format and output_config
 
 ----------------------------------------------------------------------
-#80  (hash recorded in next commit)  feat: validate generated reports against retrieved sources
+#80  878902e  feat: validate generated reports against retrieved sources
     - backend/app/services/report_validate.py: walks every claim in the report; source ids not in the retrieved-source list are dropped; a 'fact' left without a valid source is downgraded to a low-confidence unsourced interpretation; competitor citations filtered and flagged unsourced; experiment metrics outside Pursuit's real metrics are replaced by the use-case default; rate targets normalised to 0-1 (e.g. 12 -> 0.12), samples clamped; fit scores clamped 1-5; lists capped; counts recorded in content.validation
     - tests/test_report_validate.py: 4 tests (kept sourced fact, invented/missing sources downgraded, competitor filtering, metric/target/score clamping)
+
+----------------------------------------------------------------------
+#81  (hash recorded in next commit)  feat: add report job runner with limits and restart recovery
+    - backend/app/services/reports.py: create (refuses with a clear error when ANTHROPIC_API_KEY is missing, one active report per workspace, 20/day limit, audited); run() background job claims QUEUED->RUNNING atomically, reads the site with the SSRF-hardened fetcher (falls back to web research if the site blocks us, and says so), streams progress lines to the DB, adds the site as source S0, synthesises, validates, stores content + sources + model; user-safe FAILED messages, internals only in logs; recover_stale() fails jobs orphaned by a restart
