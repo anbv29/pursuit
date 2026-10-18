@@ -1,26 +1,84 @@
 @import "tailwindcss";
 
+/*
+ * Pursuit design tokens.
+ * Warm paper neutrals, an ink foreground, and a single "trail" accent (deep
+ * spruce green). Decision colours are semantic and only used for verdicts.
+ */
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --paper: #faf8f4;
+  --surface: #ffffff;
+  --sunken: #f3f0ea;
+  --line: #e7e2d9;
+  --line-strong: #d6cfc3;
+  --ink: #1b1a17;
+  --ink-2: #4a463f;
+  --ink-3: #7a746a;
+  --trail: #1e6b52;
+  --trail-strong: #15523e;
+  --trail-soft: #e4f1ea;
+  --flag: #b4542c;
+  --flag-soft: #fbe9df;
+  --demo: #7c4dbd;
+  --demo-soft: #f1eafb;
+
+  --d-continue: #1e7a4c;
+  --d-iterate: #b07a12;
+  --d-pivot: #6b4fc4;
+  --d-stop: #b9382c;
+  --d-inconclusive: #6b6a66;
 }
 
 @theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
+  --color-paper: var(--paper);
+  --color-surface: var(--surface);
+  --color-sunken: var(--sunken);
+  --color-line: var(--line);
+  --color-line-strong: var(--line-strong);
+  --color-ink: var(--ink);
+  --color-ink-2: var(--ink-2);
+  --color-ink-3: var(--ink-3);
+  --color-trail: var(--trail);
+  --color-trail-strong: var(--trail-strong);
+  --color-trail-soft: var(--trail-soft);
+  --color-flag: var(--flag);
+  --color-flag-soft: var(--flag-soft);
+  --color-demo: var(--demo);
+  --color-demo-soft: var(--demo-soft);
+  --color-d-continue: var(--d-continue);
+  --color-d-iterate: var(--d-iterate);
+  --color-d-pivot: var(--d-pivot);
+  --color-d-stop: var(--d-stop);
+  --color-d-inconclusive: var(--d-inconclusive);
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+  --shadow-card: 0 1px 2px rgb(27 26 23 / 0.04), 0 1px 1px rgb(27 26 23 / 0.03);
+  --shadow-pop: 0 8px 24px rgb(27 26 23 / 0.12), 0 2px 6px rgb(27 26 23 / 0.06);
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  background: var(--paper);
+  color: var(--ink);
+}
+
+:focus-visible {
+  outline: 2px solid var(--trail);
+  outline-offset: 2px;
+  border-radius: 6px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+@keyframes pulse-soft {
+  50% { opacity: 0.55; }
+}
+.skeleton {
+  background: var(--sunken);
+  border-radius: 8px;
+  animation: pulse-soft 1.4s ease-in-out infinite;
 }
