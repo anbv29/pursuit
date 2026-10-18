@@ -12,6 +12,7 @@ from app.core.db import get_db, utcnow
 from app.core.ratelimit import limiter
 from app.models import (
     ActionRequest,
+    ActionUpdate,
     DeliveryTracking,
     Evidence,
     Experiment,
@@ -32,7 +33,7 @@ from app.models import (
     WorkspaceBudget,
 )
 from app.models.connection import FoConnection
-from app.models.enums import ActionStatus
+from app.models.enums import ActionStatus, Role
 from app.services import audit
 
 router = APIRouter(prefix="/api/workspaces/{workspace_id}", tags=["overview"])
@@ -99,6 +100,7 @@ def dashboard(m: Membership = Depends(workspace_member), db: Session = Depends(g
                 "mode": a.mode,
             }
             for a in pending
+            if m.role == Role.OWNER or not a.payload.get("coordination")
         ],
         "recent_outcomes": [
             {
@@ -190,6 +192,7 @@ def export(m: Membership = Depends(workspace_owner), db: Session = Depends(get_d
         "prospects": rows(Prospect),
         "interviews": rows(Interview),
         "actions": rows(ActionRequest),
+        "action_updates": scoped(ActionUpdate, ActionUpdate.action_id.in_(action_ids)),
         "outcomes": rows(OutcomeEvent),
         "recommendations": rows(Recommendation),
         "sources": scoped(Source, Source.workspace_id == ws_id),

@@ -1,11 +1,15 @@
 """Conversation operations are bound to a locally approved action, never a user-supplied Fo ID."""
 
+import logging
+
 from app.adapters.fo.base import FoUnavailable
 from app.adapters.fo.factory import get_adapter
 from app.core.db import utcnow
 from app.core.errors import AppError, Conflict, Forbidden
 from app.models.enums import ActionStatus
 from app.services import action_history, concierge, executor, instructions
+
+logger = logging.getLogger("pursuit.fo_conversation")
 
 
 def guard(db, exp, action, user):
@@ -56,6 +60,7 @@ def reply(db, exp, action, user, message):
         executor._finish(db, action, exp, result)
         action.error = None
     except Exception:
+        logger.exception("Fo clarification outcome uncertain for action %s", action.id)
         # Even a timeout can have sent the reply. Never invite an automatic resend.
         action.status = ActionStatus.UNKNOWN
         action.error = "The reply outcome is uncertain. Check Fo before submitting another reply."

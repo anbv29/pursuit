@@ -13,7 +13,8 @@ export default function ApprovalsPage() {
   const { workspace, base } = useWorkspace();
   const { data, loading, error } = useApi<Action[]>(`/workspaces/${workspace.id}/approvals`);
   const pending = data?.filter((a) => a.status === "PENDING_APPROVAL") ?? [];
-  const unknown = data?.filter((a) => a.status === "UNKNOWN") ?? [];
+  const attention = data?.filter((a) => a.status === "UNKNOWN" && a.fo_state === "needs_input") ?? [];
+  const unknown = data?.filter((a) => a.status === "UNKNOWN" && a.fo_state !== "needs_input") ?? [];
 
   const section = (title: string, description: string, items: Action[]) => (
     <Card>
@@ -46,6 +47,7 @@ export default function ApprovalsPage() {
         : loading && !data ? <Skeleton className="h-48" />
           : <>
             {section("Waiting for approval", "Requested actions that have not run.", pending)}
+            {section("Fo needs attention", "Review a question or interrupted task and approve a clarification if needed.", attention)}
             {section("Outcome unconfirmed", "Fo responded, but nobody has confirmed what actually happened.", unknown)}
           </>}
     </div>

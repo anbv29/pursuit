@@ -25,7 +25,7 @@ from app.core.errors import AppError, Conflict, NotFound
 from app.models import ActionRequest, Experiment, MessageVariant, Prospect, User, Workspace
 from app.models.enums import ActionKind, ActionStatus
 from app.schemas.actions import ActionIn
-from app.services import use_cases
+from app.services import action_history, use_cases
 from app.services.experiments import log
 
 ACTIVE = (ActionStatus.QUEUED, ActionStatus.RUNNING, ActionStatus.SUCCEEDED, ActionStatus.UNKNOWN)
@@ -94,6 +94,8 @@ def request(
     )
     db.add(action)
     db.flush()
+    if body.payload.get("coordination"):
+        action_history.remember(db, action, "requested", "Waiting for individual human approval.", user.id)
     log(db, exp, user, "action.request", action_id=str(action.id), kind=body.kind.value, mode=mode)
     if commit:
         db.commit()
@@ -113,8 +115,26 @@ def _check_budget(db: Session, workspace_id: uuid.UUID) -> None:
         raise AppError("Daily action limit reached for this workspace.", code="budget_exceeded")
 
 
+def coordination_owner(db, exp, user, action):
+    if not action.payload.get("coordination"):
+        return
+    from app.core.errors import Forbidden
+    from app.models import Membership
+    from app.models.enums import Role
+
+    if not db.scalar(
+        select(Membership.id).where(
+            Membership.workspace_id == exp.workspace_id,
+            Membership.user_id == user.id,
+            Membership.role == Role.OWNER,
+        )
+    ):
+        raise Forbidden("Only a workspace owner can control interview coordination.")
+
+
 def decide(db: Session, exp: Experiment, user: User, action_id: uuid.UUID, approve: bool, note: str = ""):
     action = get(db, exp, action_id)
+    coordination_owner(db, exp, user, action)
     if approve and get_settings().actions_disabled:
         raise AppError("External actions are temporarily disabled by the operator.", code="actions_disabled")
     if approve:
@@ -133,6 +153,14 @@ def decide(db: Session, exp: Experiment, user: User, action_id: uuid.UUID, appro
     if res.rowcount != 1:
         db.rollback()
         raise Conflict("This action has already been decided.", code="already_decided")
+    if action.payload.get("coordination"):
+        action_history.remember(
+            db,
+            action,
+            "approved" if approve else "rejected",
+            note or ("Approved for bounded coordination." if approve else "Not approved."),
+            user.id,
+        )
     log(db, exp, user, "action.approve" if approve else "action.reject", action_id=str(action.id), note=note)
     db.commit()
     db.refresh(action)
@@ -141,6 +169,7 @@ def decide(db: Session, exp: Experiment, user: User, action_id: uuid.UUID, appro
 
 def cancel(db: Session, exp: Experiment, user: User, action_id: uuid.UUID) -> ActionRequest:
     action = get(db, exp, action_id)
+    coordination_owner(db, exp, user, action)
     res = db.execute(
         update(ActionRequest)
         .where(

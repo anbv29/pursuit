@@ -687,5 +687,9 @@ e8ac5b3  feat: continue approved Fo conversations
     - Add scoped history clarification approval and human confirmed booking UI.
 
 ----------------------------------------------------------------------
-(hash recorded in next commit)  test: cover interview request boundaries
+772371a  test: cover interview request boundaries
     - Verify atomic batches individual approval deadlines and invalid inputs.
+
+----------------------------------------------------------------------
+(hash recorded in next commit)  fix: isolate concierge contacts and controls
+    - Verify saved conversations owner permissions and idempotent demo booking results.

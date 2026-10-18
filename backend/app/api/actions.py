@@ -10,7 +10,7 @@ from app.api.experiments import experiment_dep
 from app.core.db import get_db
 from app.core.ratelimit import limiter
 from app.models import ActionRequest, Experiment, Membership, User
-from app.models.enums import ActionStatus
+from app.models.enums import ActionStatus, Role
 from app.schemas.actions import ActionIn, ActionOut, ConfirmIn, DecisionIn
 from app.services import actions, delivery_tracking, executor
 
@@ -37,7 +37,7 @@ def track_email(
 @router.get("/approvals", response_model=list[ActionOut])
 def pending_approvals(m: Membership = Depends(workspace_member), db: Session = Depends(get_db)):
     """Workspace-wide queue of actions waiting for a human decision."""
-    return db.scalars(
+    rows = db.scalars(
         select(ActionRequest)
         .where(
             ActionRequest.workspace_id == m.workspace_id,
@@ -45,11 +45,20 @@ def pending_approvals(m: Membership = Depends(workspace_member), db: Session = D
         )
         .order_by(ActionRequest.created_at)
     ).all()
+    return [a for a in rows if m.role == Role.OWNER or not a.payload.get("coordination")]
 
 
 @router.get(EXP, response_model=list[ActionOut])
-def list_actions(exp: Experiment = Depends(experiment_dep), db: Session = Depends(get_db)):
-    return actions.list_for_experiment(db, exp)
+def list_actions(
+    exp: Experiment = Depends(experiment_dep),
+    m: Membership = Depends(workspace_member),
+    db: Session = Depends(get_db),
+):
+    return [
+        a
+        for a in actions.list_for_experiment(db, exp)
+        if m.role == Role.OWNER or not a.payload.get("coordination")
+    ]
 
 
 @router.post(EXP, response_model=ActionOut, status_code=201)

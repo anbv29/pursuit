@@ -127,6 +127,8 @@ def execute(action_id: uuid.UUID, poll_interval: float = 2.0) -> None:
 
 def confirm(db: Session, exp: Experiment, user: User, action: ActionRequest, succeeded: bool, note: str):
     """A human states what actually happened to an UNKNOWN (live) action."""
+    if action.payload.get("coordination"):
+        raise AppError("Use the interview result controls to confirm a booking, decline or no response.")
     res = db.execute(
         update(ActionRequest)
         .where(ActionRequest.id == action.id, ActionRequest.status == ActionStatus.UNKNOWN)
