@@ -540,5 +540,9 @@ A commit cannot contain its own hash, so each entry's hash is filled in by the f
     - inventory
 
 ----------------------------------------------------------------------
-#101  (hash recorded in next commit)  "docs:
+#101  f60da66  "docs:
     - record
+
+----------------------------------------------------------------------
+#102  (hash recorded in next commit)  feat:add-encrypted-user-connection-models
+    - User-owned-OAuth-models-with-expiring-PKCE-state-and-encrypted-token-blobs.

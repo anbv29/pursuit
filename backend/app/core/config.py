@@ -32,6 +32,9 @@ class Settings(BaseSettings):
     actions_disabled: bool = False
     fo_mcp_url: str = "https://mcp.api.wajo.ai/fo"
     fo_access_token: SecretStr | None = None
+    connection_encryption_key: SecretStr | None = None
+    fo_oauth_issuer: str = "https://mcp.api.wajo.ai"
+    public_app_url: str = "http://localhost:3000"
     fo_timeout_seconds: float = 60.0
     fo_max_poll_seconds: int = 600
     fo_daily_action_limit: int = Field(default=50, ge=1)
