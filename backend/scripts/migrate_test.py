@@ -2,6 +2,7 @@
 
 from alembic import command
 from alembic.config import Config
+
 from app.core.config import get_settings
 
 config = Config("alembic.ini")

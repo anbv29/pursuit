@@ -16,8 +16,13 @@ def product_ids():
 
 def configured():
     s = get_settings()
-    return bool(s.dodo_api_key and s.dodo_api_key.get_secret_value()
-                and s.dodo_webhook_key and s.dodo_webhook_key.get_secret_value() and s.dodo_business_id)
+    return bool(
+        s.dodo_api_key
+        and s.dodo_api_key.get_secret_value()
+        and s.dodo_webhook_key
+        and s.dodo_webhook_key.get_secret_value()
+        and s.dodo_business_id
+    )
 
 
 def client():

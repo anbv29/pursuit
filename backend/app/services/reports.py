@@ -126,9 +126,7 @@ def run(report_id: uuid.UUID) -> None:
             report.billing_use_id = entitlements.reserve(db, report.workspace_id, "research")
             db.commit()
         billing_token = ai_usage.BILLING_USE.set(report.billing_use_id)
-        usage_token = ai_usage.CONTEXT.set(
-            (report.workspace_id, report.id, "claude-haiku-5-5")
-        )
+        usage_token = ai_usage.CONTEXT.set((report.workspace_id, report.id, "claude-haiku-5-5"))
         if report.attempts > 3:
             _set(
                 db,

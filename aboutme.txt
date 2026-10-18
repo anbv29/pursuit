@@ -800,3 +800,7 @@ Live API credential checkpoint (see git log for hash):
     - Replacement saved directly to ignored backend/.env; existing MyDay key preserved. No credentials committed.
     - Added read-only catalog diagnostic; actual live API verification passed for all three advertised products. Webhook signing key remains missing.
     - No payment/customer/checkout/subscription created through the API and no money moved. Production webhook URL remains required.
+
+Deployment preparation checkpoint (see git log for hash):
+    - Fixed Ruff formatting/import/type-syntax issues in OAuth/interview migrations, migration helper and billing/report services. No schema or business behavior changed.
+    - Checked GitHub main; deployment push awaits user response to earlier no-push restriction. Vercel signed in; Render and Neon sign-ins pending.
