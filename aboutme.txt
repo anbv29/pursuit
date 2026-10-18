@@ -384,8 +384,13 @@ A commit cannot contain its own hash, so each entry's hash is filled in by the f
     - Secret scan: no API keys/private keys/tokens in git history; only .env.example tracked
 
 ----------------------------------------------------------------------
-#71  (hash recorded in next commit)  ci: add CI pipeline, Render blueprint and Neon URL support
+#71  61dc67c  ci: add CI pipeline, Render blueprint and Neon URL support
     - .github/workflows/ci.yml: backend (ruff incl. security rules, format check, pip-audit, migration up/down/up, pytest on real Postgres 16), frontend (npm ci, tsc, eslint, npm audit --omit=dev, next build), gitleaks secret scan over full history; read-only token permissions
     - render.yaml: FastAPI web service with preDeploy 'alembic upgrade head', /api/health check, production env (secure cookies, demo Fo by default), secrets marked sync:false
     - backend config: postgres:// and postgresql:// URLs (Neon/Render) normalised to the psycopg 3 driver; removed unused SESSION_SECRET setting (sessions are random tokens stored hashed, so it protected nothing and was a misleading control)
     - Note: CI is written but not executed (nothing pushed, per instructions)
+
+----------------------------------------------------------------------
+#72  (hash recorded in next commit)  docs: write README with architecture, setup, demo mode and testing
+    - README.md: replaced the one-line UTF-16 README (title kept) with product overview, six use cases on one lifecycle, architecture, security model summary, local setup with Docker Postgres, demo mode, AI synthesis, test commands (pytest, ruff, pip-audit, tsc, lint, build, Playwright) and doc links
+    - Verified: ruff format --check passes (as CI runs it)
