@@ -6,7 +6,8 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "eslint"
+    "lint": "eslint",
+    "serve": "next build && next start --port 3000"
   },
   "dependencies": {
     "lucide-react": "^1.59.0",
