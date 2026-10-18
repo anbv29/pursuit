@@ -7,11 +7,11 @@ import uuid
 from sqlalchemy import select, update
 from sqlalchemy.orm import Session
 
-from app.adapters.fo.base import FoResult, FoUnavailable
+from app.adapters.fo.base import FoResult, FoSubmissionUnknown, FoUnavailable
 from app.adapters.fo.factory import get_adapter
 from app.core.config import get_settings
 from app.core.db import new_session, utcnow
-from app.core.errors import Conflict
+from app.core.errors import AppError, Conflict
 from app.models import ActionRequest, Experiment, OutcomeEvent, User
 from app.models.enums import ActionKind, ActionStatus, DataOrigin, OutcomeKind
 from app.services import action_history, instructions
@@ -105,11 +105,16 @@ def execute(action_id: uuid.UUID, poll_interval: float = 2.0) -> None:
                 )
             _finish(db, action, exp, result)
         except FoUnavailable as exc:
+            submitted = submitted or isinstance(exc, FoSubmissionUnknown)
             action.status = ActionStatus.UNKNOWN if submitted else ActionStatus.FAILED
             action.error = str(exc)[:1000]
             action.finished_at = utcnow()
             action_history.remember(db, action, "unknown" if submitted else "failed", action.error)
             log(db, exp, None, "action.result", action_id=str(action.id), status=action.status.value)
+        except AppError as exc:
+            action.status = ActionStatus.UNKNOWN if submitted else ActionStatus.FAILED
+            action.error, action.finished_at = exc.message, utcnow()
+            action_history.remember(db, action, "unknown" if submitted else "failed", exc.message)
         except Exception:
             logger.exception("Action %s crashed", action_id)
             action.status = ActionStatus.UNKNOWN if submitted else ActionStatus.FAILED

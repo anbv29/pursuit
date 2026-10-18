@@ -118,6 +118,10 @@ def decide(db: Session, exp: Experiment, user: User, action_id: uuid.UUID, appro
     if approve and get_settings().actions_disabled:
         raise AppError("External actions are temporarily disabled by the operator.", code="actions_disabled")
     if approve:
+        if action.payload.get("coordination"):
+            from app.services.concierge import check_execution
+
+            check_execution(db, exp, action)
         _check_budget(db, exp.workspace_id)
     new_status = ActionStatus.QUEUED if approve else ActionStatus.REJECTED
     # Atomic compare-and-set: two concurrent approvals can't both win.

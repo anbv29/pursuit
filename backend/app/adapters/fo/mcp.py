@@ -13,7 +13,7 @@ import json
 
 import httpx
 
-from app.adapters.fo.base import FoResult, FoUnavailable
+from app.adapters.fo.base import FoResult, FoSubmissionUnknown, FoUnavailable
 from app.core.config import get_settings
 
 PROTOCOL_VERSION = "2025-06-18"
@@ -62,6 +62,10 @@ class McpFoAdapter:
         try:
             r = self._client.post(self._url, headers=self._headers(), json=msg)
         except httpx.HTTPError as exc:
+            if method == "tools/call" and (params or {}).get("name") == "ask_fo":
+                raise FoSubmissionUnknown(
+                    "Fo may have received the request; check its outcome before retrying."
+                ) from exc
             raise FoUnavailable("Fo is unreachable (network error or timeout).") from exc
         if r.status_code in (401, 403):
             if r.status_code == 401 and self._user_id is not None and retry_auth:
@@ -77,6 +81,8 @@ class McpFoAdapter:
         if r.status_code == 429:
             raise FoUnavailable("Fo rate limit reached. Try again later.")
         if r.status_code >= 500:
+            if method == "tools/call" and (params or {}).get("name") == "ask_fo":
+                raise FoSubmissionUnknown("Fo returned a server error after submission; outcome unknown.")
             raise FoUnavailable(f"Fo is having problems (HTTP {r.status_code}).")
         if r.status_code >= 400:
             raise FoUnavailable(f"Fo refused the request (HTTP {r.status_code}).")
@@ -154,11 +160,27 @@ class McpFoAdapter:
         return self.interpret(result)
 
     def poll(self, conversation_ref: str | None) -> FoResult:
+        if not conversation_ref:
+            raise FoUnavailable("No task conversation ID was returned. Review Fo before trying again.")
         self._ensure_session()
         args: dict = {"waitSeconds": 40}
         if conversation_ref:
             args["conversationId"] = conversation_ref
         return self.interpret(self._rpc("tools/call", {"name": "get_fo_reply", "arguments": args}))
+
+    def reply(self, instruction: str, conversation_ref: str) -> FoResult:
+        if not conversation_ref:
+            raise FoUnavailable("This task has no linked Fo conversation.")
+        self._ensure_session()
+        return self.interpret(
+            self._rpc(
+                "tools/call",
+                {
+                    "name": "ask_fo",
+                    "arguments": {"message": instruction, "conversationId": conversation_ref},
+                },
+            )
+        )
 
     def health(self) -> dict:
         try:

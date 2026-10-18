@@ -30,6 +30,10 @@ class FoUnavailable(Exception):
     """Credentials missing/revoked, provider down, or rate limited. Never a success."""
 
 
+class FoSubmissionUnknown(FoUnavailable):
+    """The outgoing request may have reached Fo. Do not submit it again automatically."""
+
+
 class FoAdapter(Protocol):
     mode: Literal["demo", "live"]
 
@@ -38,3 +42,5 @@ class FoAdapter(Protocol):
     def poll(self, conversation_ref: str | None) -> FoResult: ...
 
     def health(self) -> dict: ...
+
+    def reply(self, instruction: str, conversation_ref: str) -> FoResult: ...

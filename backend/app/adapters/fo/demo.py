@@ -35,3 +35,11 @@ class DemoFoAdapter:
 
     def health(self) -> dict:
         return {"mode": "demo", "status": "simulated", "detail": "Demo mode: no real actions are performed."}
+
+    def reply(self, instruction: str, conversation_ref: str) -> FoResult:
+        return FoResult(
+            state="complete",
+            summary="[DEMO] Simulated reply. Nothing was sent.",
+            conversation_ref=conversation_ref,
+            simulated=True,
+        )

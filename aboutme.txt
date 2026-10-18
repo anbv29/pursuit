@@ -667,5 +667,9 @@ ffe7c96  feat: prepare approved interview tasks
     - Add atomic prospect selection and bounded Fo coordination instructions.
 
 ----------------------------------------------------------------------
-(hash recorded in next commit)  feat: persist Fo coordination progress
+041edfa  feat: persist Fo coordination progress
     - Save scoped progress and recheck owner prospect and deadline before execution.
+
+----------------------------------------------------------------------
+(hash recorded in next commit)  feat: continue approved Fo conversations
+    - Bind clarifications to saved conversations and preserve uncertain submission states.
