@@ -783,3 +783,8 @@ bcfd25a  test: verify billing access and record results
     - Add three passing access tests; record 125 backend and 12 browser passes with live payment limits.
 
 Final billing verification log checkpoint: local commits only; see git log for this documentation commit.
+
+Dodo merchant test catalog checkpoint (see git log for hash):
+    - Created Pursuit Single Report USD 15 once, Founder USD 29 monthly and Team USD 79 monthly in Test Mode. Existing MyDay product preserved.
+    - Saved verified test product IDs and business ID to ignored backend/.env. No API key created or saved.
+    - Prepared restricted API key form; creation awaits action-time security confirmation. Webhooks need a reachable HTTPS endpoint. No payment executed.
