@@ -44,7 +44,7 @@ def summary(m: Membership = Depends(workspace_member), db: Session = Depends(get
         "reserved_usd": reserved,
         "remaining_usd": max(Decimal(0), limit - estimate - reserved),
         "research_model": budget.research_model if budget else get_settings().research_model,
-        "models": list(ai_usage.MODELS),
+        "models": ["claude-haiku-5-5"],
         "pricing_checked_at": "2026-10-18",
         "historical_report_estimate": {"low": min(measured), "high": max(measured), "samples": len(measured)}
         if measured
@@ -72,7 +72,7 @@ def summary(m: Membership = Depends(workspace_member), db: Session = Depends(get
 
 class BudgetIn(BaseModel):
     monthly_limit_usd: Decimal = Field(ge=0, le=1000, decimal_places=4)
-    research_model: Literal["claude-haiku-5-5", "claude-sonnet-5-5", "claude-opus-5-5"]
+    research_model: Literal["claude-haiku-5-5"]
 
 
 @router.patch("")

@@ -24,6 +24,9 @@ class UsageCall(IdMixin, Base):
         ForeignKey("workspaces.id", ondelete="CASCADE"), index=True
     )
     report_id: Mapped[uuid.UUID | None] = mapped_column(ForeignKey("reports.id", ondelete="SET NULL"))
+    billing_use_id: Mapped[uuid.UUID | None] = mapped_column(
+        ForeignKey("billing_uses.id", ondelete="SET NULL", name="fk_usage_billing_use"), index=True
+    )
     model: Mapped[str] = mapped_column(String(80))
     operation: Mapped[str] = mapped_column(String(40))
     status: Mapped[str] = mapped_column(String(20), default="RESERVED")

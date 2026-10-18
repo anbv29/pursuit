@@ -23,7 +23,7 @@ class Settings(BaseSettings):
     trusted_proxy_hops: int = Field(default=0, ge=0, le=5)
 
     anthropic_api_key: SecretStr | None = None
-    anthropic_model: str = "claude-opus-5-5"
+    anthropic_model: str = "claude-haiku-5-5"
     research_model: str = "claude-haiku-5-5"
     report_worker_enabled: bool = True
     resend_api_key: SecretStr | None = None

@@ -4,6 +4,7 @@ Rates verified 2026-10-18 against Anthropic pricing. Estimates are not invoices.
 Unknown/failed calls retain reservations, since a timed-out call may be billable.
 """
 
+import json
 from contextlib import contextmanager
 from contextvars import ContextVar
 from decimal import Decimal
@@ -12,11 +13,13 @@ from sqlalchemy import func, select
 
 from app.core.db import new_session, utcnow
 from app.core.errors import AppError
-from app.models import Workspace
+from app.models import BillingUse, CreditGrant, Workspace
 from app.models.usage import UsageCall, WorkspaceBudget
+from app.services.plans import PLANS
 
 MODELS = {"claude-haiku-5-5": (0.10, 0.50), "claude-sonnet-5-5": (2, 10), "claude-opus-5-5": (4, 20)}
 CONTEXT = ContextVar("ai_usage_context", default=None)
+BILLING_USE = ContextVar("billing_use", default=None)
 
 
 @contextmanager
@@ -34,10 +37,7 @@ def model(fallback):
 
 
 def preferred_model(db, workspace_id):
-    from app.core.config import get_settings
-
-    budget = db.get(WorkspaceBudget, workspace_id)
-    return budget.research_model if budget else get_settings().research_model
+    return "claude-haiku-5-5"  # included paid allowances are priced for Haiku
 
 
 def month_start():
@@ -59,15 +59,17 @@ def estimate(model_id, usage):
     return Decimal(str(amount + searches * 0.01)).quantize(Decimal("0.000001"))
 
 
-def reserve(model_id, max_tokens, searches=0, operation="research"):
+def reserve(model_id, max_tokens, searches=0, operation="research", max_input=1_000_000):
     current = CONTEXT.get()
     if current is None:
         return None
     if model_id not in MODELS:
         raise AppError("This model has no configured pricing. Choose a supported model in Settings.")
     # Reserve at the long-context rate for a whole context window plus output and search.
-    base, output = (0.5, 2.5) if model_id == "claude-haiku-5-5" else MODELS[model_id]
-    amount = Decimal(str(base + max_tokens * output / 1_000_000 + searches * 0.01))
+    base, output = MODELS[model_id]
+    if model_id == "claude-haiku-5-5" and max_input > 100_000:
+        base, output = 0.5, 2.5
+    amount = Decimal(str((max_input * base + max_tokens * output) / 1_000_000 + searches * 0.01))
     with new_session() as db:
         db.execute(select(Workspace.id).where(Workspace.id == current[0]).with_for_update())
         budget = db.get(WorkspaceBudget, current[0])
@@ -81,11 +83,37 @@ def reserve(model_id, max_tokens, searches=0, operation="research"):
             raise AppError(
                 "Workspace AI budget reached. An owner can adjust it in Settings.", "budget_exceeded"
             )
+        use_id = BILLING_USE.get()
+        if use_id:
+            use = db.get(BillingUse, use_id)
+            grant = db.get(CreditGrant, use.grant_id)
+            total = func.coalesce(UsageCall.estimated_usd, UsageCall.reserved_usd)
+            job_cost = db.scalar(
+                select(func.coalesce(func.sum(total), 0)).where(UsageCall.billing_use_id == use_id)
+            )
+            grant_cost = db.scalar(
+                select(func.coalesce(func.sum(total), 0))
+                .join(BillingUse, BillingUse.id == UsageCall.billing_use_id)
+                .where(BillingUse.grant_id == grant.id)
+            )
+            job_limit = Decimal("0.10") if use.kind == "question" else Decimal("2.00")
+            grant_limit = Decimal(PLANS[grant.plan]["price_cents"]) / 100 * Decimal("0.30")
+            if (
+                model_id != "claude-haiku-5-5"
+                or job_cost + amount > job_limit
+                or grant_cost + amount > grant_limit
+            ):
+                raise AppError(
+                    "AI safety budget reached for this request or allowance. "
+                    "Contact support; no extra charge was made.",
+                    "budget_exceeded",
+                )
         row = UsageCall(
             workspace_id=current[0],
             report_id=current[1],
             model=model_id,
             operation=operation,
+            billing_use_id=use_id,
             reserved_usd=amount,
         )
         db.add(row)
@@ -112,7 +140,8 @@ def settle(call_id, message):
 def stream(client, **kwargs):
     tools = kwargs.get("tools", [])
     searches = sum(t.get("max_uses", 0) for t in tools if t.get("name") == "web_search")
-    call = reserve(kwargs["model"], kwargs["max_tokens"], searches)
+    bound = 1_000_000 if tools else prompt_bound(kwargs)
+    call = reserve(kwargs["model"], kwargs["max_tokens"], searches, max_input=bound)
     result = None
     try:
         with client.messages.stream(**kwargs) as response:
@@ -123,10 +152,23 @@ def stream(client, **kwargs):
 
 
 def parse(client, **kwargs):
-    call = reserve(kwargs["model"], kwargs["max_tokens"], operation="answer")
+    call = reserve(kwargs["model"], kwargs["max_tokens"], operation="answer", max_input=prompt_bound(kwargs))
     result = None
     try:
         result = client.messages.parse(**kwargs)
         return result
     finally:
         settle(call, result)
+
+
+def prompt_bound(kwargs):
+    # UTF-8 bytes bound text token count; allow additional system/schema overhead.
+    return min(
+        1_000_000,
+        len(
+            json.dumps(
+                {"system": kwargs.get("system"), "messages": kwargs.get("messages")}, ensure_ascii=False
+            ).encode()
+        )
+        + 8192,
+    )
