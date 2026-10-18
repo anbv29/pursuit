@@ -35,12 +35,17 @@ def get_engine():
     return _engine
 
 
-def get_db() -> Iterator[Session]:
+def new_session() -> Session:
+    """A standalone session for background work (caller must close it)."""
     if _SessionLocal is None:
         configure()
     if _SessionLocal is None:
         raise RuntimeError("Database session factory not configured")
-    db = _SessionLocal()
+    return _SessionLocal()
+
+
+def get_db() -> Iterator[Session]:
+    db = new_session()
     try:
         yield db
     finally:

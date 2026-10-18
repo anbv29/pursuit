@@ -131,6 +131,11 @@ A commit cannot contain its own hash, so each entry's hash is filled in by the f
     - app/adapters/fo/factory.py: picks adapter by mode
 
 ----------------------------------------------------------------------
-#22  (hash recorded in next commit)  feat: add action schemas and deterministic Fo instruction builder
+#22  a4711de  feat: add action schemas and deterministic Fo instruction builder
     - app/services/instructions.py: builds narrow Fo instructions for send_email, schedule_meeting and research_task from validated fields only; strips control characters, fences user content and tells Fo to treat it as content (prompt-injection defence), forbids any extra action
     - app/schemas/actions.py: per-kind payload validation, recipient must be one valid email, optional client idempotency key (restricted charset), approve/reject and human outcome confirmation models, action output model
+
+----------------------------------------------------------------------
+#23  (hash recorded in next commit)  feat: add action request, approval and cancellation service
+    - app/services/actions.py: request validates use-case allowed kinds, prospect/variant ownership, archived state; idempotency key (client or content fingerprint, namespaced per experiment) blocks duplicate sends; mode forced to demo for demo workspaces or FO_MODE=demo; approval/rejection and cancellation use atomic compare-and-set updates so concurrent clicks can't double-approve; 24h per-workspace action budget; documented status semantics
+    - app/core/db.py: new_session() for background execution
