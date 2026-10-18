@@ -747,5 +747,9 @@ abb5f1e  feat: separate payment configuration and team access
     - Add private Dodo configuration and preserve read access when team access expires.
 
 ----------------------------------------------------------------------
-(hash recorded in next commit)  feat: add workspace pricing and billing screen
+fd19a14  feat: add workspace pricing and billing screen
     - Add plan comparison balances checkout status and subscription portal controls.
+
+----------------------------------------------------------------------
+(hash recorded in next commit)  feat: include a clearly synthetic free sample report
+    - Seed a readable report and first week plan without paid AI calls.

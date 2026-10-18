@@ -277,3 +277,6 @@ def seed_workspace(db: Session, ws: Workspace, user: User) -> None:
         )
     db.commit()
     recommendations.generate(db, pd, user, use_ai=False)
+    from app.services.demo_report import seed
+
+    seed(db, ws, user)
