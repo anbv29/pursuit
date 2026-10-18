@@ -164,3 +164,16 @@ def test_interpret_matches_verified_fo_schema():
         == "failed"
     )
     assert McpFoAdapter.interpret({"content": [{"type": "text", "text": "???"}]}).state == "needs_input"
+
+
+def test_emergency_stop_blocks_approval(api, exp_url, monkeypatch):
+    monkeypatch.setenv("ACTIONS_DISABLED", "true")
+    get_settings.cache_clear()
+    try:
+        a = _request(api, exp_url)
+        r = api.post(f"{exp_url}/actions/{a['id']}/decision", {"decision": "approve"})
+        assert r.status_code == 400 and r.json()["error"]["code"] == "actions_disabled"
+        assert api.get(f"{exp_url}/actions").json()[0]["status"] == "PENDING_APPROVAL"
+    finally:
+        monkeypatch.delenv("ACTIONS_DISABLED")
+        get_settings.cache_clear()

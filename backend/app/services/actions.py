@@ -110,6 +110,8 @@ def _check_budget(db: Session, workspace_id: uuid.UUID) -> None:
 
 def decide(db: Session, exp: Experiment, user: User, action_id: uuid.UUID, approve: bool, note: str = ""):
     action = get(db, exp, action_id)
+    if approve and get_settings().actions_disabled:
+        raise AppError("External actions are temporarily disabled by the operator.", code="actions_disabled")
     if approve:
         _check_budget(db, exp.workspace_id)
     new_status = ActionStatus.QUEUED if approve else ActionStatus.REJECTED

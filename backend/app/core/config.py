@@ -26,6 +26,8 @@ class Settings(BaseSettings):
     ai_timeout_seconds: float = 45.0
 
     fo_mode: Literal["demo", "live"] = "demo"
+    # Emergency stop: when true, no external action can be approved or executed.
+    actions_disabled: bool = False
     fo_mcp_url: str = "https://mcp.api.wajo.ai/fo"
     fo_access_token: SecretStr | None = None
     fo_timeout_seconds: float = 60.0

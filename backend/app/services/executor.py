@@ -66,6 +66,12 @@ def execute(action_id: uuid.UUID, poll_interval: float = 2.0) -> None:
         if claimed.rowcount != 1:
             return  # someone else is running it, or it was cancelled
         action = db.scalar(select(ActionRequest).where(ActionRequest.id == action_id))
+        if get_settings().actions_disabled:  # emergency stop also catches already-queued work
+            action.status = ActionStatus.FAILED
+            action.error = "Not executed: external actions were disabled by the operator."
+            action.finished_at = utcnow()
+            db.commit()
+            return
         exp = db.get(Experiment, action.experiment_id)
         submitted = False
         try:

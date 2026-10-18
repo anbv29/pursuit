@@ -362,10 +362,16 @@ A commit cannot contain its own hash, so each entry's hash is filled in by the f
     - Result: Playwright responsive 2 passed (desktop + mobile)
 
 ----------------------------------------------------------------------
-#68  (hash recorded in next commit)  fix: align Fo adapter with Fo's verified MCP output schema
+#68  8702ae5  fix: align Fo adapter with Fo's verified MCP output schema
     - Verified against the live Fo endpoint with read-only calls only (initialize + tools/list; no ask_fo, nothing sent): server wajo-fo 0.1.0, SSE responses, no session id, OAuth resource metadata with scope 'mcp', tools ask_fo/get_fo_reply/list_fo_conversations/get_fo_conversation/start_fo_call, ask_fo/get_fo_reply output {response, status complete
     - working
     - failed, conversationId, progress, elapsedSeconds}
     - app/adapters/fo/mcp.py: read the real 'response' field (previously looked for 'reply', which would have lost Fo's summary); docstring records exactly what is and isn't verified (an authenticated tool call from the server is still unverified)
     - tests/test_actions.py: interpret() pinned to the published schema
     - Result: pytest 61 passed
+
+----------------------------------------------------------------------
+#69  (hash recorded in next commit)  feat: add emergency stop for all external actions
+    - ACTIONS_DISABLED setting (env) blocks approvals with a clear error and makes the executor refuse already-queued actions (marked FAILED, 'not executed'), for incident response and emergency agent shutdown
+    - tests: approval blocked while the stop is on and the action stays PENDING_APPROVAL
+    - .env.example: documents ACTIONS_DISABLED
