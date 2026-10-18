@@ -572,5 +572,9 @@ A commit cannot contain its own hash, so each entry's hash is filled in by the f
     - Cancel/resume controls, durable job migration with backfill defaults for existing reports, and tests for resume and cancel during research.
 
 ----------------------------------------------------------------------
-#109  (hash recorded in next commit)  feat: add saved report questions with citations
+#109  ba31cb4  feat: add saved report questions with citations
     - Bounded Haiku answers use saved report only, filter citations and persist question history. Workspace isolation and rate limits apply.
+
+----------------------------------------------------------------------
+#110  (hash recorded in next commit)  feat: add report question history and plain-English help
+    - Report question UI with suggested prompts, source links, persistent answers and errors. Tests use mocked AI and verify foreign-workspace denial.
