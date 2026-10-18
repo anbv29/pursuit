@@ -269,6 +269,11 @@ A commit cannot contain its own hash, so each entry's hash is filled in by the f
     - frontend/src/app/w/[ws]/layout.tsx: auth guard + workspace shell
 
 ----------------------------------------------------------------------
-#49  (hash recorded in next commit)  feat: add dashboard and shared experiment display bits
+#49  98d1eb0  feat: add dashboard and shared experiment display bits
     - frontend/src/components/bits.tsx: decision chip, 9-segment lifecycle stage bar, RateView (always shows numerator/denominator and 95% interval, never a bare %), interval bar with target marker
     - frontend/src/app/w/[ws]/page.tsx: dashboard from persisted data only - active experiments with stage + latest verdict, items needing approval/confirmation (simulated ones labelled), latest recommendations with confidence, recently recorded outcomes with demo labels; distinct empty state for new workspaces; skeleton and error states
+
+----------------------------------------------------------------------
+#50  (hash recorded in next commit)  feat: add success criteria editor
+    - frontend/src/components/criteria-editor.tsx: edit success criteria with known metrics, comparator, target (rates entered as %), and minimum sample size before a criterion is judged; add/remove rows (max 10); accessible labels
+    - Smoke test (manual): backend + Next dev servers running, /api proxy works, register -> demo workspace -> dashboard verified with curl through the proxy
