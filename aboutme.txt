@@ -794,3 +794,9 @@ Live Dodo catalog checkpoint (see git log for hash):
     - Imported exactly three Pursuit products into live catalog at USD 15 once, USD 29 monthly and USD 79 monthly; preserved MyDay.
     - Saved live product IDs and live_mode in ignored backend/.env. Prepared restricted live key; creation awaits browser security confirmation.
     - No payment, refund, payout or subscription transaction executed. Webhook requires production HTTPS origin.
+
+Live API credential checkpoint (see git log for hash):
+    - Created restricted live Pursuit backend key after confirmation. Initial unused key appeared in setup output; revoked with user approval and replaced.
+    - Replacement saved directly to ignored backend/.env; existing MyDay key preserved. No credentials committed.
+    - Added read-only catalog diagnostic; actual live API verification passed for all three advertised products. Webhook signing key remains missing.
+    - No payment/customer/checkout/subscription created through the API and no money moved. Production webhook URL remains required.
