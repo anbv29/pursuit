@@ -14,8 +14,9 @@ from app.core.config import get_settings
 from app.core.db import new_session, utcnow
 from app.core.errors import AppError, NotFound
 from app.models import Report, User, Workspace
+from app.models.usage import WorkspaceBudget
 from app.schemas.report import ReportIn
-from app.services import audit, fetcher, report_research, report_validate
+from app.services import ai_usage, audit, fetcher, report_research, report_validate
 from app.services.report_worker import LEASE, eligible, heartbeat
 
 logger = logging.getLogger("pursuit.reports")
@@ -56,12 +57,14 @@ def create(db: Session, ws: Workspace, user: User, body: ReportIn) -> Report:
     if (today or 0) >= DAILY_LIMIT:
         raise AppError("Daily report limit reached for this workspace.", "budget_exceeded")
     inputs = body.model_dump(mode="json", exclude={"company_url", "company_name"})
+    budget = db.get(WorkspaceBudget, ws.id)
     report = Report(
         workspace_id=ws.id,
         created_by=user.id,
         company_url=str(body.company_url),
         company_name=body.company_name.strip(),
         inputs={k: v for k, v in inputs.items() if v},
+        model=budget.research_model if budget else get_settings().research_model,
     )
     db.add(report)
     db.flush()
@@ -97,6 +100,7 @@ def run(report_id: uuid.UUID) -> None:
     db = new_session()
     owner = uuid.uuid4().hex
     stop = threading.Event()
+    usage_token = None
     try:
         claimed = db.execute(
             update(Report)
@@ -115,6 +119,9 @@ def run(report_id: uuid.UUID) -> None:
         if claimed.rowcount != 1:
             return
         report = db.get(Report, report_id)
+        usage_token = ai_usage.CONTEXT.set(
+            (report.workspace_id, report.id, report.model or get_settings().research_model)
+        )
         if report.attempts > 3:
             _set(
                 db,
@@ -184,7 +191,7 @@ def run(report_id: uuid.UUID) -> None:
             report.company_name = data["snapshot"]["name"][:160]
         report.content = data
         report.sources = found.sources
-        report.model = get_settings().research_model
+        report.model = ai_usage.model(get_settings().research_model)
         report.status, report.progress, report.finished_at = "SUCCEEDED", "Done", utcnow()
         report.lease_until = None
         audit.record(
@@ -238,6 +245,8 @@ def run(report_id: uuid.UUID) -> None:
                 finished_at=utcnow(),
             )
     finally:
+        if usage_token is not None:
+            ai_usage.CONTEXT.reset(usage_token)
         stop.set()
         db.close()
 

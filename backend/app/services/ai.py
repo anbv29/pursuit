@@ -16,6 +16,7 @@ from pydantic import BaseModel, Field
 
 from app.core.config import get_settings
 from app.models.enums import Decision
+from app.services import ai_usage
 
 logger = logging.getLogger("pursuit.ai")
 
@@ -69,10 +70,11 @@ def synthesize(exp, metrics: dict, criteria: list[dict], evidence: list) -> AISy
     if not s.ai_enabled:
         return None
     client = anthropic.Anthropic(
-        api_key=s.anthropic_api_key.get_secret_value(), timeout=s.ai_timeout_seconds, max_retries=1
+        api_key=s.anthropic_api_key.get_secret_value(), timeout=s.ai_timeout_seconds, max_retries=0
     )
     try:
-        response = client.messages.parse(
+        response = ai_usage.parse(
+            client,
             model=s.anthropic_model,
             max_tokens=16000,
             system=SYSTEM,

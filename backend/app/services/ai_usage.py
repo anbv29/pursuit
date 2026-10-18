@@ -33,6 +33,13 @@ def model(fallback):
     return current[2] if current and current[2] else fallback
 
 
+def preferred_model(db, workspace_id):
+    from app.core.config import get_settings
+
+    budget = db.get(WorkspaceBudget, workspace_id)
+    return budget.research_model if budget else get_settings().research_model
+
+
 def month_start():
     return utcnow().replace(day=1, hour=0, minute=0, second=0, microsecond=0)
 

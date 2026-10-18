@@ -15,12 +15,14 @@ act on anything, and the server validates the output afterwards.
 import json
 import logging
 from concurrent.futures import ThreadPoolExecutor
+from contextvars import copy_context
 from dataclasses import dataclass, field
 
 import anthropic
 
 from app.core.config import get_settings
 from app.schemas.report import PartMarket, PartPlan, PartProfile, ReportContent
+from app.services import ai_usage
 
 logger = logging.getLogger("pursuit.reports")
 
@@ -109,7 +111,7 @@ def _client() -> anthropic.Anthropic:
     s = get_settings()
     if not s.ai_enabled:
         raise ResearchError("Report generation needs ANTHROPIC_API_KEY on the server.")
-    return anthropic.Anthropic(api_key=s.anthropic_api_key.get_secret_value(), timeout=600, max_retries=2)
+    return anthropic.Anthropic(api_key=s.anthropic_api_key.get_secret_value(), timeout=600, max_retries=0)
 
 
 def _collect_sources(blocks, seen: dict[str, dict]) -> None:
@@ -151,8 +153,9 @@ def research(
     texts: list[str] = []
     for attempt in range(MAX_PAUSE_RESTARTS + 1):
         on_progress("Researching the market, competitors and pricing on the web…")
-        with client.messages.stream(
-            model=s.research_model,
+        with ai_usage.stream(
+            client,
+            model=ai_usage.model(s.research_model),
             max_tokens=32000,
             system=RESEARCH_SYSTEM,
             tools=tools,
@@ -173,7 +176,8 @@ def research(
 
 
 def _synthesize_part(client, model: str, context: str, part_model, instruction: str):
-    with client.messages.stream(
+    with ai_usage.stream(
+        client,
         model=model,
         max_tokens=24000,
         system=SYNTHESIS_SYSTEM,
@@ -212,7 +216,12 @@ def synthesize(
     )
     parts = [(m, i) for m, i in PARTS if not sections or set(m.model_fields) & set(sections)]
     with ThreadPoolExecutor(max_workers=len(parts)) as pool:
-        futures = [pool.submit(_synthesize_part, client, s.research_model, context, m, i) for m, i in parts]
+        futures = [
+            pool.submit(
+                copy_context().run, _synthesize_part, client, ai_usage.model(s.research_model), context, m, i
+            )
+            for m, i in parts
+        ]
         merged: dict = dict(base or {})
         for f in futures:
             generated = f.result().model_dump()

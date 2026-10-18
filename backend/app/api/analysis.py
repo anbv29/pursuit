@@ -13,7 +13,7 @@ from app.core.ratelimit import limiter
 from app.models import Experiment, User
 from app.models.enums import DataOrigin, Decision
 from app.schemas.common import ORM
-from app.services import funnel, recommendations
+from app.services import ai_usage, funnel, recommendations
 
 router = APIRouter(prefix="/api/workspaces/{workspace_id}/experiments/{experiment_id}", tags=["analysis"])
 
@@ -66,7 +66,8 @@ def generate(
     db: Session = Depends(get_db),
 ):
     limiter.check(f"recommend:{user.id}", limit=20, window_seconds=3600)
-    return recommendations.generate(db, exp, user, use_ai=body.use_ai)
+    with ai_usage.scope(exp.workspace_id):
+        return recommendations.generate(db, exp, user, use_ai=body.use_ai)
 
 
 def _store(db, exp, user, stages: list[dict], label: str, origin: DataOrigin, warnings: list[str]):

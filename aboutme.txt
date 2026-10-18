@@ -616,5 +616,9 @@ A commit cannot contain its own hash, so each entry's hash is filled in by the f
     - Owner share controls require review, expire in 1-30 days and support revocation. Public view contains only snapshot content and sources, with no workspace mutations.
 
 ----------------------------------------------------------------------
-#120  (hash recorded in next commit)  feat: meter AI usage and reserve workspace budgets
+#120  3ea73b6  feat: meter AI usage and reserve workspace budgets
     - Token-ledger and monthly-budget models. Serialize reservations before calls, record provider token counts, estimate tiered Haiku pricing and search fees, retain unknown-call reservations.
+
+----------------------------------------------------------------------
+#121  (hash recorded in next commit)  feat: enforce estimated AI budgets for all research calls
+    - Meter report research/synthesis, report questions, company discovery and recommendations. Threaded synthesis preserves workspace context. Disable opaque SDK retries and record actual selected models.

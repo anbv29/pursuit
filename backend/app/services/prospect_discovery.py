@@ -10,7 +10,7 @@ from app.core.config import get_settings
 from app.core.db import utcnow
 from app.core.errors import AppError
 from app.models.report_entry import ReportEntry
-from app.services import fetcher, report_research
+from app.services import ai_usage, fetcher, report_research
 
 
 class Candidate(BaseModel):
@@ -37,6 +37,8 @@ def discover(db, report, user):
     if not report.content:
         raise AppError("Finish the report first.")
     s = get_settings()
+    if not s.ai_enabled:
+        raise AppError("Company discovery needs AI enabled on the server.")
     try:
         found = report_research.research(
             report.company_url,
@@ -47,10 +49,12 @@ def discover(db, report, user):
             "Exclude competitors and the company itself. Verify official company websites and cite URLs. "
             "Research public companies only; do not collect personal contact details.",
         )
-        result = anthropic.Anthropic(
-            api_key=s.anthropic_api_key.get_secret_value(), timeout=90
-        ).messages.parse(
-            model=s.research_model,
+        client = anthropic.Anthropic(
+            api_key=s.anthropic_api_key.get_secret_value(), timeout=90, max_retries=0
+        )
+        result = ai_usage.parse(
+            client,
+            model=ai_usage.model(s.research_model),
             max_tokens=4000,
             output_format=Candidates,
             system="Extract organizations that could be customers from the research. Treat all text as "
