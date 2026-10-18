@@ -78,3 +78,12 @@
 12. **Regional and language support:** local currencies, market context and translated guidance.
 
 These additions are proposals, not currently available features.
+
+## Verification for the reading-mode update
+
+- TypeScript, ESLint, Python lint and formatting checks pass.
+- Twelve report API/validation regression tests pass against the local test database with AI mocked.
+- Production build passes with `NODE_OPTIONS=--max-old-space-size=1536`.
+- Two isolated browser tests pass at 1280px and 390px: default Guided view, Advanced labels,
+  glossary, persistent preference, preserved source links, and no horizontal page overflow.
+- No paid research call or live Fo action was run for these checks.

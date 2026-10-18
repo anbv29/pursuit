@@ -536,5 +536,9 @@ A commit cannot contain its own hash, so each entry's hash is filled in by the f
     - cover
 
 ----------------------------------------------------------------------
-#100  (hash recorded in next commit)  "docs:
+#100  02f62a7  "docs:
     - inventory
+
+----------------------------------------------------------------------
+#101  (hash recorded in next commit)  "docs:
+    - record
