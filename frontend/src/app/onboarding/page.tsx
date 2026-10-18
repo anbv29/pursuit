@@ -23,14 +23,14 @@ function Onboarding() {
     try {
       const ws = await api<Workspace>("/workspaces", { json: { name: name.trim(), with_demo_data: demo } });
       localStorage.setItem("pursuit.lastWorkspace", ws.id);
-      router.replace(demo ? `/w/${ws.id}` : `/w/${ws.id}/experiments/new`);
+      router.replace(demo ? `/w/${ws.id}` : `/w/${ws.id}/reports/new`);
     } catch (e) {
       setError(errorMessage(e));
     }
   });
 
   const choices = [
-    { demo: false, icon: Beaker, title: "Start my first experiment", body: "An empty workspace for your real data. You'll be guided through your first hypothesis." },
+    { demo: false, icon: Beaker, title: "Analyze my company", body: "Enter your website and get a full sourced GTM report, then track the experiments it recommends." },
     { demo: true, icon: Sparkles, title: "Explore with demo data", body: "Four synthetic experiments, clearly labelled as demo. Nothing here is a real result." },
   ];
 
