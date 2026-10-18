@@ -490,5 +490,10 @@ A commit cannot contain its own hash, so each entry's hash is filled in by the f
     - frontend/src/app/w/[ws]/reports/page.tsx: reports list with Ready / Generating / Failed status and empty state CTA
 
 ----------------------------------------------------------------------
-#91  (hash recorded in next commit)  feat: surface company reports on the dashboard
+#91  4877429  feat: surface company reports on the dashboard
     - frontend/src/app/w/[ws]/page.tsx: latest reports card with Ready/Generating/Failed status; empty workspace now leads with 'Analyze your company' (or, once a report exists, points to 'Track this' on its experiments); header has 'Analyze your company' as the primary action and 'New experiment' as secondary
+
+----------------------------------------------------------------------
+#92  (hash recorded in next commit)  test: add real end-to-end report generation test
+    - frontend/e2e/report.spec.ts: browser test with real Claude research - sign up, 'Analyze my company', enter linear.app + description + goal, watch progress, wait for the finished report, check all 10 main sections, a 'Sourced fact' label and the source list, reload for persistence, then 'Track this' on experiment 1 and land on its Hypothesis stage; fails on any uncaught page error. Skippable with E2E_SKIP_AI=1
+    - Result: passed in 2.4 min (74 sources); screenshots reviewed (summary, snapshot, competitor table with citations, funnel risks, ordered experiments)
