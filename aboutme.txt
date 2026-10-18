@@ -77,7 +77,12 @@ A commit cannot contain its own hash, so each entry's hash is filled in by the f
     - pyproject.toml: allow test-only password literals
 
 ----------------------------------------------------------------------
-#12  (hash recorded in next commit)  test: cover auth, CSRF, rate limits and workspace isolation
+#12  428eb4b  test: cover auth, CSRF, rate limits and workspace isolation
     - tests/conftest.py: tests run the real app against the real Postgres pursuit_test DB, truncating between tests; API client helper that carries the CSRF token like the frontend
     - tests/test_auth_workspaces.py: 12 tests - health, register/login/me/logout, httpOnly cookie, case-insensitive duplicate email, generic login errors, login rate limit, invalid input 422, anonymous 401, CSRF 403, cross-user workspace 404s, member vs owner permissions, workspace deletion
     - Result: pytest 12 passed
+
+----------------------------------------------------------------------
+#13  (hash recorded in next commit)  feat: add shared experiment lifecycle state machine
+    - app/services/lifecycle.py: 9-stage lifecycle shared by all use cases; forward moves are one step at a time with evidence-based gates (evidence before EVIDENCE, success criteria before APPROVAL, an approved action before ACTION, outcomes or funnel data before ANALYSIS, a recommendation before RECOMMENDATION); backward moves always allowed for iteration; competitive research and funnel diagnosis can proceed without external actions; per-stage checklist for the UI
+    - tests/test_lifecycle_unit.py: stage order matches the documented lifecycle
