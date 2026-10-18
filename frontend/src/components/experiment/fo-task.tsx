@@ -39,6 +39,7 @@ export function FoTask({ action, refresh }: { action: Action; refresh: () => voi
   };
   const recorded = ["booked", "declined", "no_response"].includes(action.fo_state ?? "");
   return <div className="mt-3 space-y-3 border-t border-line pt-3 text-sm">
+    {recorded && <Notice>{action.mode === "demo" ? "Simulated result: " : "Recorded result: "}{action.fo_state?.replace(/_/g, " ")}. A booking is a planned interview, not a completed conversation.</Notice>}
     {action.fo_state === "needs_input" && <Notice tone="flag">Fo needs attention. Review its reply below. It may need clarification or an outcome check.</Notice>}
     {action.status === "UNKNOWN" && <Button size="sm" variant="secondary" loading={run.pending} onClick={() => run.run("check", {})}>Check Fo update</Button>}
     <details><summary className="cursor-pointer text-trail">Coordination history</summary>

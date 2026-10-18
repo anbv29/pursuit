@@ -1,5 +1,10 @@
 # Fo integration
 
+For the new per-user connection flow, use `NEW_FEATURE_SETUP.md`. For approved interview
+coordination, saved progress, clarification replies and booking confirmation, see
+`INTERVIEW_CONCIERGE.md`. The older manual-token instructions below describe the original
+adapter setup; normal user actions now use encrypted, user-owned OAuth credentials.
+
 Fo (by Wajo) performs real-world actions such as email, calendar, calls and purchases from the user's own Wajo
 account. Pursuit uses it only to carry out **human-approved** experiment actions.
 

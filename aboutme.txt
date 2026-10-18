@@ -695,5 +695,9 @@ ebd034a  fix: isolate concierge contacts and controls
     - Verify saved conversations owner permissions and idempotent demo booking results.
 
 ----------------------------------------------------------------------
-(hash recorded in next commit)  fix: preserve uncertain Fo submission results
+a19a472  fix: preserve uncertain Fo submission results
     - Verify progress persistence conversation binding and safe provider failure handling.
+
+----------------------------------------------------------------------
+(hash recorded in next commit)  test: exercise concierge flow on desktop and phone
+    - Add real stack demo booking checks and document provider boundaries.
