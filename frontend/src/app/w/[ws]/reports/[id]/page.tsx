@@ -11,6 +11,7 @@ import { Competitors, FunnelRisks, Messaging, PositioningPricing, Prospecting, R
 import { Section, SourcesProvider } from "@/components/report/parts";
 import { ReportQuestions } from "@/components/report/questions";
 import { ReportPlan } from "@/components/report/plan";
+import { ReportVersions } from "@/components/report/versions";
 import { useFeedback } from "@/components/feedback";
 import { useWorkspace } from "@/components/shell";
 import { Badge, Button, Card, Empty, Notice, Skeleton } from "@/components/ui";
@@ -168,6 +169,10 @@ export default function ReportPage() {
           <FunnelRisks c={c} />
           <Experiments c={c} reportId={r.id} />
           <Risks c={c} />
+          <details className="print:hidden rounded-lg border border-line bg-surface p-4">
+            <summary className="cursor-pointer font-medium text-trail">Correct facts, refresh sections, or compare versions</summary>
+            <div className="mt-4"><ReportVersions path={reportPath} refresh={reload} /></div>
+          </details>
           <Section id="sources" title={`Sources (${r.sources.length})`} kicker="Everything retrieved during research">
             <ol className="grid gap-1.5 text-[13px] md:grid-cols-2">
               {r.sources.map((s) => (

@@ -47,3 +47,22 @@ def test_first_week_plan_is_idempotent_and_tasks_persist(api, ws, fake_ai, other
     assert response.json()["payload"]["done"] is True
     assert api.get(path).json()[2]["payload"]["notes"] == "Prepared interview questions"
     assert other.get(path).status_code == 404
+
+
+def test_refresh_preserves_snapshot_and_namespaces_old_sources(api, ws, fake_ai, other):
+    from app.core.db import new_session
+    from app.models import Report
+
+    rid = api.post(f"/api/workspaces/{ws}/reports", BODY).json()["id"]
+    path = f"/api/workspaces/{ws}/reports/{rid}"
+    response = api.post(path + "/refresh", {"correction": "Our price is $29", "sections": ["pricing"]})
+    assert response.status_code == 202
+    versions = api.get(path + "/versions").json()
+    assert len(versions) == 1 and versions[0]["payload"]["note"] == "Our price is $29"
+    assert versions[0]["payload"]["content"]["snapshot"]["name"] == "Acme"
+    with new_session() as db:
+        report = db.get(Report, rid)
+        assert report.checkpoint["sections"] == ["pricing"]
+        assert all(s["id"].startswith("OLD-") for s in report.checkpoint["base_sources"])
+    assert other.get(path + "/versions").status_code == 404
+    assert api.post(path + "/refresh", {"sections": ["made_up"]}).status_code == 400
