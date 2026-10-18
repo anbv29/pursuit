@@ -640,5 +640,9 @@ A commit cannot contain its own hash, so each entry's hash is filled in by the f
     - Verify source checks recipient matching and provider idempotency.
 
 ----------------------------------------------------------------------
-#126  (hash recorded in next commit)  docs: describe new features and connection setup
+#126  683750a  docs: describe new features and connection setup
     - Document all eight additions and external verification limits.
+
+----------------------------------------------------------------------
+#127  (hash recorded in next commit)  fix: compile styles consistently and redact sensitive paths
+    - Use standard Tailwind PostCSS and audit verified delivery events.

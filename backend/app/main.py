@@ -24,7 +24,7 @@ from app.api import (
 from app.core.config import get_settings
 from app.core.db import get_engine
 from app.core.errors import install_handlers
-from app.core.log_redaction import AccessRedaction
+from app.core.log_redaction import AccessRedaction, safe_path
 
 logger = logging.getLogger("pursuit")
 
@@ -77,7 +77,7 @@ def create_app() -> FastAPI:
         try:
             response = await call_next(request)
         except Exception:
-            logger.exception("Unhandled error on %s %s", request.method, request.url.path)
+            logger.exception("Unhandled error on %s %s", request.method, safe_path(request.url.path))
             response = JSONResponse(
                 status_code=500, content={"error": {"code": "internal", "message": "Something went wrong."}}
             )

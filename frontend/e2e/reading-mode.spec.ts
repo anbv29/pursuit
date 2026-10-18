@@ -60,7 +60,7 @@ for (const width of [1280, 390]) {
     const task = page.getByRole("checkbox", { name: "Day 1: Choose your customer" });
     await task.click();
     await expect(task).toBeChecked();
-    await page.getByText("Ask about this report", { exact: true }).first().click();
+    await page.getByText("Ask about the report or explain a term", { exact: true }).click();
     await page.getByRole("button", { name: "What should I do first and why?" }).click();
     await page.getByRole("button", { name: "Ask report", exact: true }).click();
     await expect(page.getByText("Talk to five potential customers first.", { exact: true })).toBeVisible();

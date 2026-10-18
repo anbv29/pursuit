@@ -11,6 +11,7 @@ from app.core.errors import AppError, Conflict
 from app.models import OutcomeEvent
 from app.models.enums import ActionKind, ActionStatus, DataOrigin, OutcomeKind
 from app.models.tracking import DeliveryTracking
+from app.services import audit
 
 
 def configured(workspace_id):
@@ -49,6 +50,8 @@ def sync(db, exp, action, message_id):
         raise AppError("This provider email does not match the approved recipient and subject.")
     # Serialize with manual confirmation so a sent event is never recorded twice.
     db.refresh(action, with_for_update=True)
+    if action.status not in (ActionStatus.SUCCEEDED, ActionStatus.UNKNOWN):
+        raise Conflict("The action changed while verification was in progress. Review it again.")
     row = db.get(DeliveryTracking, action.id)
     if row and row.provider_message_id != message_id:
         raise Conflict("This action is already linked to a different email.")
@@ -85,6 +88,14 @@ def sync(db, exp, action, message_id):
                     note=f"Verified from Resend: {message_id}",
                 )
             )
+    audit.record(
+        db,
+        "action.delivery_verified",
+        actor_id=action.requested_by,
+        workspace_id=exp.workspace_id,
+        target_id=action.id,
+        detail={"provider": "resend", "event": row.last_event},
+    )
     db.commit()
     return {
         "provider": row.provider,
