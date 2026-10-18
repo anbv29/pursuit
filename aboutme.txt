@@ -767,5 +767,9 @@ d3ad1f6  test: verify signed payment fulfillment
     - Six signed payment tests pass; fix system actor audits and checkout binding.
 
 ----------------------------------------------------------------------
-(hash recorded in next commit)  test: cover subscription lifecycle
+738d4e5  test: cover subscription lifecycle
     - Four subscription tests pass; stop revoked or expired allowances before AI requests.
+
+----------------------------------------------------------------------
+(hash recorded in next commit)  test: verify paid credit enforcement
+    - Four allowance tests pass including concurrent last credit and failed report credit release.
