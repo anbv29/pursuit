@@ -244,6 +244,11 @@ A commit cannot contain its own hash, so each entry's hash is filled in by the f
     - frontend/src/lib/hooks.ts: useApi (loading/error/reload, ignores stale responses), useAction (prevents double submission, exposes pending)
 
 ----------------------------------------------------------------------
-#44  (hash recorded in next commit)  feat: add session provider and app layout
+#44  ce5522f  feat: add session provider and app layout
     - frontend/src/components/session.tsx: session context (checks /auth/me on load, login/register/logout, stores CSRF token in memory only), RequireAuth guard with skeleton while checking
     - frontend/src/app/layout.tsx: Pursuit metadata, Geist fonts, session + feedback providers
+
+----------------------------------------------------------------------
+#45  (hash recorded in next commit)  feat: add Pursuit landing page and logo
+    - frontend/src/components/brand.tsx: original Pursuit mark (three ascending trail points: hypothesis, evidence, decision)
+    - frontend/src/app/page.tsx: landing page explaining the value in one screen, the 9-stage lifecycle strip (approval highlighted), three product pillars, session-aware CTAs (sign in / start free / open workspace)
