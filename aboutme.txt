@@ -300,5 +300,9 @@ A commit cannot contain its own hash, so each entry's hash is filled in by the f
     - frontend/src/components/experiment/evidence.tsx: add sources by server-side fetch or link-only, list with retrieval timestamps; add evidence (claim, fact/interpretation/assumption, stance, source, relevance, tags incl. competitor:Name); evidence shown in three separate columns (observed facts / interpretations / unverified assumptions) with stance filter and contradicting items highlighted; source links open with noopener/nofollow; delete with confirmation; demo labels
 
 ----------------------------------------------------------------------
-#56  (hash recorded in next commit)  feat: add action request, approval and confirmation UI
+#56  2b2595c  feat: add action request, approval and confirmation UI
     - frontend/src/components/experiment/actions.tsx: request email / meeting / research actions (kinds limited by use case), prefill from prospect or message variant, single-recipient validation errors from server; action list with honest status badges + help text, demo 'Simulated' vs 'Live - Fo' labels, Fo summary and errors; review-and-approve dialog shows the exact recipient and message and warns that live actions use the real account; reject/cancel; UNKNOWN outcomes require 'It happened' / 'It didn't' confirmation; polls while actions are queued or running
+
+----------------------------------------------------------------------
+#57  (hash recorded in next commit)  feat: add prospects and customer discovery panel
+    - frontend/src/components/experiment/discovery.tsx: discovery metrics (interviews completed, problem confirmed and budget owner rates with n and 95% CI, commitments vs verbal interest kept separate); prospects with role/company/segment, provenance link, inline status pipeline, owner-only contact details note; add prospect form with server validation; behaviour-based interview capture (pain points, current solution, frequency, cost, budget owner, WTP signal with commitment defined, contradictions, notes) and interview list highlighting contradictions
