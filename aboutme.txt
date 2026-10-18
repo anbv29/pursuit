@@ -450,6 +450,14 @@ A commit cannot contain its own hash, so each entry's hash is filled in by the f
     - tests/test_reports.py: 8 tests - full generation with mocked Claude (site becomes S0, inputs passed through, facts downgraded), conversion with evidence provenance + bad index 404, clear error without API key, research failure surfaced as FAILED with message, blocked website still researched with a note, input validation (javascript:, junk, bad enum), cross-workspace isolation, stale-job recovery
 
 ----------------------------------------------------------------------
-#83  (hash recorded in next commit)  refactor: run stale-report recovery in FastAPI lifespan
+#83  251a8ed  refactor: run stale-report recovery in FastAPI lifespan
     - backend/app/main.py: replaced deprecated @app.on_event('startup') with a lifespan handler (removes FastAPI deprecation warnings)
     - Result: pytest 75 passed, no deprecation warnings from app code
+
+----------------------------------------------------------------------
+#84  (hash recorded in next commit)  fix: split report synthesis into three structured calls
+    - Found by a live run against the real API: one ReportContent structured-output call is rejected with 400 'The compiled grammar is too large'. Synthesis now runs three smaller schemas (profile / market / plan) in parallel and merges them into ReportContent
+    - backend/app/schemas/report.py: PartProfile, PartMarket, PartPlan
+    - backend/app/services/report_research.py: rewritten cleanly (parallel parts, shared context, refusal/max_tokens/unparseable handling per part)
+    - Live verification on https://linear.app: research 88s with 90 retrieved sources, synthesis 51s, validation dropped 0 source refs and downgraded 0 facts; competitors Jira/Shortcut/GitHub Projects/ClickUp/Asana all cited; 6 experiments mapped to Pursuit metrics
+    - pytest report tests 12 passed

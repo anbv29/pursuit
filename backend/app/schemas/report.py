@@ -183,3 +183,27 @@ class ReportListItem(BaseModel):
     status: str
     progress: str
     created_at: datetime
+
+
+# ---- synthesis parts (each small enough for one structured-output call) ---------
+class PartProfile(BaseModel):
+    executive_summary: list[str]
+    snapshot: Snapshot
+    segments: list[Segment]
+    personas: list[Persona]
+    problems: list[ProblemHypothesis]
+
+
+class PartMarket(BaseModel):
+    competitors: list[Competitor]
+    positioning: Positioning
+    pricing: Pricing
+
+
+class PartPlan(BaseModel):
+    messaging: list[MessageAngle]
+    prospecting: Prospecting
+    funnel_risks: list[FunnelRisk]
+    experiments: list[ExperimentIdea]
+    risks_and_unknowns: list[str]
+    focus_first: str
