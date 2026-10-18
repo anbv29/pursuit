@@ -249,6 +249,11 @@ A commit cannot contain its own hash, so each entry's hash is filled in by the f
     - frontend/src/app/layout.tsx: Pursuit metadata, Geist fonts, session + feedback providers
 
 ----------------------------------------------------------------------
-#45  (hash recorded in next commit)  feat: add Pursuit landing page and logo
+#45  1e5d8d4  feat: add Pursuit landing page and logo
     - frontend/src/components/brand.tsx: original Pursuit mark (three ascending trail points: hypothesis, evidence, decision)
     - frontend/src/app/page.tsx: landing page explaining the value in one screen, the 9-stage lifecycle strip (approval highlighted), three product pillars, session-aware CTAs (sign in / start free / open workspace)
+
+----------------------------------------------------------------------
+#46  (hash recorded in next commit)  feat: add sign-in and sign-up pages with validation
+    - frontend/src/components/auth-form.tsx: shared auth form with zod client validation mirroring server rules, server field errors mapped back to inputs, form-level error notice, double-submit protection, correct autocomplete attributes; redirects to onboarding after sign-up
+    - frontend/src/app/login, signup: pages
