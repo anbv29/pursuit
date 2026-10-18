@@ -624,5 +624,9 @@ A commit cannot contain its own hash, so each entry's hash is filled in by the f
     - Meter report research/synthesis, report questions, company discovery and recommendations. Threaded synthesis preserves workspace context. Disable opaque SDK retries and record actual selected models.
 
 ----------------------------------------------------------------------
-#122  (hash recorded in next commit)  feat: finish private exports and connection safety
+#122  00e7911  feat: finish private exports and connection safety
     - Complete workspace exports and redact share links from access logs.
+
+----------------------------------------------------------------------
+#123  (hash recorded in next commit)  feat: migrate tracking shares and AI usage
+    - Add reproducible schema and isolated test migration runner.
