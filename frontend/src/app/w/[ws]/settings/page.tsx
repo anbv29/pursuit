@@ -11,7 +11,7 @@ import { useAction, useApi } from "@/lib/hooks";
 
 type Integrations = {
   environment: string;
-  fo: { mode: string; status: string; detail?: string; tools?: string[]; verified_live: boolean; workspace_forced_demo: boolean };
+  fo: { mode: string; status: string; detail?: string; tools?: string[]; verified_live: boolean; workspace_forced_demo: boolean; account_connected: boolean; oauth_configured: boolean };
   ai: { enabled: boolean; model: string | null; detail: string | null };
   checked_at: string;
 };
@@ -27,6 +27,17 @@ export default function SettingsPage() {
   const isOwner = workspace.role === "owner";
   const [email, setEmail] = useState("");
   const [err, setErr] = useState<string | null>(null);
+  const connectFo = useAction(async () => {
+    try {
+      const result = await api<{ url: string }>(`${base}/fo/connect`, { method: "POST" });
+      window.location.assign(result.url);
+    } catch (e) { toast("error", errorMessage(e)); }
+  });
+  const disconnectFo = useAction(async () => {
+    if (!await confirm({ title: "Disconnect your Fo account?", body: "Your approved actions will need reconnection before they can run. Other users keep their own connections.", confirm: "Disconnect" })) return;
+    try { await api("/fo/connection", { method: "DELETE" }); await integ.reload(); }
+    catch (e) { toast("error", errorMessage(e)); }
+  });
 
   const invite = useAction(async () => {
     try {
@@ -92,6 +103,13 @@ export default function SettingsPage() {
                       : fo!.detail ?? (fo!.tools ? `Tools available: ${fo!.tools.join(", ")}` : "")}
                 </p>
                 <p className="mt-1 text-xs text-ink-3">Scope used: ask_fo / get_fo_reply only, with one narrowly worded instruction per approved action.</p>
+                <div className="mt-3 flex flex-wrap gap-2">
+                  <Button size="sm" loading={connectFo.pending} onClick={() => connectFo.run()}>
+                    {fo?.account_connected ? "Reconnect my Fo account" : "Connect my Fo account"}
+                  </Button>
+                  {fo?.account_connected && <Button size="sm" variant="secondary" loading={disconnectFo.pending} onClick={() => disconnectFo.run()}>Disconnect</Button>}
+                </div>
+                <p className="mt-2 text-xs text-ink-3">Sign in to your own Wajo account. Pursuit refreshes its access automatically; a revoked connection needs sign-in again.</p>
               </div>
             </li>
             <li className="flex items-start gap-3 px-5 py-4">

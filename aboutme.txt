@@ -552,5 +552,9 @@ A commit cannot contain its own hash, so each entry's hash is filled in by the f
     - add
 
 ----------------------------------------------------------------------
-#104  (hash recorded in next commit)  feat: connect Fo to user-owned accounts
+#104  149cf5d  feat: connect Fo to user-owned accounts
     - Add callback disconnect routes and user-scoped adapter credentials. Fixes cross-user credential sharing. Tokens are never sent to clients.
+
+----------------------------------------------------------------------
+#105  (hash recorded in next commit)  feat: add Fo connection controls and refresh tests
+    - Settings connect/reconnect/disconnect controls. Single-use user-bound callback tests, encrypted storage, rotating refresh and cross-user access tests. Add local migration.

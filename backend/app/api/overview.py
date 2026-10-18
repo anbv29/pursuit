@@ -21,6 +21,7 @@ from app.models import (
     Recommendation,
     User,
 )
+from app.models.connection import FoConnection
 from app.models.enums import ActionStatus
 from app.services import audit
 
@@ -116,7 +117,11 @@ def dashboard(m: Membership = Depends(workspace_member), db: Session = Depends(g
 
 
 @router.get("/integrations")
-def integrations(m: Membership = Depends(workspace_member), user: User = Depends(current_user)):
+def integrations(
+    m: Membership = Depends(workspace_member),
+    user: User = Depends(current_user),
+    db: Session = Depends(get_db),
+):
     s = get_settings()
     limiter.check(f"integrations:{user.id}", limit=30, window_seconds=600)
     effective = "demo" if m.workspace.is_demo else s.fo_mode
@@ -126,7 +131,13 @@ def integrations(m: Membership = Depends(workspace_member), user: User = Depends
         fo = {"mode": effective, "status": "not_configured", "detail": str(exc)}
     return {
         "environment": s.app_env,
-        "fo": fo | {"verified_live": False, "workspace_forced_demo": m.workspace.is_demo},
+        "fo": fo
+        | {
+            "verified_live": False,
+            "workspace_forced_demo": m.workspace.is_demo,
+            "account_connected": db.get(FoConnection, user.id) is not None,
+            "oauth_configured": bool(s.connection_encryption_key),
+        },
         "ai": {
             "enabled": s.ai_enabled,
             "model": s.anthropic_model if s.ai_enabled else None,

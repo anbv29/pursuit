@@ -55,7 +55,7 @@ class McpFoAdapter:
             h["Mcp-Session-Id"] = self._session
         return h
 
-    def _rpc(self, method: str, params: dict | None = None, notify: bool = False) -> dict:
+    def _rpc(self, method: str, params: dict | None = None, notify: bool = False, retry_auth=True) -> dict:
         msg: dict = {"jsonrpc": "2.0", "method": method, "params": params or {}}
         if not notify:
             msg["id"] = next(self._ids)
@@ -64,6 +64,15 @@ class McpFoAdapter:
         except httpx.HTTPError as exc:
             raise FoUnavailable("Fo is unreachable (network error or timeout).") from exc
         if r.status_code in (401, 403):
+            if r.status_code == 401 and self._user_id is not None and retry_auth:
+                from app.core.errors import AppError
+                from app.services.fo_oauth import access_token
+
+                try:
+                    self._token = access_token(self._user_id, force=True)
+                except AppError as exc:
+                    raise FoUnavailable(exc.message) from exc
+                return self._rpc(method, params, notify, retry_auth=False)
             raise FoUnavailable("Fo rejected the credentials (revoked or insufficient scope).")
         if r.status_code == 429:
             raise FoUnavailable("Fo rate limit reached. Try again later.")
