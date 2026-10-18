@@ -7,7 +7,7 @@ from pydantic import BaseModel
 from sqlalchemy import func, select
 from sqlalchemy.orm import Session
 
-from app.api.deps import current_user, workspace_owner
+from app.api.deps import current_user, workspace_member, workspace_owner
 from app.core.config import get_settings
 from app.core.db import get_db, utcnow
 from app.core.errors import AppError
@@ -26,6 +26,11 @@ def plans():
 
 class Purchase(BaseModel):
     plan: Literal["single", "founder", "team"]
+
+
+@router.get("/api/workspaces/{workspace_id}/allowance")
+def allowance(m: Membership = Depends(workspace_member), db: Session = Depends(get_db)):
+    return entitlements.summary(db, m.workspace_id)
 
 
 @router.get("/api/workspaces/{workspace_id}/billing")

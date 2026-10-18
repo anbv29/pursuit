@@ -51,6 +51,11 @@ export default function SettingsPage() {
       setErr(errorMessage(e));
     }
   });
+  const removeMember = useAction(async (member: Member) => {
+    if (!await confirm({ title: `Remove ${member.name}?`, body: "They will lose workspace access. Their existing evidence and recorded work stay saved.", confirm: "Remove member", danger: true })) return;
+    try { await api(`${base}/members/${member.user_id}`, { method: "DELETE" }); await members.reload(); toast("success", "Member removed; their seat is now available."); }
+    catch (e) { toast("error", errorMessage(e)); }
+  });
 
   const exportData = useAction(async () => {
     try {
@@ -137,7 +142,9 @@ export default function SettingsPage() {
           {members.data?.map((m) => (
             <li key={m.user_id} className="flex items-center justify-between px-5 py-3 text-sm">
               <span><span className="font-medium">{m.name}</span> <span className="text-ink-3">{m.email}</span></span>
-              <Badge tone={m.role === "owner" ? "trail" : "neutral"}>{m.role}</Badge>
+              <div className="flex shrink-0 items-center gap-2"><Badge tone={m.role === "owner" ? "trail" : "neutral"}>{m.role}</Badge>
+                {isOwner && m.role !== "owner" && <Button size="sm" variant="ghost" loading={removeMember.pending} onClick={() => removeMember.run(m)}>Remove member</Button>}
+              </div>
             </li>
           ))}
         </ul>

@@ -25,7 +25,7 @@ export function UsagePanel({ path, owner, preview = false }: { path: string; own
     <p>Model: {u.research_model.replace("claude-", "")} · Remaining estimated monthly budget: {dollars(u.remaining_usd)}</p>
     <p className="mt-1">{h ? `Previous measured runs: ${dollars(h.low)}–${dollars(h.high)} across ${h.samples} reports. Your next report may differ.` : "No measured report cost yet. Token and search usage will be recorded as requests complete."}</p>
   </div>;
-  return <Card><CardHeader title="AI usage and budget" description={u.note} /><div className="space-y-4 p-5">
+  return <Card><CardHeader title="AI safety settings" description="Internal cost estimates, not an extra charge. Plan credits and subscription prices are managed in Billing." /><div className="space-y-4 p-5">
     <p className="text-sm">Estimated this month: <b>{dollars(u.estimated_usd)}</b> · Reserved / unknown: <b>{dollars(u.reserved_usd)}</b> · Remaining: <b>{dollars(u.remaining_usd)}</b></p>
     {owner && <form onSubmit={(e: FormEvent) => { e.preventDefault(); void save.run(); }} className="grid gap-3 sm:grid-cols-2">
       <Field label="Monthly estimated-spend limit (USD)">{(id) => <Input id={id} type="number" min={0} max={1000} step="0.0001" value={limit ?? u.monthly_limit_usd} onChange={(e) => setLimit(e.target.value)} />}</Field>

@@ -1,5 +1,7 @@
 "use client";
 
+import { useState } from "react";
+
 import { AlertTriangle, Bot, Compass, ListChecks, Sparkles } from "lucide-react";
 import { api, errorMessage } from "@/lib/api";
 import { useAction, useApi } from "@/lib/hooks";
@@ -26,10 +28,11 @@ export function RecommendationPanel() {
   const { exp, path, reload, version, touch } = useExperiment();
   const { toast } = useFeedback();
   const recs = useApi<Recommendation[]>(`${path}/recommendations`, version);
+  const [useAi, setUseAi] = useState(false);
 
   const generate = useAction(async () => {
     try {
-      await api(`${path}/recommendations`, { json: { use_ai: true } });
+      await api(`${path}/recommendations`, { json: { use_ai: useAi } });
       await Promise.all([recs.reload(), reload()]);
       touch();
       toast("success", "Recommendation generated from current evidence and outcomes.");
@@ -48,6 +51,7 @@ export function RecommendationPanel() {
   return (
     <Card>
       <CardHeader title="Recommendation" description="Based only on persisted evidence and outcomes." action={action} />
+      <label className="flex items-start gap-2 px-5 py-3 text-sm text-ink-2"><input type="checkbox" className="mt-1" checked={useAi} onChange={(e) => setUseAi(e.target.checked)} />Use AI assistance (one AI answer on success). Leave off for free rule-based analysis.</label>
       {recs.loading && !recs.data ? <div className="p-5"><Skeleton className="h-28" /></div>
         : !latest ? (
           <Empty icon={<Compass className="size-4" />} title="No recommendation yet"

@@ -3,8 +3,8 @@ import uuid
 from sqlalchemy import func, select
 from sqlalchemy.orm import Session
 
-from app.core.errors import Conflict, NotFound, PaymentRequired
-from app.models import Membership, User, Workspace
+from app.core.errors import AppError, Conflict, NotFound, PaymentRequired
+from app.models import BillingAccount, Membership, User, Workspace
 from app.models.enums import Role
 from app.services import audit, entitlements
 
@@ -75,6 +75,31 @@ def add_member(db: Session, actor: User, workspace_id: uuid.UUID, email: str) ->
 
 def delete(db: Session, actor: User, ws: Workspace) -> None:
     """Hard delete; FK cascades remove all workspace data (data-deletion requirement)."""
+    account = db.get(BillingAccount, ws.id)
+    if (
+        account
+        and account.subscription_id
+        and account.status in ("active", "past_due", "on_hold", "paused", "pending")
+    ):
+        raise AppError(
+            "Cancel the subscription and wait for it to end before deleting this workspace. "
+            "Open Plans & billing to manage it."
+        )
     audit.record(db, "workspace.delete", actor_id=actor.id, detail={"workspace_id": str(ws.id)})
     db.delete(ws)
+    db.commit()
+
+
+def remove_member(db, actor, workspace_id, user_id):
+    membership = db.scalar(
+        select(Membership).where(Membership.workspace_id == workspace_id, Membership.user_id == user_id)
+    )
+    if membership is None:
+        raise NotFound("Member not found.")
+    if membership.role == Role.OWNER:
+        raise AppError("The workspace owner cannot be removed.")
+    db.delete(membership)
+    audit.record(
+        db, "workspace.member_remove", actor_id=actor.id, workspace_id=workspace_id, target_id=user_id
+    )
     db.commit()

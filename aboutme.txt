@@ -751,5 +751,9 @@ fd19a14  feat: add workspace pricing and billing screen
     - Add plan comparison balances checkout status and subscription portal controls.
 
 ----------------------------------------------------------------------
-(hash recorded in next commit)  feat: include a clearly synthetic free sample report
+432dc67  feat: include a clearly synthetic free sample report
     - Seed a readable report and first week plan without paid AI calls.
+
+----------------------------------------------------------------------
+(hash recorded in next commit)  feat: clarify paid allowances and subscription safety
+    - Add visible credit costs free analysis choice member removal and billing aware data controls.

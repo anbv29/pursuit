@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 import { useState, type FormEvent } from "react";
 import { z } from "zod";
 import { useWorkspace } from "@/components/shell";
-import { UsagePanel } from "@/components/usage";
+import { ResearchAllowance } from "@/components/allowance";
 import { Button, Card, cx, Field, Input, Notice, Select, Textarea } from "@/components/ui";
 import { api, ApiError, errorMessage } from "@/lib/api";
 import { useAction } from "@/lib/hooks";
@@ -103,7 +103,7 @@ export default function NewReportPage() {
           )}
         </Card>
         {formError && <Notice tone="bad">{formError}</Notice>}
-        <UsagePanel path={`/workspaces/${workspace.id}`} preview />
+        <ResearchAllowance />
         <Button type="submit" loading={submit.pending} className="h-11 w-full text-base">Generate report</Button>
         <p className="text-center text-xs text-ink-3">
           Research uses public web sources only. Every claim in the report is labelled as a sourced fact, an interpretation or an assumption.

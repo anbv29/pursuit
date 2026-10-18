@@ -13,6 +13,10 @@ from app.core.ratelimit import limiter
 from app.models import (
     ActionRequest,
     ActionUpdate,
+    BillingAccount,
+    BillingUse,
+    CheckoutOrder,
+    CreditGrant,
     DeliveryTracking,
     Evidence,
     Experiment,
@@ -204,5 +208,9 @@ def export(m: Membership = Depends(workspace_owner), db: Session = Depends(get_d
         "delivery_tracking": scoped(DeliveryTracking, DeliveryTracking.action_id.in_(action_ids)),
         "usage": scoped(UsageCall, UsageCall.workspace_id == ws_id),
         "budget": scoped(WorkspaceBudget, WorkspaceBudget.workspace_id == ws_id),
+        "billing_account": scoped(BillingAccount, BillingAccount.workspace_id == ws_id),
+        "credit_grants": scoped(CreditGrant, CreditGrant.workspace_id == ws_id),
+        "billing_usage": scoped(BillingUse, BillingUse.workspace_id == ws_id),
+        "checkouts": scoped(CheckoutOrder, CheckoutOrder.workspace_id == ws_id, ("checkout_url",)),
         "shares": scoped(ReportShare, ReportShare.report_id.in_(report_ids), ("token_hash", "snapshot")),
     }

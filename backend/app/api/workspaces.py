@@ -1,3 +1,5 @@
+import uuid
+
 from fastapi import APIRouter, Depends
 from sqlalchemy import select
 from sqlalchemy.orm import Session
@@ -70,3 +72,13 @@ def audit_log(m: Membership = Depends(workspace_owner), db: Session = Depends(ge
         .order_by(AuditEvent.created_at.desc())
         .limit(200)
     ).all()
+
+
+@router.delete("/{workspace_id}/members/{user_id}", status_code=204)
+def remove_member(
+    user_id: uuid.UUID,
+    m: Membership = Depends(workspace_owner),
+    user: User = Depends(current_user),
+    db: Session = Depends(get_db),
+):
+    workspaces.remove_member(db, user, m.workspace_id, user_id)

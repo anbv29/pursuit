@@ -24,7 +24,7 @@ export function ReportVersions({ path, refresh }: { path: string; refresh: () =>
     catch (e) { setError(errorMessage(e)); }
   });
   return <Section id="versions" title="Correct facts and refresh your report">
-    <p className="mb-3 text-sm text-ink-2">Add your corrections and choose the sections to update. The earlier report is saved first. Refreshing runs fresh web research and uses AI credits.</p>
+    <p className="mb-3 text-sm text-ink-2">Add corrections and choose sections to update. The earlier report is saved first. A completed refresh uses one research credit and needs Founder or Team.</p>
     <Field label="Company facts to correct">{(id) => <Textarea id={id} maxLength={3000} value={correction} onChange={(e) => setCorrection(e.target.value)} placeholder="For example: our price is $29/month, and we sell to small clinics." />}</Field>
     <fieldset className="my-4 grid gap-2 sm:grid-cols-2"><legend className="mb-2 text-sm font-medium">Sections to refresh</legend>
       {SECTIONS.map((section) => <label key={section} className="flex gap-2 text-sm"><input type="checkbox" checked={sections.includes(section)} onChange={(e) => setSections((s) => e.target.checked ? [...s, section] : s.filter((v) => v !== section))} />{section.replace(/_/g, " ")}</label>)}

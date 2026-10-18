@@ -82,7 +82,7 @@ def test_member_access_but_not_owner_actions(api, other):
 
 def test_delete_workspace(api):
     api.signup()
-    ws = api.workspace()
+    ws = api.workspace(paid=False)
     assert api.delete(f"/api/workspaces/{ws}").status_code == 204
     assert api.get(f"/api/workspaces/{ws}").status_code == 404
 
