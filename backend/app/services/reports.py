@@ -162,3 +162,88 @@ def recover_stale(db: Session) -> int:
     )
     db.commit()
     return res.rowcount
+
+
+def _min_len(text: str, n: int, prefix: str) -> str:
+    """Model output can be terse; keep it but satisfy experiment validation."""
+    text = (text or "").strip()
+    return text if len(text) >= n else f"{prefix}: {text}".strip(": ")
+
+
+def to_experiment(db: Session, ws: Workspace, user: User, report: Report, index: int):
+    """Create a tracked experiment from one of the report's recommended experiments,
+    carrying over sourced facts as evidence (with their URLs) so provenance survives."""
+    from app.models import Evidence, Source
+    from app.models.enums import DataOrigin, EvidenceKind, Stance
+    from app.schemas.experiments import CriterionIn, ExperimentIn
+    from app.services import experiments
+
+    if report.status != "SUCCEEDED" or not report.content:
+        raise AppError("This report isn't finished yet.", "not_ready")
+    ideas = report.content.get("experiments", [])
+    if not 0 <= index < len(ideas):
+        raise NotFound("Experiment idea not found.")
+    idea = ideas[index]
+    segment = (report.content.get("segments") or [{}])[0]
+    exp = experiments.create(
+        db,
+        ws,
+        user,
+        ExperimentIn(
+            use_case=idea["use_case"],
+            title=_min_len(idea["title"], 3, "Experiment")[:160],
+            hypothesis=_min_len(idea["hypothesis"], 10, "Hypothesis from report")[:4000],
+            target_audience=f"{segment.get('name', '')}: {segment.get('description', '')}"[:2000],
+            config={"from_report": str(report.id), "why_first": idea.get("why_first", "")},
+            criteria=[
+                CriterionIn(
+                    metric=idea["metric"],
+                    comparator=idea["comparator"],
+                    target=idea["target"],
+                    min_sample=idea["min_sample"],
+                )
+            ],
+        ),
+    )
+    by_id = {s["id"]: s for s in report.sources}
+    c = report.content
+    stance_groups = [
+        (c["snapshot"]["key_facts"] + c["snapshot"]["observed_pricing"], Stance.NEUTRAL),
+        ([x for p in c["problems"] for x in p["supporting"]], Stance.SUPPORTS),
+        ([x for p in c["problems"] for x in p["against"]], Stance.CONTRADICTS),
+    ]
+    added = 0
+    for claims, stance in stance_groups:
+        for cl in claims:
+            if added >= 15 or not cl.get("source_ids"):
+                continue
+            src_meta = by_id.get(cl["source_ids"][0])
+            if not src_meta:
+                continue
+            src = Source(
+                workspace_id=ws.id,
+                experiment_id=exp.id,
+                url=src_meta["url"][:2048],
+                title=src_meta.get("title", "")[:300],
+                origin=DataOrigin.AI,
+                excerpt=f"Cited in Pursuit report for {report.company_name or report.company_url}",
+            )
+            db.add(src)
+            db.flush()
+            kind = EvidenceKind.OBSERVED_FACT if cl["kind"] == "fact" else EvidenceKind.INTERPRETATION
+            db.add(
+                Evidence(
+                    experiment_id=exp.id,
+                    source_id=src.id,
+                    kind=kind,
+                    stance=stance,
+                    claim=cl["text"][:4000],
+                    relevance=0.6,
+                    tags=["from-report"],
+                    origin=DataOrigin.AI,
+                )
+            )
+            added += 1
+    experiments.log(db, exp, user, "experiment.from_report", report_id=str(report.id), evidence=added)
+    db.commit()
+    return exp

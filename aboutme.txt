@@ -439,5 +439,12 @@ A commit cannot contain its own hash, so each entry's hash is filled in by the f
     - tests/test_report_validate.py: 4 tests (kept sourced fact, invented/missing sources downgraded, competitor filtering, metric/target/score clamping)
 
 ----------------------------------------------------------------------
-#81  (hash recorded in next commit)  feat: add report job runner with limits and restart recovery
+#81  fc0acc6  feat: add report job runner with limits and restart recovery
     - backend/app/services/reports.py: create (refuses with a clear error when ANTHROPIC_API_KEY is missing, one active report per workspace, 20/day limit, audited); run() background job claims QUEUED->RUNNING atomically, reads the site with the SSRF-hardened fetcher (falls back to web research if the site blocks us, and says so), streams progress lines to the DB, adds the site as source S0, synthesises, validates, stores content + sources + model; user-safe FAILED messages, internals only in logs; recover_stale() fails jobs orphaned by a restart
+
+----------------------------------------------------------------------
+#82  (hash recorded in next commit)  feat: add reports API, report-to-experiment conversion and tests
+    - backend/app/api/reports.py: list, create (202, generation runs in background, rate limited per user), get (status/progress polling), create an experiment from recommended experiment #n; all workspace-scoped
+    - backend/app/services/reports.py: to_experiment creates a tracked experiment with the idea's success criterion and carries up to 15 sourced claims over as evidence with their source URLs (origin=ai, tagged from-report); terse model titles/hypotheses padded instead of crashing (bug found by tests)
+    - backend/app/main.py: register router; on startup fail reports orphaned by a restart
+    - tests/test_reports.py: 8 tests - full generation with mocked Claude (site becomes S0, inputs passed through, facts downgraded), conversion with evidence provenance + bad index 404, clear error without API key, research failure surfaced as FAILED with message, blocked website still researched with a note, input validation (javascript:, junk, bad enum), cross-workspace isolation, stale-job recovery
