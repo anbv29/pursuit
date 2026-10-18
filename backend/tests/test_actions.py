@@ -177,3 +177,21 @@ def test_emergency_stop_blocks_approval(api, exp_url, monkeypatch):
     finally:
         monkeypatch.delenv("ACTIONS_DISABLED")
         get_settings.cache_clear()
+
+
+def test_cancelled_or_rejected_action_does_not_unlock_action_stage(api, exp_url):
+    api.post(f"{exp_url}/transition", {"to": "research"})
+    api.post(f"{exp_url}/evidence", {"kind": "observed_fact", "claim": "Clinics reconcile by hand."})
+    api.post(f"{exp_url}/criteria", {"metric": "interviews_completed", "target": 3})
+    for s in ("evidence", "design", "approval"):
+        assert api.post(f"{exp_url}/transition", {"to": s}).json()["stage"] == s
+    cancelled = _request(api, exp_url)
+    api.post(f"{exp_url}/actions/{cancelled['id']}/cancel")
+    blocked = api.post(f"{exp_url}/transition", {"to": "action"})
+    assert blocked.status_code == 400 and "Approve at least one action" in blocked.json()["error"]["message"]
+    rejected = _request(api, exp_url, {**EMAIL, "target": "other@clinic.example.com"})
+    api.post(f"{exp_url}/actions/{rejected['id']}/decision", {"decision": "reject"})
+    assert api.post(f"{exp_url}/transition", {"to": "action"}).status_code == 400
+    approved = _request(api, exp_url, {**EMAIL, "target": "third@clinic.example.com"})
+    api.post(f"{exp_url}/actions/{approved['id']}/decision", {"decision": "approve"})
+    assert api.post(f"{exp_url}/transition", {"to": "action"}).status_code == 200

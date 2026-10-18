@@ -506,9 +506,15 @@ A commit cannot contain its own hash, so each entry's hash is filled in by the f
     - Results: backend ruff/format/pip-audit clean, pytest 75 passed; next build OK while dev kept serving; Playwright against demo-mode backend 5 passed (+ report test passed earlier with real Claude in 2.4 min); live-mode backend restored afterwards
 
 ----------------------------------------------------------------------
-#94  (hash recorded in next commit)  fix: run the frontend in production mode on low-memory machines
+#94  7fd5bf3  fix: run the frontend in production mode on low-memory machines
     - Diagnosis (corrects an earlier wrong explanation): the site-wide 500s ('Jest worker encountered 2 child process exceptions') happen because this machine has 5.9 GB RAM with ~0.6 GB free and heavy paging; the Next 16 dev server's on-demand compile workers get killed under that pressure. It happened again with no build running, so the build was not the cause. Backend logs showed no errors throughout; the myday.buzz report had succeeded (2m48s) and a second click was correctly refused with 'already generating'
     - frontend/package.json: 'serve' script (next build && next start)
     - README.md: low-memory guidance
     - Verified: production server answers all routes in <0.1s (dev server took 7-13s then 500); the user's MYDAY report renders with no page errors
     - Cleaned up: removed the temporary repro accounts and the copy of the report used for the check
+
+----------------------------------------------------------------------
+#95  (hash recorded in next commit)  fix: only approved actions unlock the Action stage
+    - backend/app/services/lifecycle.py: the Approval -> Action gate counted every action that wasn't pending or rejected, so a CANCELLED action wrongly unlocked the Action stage. It now counts only actions a person approved (QUEUED, RUNNING, SUCCEEDED, FAILED, UNKNOWN)
+    - tests/test_actions.py: cancelled and rejected actions keep the stage locked with the 'Approve at least one action' message; an approved one unlocks it. Verified the test fails on the old code and passes with the fix
+    - Result: pytest 76 passed

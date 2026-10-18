@@ -26,6 +26,15 @@ from app.models.enums import STAGE_ORDER, ActionStatus, Stage, UseCase
 # Use cases whose core loop doesn't require external actions may skip Approval/Action.
 ACTIONLESS = {UseCase.COMPETITIVE_RESEARCH, UseCase.FUNNEL_DIAGNOSIS}
 
+# Someone approved it and it went (or is going) to Fo. Cancelled and rejected never count.
+APPROVED_STATUSES = [
+    ActionStatus.QUEUED,
+    ActionStatus.RUNNING,
+    ActionStatus.SUCCEEDED,
+    ActionStatus.FAILED,
+    ActionStatus.UNKNOWN,
+]
+
 
 @dataclass
 class Gate:
@@ -53,7 +62,7 @@ def gate_for(db: Session, exp: Experiment, target: Stage) -> Gate:
             db,
             select(ActionRequest.id).where(
                 ActionRequest.experiment_id == eid,
-                ActionRequest.status.notin_([ActionStatus.PENDING_APPROVAL, ActionStatus.REJECTED]),
+                ActionRequest.status.in_(APPROVED_STATUSES),
             ),
         )
         if not approved:
