@@ -4,7 +4,8 @@ import { defineConfig, devices } from "@playwright/test";
 // See README "Testing" for how to start both.
 export default defineConfig({
   testDir: "./e2e",
-  timeout: 90_000,
+  timeout: 180_000, // the flow includes a real Claude synthesis call when ANTHROPIC_API_KEY is set
+  workers: 1, // one shared dev server + DB; parallel runs caused load-related timeouts
   expect: { timeout: 15_000 },
   fullyParallel: false,
   reporter: [["list"]],

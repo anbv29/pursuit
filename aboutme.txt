@@ -409,6 +409,11 @@ A commit cannot contain its own hash, so each entry's hash is filled in by the f
     - Result: pytest 63 passed
 
 ----------------------------------------------------------------------
-#75  (hash recorded in next commit)  docs: add 45-point security checklist and incident response
+#75  9de3ce2  docs: add 45-point security checklist and incident response
     - docs/SECURITY_CHECKLIST.md: all 45 items with file/test/command evidence; tally verified by script: 37 PASS (several with stated limits), 3 FAIL (#18 no frontend CSP, #38 no account deletion/password reset, #43 no monitoring/alerting), 5 UNKNOWN (#4 env isolation, #6 deploy permissions, #12 and #15 DB least privilege, #44 backup restore); production readiness explicitly NOT claimed
     - docs/INCIDENT_RESPONSE.md: emergency agent stop (ACTIONS_DISABLED + revoking the Fo token), rotation table per credential, data exposure triage from audit_events, compromised-account SQL steps, post-incident note
+
+----------------------------------------------------------------------
+#76  (hash recorded in next commit)  test: run E2E serially with headroom for real AI calls
+    - frontend/playwright.config.ts: workers 1 and 180s timeout. A full-suite run had one load-related timeout (3 parallel workers on one dev server plus a real Claude call); the same test passed alone in 29s
+    - Final verification: ruff + format check clean; pip-audit no known vulnerabilities; pytest 63 passed; tsc clean; eslint clean; next build OK; Playwright 5/5 passed (desktop + mobile)
