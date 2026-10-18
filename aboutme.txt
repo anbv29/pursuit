@@ -1,0 +1,17 @@
+PURSUIT — COMMIT LOG
+====================
+One entry per commit: what changed and what was added.
+A commit cannot contain its own hash, so each entry's hash is filled in by the following commit.
+
+----------------------------------------------------------------------
+#0  c4a34cf  first commit
+    - README.md with project title.
+
+----------------------------------------------------------------------
+#1  (hash recorded in next commit)  chore: add repo foundations and local Postgres
+    Added:
+    - .gitignore (secrets, Python, Node/Next build output, editor files).
+    - .env.example with placeholder-only config for backend and frontend.
+    - docker-compose.yml: Postgres 16 on localhost:5433 for local dev.
+    - backend/scripts/init-test-db.sql: creates a separate pursuit_test database.
+    - aboutme.txt: this commit log.
