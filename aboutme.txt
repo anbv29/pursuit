@@ -759,5 +759,9 @@ fd19a14  feat: add workspace pricing and billing screen
     - Add visible credit costs free analysis choice member removal and billing aware data controls.
 
 ----------------------------------------------------------------------
-(hash recorded in next commit)  test: add offline signed payment test provider
+426b986  test: add offline signed payment test provider
     - Use real SDK signature verification with synthetic resources and no external charges.
+
+----------------------------------------------------------------------
+(hash recorded in next commit)  test: verify signed payment fulfillment
+    - Six signed payment tests pass; fix system actor audits and checkout binding.

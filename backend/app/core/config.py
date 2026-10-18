@@ -74,7 +74,7 @@ class Settings(BaseSettings):
     @model_validator(mode="after")
     def _production_guards(self) -> "Settings":
         if self.app_env == "production":
-            if self.dodo_api_key and self.dodo_environment != "live_mode":
+            if self.dodo_api_key and self.dodo_api_key.get_secret_value() and self.dodo_environment != "live_mode":
                 raise ValueError("Production billing requires DODO_PAYMENTS_ENVIRONMENT=live_mode")
             if not self.cookie_secure:
                 raise ValueError("COOKIE_SECURE must be true in production")

@@ -23,6 +23,8 @@ def bound_order(db, resource):
         return None, None
     db.execute(select(Workspace.id).where(Workspace.id == order.workspace_id).with_for_update())
     account = db.get(BillingAccount, order.workspace_id)
+    if account is None:
+        raise AppError("Billing account is unavailable.")
     db.refresh(account)
     if (
         order.environment != get_settings().dodo_environment
@@ -81,7 +83,13 @@ def payment(db, provider, payment_id):
         raise AppError("Paid cart does not match the purchased report pack.")
     grant(db, order, f"payment:{paid.payment_id}", "single", payment_id=paid.payment_id)
     order.state, order.payment_id = "PAID", paid.payment_id
-    audit.record(db, "billing.pack_paid", workspace_id=order.workspace_id, detail={"order": str(order.id)})
+    audit.record(
+        db,
+        "billing.pack_paid",
+        actor_id=None,
+        workspace_id=order.workspace_id,
+        detail={"order": str(order.id)},
+    )
 
 
 def subscription(db, provider, subscription_id):
@@ -93,6 +101,8 @@ def subscription(db, provider, subscription_id):
     sub = provider.subscriptions.retrieve(subscription_id)
     if sub.customer.customer_id != account.customer_id:
         raise AppError("Subscription customer changed during verification.")
+    if account.subscription_id is None and sub.product_id != order.product_id:
+        raise AppError("Initial subscription product does not match its checkout.")
     if (
         account.subscription_id
         and account.subscription_id != sub.subscription_id
@@ -133,6 +143,7 @@ def subscription(db, provider, subscription_id):
     audit.record(
         db,
         "billing.subscription_sync",
+        actor_id=None,
         workspace_id=order.workspace_id,
         detail={"status": status, "plan": slug},
     )
@@ -151,5 +162,9 @@ def revoke(db, provider, payment_id):
             row.revoked_at = utcnow()
     account.suspended = True  # partial refunds/disputes require explicit operator review
     audit.record(
-        db, "billing.payment_review", workspace_id=order.workspace_id, detail={"payment_id": payment_id}
+        db,
+        "billing.payment_review",
+        actor_id=None,
+        workspace_id=order.workspace_id,
+        detail={"payment_id": payment_id},
     )
