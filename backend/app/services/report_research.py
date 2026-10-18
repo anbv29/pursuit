@@ -190,7 +190,9 @@ def _synthesize_part(client, model: str, context: str, part_model, instruction: 
     return parsed
 
 
-def synthesize(company_url: str, site_text: str, inputs: dict, found: Research) -> ReportContent:
+def synthesize(
+    company_url: str, site_text: str, inputs: dict, found: Research, *, base=None, sections=None
+) -> ReportContent:
     s = get_settings()
     client = _client()
     source_list = NL.join(f"{x['id']}: {x['url']} - {x['title']}" for x in found.sources) or "(none)"
@@ -206,9 +208,11 @@ def synthesize(company_url: str, site_text: str, inputs: dict, found: Research) 
             f"Allowed metric names: {', '.join(ALLOWED_METRICS)}.",
         ]
     )
-    with ThreadPoolExecutor(max_workers=len(PARTS)) as pool:
-        futures = [pool.submit(_synthesize_part, client, s.research_model, context, m, i) for m, i in PARTS]
-        merged: dict = {}
+    parts = [(m, i) for m, i in PARTS if not sections or set(m.model_fields) & set(sections)]
+    with ThreadPoolExecutor(max_workers=len(parts)) as pool:
+        futures = [pool.submit(_synthesize_part, client, s.research_model, context, m, i) for m, i in parts]
+        merged: dict = dict(base or {})
         for f in futures:
-            merged.update(f.result().model_dump())
+            generated = f.result().model_dump()
+            merged.update({k: v for k, v in generated.items() if not sections or k in sections})
     return ReportContent.model_validate(merged)

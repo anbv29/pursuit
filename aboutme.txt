@@ -584,5 +584,9 @@ A commit cannot contain its own hash, so each entry's hash is filled in by the f
     - Seven report-specific days with interview scripts, completion criteria, notes and checkoffs. Idempotent plan creation and workspace-scoped updates.
 
 ----------------------------------------------------------------------
-#112  (hash recorded in next commit)  feat: add first-week checklist and interview scripts
+#112  553f72b  feat: add first-week checklist and interview scripts
     - Seven-day plan UI with saved notes, checkoffs, completion criteria and progress. Tests cover idempotence, persistence and cross-user denial.
+
+----------------------------------------------------------------------
+#113  (hash recorded in next commit)  feat: preserve report versions and refresh selected sections
+    - Immutable before-refresh snapshots, founder corrections, comparisons and selective synthesis. Old and new citations remain distinct.

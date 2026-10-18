@@ -8,7 +8,7 @@ from app.api.deps import current_user, workspace_member
 from app.core.db import get_db
 from app.core.ratelimit import limiter
 from app.models import Membership, User
-from app.services import report_chat, report_plan, reports
+from app.services import report_chat, report_plan, report_versions, reports
 
 router = APIRouter(prefix="/api/workspaces/{workspace_id}/reports/{report_id}", tags=["Report tools"])
 
@@ -25,6 +25,33 @@ def entry_out(entry):
 
 class Question(BaseModel):
     question: str = Field(min_length=3, max_length=2000)
+
+
+class Refresh(BaseModel):
+    correction: str = Field(default="", max_length=3000)
+    sections: list[str] = Field(min_length=1, max_length=16)
+
+
+@router.get("/versions")
+def versions(report=Depends(owned_report), db: Session = Depends(get_db)):
+    return [entry_out(row) for row in report_versions.versions(db, report)]
+
+
+@router.get("/versions/{version_id}/compare")
+def compare(version_id: uuid.UUID, report=Depends(owned_report), db: Session = Depends(get_db)):
+    return report_versions.compare(db, report, version_id)
+
+
+@router.post("/refresh", status_code=202)
+def refresh(
+    body: Refresh,
+    report=Depends(owned_report),
+    user: User = Depends(current_user),
+    db: Session = Depends(get_db),
+):
+    limiter.check(f"report-refresh:{user.id}", limit=5, window_seconds=3600)
+    row = report_versions.refresh(db, report, user, body.correction, body.sections)
+    return {"id": str(row.id), "status": row.status}
 
 
 @router.get("/questions")

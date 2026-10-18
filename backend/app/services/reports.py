@@ -159,11 +159,22 @@ def run(report_id: uuid.UUID) -> None:
             )
             if site.get("source"):
                 found.sources.insert(0, site["source"])
+            found.sources.extend(checkpoint.get("base_sources", []))
             checkpoint["research"] = {"notes": found.notes, "sources": found.sources}
             _set(db, report_id, owner, checkpoint=checkpoint)
         found = report_research.Research(**checkpoint["research"])
         _set(db, report_id, owner, progress=f"Writing the report from {len(found.sources)} sources…")
-        content = report_research.synthesize(report.company_url, site_text, inputs, found)
+        if checkpoint.get("sections"):
+            content = report_research.synthesize(
+                report.company_url,
+                site_text,
+                inputs,
+                found,
+                base=checkpoint["base_content"],
+                sections=checkpoint["sections"],
+            )
+        else:
+            content = report_research.synthesize(report.company_url, site_text, inputs, found)
         data, stats = report_validate.validate(content, found.sources)
         # A cancelled or reclaimed job must never overwrite its replacement.
         db.refresh(report)
