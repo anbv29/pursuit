@@ -316,5 +316,11 @@ A commit cannot contain its own hash, so each entry's hash is filled in by the f
     - frontend/src/components/experiment/outcomes.tsx: record real outcomes (sent, delivered, replied, positive reply, meeting, interview, pricing feedback, verbal interest vs commitment, other) linked to variant/prospect with optional amount; outcome log with origin labels (demo / fo / manual / import); delete with confirmation and metric recalculation
 
 ----------------------------------------------------------------------
-#60  (hash recorded in next commit)  feat: add funnel diagnosis panel with CSV import
+#60  53ba694  feat: add funnel diagnosis panel with CSV import
     - frontend/src/components/experiment/funnel.tsx: accessible funnel visualisation with per-step conversion, drop-off counts and the biggest leak highlighted; overall conversion with n and 95% CI; competing explanations each paired with a distinguishing test; CSV upload (server-validated, row errors and warnings shown) and manual stage entry with validation
+
+----------------------------------------------------------------------
+#61  (hash recorded in next commit)  feat: add experiment workspace page and competitor matrix
+    - frontend/src/app/w/[ws]/experiments/[id]/page.tsx: experiment workspace with header (use case, demo/archived labels), lifecycle rail, use-case-specific tabs (overview, evidence, prospects & interviews, variants, competitors, funnel, actions, outcomes) persisted in the URL, archive with confirmation, not-found state for foreign IDs
+    - frontend/src/components/experiment/competitive.tsx: competitor x aspect matrix (pricing/features/audience/positioning) derived from tagged evidence; unknown cells shown as 'Unknown', unsourced claims flagged, contradicting items marked, source dates linked
+    - Known: eslint react-hooks/set-state-in-effect errors to fix next
