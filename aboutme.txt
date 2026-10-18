@@ -259,5 +259,11 @@ A commit cannot contain its own hash, so each entry's hash is filled in by the f
     - frontend/src/app/login, signup: pages
 
 ----------------------------------------------------------------------
-#47  (hash recorded in next commit)  feat: add workspace app shell with collapsible sidebar
+#47  517b4cf  feat: add workspace app shell with collapsible sidebar
     - frontend/src/components/shell.tsx: persistent collapsible sidebar (state remembered), primary nav with live approvals count, sticky header with workspace switcher, demo/live workspace indicator, mobile nav, sign out; workspace context for child pages; 'not available' state for foreign or missing workspaces
+
+----------------------------------------------------------------------
+#48  (hash recorded in next commit)  feat: add onboarding and workspace routing
+    - frontend/src/app/onboarding/page.tsx: name the workspace and choose 'start my first experiment' (empty, goes straight to experiment creation) or 'explore with demo data' (clearly labelled synthetic data); accessible radio cards
+    - frontend/src/app/w/page.tsx: sends signed-in users to their last or first workspace, or onboarding if none
+    - frontend/src/app/w/[ws]/layout.tsx: auth guard + workspace shell
