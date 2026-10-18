@@ -715,5 +715,9 @@ b5c2e2b  feat: enforce paid research allowances
     - Add atomic credit reservations feature checks and failure credit release.
 
 ----------------------------------------------------------------------
-(hash recorded in next commit)  feat: migrate paid plan storage
+e6d1031  feat: migrate paid plan storage
     - Add reproducible billing schema with named reversible report credit reference.
+
+----------------------------------------------------------------------
+(hash recorded in next commit)  feat: prepare verified paid plan checkout
+    - Use allowlisted products owner bound orders and safe Dodo checkout links.
