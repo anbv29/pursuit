@@ -67,6 +67,11 @@ A commit cannot contain its own hash, so each entry's hash is filled in by the f
     - app/api/auth.py: register, login, me, logout. httpOnly SameSite=Lax session cookie (Secure in prod), CSRF token returned in body, per-IP and per-email login rate limits, register rate limit
 
 ----------------------------------------------------------------------
-#10  (hash recorded in next commit)  feat: add workspace service and routes with membership checks
+#10  639cda8  feat: add workspace service and routes with membership checks
     - app/services/workspaces.py: create (creator becomes owner), list for user, list/add members (existing accounts only), hard delete with FK cascade for data-deletion requests
     - app/api/workspaces.py: workspace CRUD, members, owner-only audit log; all routes require membership; demo seeding hook (service added in a later commit)
+
+----------------------------------------------------------------------
+#11  (hash recorded in next commit)  feat: add FastAPI app factory with security headers and health check
+    - app/main.py: app factory, CORS restricted to configured origins and methods, security headers (nosniff, DENY framing, strict CSP, no-store, HSTS when secure cookies), generic 500 handler that logs server-side only, /api/health with DB probe (no secrets), docs disabled in production
+    - pyproject.toml: allow test-only password literals
