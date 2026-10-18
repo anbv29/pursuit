@@ -11,3 +11,4 @@ argon2-cffi==25.1.0
 httpx==0.28.1
 anthropic==1.15.0
 python-multipart==0.0.32
+cryptography==50.0.2
