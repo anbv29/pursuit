@@ -425,5 +425,10 @@ A commit cannot contain its own hash, so each entry's hash is filled in by the f
     - migrations/versions/f9fde6eadbca_add_reports.py: verified upgrade -> downgrade -> upgrade on dev and upgrade on test DB
 
 ----------------------------------------------------------------------
-#78  (hash recorded in next commit)  feat: add report input and content schemas
+#78  ddb84a1  feat: add report input and content schemas
     - backend/app/schemas/report.py: ReportIn (website URL required, http(s) only; optional name, description, target customers, stage, business model, pricing, known competitors, geography, goal) and ReportContent - the structured-output contract for Claude: executive summary, snapshot with observed pricing, ICP segments with fit score, personas, problem hypotheses with evidence for/against, competitors, positioning gaps, pricing/WTP, messaging angles with drafts, prospecting signals, funnel risks, prioritised experiments mapped to Pursuit use cases and metrics, risks/unknowns, focus-first. Every claim carries kind (fact/interpretation/assumption), confidence and source ids
+
+----------------------------------------------------------------------
+#79  (hash recorded in next commit)  feat: add two-pass Claude research for company reports
+    - backend/app/services/report_research.py: pass 1 streams Claude (ANTHROPIC_MODEL, default claude-opus-5-5, effort medium) with Anthropic server tools web_search_20260209 (max 10) and web_fetch_20260209 (max 6), resumes pause_turn up to 4 times, and records only URLs that actually came back in tool results as citable sources S1..Sn; pass 2 streams a structured ReportContent via output_format. Prompts treat site text, founder inputs and web content as data, forbid inventing prices/numbers and researching private individuals; refusal / max_tokens / unparseable output raise user-safe errors
+    - Verified SDK 1.15 messages.stream accepts output_format and output_config
