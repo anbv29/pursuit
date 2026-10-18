@@ -23,6 +23,10 @@ test("website + description -> full sourced report -> tracked experiment", async
   expect(integrations.ok()).toBeTruthy();
   test.skip(!(await integrations.json()).ai.enabled,
     "Live report verification requires ANTHROPIC_API_KEY on the backend; research is unavailable without it.");
+  const allowance = await page.request.get(`/api/workspaces/${workspaceId}/allowance`);
+  expect(allowance.ok()).toBeTruthy();
+  test.skip((await allowance.json()).research_remaining < 1,
+    "Live report verification requires a legitimately purchased research credit; this test never buys one.");
   // This integration test verifies detailed terminology; guided mode is tested separately.
   await page.getByLabel("Reading style").selectOption("advanced");
 

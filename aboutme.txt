@@ -771,5 +771,9 @@ d3ad1f6  test: verify signed payment fulfillment
     - Four subscription tests pass; stop revoked or expired allowances before AI requests.
 
 ----------------------------------------------------------------------
-(hash recorded in next commit)  test: verify paid credit enforcement
+bc59919  test: verify paid credit enforcement
     - Four allowance tests pass including concurrent last credit and failed report credit release.
+
+----------------------------------------------------------------------
+(hash recorded in next commit)  docs: document paid plans and billing setup
+    - Add billing browser checks and merchant setup; production build and frontend lint pass.
