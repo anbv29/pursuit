@@ -13,7 +13,7 @@ from sqlalchemy import func, select
 
 from app.core.db import new_session, utcnow
 from app.core.errors import AppError
-from app.models import BillingUse, CreditGrant, Workspace
+from app.models import BillingUse, Workspace
 from app.models.usage import UsageCall, WorkspaceBudget
 from app.services.plans import PLANS
 
@@ -86,7 +86,17 @@ def reserve(model_id, max_tokens, searches=0, operation="research", max_input=1_
         use_id = BILLING_USE.get()
         if use_id:
             use = db.get(BillingUse, use_id)
-            grant = db.get(CreditGrant, use.grant_id)
+            from app.services.entitlements import eligible_grants
+
+            allowed = {g.id: g for g in eligible_grants(db, current[0])}
+            if (
+                not use
+                or use.workspace_id != current[0]
+                or use.status != "RESERVED"
+                or use.grant_id not in allowed
+            ):
+                raise AppError("This research allowance is no longer available.", "allowance_unavailable")
+            grant = allowed[use.grant_id]
             total = func.coalesce(UsageCall.estimated_usd, UsageCall.reserved_usd)
             job_cost = db.scalar(
                 select(func.coalesce(func.sum(total), 0)).where(UsageCall.billing_use_id == use_id)
