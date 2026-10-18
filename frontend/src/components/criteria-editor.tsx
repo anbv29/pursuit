@@ -2,6 +2,7 @@
 
 import { Plus, Trash2 } from "lucide-react";
 import { Button, Input, Select } from "./ui";
+import { useAdvanced } from "./reading-mode";
 
 export type CriterionDraft = { metric: string; comparator: string; target: number; min_sample: number; description: string };
 
@@ -21,6 +22,7 @@ export const KNOWN_METRICS: { value: string; label: string; rate: boolean }[] = 
 export const isRate = (m: string) => KNOWN_METRICS.find((k) => k.value === m)?.rate ?? false;
 
 export function CriteriaEditor({ value, onChange }: { value: CriterionDraft[]; onChange: (v: CriterionDraft[]) => void }) {
+  const advanced = useAdvanced();
   const update = (i: number, patch: Partial<CriterionDraft>) => onChange(value.map((c, j) => (j === i ? { ...c, ...patch } : c)));
   return (
     <div className="space-y-2">
@@ -52,7 +54,7 @@ export function CriteriaEditor({ value, onChange }: { value: CriterionDraft[]; o
         );
       })}
       <div className="flex items-center justify-between">
-        <p className="text-xs text-ink-3">Columns: metric · comparator · target · minimum sample size before judging.</p>
+        <p className="max-w-prose text-xs text-ink-3">{advanced ? "Columns: metric · comparator · target · minimum sample size before judging." : "Choose what to measure, the result you want (≥ means at least), and how many observations you need before judging it."}</p>
         <Button type="button" variant="ghost" size="sm" disabled={value.length >= 10}
           onClick={() => onChange([...value, { metric: "interviews_completed", comparator: ">=", target: 5, min_sample: 0, description: "" }])}>
           <Plus className="size-3.5" /> Add criterion

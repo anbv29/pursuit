@@ -1,14 +1,19 @@
+"use client";
+
 import { DECISION_STYLE, STAGE_LABEL } from "@/lib/labels";
 import type { Decision, Rate, Stage } from "@/lib/types";
 import { cx } from "./ui";
+import { useAdvanced } from "./reading-mode";
 
 const STAGES = Object.keys(STAGE_LABEL) as Stage[];
 
 export function DecisionChip({ decision, size = "sm" }: { decision: Decision; size?: "sm" | "lg" }) {
+  const advanced = useAdvanced();
+  const simple = { CONTINUE: "Keep going", ITERATE: "Improve and retry", PIVOT: "Change direction", STOP: "Stop this test", INCONCLUSIVE: "Need more evidence" };
   const s = DECISION_STYLE[decision];
   return (
     <span className={cx("inline-flex items-center rounded-md font-semibold tracking-wide", s.className,
-      size === "lg" ? "px-3 py-1.5 text-sm" : "px-1.5 py-0.5 text-[11px] uppercase")}>{s.label}</span>
+      size === "lg" ? "px-3 py-1.5 text-sm" : "px-1.5 py-0.5 text-[11px] uppercase")}>{advanced ? s.label : simple[decision]}</span>
   );
 }
 
@@ -29,6 +34,7 @@ export function StageBar({ stage }: { stage: Stage }) {
 
 /** A rate with its denominator and 95% interval — never a bare percentage. */
 export function RateView({ rate, label }: { rate: Rate; label?: string }) {
+  const advanced = useAdvanced();
   if (rate.value === null) {
     return <span className="text-sm text-ink-3">No data yet{label ? ` for ${label}` : ""}</span>;
   }
@@ -39,7 +45,7 @@ export function RateView({ rate, label }: { rate: Rate; label?: string }) {
     <span className="inline-flex flex-wrap items-baseline gap-x-1.5">
       <span className="text-base font-semibold tabular-nums">{p(rate.value)}%</span>
       <span className="text-xs tabular-nums text-ink-3">
-        {rate.numerator.toLocaleString()}/{rate.denominator.toLocaleString()} · 95% CI {p(rate.ci_low)}–{p(rate.ci_high)}%
+        {rate.numerator.toLocaleString()}/{rate.denominator.toLocaleString()} · {advanced ? "95% CI" : "95% uncertainty range"} {p(rate.ci_low)}–{p(rate.ci_high)}%
       </span>
     </span>
   );

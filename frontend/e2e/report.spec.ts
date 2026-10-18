@@ -18,6 +18,8 @@ test("website + description -> full sourced report -> tracked experiment", async
   await page.getByText("Analyze my company").click();
   await page.getByRole("button", { name: "Create workspace" }).click();
   await expect(page.getByRole("heading", { name: "Analyze your company" })).toBeVisible({ timeout: 60_000 });
+  // This integration test verifies detailed terminology; guided mode is tested separately.
+  await page.getByLabel("Reading style").selectOption("advanced");
 
   await v("Website").fill("linear.app");
   await v("What do you do, and for whom?").fill("Issue tracking and project management for software teams.");

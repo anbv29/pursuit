@@ -59,6 +59,7 @@ def test_report_generates_end_to_end(api, ws, fake_ai):
     rep = api.get(f"/api/workspaces/{ws}/reports/{rid}").json()  # background task ran
     assert rep["status"] == "SUCCEEDED", rep
     assert rep["company_name"] == "Acme"
+    assert rep["model"] == get_settings().research_model
     assert [s["id"] for s in rep["sources"]] == ["S0", "S1"]  # site + research
     assert fake_ai["sources"] == ["S0", "S1"]
     assert fake_ai["research"]["inputs"]["description"] == "Claims automation for clinics"

@@ -12,6 +12,7 @@ test("demo workspace screens are labelled and responsive", async ({ page }, info
   await page.getByText("Explore with demo data").click();
   await page.getByRole("button", { name: "Create demo workspace" }).click();
   await expect(page.getByText("Demo workspace").first()).toBeVisible();
+  await page.getByLabel("Reading style").selectOption("advanced");
 
   const shot = async (name: string) => {
     const overflow = await page.evaluate(() => document.documentElement.scrollWidth - window.innerWidth);

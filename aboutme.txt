@@ -528,5 +528,9 @@ A commit cannot contain its own hash, so each entry's hash is filled in by the f
     - add
 
 ----------------------------------------------------------------------
-#98  (hash recorded in next commit)  "feat:
+#98  483b4e8  "feat:
     - explain
+
+----------------------------------------------------------------------
+#99  (hash recorded in next commit)  "test:
+    - cover
