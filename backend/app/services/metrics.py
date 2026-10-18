@@ -19,11 +19,10 @@ def _visible(exp: Experiment, origin: DataOrigin) -> bool:
 
 
 def compute(db: Session, exp: Experiment) -> dict:
-    outcomes = [
-        o
-        for o in db.scalars(select(OutcomeEvent).where(OutcomeEvent.experiment_id == exp.id))
-        if _visible(exp, o.origin)
-    ]
+    all_outcomes = db.scalars(select(OutcomeEvent).where(OutcomeEvent.experiment_id == exp.id)).all()
+    outcomes = [o for o in all_outcomes if _visible(exp, o.origin)]
+    # Simulated events in a live experiment are reported separately, never mixed in.
+    simulated = Counter(o.kind.value for o in all_outcomes if not _visible(exp, o.origin))
     interviews = [
         i
         for i in db.scalars(select(Interview).where(Interview.experiment_id == exp.id))
@@ -35,7 +34,11 @@ def compute(db: Session, exp: Experiment) -> dict:
         if _visible(exp, e.origin)
     ]
     counts = Counter(o.kind for o in outcomes)
-    m: dict = {"includes_demo_data": exp.is_demo, "outcome_counts": {k.value: counts[k] for k in OutcomeKind}}
+    m: dict = {
+        "includes_demo_data": exp.is_demo,
+        "outcome_counts": {k.value: counts[k] for k in OutcomeKind},
+        "excluded_simulated_outcomes": dict(simulated),
+    }
 
     # Interviews / discovery / WTP
     done = [i for i in interviews if i.status == "completed"]

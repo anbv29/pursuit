@@ -194,8 +194,14 @@ A commit cannot contain its own hash, so each entry's hash is filled in by the f
     - app/services/recommend_rules.py: shortened long strings (lint fix for previous commit)
 
 ----------------------------------------------------------------------
-#35  (hash recorded in next commit)  feat: add recommendations, analysis and funnel import API
+#35  0e54e10  feat: add recommendations, analysis and funnel import API
     - app/services/recommendations.py: analysis (metrics + criteria results), generate a persisted recommendation from rules, optionally refined by Claude with server-side guards (model can't overturn INCONCLUSIVE, confidence capped at 0.9, cited ids filtered to real evidence, counterevidence always DB-sourced); demo evidence excluded from live experiments; funnel snapshot persistence
     - app/api/analysis.py: GET analysis, list/generate recommendations (rate limited), manual funnel entry, CSV funnel import (.csv only, 100 KB cap, row-level errors returned)
     - requirements.txt: python-multipart for uploads
     - app/main.py: register analysis router
+
+----------------------------------------------------------------------
+#36  (hash recorded in next commit)  test: add end-to-end experiment flow and recommendation guard tests
+    - tests/test_e2e_flow.py: full path through real routes and DB: workspace -> experiment -> evidence with source -> criteria -> blocked action stage until approval -> approve demo action -> interviews/outcomes -> analysis (criterion met) -> rule-based CONTINUE -> logout/login persistence check -> other user gets 404 on read and approve; INCONCLUSIVE without data; a fake AI saying CONTINUE at 0.99 with fake evidence ids is overruled to INCONCLUSIVE, capped and filtered; funnel CSV import, bottleneck and row errors
+    - app/services/metrics.py: simulated outcomes in live experiments are reported separately as excluded_simulated_outcomes (found by the E2E test: demo sends must not inflate live metrics)
+    - Result: pytest 58 passed
