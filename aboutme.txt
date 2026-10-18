@@ -141,5 +141,10 @@ A commit cannot contain its own hash, so each entry's hash is filled in by the f
     - app/core/db.py: new_session() for background execution
 
 ----------------------------------------------------------------------
-#24  (hash recorded in next commit)  feat: add action executor with honest status tracking
+#24  f24a4b0  feat: add action executor with honest status tracking
     - app/services/executor.py: background execution claims QUEUED->RUNNING atomically (no double runs), builds the deterministic instruction, submits to Fo exactly once (no blind resubmits that could duplicate emails), polls with a deadline and bounded poll errors; demo completions become SUCCEEDED and log a demo-labelled 'sent' outcome; live completions, Fo questions and timeouts become UNKNOWN until a human confirms; provider outages before submit = FAILED, after submit = UNKNOWN; human confirm endpoint logic records a live 'sent' outcome
+
+----------------------------------------------------------------------
+#25  (hash recorded in next commit)  feat: add action approval API routes
+    - app/api/actions.py: workspace approval queue (pending + unknown-outcome actions), list/request actions per experiment (rate limited), approve/reject (approval schedules background execution), cancel, and human confirmation of unknown outcomes
+    - app/main.py: register actions router
