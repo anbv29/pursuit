@@ -8,6 +8,7 @@ import { useApi } from "@/lib/hooks";
 import type { Workspace } from "@/lib/types";
 import { Logo } from "./brand";
 import { useSession } from "./session";
+import { ReadingControls } from "./reading-mode";
 import { Badge, cx, DemoBadge, Empty, Skeleton } from "./ui";
 
 // Sidebar preference lives in localStorage; read it as an external store (SSR renders expanded).
@@ -114,6 +115,7 @@ export function WorkspaceShell({ wsId, children }: { wsId: string; children: Rea
         <main className="flex-1 px-4 py-6 md:px-8">
           {ws.data ? (
             <WorkspaceCtx.Provider value={{ workspace: ws.data, base, refreshApprovals: approvals.reload }}>
+              <ReadingControls />
               {children}
             </WorkspaceCtx.Provider>
           ) : (

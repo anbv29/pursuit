@@ -520,5 +520,9 @@ A commit cannot contain its own hash, so each entry's hash is filled in by the f
     - Result: pytest 76 passed
 
 ----------------------------------------------------------------------
-#96  (hash recorded in next commit)  "feat:
+#96  102603b  "feat:
     - default
+
+----------------------------------------------------------------------
+#97  (hash recorded in next commit)  "feat:
+    - add
