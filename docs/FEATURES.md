@@ -26,6 +26,9 @@
 - Review the experiment activity timeline and archive experiments while keeping their records.
 
 ### Work with a team and approved actions
+- Use the owner-only interview concierge to review invitations for up to five prospects,
+  approve each task, inspect Fo progress, approve clarifications, and manually confirm bookings.
+  See `INTERVIEW_CONCIERGE.md` for tested scope and live-verification requirements.
 - Create accounts and workspaces; add existing users as members.
 - Review workspace approvals and outcomes that still need confirmation.
 - Request email, calendar and public-research actions through Fo, then approve them explicitly.

@@ -699,5 +699,9 @@ a19a472  fix: preserve uncertain Fo submission results
     - Verify progress persistence conversation binding and safe provider failure handling.
 
 ----------------------------------------------------------------------
-(hash recorded in next commit)  test: exercise concierge flow on desktop and phone
+7c5da54  test: exercise concierge flow on desktop and phone
     - Add real stack demo booking checks and document provider boundaries.
+
+----------------------------------------------------------------------
+(hash recorded in next commit)  docs: record verified interview concierge
+    - Record 108 backend and 10 browser passes plus live Fo verification requirements.

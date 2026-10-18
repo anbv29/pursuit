@@ -64,3 +64,27 @@ Before offering paid live coordination, approve one invitation to a consenting t
 check the actual email/calendar, verify clarification and token-refresh behavior, and confirm
 that the provider respects recipient, reminder, calendar and deadline limits. Provider costs
 and account limits must be checked separately. None of those live outcomes is claimed here.
+
+## Executed verification (2026-10-18)
+
+- Applied migration `400dfbe519c4` to local development and isolated test PostgreSQL databases.
+- `pytest -q -rA`: **108 passed**. Includes real API/database tests for atomic invitation batches,
+  limits, expired execution, owner-only access, duplicate prevention, scoped conversation replies,
+  saved progress, unknown submission outcomes and live/demo result separation. Provider calls mocked.
+- `ruff check backend/app backend/tests`: passed; formatting checks for the new backend modules passed.
+- `npm run lint`, `npx tsc --noEmit`: passed.
+- `NEXT_DIST_DIR=.next-build NODE_OPTIONS=--max-old-space-size=1536 npm run build`: passed.
+- `npx playwright test e2e/concierge.spec.ts e2e/reading-mode.spec.ts --project=desktop`:
+  **5 passed**, including actual browser → API → PostgreSQL concierge flows at 1280px and 390px.
+  A booking persisted after reload; exactly one planned demo interview and one demo booking event
+  were verified. Report-reading tests use synthetic API fixtures.
+- `npx playwright test e2e/experiment-flow.spec.ts e2e/responsive.spec.ts`: **5 passed**,
+  covering the existing experiment/approval loop, cross-user rejection, signup validation,
+  anonymous protection and desktop/mobile demo screens. Total browser checks: **10 passed**.
+- Desktop and mobile screenshots were inspected against the existing product components and tokens.
+  No horizontal overflow or browser page errors occurred in the concierge tests.
+- Published Fo tool inputs were rechecked through read-only MCP calls. No live `ask_fo` action,
+  message, reminder, calendar booking or call was performed.
+
+Earlier security/readiness findings remain open. This feature's demo and mocked-provider checks
+do not certify Fo's real execution or resolve production monitoring, backup or account-management gaps.
