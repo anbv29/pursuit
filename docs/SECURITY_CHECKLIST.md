@@ -1,5 +1,31 @@
 # Pursuit security checklist (45 points)
 
+## Eight-feature addendum (2026-10-18)
+
+The original matrix below is historical evidence, not a fresh production certification.
+The new verification record is `docs/FEATURE_VERIFICATION.md`. Existing FAIL/UNKNOWN findings
+remain unresolved. Newly added controls and their concrete evidence:
+
+- #2/#13/#22: `services/fo_oauth.py` encrypts per-user credentials with Fernet, validates
+  one-time state/PKCE, and serializes refresh; `tests/test_fo_oauth.py` covers isolation.
+  Production key custody and real provider consent remain UNKNOWN.
+- #9/#10/#11: report tools, sharing management and usage settings enforce workspace access;
+  `tests/test_report_tools.py`, `test_sharing_usage.py`, `test_prospect_discovery.py` and
+  `test_delivery_tracking.py` exercise foreign-user rejection.
+- #30/#36: `services/ai_usage.py` locks workspace budget reservations; `report_worker.py`
+  claims leased jobs and `reports.py` uses atomic completion guarded by owner and status.
+  `test_sharing_usage.py` and `test_report_jobs.py` exercise these controls.
+- #35/#37/#39: `services/delivery_tracking.py` verifies approved recipient/subject and
+  deduplicates imported events. Provider errors do not imply success (`test_delivery_tracking.py`).
+- #38: exports now include reports and associated records, excluding OAuth and share secrets
+  (`api/overview.py`, `test_sharing_usage.py`). Account deletion/recovery remain incomplete.
+- #43: share bearer paths and OAuth callback queries are redacted by `core/log_redaction.py`;
+  monitoring and alerting remain missing. Deployment proxy/frontend logs need separate review.
+- #5/#42: frontend audit still reports five high development-only advisories; automatic
+  breaking downgrade was not applied. Do not treat this as a clean dependency audit.
+
+---
+
 Audited 2026-10-18 against the code at the commit that adds this file. Statuses are `PASS`, `FAIL`, `UNKNOWN`
 or `NOT_APPLICABLE`. A PASS cites concrete evidence, and UNKNOWN is never counted as PASS.
 Paths are relative to the repo root. Tests are in `backend/tests/` and `frontend/e2e/`.

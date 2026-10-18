@@ -644,5 +644,9 @@ A commit cannot contain its own hash, so each entry's hash is filled in by the f
     - Document all eight additions and external verification limits.
 
 ----------------------------------------------------------------------
-#127  (hash recorded in next commit)  fix: compile styles consistently and redact sensitive paths
+#127  7028e4a  fix: compile styles consistently and redact sensitive paths
     - Use standard Tailwind PostCSS and audit verified delivery events.
+
+----------------------------------------------------------------------
+#128  (hash recorded in next commit)  docs: record final feature verification
+    - Record 92 backend passes three browser passes and provider setup limits.

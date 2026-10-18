@@ -84,3 +84,21 @@ for (const width of [1280, 390]) {
     expect(errors).toEqual([]);
   });
 }
+
+test("shared reports stay read-only and handle revoked links", async ({ page }) => {
+  let revoked = false;
+  await page.route("**/api/**", async (route) => {
+    if (new URL(route.request().url()).pathname.includes("/shared-reports/")) {
+      return route.fulfill(revoked ? { status: 404, json: { error: { code: "not_found", message: "Revoked" } } }
+        : { json: { company_name: report.company_name, content: report.content, sources: report.sources, expires_at: "2026-10-25T00:00:00Z" } });
+    }
+    return route.fulfill({ status: 401, json: { error: { code: "unauthorized", message: "Sign in" } } });
+  });
+  await page.goto("/shared/test-link");
+  await expect(page.getByRole("heading", { name: "Reading test company · shared report" })).toBeVisible();
+  await expect(page.getByText("This claim keeps its original source.")).toBeVisible();
+  await expect(page.getByRole("button", { name: /Start this test|Track this|Ask report/ })).toHaveCount(0);
+  revoked = true;
+  await page.reload();
+  await expect(page.getByText("This report link is unavailable", { exact: true })).toBeVisible();
+});
