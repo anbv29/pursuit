@@ -711,5 +711,9 @@ eb1f58a  feat: define paid plans and billing records
     - Add workspace billing orders credit grants and persistent usage reservations.
 
 ----------------------------------------------------------------------
-(hash recorded in next commit)  feat: enforce paid research allowances
+b5c2e2b  feat: enforce paid research allowances
     - Add atomic credit reservations feature checks and failure credit release.
+
+----------------------------------------------------------------------
+(hash recorded in next commit)  feat: migrate paid plan storage
+    - Add reproducible billing schema with named reversible report credit reference.

@@ -38,5 +38,5 @@ class Report(IdMixin, TimestampMixin, Base):
     lease_owner: Mapped[str | None] = mapped_column(String(64))
     lease_until: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
     billing_use_id: Mapped[uuid.UUID | None] = mapped_column(
-        ForeignKey("billing_uses.id", ondelete="SET NULL")
+        ForeignKey("billing_uses.id", ondelete="SET NULL", name="fk_reports_billing_use")
     )
