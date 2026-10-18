@@ -779,5 +779,7 @@ bc59919  test: verify paid credit enforcement
     - Add billing browser checks and merchant setup; production build and frontend lint pass.
 
 ----------------------------------------------------------------------
-(hash recorded in next commit)  test: verify billing access and record results
+bcfd25a  test: verify billing access and record results
     - Add three passing access tests; record 125 backend and 12 browser passes with live payment limits.
+
+Final billing verification log checkpoint: local commits only; see git log for this documentation commit.
