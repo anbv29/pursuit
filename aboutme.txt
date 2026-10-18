@@ -788,3 +788,9 @@ Dodo merchant test catalog checkpoint (see git log for hash):
     - Created Pursuit Single Report USD 15 once, Founder USD 29 monthly and Team USD 79 monthly in Test Mode. Existing MyDay product preserved.
     - Saved verified test product IDs and business ID to ignored backend/.env. No API key created or saved.
     - Prepared restricted API key form; creation awaits action-time security confirmation. Webhooks need a reachable HTTPS endpoint. No payment executed.
+
+Live Dodo catalog checkpoint (see git log for hash):
+    - User requested live mode. Verified merchant identity/product/bank approval and live payment activation in Dodo.
+    - Imported exactly three Pursuit products into live catalog at USD 15 once, USD 29 monthly and USD 79 monthly; preserved MyDay.
+    - Saved live product IDs and live_mode in ignored backend/.env. Prepared restricted live key; creation awaits browser security confirmation.
+    - No payment, refund, payout or subscription transaction executed. Webhook requires production HTTPS origin.
