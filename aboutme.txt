@@ -514,7 +514,11 @@ A commit cannot contain its own hash, so each entry's hash is filled in by the f
     - Cleaned up: removed the temporary repro accounts and the copy of the report used for the check
 
 ----------------------------------------------------------------------
-#95  (hash recorded in next commit)  fix: only approved actions unlock the Action stage
+#95  16a0e10  fix: only approved actions unlock the Action stage
     - backend/app/services/lifecycle.py: the Approval -> Action gate counted every action that wasn't pending or rejected, so a CANCELLED action wrongly unlocked the Action stage. It now counts only actions a person approved (QUEUED, RUNNING, SUCCEEDED, FAILED, UNKNOWN)
     - tests/test_actions.py: cancelled and rejected actions keep the stage locked with the 'Approve at least one action' message; an approved one unlocks it. Verified the test fails on the old code and passes with the fix
     - Result: pytest 76 passed
+
+----------------------------------------------------------------------
+#96  (hash recorded in next commit)  "feat:
+    - default

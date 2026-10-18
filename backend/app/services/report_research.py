@@ -145,7 +145,7 @@ def research(company_url: str, site_text: str, inputs: dict, on_progress) -> Res
     for attempt in range(MAX_PAUSE_RESTARTS + 1):
         on_progress("Researching the market, competitors and pricing on the web…")
         with client.messages.stream(
-            model=s.anthropic_model,
+            model=s.research_model,
             max_tokens=32000,
             system=RESEARCH_SYSTEM,
             tools=tools,
@@ -202,7 +202,7 @@ def synthesize(company_url: str, site_text: str, inputs: dict, found: Research) 
         ]
     )
     with ThreadPoolExecutor(max_workers=len(PARTS)) as pool:
-        futures = [pool.submit(_synthesize_part, client, s.anthropic_model, context, m, i) for m, i in PARTS]
+        futures = [pool.submit(_synthesize_part, client, s.research_model, context, m, i) for m, i in PARTS]
         merged: dict = {}
         for f in futures:
             merged.update(f.result().model_dump())

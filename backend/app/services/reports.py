@@ -118,7 +118,7 @@ def run(report_id: uuid.UUID) -> None:
             report.company_name = data["snapshot"]["name"][:160]
         report.content = data
         report.sources = found.sources
-        report.model = get_settings().anthropic_model
+        report.model = get_settings().research_model
         report.status, report.progress, report.finished_at = "SUCCEEDED", "Done", utcnow()
         audit.record(
             db,
