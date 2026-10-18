@@ -463,6 +463,10 @@ A commit cannot contain its own hash, so each entry's hash is filled in by the f
     - pytest report tests 12 passed
 
 ----------------------------------------------------------------------
-#85  (hash recorded in next commit)  feat: add company analysis form (URL + description first)
+#85  b20216c  feat: add company analysis form (URL + description first)
     - frontend/src/app/w/[ws]/reports/new/page.tsx: Pancake-style start - website (accepts bare domains, normalised to https and validated), 'what do you do and for whom', 'what do you most want to learn', plus optional context (name, stage, current customers, business model, pricing, known competitors, region); server field errors mapped back; inputs preserved on error; double-submit protected
     - frontend/src/lib/types.ts: report, claim, source and content types
+
+----------------------------------------------------------------------
+#86  (hash recorded in next commit)  feat: add report building blocks with claim labels and citations
+    - frontend/src/components/report/parts.tsx: citation chips resolve source ids to the retrieved URLs (hostname, title on hover, open in new tab with noopener/nofollow); every claim shows 'Sourced fact' / 'Interpretation' / 'Assumption' or 'Unsourced' (when the server downgraded a fact) plus non-high confidence; section, bullet and label primitives with print-friendly styles
