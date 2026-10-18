@@ -5,7 +5,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
 from sqlalchemy import text
 
-from app.api import auth, workspaces
+from app.api import auth, experiments, workspaces
 from app.core.config import get_settings
 from app.core.db import get_engine
 from app.core.errors import install_handlers
@@ -57,6 +57,8 @@ def create_app() -> FastAPI:
     install_handlers(app)
     app.include_router(auth.router)
     app.include_router(workspaces.router)
+    app.include_router(experiments.router)
+    app.include_router(experiments.templates_router)
 
     @app.get("/api/health", tags=["ops"])
     def health():

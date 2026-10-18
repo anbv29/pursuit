@@ -93,5 +93,10 @@ A commit cannot contain its own hash, so each entry's hash is filled in by the f
     - app/services/use_cases.py: templates for all six use cases (segment, WTP, messaging, discovery, competitive, funnel) with hypothesis hints, default success criteria, and the external action kinds each may request (competitive and funnel request none)
 
 ----------------------------------------------------------------------
-#15  (hash recorded in next commit)  feat: add experiment service with lifecycle transitions and timeline
+#15  8428a40  feat: add experiment service with lifecycle transitions and timeline
     - app/services/experiments.py: workspace-scoped get (404 across tenants), list, create with success criteria (inherits demo flag from workspace), patch, gated stage transitions, archive (cancels pending approvals), add/delete criteria, per-experiment counts, chronological timeline built from audit events
+
+----------------------------------------------------------------------
+#16  (hash recorded in next commit)  feat: add experiment API routes
+    - app/api/experiments.py: list/create/get/patch experiments, gated stage transition, archive, add/delete success criteria, timeline, and /api/use-cases templates. Every route resolves the experiment through workspace membership so foreign IDs return 404
+    - app/main.py: register experiment routers
