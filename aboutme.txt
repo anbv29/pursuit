@@ -239,6 +239,11 @@ A commit cannot contain its own hash, so each entry's hash is filled in by the f
     - tsc: no errors
 
 ----------------------------------------------------------------------
-#43  (hash recorded in next commit)  feat: add toasts, confirm dialog and data hooks
+#43  0b8fff6  feat: add toasts, confirm dialog and data hooks
     - frontend/src/components/feedback.tsx: toast notifications (aria-live), promise-based confirmation dialog on native <dialog> (focus trap, Esc cancels, cancel focused by default) for consequential actions
     - frontend/src/lib/hooks.ts: useApi (loading/error/reload, ignores stale responses), useAction (prevents double submission, exposes pending)
+
+----------------------------------------------------------------------
+#44  (hash recorded in next commit)  feat: add session provider and app layout
+    - frontend/src/components/session.tsx: session context (checks /auth/me on load, login/register/logout, stores CSRF token in memory only), RequireAuth guard with skeleton while checking
+    - frontend/src/app/layout.tsx: Pursuit metadata, Geist fonts, session + feedback providers
