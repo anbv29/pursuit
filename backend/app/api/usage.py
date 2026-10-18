@@ -63,7 +63,10 @@ def summary(m: Membership = Depends(workspace_member), db: Session = Depends(get
             }
             for row in records[:50]
         ],
-        "note": "Estimated API spend plus reservations for unfinished or unknown calls. Not a provider invoice or provider billing cap.",
+        "note": (
+            "Estimated API spend plus reservations for unfinished or unknown calls. "
+            "Not a provider invoice or provider billing cap."
+        ),
     }
 
 

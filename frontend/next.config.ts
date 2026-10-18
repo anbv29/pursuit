@@ -31,7 +31,11 @@ const nextConfig: NextConfig = {
     return [{ source: "/api/:path*", destination: `${backend}/api/:path*` }];
   },
   async headers() {
-    return [{ source: "/:path*", headers: securityHeaders }];
+    return [
+      { source: "/:path*", headers: securityHeaders },
+      { source: "/shared/:path*", headers: [{ key: "Referrer-Policy", value: "no-referrer" },
+        { key: "Cache-Control", value: "private, no-store" }, { key: "X-Robots-Tag", value: "noindex, nofollow" }] },
+    ];
   },
 };
 

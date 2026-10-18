@@ -24,8 +24,11 @@ from app.api import (
 from app.core.config import get_settings
 from app.core.db import get_engine
 from app.core.errors import install_handlers
+from app.core.log_redaction import AccessRedaction
 
 logger = logging.getLogger("pursuit")
+
+logging.getLogger("uvicorn.access").addFilter(AccessRedaction())
 
 SECURITY_HEADERS = {
     "X-Content-Type-Options": "nosniff",

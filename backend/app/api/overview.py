@@ -12,14 +12,24 @@ from app.core.db import get_db, utcnow
 from app.core.ratelimit import limiter
 from app.models import (
     ActionRequest,
+    DeliveryTracking,
     Evidence,
     Experiment,
+    FunnelSnapshot,
     Interview,
     Membership,
+    MessageVariant,
     OutcomeEvent,
     Prospect,
     Recommendation,
+    Report,
+    ReportEntry,
+    ReportShare,
+    Source,
+    SuccessCriterion,
+    UsageCall,
     User,
+    WorkspaceBudget,
 )
 from app.models.connection import FoConnection
 from app.models.enums import ActionStatus
@@ -162,6 +172,15 @@ def export(m: Membership = Depends(workspace_owner), db: Session = Depends(get_d
             for r in db.scalars(select(model).where(model.experiment_id.in_(ids)))
         ]
 
+    def scoped(model, condition, excluded=()):
+        return [
+            {c.name: getattr(r, c.name) for c in model.__table__.columns if c.name not in excluded}
+            for r in db.scalars(select(model).where(condition))
+        ]
+
+    report_ids = select(Report.id).where(Report.workspace_id == ws_id)
+    action_ids = select(ActionRequest.id).where(ActionRequest.workspace_id == ws_id)
+
     audit.record(db, "workspace.export", actor_id=m.user_id, workspace_id=ws_id)
     db.commit()
     return {
@@ -173,4 +192,14 @@ def export(m: Membership = Depends(workspace_owner), db: Session = Depends(get_d
         "actions": rows(ActionRequest),
         "outcomes": rows(OutcomeEvent),
         "recommendations": rows(Recommendation),
+        "sources": scoped(Source, Source.workspace_id == ws_id),
+        "success_criteria": rows(SuccessCriterion),
+        "messaging_variants": rows(MessageVariant),
+        "funnel_snapshots": rows(FunnelSnapshot),
+        "reports": scoped(Report, Report.workspace_id == ws_id),
+        "report_entries": scoped(ReportEntry, ReportEntry.report_id.in_(report_ids)),
+        "delivery_tracking": scoped(DeliveryTracking, DeliveryTracking.action_id.in_(action_ids)),
+        "usage": scoped(UsageCall, UsageCall.workspace_id == ws_id),
+        "budget": scoped(WorkspaceBudget, WorkspaceBudget.workspace_id == ws_id),
+        "shares": scoped(ReportShare, ReportShare.report_id.in_(report_ids), ("token_hash", "snapshot")),
     }
