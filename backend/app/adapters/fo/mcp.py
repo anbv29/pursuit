@@ -1,0 +1,147 @@
+"""Live adapter: minimal MCP (streamable HTTP) client for Fo's `ask_fo` / `get_fo_reply`.
+
+UNVERIFIED against production until a server-side FO_ACCESS_TOKEN is available —
+see docs/FO_INTEGRATION.md. Any response we can't confidently parse becomes
+`needs_input`/`working`-free UNKNOWN territory upstream, never a success.
+"""
+
+import itertools
+import json
+
+import httpx
+
+from app.adapters.fo.base import FoResult, FoUnavailable
+from app.core.config import get_settings
+
+PROTOCOL_VERSION = "2025-06-18"
+
+
+class McpFoAdapter:
+    mode = "live"
+
+    def __init__(self, client: httpx.Client | None = None) -> None:
+        s = get_settings()
+        if not s.fo_access_token or not s.fo_access_token.get_secret_value():
+            raise FoUnavailable("Fo live mode needs FO_ACCESS_TOKEN on the server.")
+        self._url = s.fo_mcp_url
+        self._token = s.fo_access_token.get_secret_value()
+        self._client = client or httpx.Client(timeout=s.fo_timeout_seconds)
+        self._ids = itertools.count(1)
+        self._session: str | None = None
+
+    # --- JSON-RPC plumbing -------------------------------------------------
+    def _headers(self) -> dict[str, str]:
+        h = {
+            "Authorization": f"Bearer {self._token}",
+            "Accept": "application/json, text/event-stream",
+            "Content-Type": "application/json",
+            "MCP-Protocol-Version": PROTOCOL_VERSION,
+        }
+        if self._session:
+            h["Mcp-Session-Id"] = self._session
+        return h
+
+    def _rpc(self, method: str, params: dict | None = None, notify: bool = False) -> dict:
+        msg: dict = {"jsonrpc": "2.0", "method": method, "params": params or {}}
+        if not notify:
+            msg["id"] = next(self._ids)
+        try:
+            r = self._client.post(self._url, headers=self._headers(), json=msg)
+        except httpx.HTTPError as exc:
+            raise FoUnavailable("Fo is unreachable (network error or timeout).") from exc
+        if r.status_code in (401, 403):
+            raise FoUnavailable("Fo rejected the credentials (revoked or insufficient scope).")
+        if r.status_code == 429:
+            raise FoUnavailable("Fo rate limit reached. Try again later.")
+        if r.status_code >= 500:
+            raise FoUnavailable(f"Fo is having problems (HTTP {r.status_code}).")
+        if r.status_code >= 400:
+            raise FoUnavailable(f"Fo refused the request (HTTP {r.status_code}).")
+        self._session = r.headers.get("mcp-session-id", self._session)
+        if notify:
+            return {}
+        payload = self._parse_body(r, msg["id"])
+        if "error" in payload:
+            raise FoUnavailable(f"Fo returned an error: {str(payload['error'].get('message', ''))[:200]}")
+        return payload.get("result", {})
+
+    @staticmethod
+    def _parse_body(r: httpx.Response, req_id: int) -> dict:
+        if r.headers.get("content-type", "").startswith("text/event-stream"):
+            for line in r.text.splitlines():
+                if line.startswith("data:"):
+                    try:
+                        data = json.loads(line[5:].strip())
+                    except json.JSONDecodeError:
+                        continue
+                    if data.get("id") == req_id:
+                        return data
+            raise FoUnavailable("Fo sent a response we couldn't read.")
+        try:
+            return r.json()
+        except ValueError as exc:
+            raise FoUnavailable("Fo sent a response we couldn't read.") from exc
+
+    def _ensure_session(self) -> None:
+        if self._session:
+            return
+        self._rpc(
+            "initialize",
+            {
+                "protocolVersion": PROTOCOL_VERSION,
+                "capabilities": {},
+                "clientInfo": {"name": "pursuit", "version": "0.1.0"},
+            },
+        )
+        self._rpc("notifications/initialized", notify=True)
+
+    # --- tool result interpretation --------------------------------------------
+    @staticmethod
+    def interpret(result: dict) -> FoResult:
+        """Map a tools/call result to FoResult. Unrecognised shapes stay non-final."""
+        text = " ".join(c.get("text", "") for c in result.get("content", []) if c.get("type") == "text")
+        data = result.get("structuredContent")
+        if not isinstance(data, dict):
+            try:
+                data = json.loads(text)
+            except (json.JSONDecodeError, TypeError):
+                data = {}
+        status = str(data.get("status", "")).lower()
+        summary = str(data.get("reply") or data.get("progress") or data.get("message") or text)[:2000]
+        ref = data.get("conversationId")
+        if result.get("isError") or status == "failed":
+            return FoResult(state="failed", summary=summary or "Fo reported a failure.", conversation_ref=ref)
+        if status == "complete":
+            return FoResult(state="complete", summary=summary, conversation_ref=ref)
+        if status == "working":
+            return FoResult(state="working", summary=summary, conversation_ref=ref)
+        # Fo asked a question, or we don't recognise the shape: needs a human.
+        return FoResult(
+            state="needs_input", summary=summary or "Fo's reply was unclear.", conversation_ref=ref
+        )
+
+    # --- adapter API ------------------------------------------------------------
+    def submit(self, instruction: str, idempotency_key: str) -> FoResult:
+        self._ensure_session()
+        result = self._rpc(
+            "tools/call",
+            {"name": "ask_fo", "arguments": {"message": instruction, "newConversation": True}},
+        )
+        return self.interpret(result)
+
+    def poll(self, conversation_ref: str | None) -> FoResult:
+        self._ensure_session()
+        args: dict = {"waitSeconds": 40}
+        if conversation_ref:
+            args["conversationId"] = conversation_ref
+        return self.interpret(self._rpc("tools/call", {"name": "get_fo_reply", "arguments": args}))
+
+    def health(self) -> dict:
+        try:
+            self._ensure_session()
+            tools = self._rpc("tools/list").get("tools", [])
+        except FoUnavailable as exc:
+            return {"mode": "live", "status": "error", "detail": str(exc)}
+        names = sorted(t.get("name", "") for t in tools)
+        ok = "ask_fo" in names
+        return {"mode": "live", "status": "connected" if ok else "error", "tools": names}
