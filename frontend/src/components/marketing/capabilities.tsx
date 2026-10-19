@@ -8,7 +8,7 @@ const WORKFLOWS = [
 ];
 
 export function Capabilities() {
-  return <section aria-labelledby="capabilities-h" className="pb-24">
+  return <section id="capabilities" aria-labelledby="capabilities-h" className="scroll-mt-28 pb-24">
     <div className="grid gap-8 border-t border-line pt-10 lg:grid-cols-[1fr_1.6fr] lg:gap-16">
       <div>
         <p className="text-sm font-semibold text-trail">One place to research and learn</p>

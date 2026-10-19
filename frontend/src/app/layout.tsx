@@ -1,5 +1,5 @@
 import type { Metadata, Viewport } from "next";
-import { Sora, Manrope, Source_Sans_3 } from "next/font/google";
+import { Plus_Jakarta_Sans, Manrope, Source_Sans_3 } from "next/font/google";
 import { BackdropOrbs } from "@/components/backdrop";
 import { FeedbackProvider } from "@/components/feedback";
 import { LensLoader } from "@/components/lens-loader";
@@ -8,7 +8,7 @@ import { ReadingProvider } from "@/components/reading-mode";
 import { SessionProvider } from "@/components/session";
 import "./globals.css";
 
-const display = Sora({ variable: "--font-editorial", subsets: ["latin"], display: "swap" });
+const display = Plus_Jakarta_Sans({ variable: "--font-editorial", subsets: ["latin"], display: "swap" });
 const ui = Manrope({ variable: "--font-interface", subsets: ["latin"], display: "swap" });
 const body = Source_Sans_3({ variable: "--font-reading", subsets: ["latin"], display: "swap" });
 
@@ -19,8 +19,8 @@ export const metadata: Metadata = {
 
 export const viewport: Viewport = {
   themeColor: [
-    { media: "(prefers-color-scheme: light)", color: "#f5f7fb" },
-    { media: "(prefers-color-scheme: dark)", color: "#101726" },
+    { media: "(prefers-color-scheme: light)", color: "#f7f6f2" },
+    { media: "(prefers-color-scheme: dark)", color: "#1b1c19" },
   ],
 };
 

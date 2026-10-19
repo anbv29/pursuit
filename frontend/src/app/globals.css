@@ -1,7 +1,7 @@
 @import "tailwindcss";
 
 /*
- * Pursuit design system: ink, cobalt and precision glass.
+ * Pursuit design system: warm paper, charcoal and restrained copper.
  *
  * One source of truth. Brand tokens (--bg, --ink, --glass-*, --orb-*, --accent)
  * follow the brand spec; semantic tokens build on them. Legacy names used across
@@ -17,28 +17,28 @@
   color-scheme: light;
 
   /* brand */
-  --bg: #f5f7fb;
-  --ink: #182239;
-  --muted: #5b6880;
+  --bg: #f7f6f2;
+  --ink: #242522;
+  --muted: #6d6e67;
   --glass-1: rgba(255, 255, 255, 0.84);
-  --glass-2: rgba(246, 249, 255, 0.65);
-  --glass-border: rgba(155, 177, 212, 0.3);
-  --shadow: rgba(24, 42, 77, 0.1);
-  --orb-1: #c4d4f7;
-  --orb-2: #e1e6ef;
-  --orb-3: #cdd8eb;
-  --accent: #416de0;
+  --glass-2: rgba(250, 249, 246, 0.72);
+  --glass-border: rgba(92, 88, 76, 0.16);
+  --shadow: rgba(42, 38, 29, 0.09);
+  --orb-1: #e2dace;
+  --orb-2: #e9e7df;
+  --orb-3: #e9ddd1;
+  --accent: #ad583c;
   --accent-ink: #ffffff;
   --inset: rgba(12, 42, 43, 0.07);
 
   /* semantic */
-  --accent-strong: #2756cb;
-  --accent-soft: #e8efff;
-  --ink-soft: #3d4c65;
+  --accent-strong: #98462e;
+  --accent-soft: #f3e8e0;
+  --ink-soft: #50534c;
   --surface-solid: #ffffff;
-  --surface-sunken: #edf1f8;
-  --hairline: #dce3ef;
-  --hairline-strong: #b3c2da;
+  --surface-sunken: #efeee8;
+  --hairline: #deded5;
+  --hairline-strong: #bab9ac;
   --success: #1e7a4c;
   --success-soft: #d6f1e2;
   --warning: #9a4a1f;
@@ -47,10 +47,10 @@
   --danger-soft: #fbe3df;
   --demo: #6d3fb8;
   --demo-soft: #ece2fb;
-  --focus-ring: #2756cb;
+  --focus-ring: #98462e;
   --scrim: rgba(15, 26, 47, 0.36);
-  --orb-opacity: 0.38;
-  --specular: 0.22;
+  --orb-opacity: 0.16;
+  --specular: 0.14;
   --shimmer: rgba(255, 255, 255, 0.45);
 
   /* decisions (filled chips with white text; all >= 4.5:1) */
@@ -69,7 +69,7 @@
   --ink-2: var(--ink-soft);
   --ink-3: var(--muted);
   --trail: var(--accent-strong);
-  --trail-strong: #224aa8;
+  --trail-strong: #803b27;
   --trail-soft: var(--accent-soft);
   --flag: var(--warning);
   --flag-soft: var(--warning-soft);
@@ -100,6 +100,37 @@
   --dur-fast: 160ms;
   --dur-base: 220ms;
   --dur-slow: 320ms;
+}
+
+/* Public pages use a quieter canvas; glass remains on navigation and the brief. */
+.marketing-page { background: color-mix(in srgb, var(--bg) 94%, transparent); }
+.marketing-page .landing-nav {
+  box-shadow: 0 2px 12px -8px var(--shadow);
+  border-color: color-mix(in srgb, var(--line) 70%, transparent);
+}
+.pursuit-hero { position: relative; }
+.report-sheet.glass {
+  border-radius: 14px;
+  background: var(--surface);
+  box-shadow: 0 20px 55px -32px var(--shadow), 0 2px 5px -3px var(--shadow);
+}
+.report-sheet.glass::before { opacity: 0.12; }
+.research-preview::before {
+  content: "";
+  position: absolute;
+  inset: 46px -8px -8px 8px;
+  z-index: -1;
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  background: var(--sunken);
+  transform: rotate(1.2deg);
+}
+.research-preview { isolation: isolate; }
+.marketing-page :is(h2, h3) { font-weight: 600; }
+.marketing-page a:focus-visible { outline: 2px solid var(--focus-ring); outline-offset: 4px; }
+@media (max-width: 639px) {
+  .research-preview::before { inset-inline: 4px -4px; transform: rotate(0.6deg); }
+  .marketing-page .landing-nav { padding-inline: 12px; gap: 8px; }
 }
 
 /* Dark: follows the OS unless the user chose light; data-theme overrides either way. */
