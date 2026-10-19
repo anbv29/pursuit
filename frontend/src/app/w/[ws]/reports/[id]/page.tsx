@@ -1,9 +1,9 @@
 "use client";
 
-import { AlertTriangle, ArrowRight, FlaskConical, Loader2, Printer, RotateCw } from "lucide-react";
+import { AlertTriangle, FlaskConical, Printer, RotateCw } from "lucide-react";
 import Link from "next/link";
 import { useParams, useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { isRate, KNOWN_METRICS } from "@/components/criteria-editor";
 import { SECTION_HELP, useAdvanced } from "@/components/reading-mode";
 import { Personas, Problems, Segments, Snapshot, Summary } from "@/components/report/customer-sections";
@@ -16,7 +16,8 @@ import { ReportProspects } from "@/components/report/prospects";
 import { ReportSharing } from "@/components/report/sharing";
 import { useFeedback } from "@/components/feedback";
 import { useWorkspace } from "@/components/shell";
-import { Badge, Button, Card, Empty, Notice, Skeleton } from "@/components/ui";
+import { ProcessingFeed, type FeedStep, Elapsed } from "@/components/processing-feed";
+import { Badge, Button, buttonStyles, cx, Empty, Glass, Notice, PageHeader, Skeleton } from "@/components/ui";
 import { api, errorMessage } from "@/lib/api";
 import { useAction, useApi } from "@/lib/hooks";
 import { USE_CASE_LABEL } from "@/lib/labels";
@@ -28,25 +29,29 @@ const TOC = [
   ["messaging", "Messaging"], ["prospecting", "Prospecting"], ["funnel", "Funnel"], ["experiments", "Experiments"],
   ["risks", "Risks"], ["sources", "Sources"],
 ];
-const STEPS = ["Reading the company website", "Researching market, competitors and pricing", "Writing the report"];
+const STEPS: FeedStep[] = [
+  { label: "Reading the company website", done: "Read the company website" },
+  { label: "Researching market, competitors and pricing", done: "Researched market, competitors and pricing" },
+  { label: "Writing the report", done: "Wrote the report" },
+];
 
 function Progress({ r, onCancel, pending }: { r: Report; onCancel: () => void; pending: boolean }) {
+  // Step and source count come only from the server's progress line; nothing is simulated.
   const step = r.progress.startsWith("Writing") ? 2 : r.progress.startsWith("Researching") ? 1 : 0;
+  const sources = Number(r.progress.match(/(\d+)\s+sources/)?.[1] ?? 0);
   return (
-    <Card className="mx-auto mt-6 max-w-xl p-8 text-center">
-      <Loader2 className="mx-auto size-8 animate-spin text-trail" aria-hidden />
-      <h1 className="mt-4 text-xl font-semibold">Analyzing {r.company_name || r.company_url}</h1>
-      <p className="mt-1 text-sm text-ink-3">Usually 2–4 minutes. You can leave this page; the report keeps generating.</p>
-      <ol className="mx-auto mt-6 max-w-sm space-y-2 text-left text-sm" aria-live="polite">
-        {STEPS.map((s, i) => (
-          <li key={s} className={i < step ? "text-ink-3 line-through" : i === step ? "font-medium text-ink" : "text-ink-3"}>
-            {i < step ? "✓" : i === step ? "→" : "·"} {s}
-          </li>
-        ))}
-      </ol>
-      <Button className="mt-5" variant="secondary" loading={pending} onClick={onCancel}>Cancel report</Button>
-      <p className="mt-2 text-xs text-ink-3">Saved research can be resumed. An AI request already in progress may still incur charges.</p>
-    </Card>
+    <Glass className="enter-rise mx-auto mt-4 max-w-xl p-6 sm:p-8">
+      <p className="text-[13px] font-medium text-trail">{r.status === "QUEUED" ? "Queued" : "Working"} · <Elapsed since={r.started_at ?? r.created_at} /></p>
+      <h1 className="mt-1 font-display text-2xl font-bold tracking-tight">Analyzing {r.company_name || r.company_url}</h1>
+      <p className="mt-1.5 text-sm text-ink-2">Usually 2–4 minutes. You can leave this page; the report keeps generating.</p>
+      <div className="mt-6" aria-live="polite">
+        <ProcessingFeed steps={STEPS} current={step} detail={r.progress} count={sources} countLabel="sources gathered" />
+      </div>
+      <div className="mt-6 flex flex-wrap items-center gap-3 border-t border-[var(--glass-border)] pt-5">
+        <Button variant="secondary" loading={pending} onClick={onCancel}>Cancel report</Button>
+        <p className="text-xs text-ink-3">Saved research can be resumed. An AI request already in progress may still incur charges.</p>
+      </div>
+    </Glass>
   );
 }
 
@@ -68,11 +73,11 @@ function Experiments({ c, reportId }: { c: ReportContent; reportId: string }) {
     <Section id="experiments" title="Experiments to run, in order" kicker="Turn the report into evidence">
       <ol className="space-y-3">
         {c.experiments.map((e, i) => (
-          <li key={i} className="flex flex-col gap-3 rounded-lg border border-line p-4 sm:flex-row sm:items-start">
-            <span className="grid size-7 shrink-0 place-items-center rounded-full bg-ink text-sm font-semibold text-bg">{i + 1}</span>
+          <li key={i} className="flex flex-col gap-3 rounded-2xl border border-line bg-surface p-4 transition-colors hover:border-line-strong sm:flex-row sm:items-start">
+            <span className="grid size-8 shrink-0 place-items-center rounded-full bg-accent-soft font-display text-sm font-bold text-trail-strong">{i + 1}</span>
             <div className="min-w-0 flex-1">
               <div className="flex flex-wrap items-center gap-2">
-                <p className="font-medium">{e.title}</p>
+                <p className="font-semibold text-ink">{e.title}</p>
                 <Badge tone="trail">{USE_CASE_LABEL[e.use_case]}</Badge>
                 <Badge tone="muted">{e.effort} effort</Badge>
               </div>
@@ -110,21 +115,47 @@ export default function ReportPage() {
     const t = setInterval(() => setTick((n) => n + 1), 3000);
     return () => clearInterval(t);
   }, [running]);
+  // Success toast when a report you were watching finishes.
+  const wasRunning = useRef(false);
+  useEffect(() => {
+    if (running) wasRunning.current = true;
+    else if (wasRunning.current && r?.status === "SUCCEEDED") {
+      wasRunning.current = false;
+      toast("success", "Report ready.");
+    }
+  }, [running, r?.status, toast]);
 
-  if (error) return <Empty title="Report not found" body="It may belong to a workspace you can't access." />;
-  if (!r) return <div className="space-y-4"><Skeleton className="h-10 w-72" /><Skeleton className="h-64" /></div>;
+  if (error) {
+    return (
+      <Glass className="mx-auto mt-6 max-w-lg p-2">
+        <Empty icon={<AlertTriangle className="size-5" />} title="Report not found" body="It may belong to a workspace you can't access."
+          action={<Link href={`${base}/reports`} className={buttonStyles("secondary")}>Back to reports</Link>} />
+      </Glass>
+    );
+  }
+  if (!r) {
+    return (
+      <div className="mx-auto max-w-5xl space-y-4" aria-busy aria-label="Loading report">
+        <Skeleton className="h-4 w-32" /><Skeleton className="h-9 w-80 max-w-full" /><Skeleton className="h-14" />
+        <Skeleton className="h-64" /><Skeleton className="h-48" />
+      </div>
+    );
+  }
   if (running) return <Progress r={r} pending={jobControl.pending} onCancel={() => void jobControl.run("cancel")} />;
   if (r.status === "FAILED" || !r.content) {
+    const cancelled = r.status === "CANCELLED";
     return (
-      <Card className="mx-auto mt-6 max-w-xl p-8 text-center">
-        <AlertTriangle className="mx-auto size-8 text-d-stop" aria-hidden />
-        <h1 className="mt-3 text-lg font-semibold">{r.status === "CANCELLED" ? "Report cancelled" : "The report couldn't be generated"}</h1>
-        <p className="mt-2 text-sm text-ink-2">{r.status === "CANCELLED" ? "Your saved research is kept. Resume when you are ready." : r.error ?? "Unknown error."}</p>
-        <Button className="mt-4" loading={jobControl.pending} onClick={() => jobControl.run("retry")}>Resume saved progress</Button>
-        <Link href={`${base}/reports/new`} className="mt-5 inline-flex items-center gap-1.5 rounded-lg bg-trail px-3.5 py-2 text-sm font-medium text-accent-ink hover:brightness-110">
-          <RotateCw className="size-4" /> Try again
-        </Link>
-      </Card>
+      <Glass className="mx-auto mt-6 max-w-xl p-8 text-center">
+        <span className={cx("mx-auto grid size-12 place-items-center rounded-2xl", cancelled ? "bg-[var(--inset)] text-ink-2" : "bg-danger-soft text-danger")}>
+          <AlertTriangle className="size-6" aria-hidden />
+        </span>
+        <h1 className="mt-4 font-display text-xl font-bold">{cancelled ? "Report cancelled" : "The report couldn't be generated"}</h1>
+        <p className="mt-2 text-sm text-ink-2">{cancelled ? "Your saved research is kept. Resume when you are ready." : r.error ?? "Unknown error."}</p>
+        <div className="mt-6 flex flex-wrap justify-center gap-2">
+          <Button loading={jobControl.pending} onClick={() => jobControl.run("retry")}>Resume saved progress</Button>
+          <Link href={`${base}/reports/new`} className={buttonStyles("secondary")}><RotateCw className="size-4" aria-hidden /> Start a new report</Link>
+        </div>
+      </Glass>
     );
   }
   const c = r.content;
@@ -132,24 +163,21 @@ export default function ReportPage() {
   return (
     <SourcesProvider sources={r.sources}>
       <div className="mx-auto flex max-w-7xl gap-8">
-        <nav aria-label="Report sections" className="sticky top-20 hidden h-fit w-44 shrink-0 xl:block print:hidden">
-          <p className="mb-2 text-xs font-medium text-ink-3">On this page</p>
-          <ul className="space-y-0.5 text-sm">
-            {TOC.map(([k, label]) => <li key={k}><a href={`#${k}`} className="block rounded-md px-2 py-1 text-ink-2 hover:bg-sunken hover:text-ink">{!advanced && SECTION_HELP[k]?.[0] ? SECTION_HELP[k][0] : label}</a></li>)}
-          </ul>
+        <nav aria-label="Report sections" className="sticky top-24 hidden h-fit w-48 shrink-0 xl:block print:hidden">
+          <Glass dense className="p-3">
+            <p className="mb-2 px-2 text-xs font-semibold text-ink-3">On this page</p>
+            <ul className="space-y-0.5 text-sm">
+              {TOC.map(([k, label]) => <li key={k}><a href={`#${k}`} className="block rounded-lg px-2 py-1.5 text-ink-2 transition-colors hover:bg-[var(--inset)] hover:text-ink">{!advanced && SECTION_HELP[k]?.[0] ? SECTION_HELP[k][0] : label}</a></li>)}
+            </ul>
+          </Glass>
         </nav>
         <div className="min-w-0 flex-1 space-y-6">
-          <header className="flex flex-wrap items-end justify-between gap-3">
-            <div>
-              <p className="text-xs font-medium text-ink-3">{advanced ? "GTM report" : "Your customer and growth report"}</p>
-              <h1 className="mt-1 text-2xl font-semibold tracking-tight">{r.company_name || r.company_url}</h1>
-              <p className="mt-1 text-sm text-ink-3">
-                <a href={r.company_url} target="_blank" rel="noopener noreferrer" className="hover:text-trail">{r.company_url}</a>
-                {" · "}{r.sources.length} sources · {r.finished_at && new Date(r.finished_at).toLocaleString()} · {r.model}
-              </p>
-            </div>
-            <Button variant="secondary" onClick={() => window.print()} className="print:hidden"><Printer className="size-4" /> Print / PDF</Button>
-          </header>
+          <PageHeader eyebrow={advanced ? "GTM report" : "Your customer and growth report"} title={r.company_name || r.company_url}
+            description={<>
+              <a href={r.company_url} target="_blank" rel="noopener noreferrer" className="break-all hover:text-trail">{r.company_url}</a>
+              {" · "}{r.sources.length} sources · {r.finished_at && new Date(r.finished_at).toLocaleString()} · {r.model}
+            </>}
+            action={<Button variant="secondary" onClick={() => window.print()} className="print:hidden"><Printer className="size-4" aria-hidden /> Print or save PDF</Button>} />
           <Notice tone="trail">
             AI research from public web sources. Green dots are <b>sourced facts</b> (click the source to verify); grey are interpretations; orange are assumptions to test.
             {v && v.downgraded_facts + v.dropped_source_refs > 0 && ` Pursuit removed ${v.dropped_source_refs} unverifiable citation(s) and downgraded ${v.downgraded_facts} unsourced "fact(s)".`}
@@ -157,8 +185,8 @@ export default function ReportPage() {
           <Summary c={c} />
           {workspace.role === "owner" && <ReportSharing path={reportPath} />}
           <ReportPlan path={reportPath} />
-          <details className="print:hidden rounded-lg border border-line bg-surface p-4">
-            <summary className="cursor-pointer font-medium text-trail">Ask about the report or explain a term</summary>
+          <details className="surface group print:hidden rounded-[var(--radius-lg)] p-4 sm:p-5">
+            <summary className="cursor-pointer list-none font-semibold text-trail marker:hidden">Ask about the report or explain a term</summary>
             <div className="mt-4"><ReportQuestions path={reportPath} /></div>
           </details>
           <Snapshot c={c} />
@@ -173,8 +201,8 @@ export default function ReportPage() {
           <FunnelRisks c={c} />
           <Experiments c={c} reportId={r.id} />
           <Risks c={c} />
-          <details className="print:hidden rounded-lg border border-line bg-surface p-4">
-            <summary className="cursor-pointer font-medium text-trail">Correct facts, refresh sections, or compare versions</summary>
+          <details className="surface group print:hidden rounded-[var(--radius-lg)] p-4 sm:p-5">
+            <summary className="cursor-pointer list-none font-semibold text-trail marker:hidden">Correct facts, refresh sections, or compare versions</summary>
             <div className="mt-4"><ReportVersions path={reportPath} refresh={reload} /></div>
           </details>
           <Section id="sources" title={`Sources (${r.sources.length})`} kicker="Everything retrieved during research">
@@ -188,7 +216,7 @@ export default function ReportPage() {
             </ol>
           </Section>
           <div className="flex justify-center pb-6 print:hidden">
-            <Link href={`${base}/reports/new`} className="inline-flex items-center gap-1 text-sm font-medium text-trail">Analyze another company <ArrowRight className="size-4" /></Link>
+            <Link href={`${base}/reports/new`} className={buttonStyles("secondary")}>Analyze another company</Link>
           </div>
         </div>
       </div>

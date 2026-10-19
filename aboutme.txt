@@ -840,9 +840,20 @@ Free preview hosting checkpoint (see git log for hash):
     - tsc and eslint clean on changed files
 
 ----------------------------------------------------------------------
-#131  (hash recorded in next commit)  feat(ui): glass auth screens and stepped onboarding
+#131  4243784  feat(ui): glass auth screens and stepped onboarding
     - Frontend only. auth-form.tsx: centered glass card on the backdrop, theme toggle, PasswordInput with visible show/hide toggle, larger submit; zod validation, login/register calls and redirects unchanged
     - onboarding/page.tsx: two-step stepper (name, then how to start) with numbered progress, aria-current step and an aria-live step announcement; create() request, demo flag and redirects unchanged; Back button; same 'Give your workspace a name.' message when continuing with an empty name
     - brand.tsx: logo uses accent tokens so it stays legible in dark mode; per-instance gradient id
     - Not present in this app, so skipped: password reset, email verification, social sign-in
+    - tsc + eslint clean
+
+----------------------------------------------------------------------
+#132  (hash recorded in next commit)  feat(ui): dashboard, reports and staged processing feed
+    - Frontend only; all API calls, polling, job controls and redirects unchanged
+    - Dashboard: page header, stat tiles from real data (active experiments, waiting on you, reports), experiment cards with stage bar and verdict pill, client-side filter tabs (all / no verdict / has a verdict), glass empty state, error state with retry (uses the hook's existing reload), content-shaped skeletons
+    - Reports list: page header, row skeletons, error with retry, glass empty state, status pills
+    - New report: glass focal card, display heading, large submit
+    - Report detail: generating state is a staged processing feed (components/processing-feed.tsx) - segmented progress, scrambled label on the active step, count-up of the source count parsed from the server's own progress line, real elapsed time, content-shaped skeleton; nothing simulated. Success toast when a watched report finishes. Glass table of contents, page header, restyled experiment rows and disclosure panels, failure/cancelled card with resume + new report
+    - ScrambleText and CountUp respect prefers-reduced-motion and expose the real text to screen readers
+    - buttonStyles() helper so button-like links match Button exactly
     - tsc + eslint clean

@@ -16,6 +16,12 @@ const BTN: Record<Variant, string> = {
 };
 const SIZE = { sm: "h-8 px-3 text-[13px] rounded-[10px]", md: "h-10 px-4 text-sm rounded-xl", lg: "h-12 px-6 text-base rounded-2xl" };
 
+/** Same look as <Button>, for links and other elements that act as buttons. */
+export const buttonStyles = (variant: Variant = "primary", size: "sm" | "md" | "lg" = "md", className?: string) =>
+  cx("press inline-flex items-center justify-center gap-1.5 whitespace-nowrap font-medium",
+    "transition-[background-color,border-color,box-shadow,filter,color,transform] duration-150 ease-[var(--ease-out)]",
+    SIZE[size], BTN[variant], className);
+
 export function Button({
   variant = "primary", size = "md", loading, className, children, disabled, ...rest
 }: ButtonHTMLAttributes<HTMLButtonElement> & { variant?: Variant; size?: "sm" | "md" | "lg"; loading?: boolean }) {

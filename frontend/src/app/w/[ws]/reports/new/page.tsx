@@ -6,7 +6,7 @@ import { useState, type FormEvent } from "react";
 import { z } from "zod";
 import { useWorkspace } from "@/components/shell";
 import { ResearchAllowance } from "@/components/allowance";
-import { Button, Card, cx, Field, Input, Notice, Select, Textarea } from "@/components/ui";
+import { Button, cx, Field, Glass, Input, Notice, Select, Textarea } from "@/components/ui";
 import { api, ApiError, errorMessage } from "@/lib/api";
 import { useAction } from "@/lib/hooks";
 import type { Report } from "@/lib/types";
@@ -50,10 +50,10 @@ export default function NewReportPage() {
   return (
     <div className="mx-auto max-w-2xl py-4">
       <div className="text-center">
-        <span className="inline-flex items-center gap-1.5 rounded-full border border-line bg-surface px-3 py-1 text-xs text-ink-2">
-          <Sparkles className="size-3.5 text-trail" /> Full GTM report in about 3 minutes
+        <span className="inline-flex items-center gap-1.5 rounded-full border border-[var(--glass-border)] bg-surface/70 px-3 py-1 text-xs font-medium text-ink-2">
+          <Sparkles className="size-3.5 text-trail" aria-hidden /> Full report in about 3 minutes
         </span>
-        <h1 className="mt-4 text-3xl font-semibold tracking-tight">Analyze your company</h1>
+        <h1 className="mt-4 font-display text-[32px] font-bold leading-tight tracking-tight sm:text-4xl">Analyze your company</h1>
         <p className="mx-auto mt-2 max-w-lg text-ink-2">
           Drop your website. Pursuit reads it, researches your market and competitors on the web, and
           builds a sourced report: who to sell to, how to position, what to charge, what to say, and which
@@ -62,8 +62,8 @@ export default function NewReportPage() {
       </div>
 
       <form noValidate onSubmit={(e: FormEvent) => { e.preventDefault(); void submit.run(); }} className="mt-8 space-y-5">
-        <Card className="p-5">
-          <div className="space-y-4">
+        <Glass className="p-5 sm:p-7">
+          <div className="space-y-5">
             <Field label="Website" error={errors.company_url}>
               {(id, d) => (
                 <div className="relative">
@@ -101,10 +101,10 @@ export default function NewReportPage() {
               <Field label="Region">{(id) => <Input id={id} value={f.geography} onChange={set("geography")} placeholder="US, EU…" />}</Field>
             </div>
           )}
-        </Card>
+        </Glass>
         {formError && <Notice tone="bad">{formError}</Notice>}
         <ResearchAllowance />
-        <Button type="submit" loading={submit.pending} className="h-11 w-full text-base">Generate report</Button>
+        <Button type="submit" size="lg" loading={submit.pending} className="w-full">Generate report</Button>
         <p className="text-center text-xs text-ink-3">
           Research uses public web sources only. Every claim in the report is labelled as a sourced fact, an interpretation or an assumption.
         </p>
