@@ -5,7 +5,7 @@ from app.models import User
 
 
 def test_password_change_revokes_sessions(api, app):
-    from conftest import Api
+    from tests.conftest import Api
 
     api.signup()
     second = Api(app)

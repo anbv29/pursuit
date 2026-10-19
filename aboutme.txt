@@ -907,3 +907,6 @@ fix: pin research connections to validated public addresses (see Git history for
 
 feat: add account security controls (see Git history for hash)
     - Password change revokes all sessions; deletion requires reauthentication and owned workspace cleanup. Ruff passed; database tests pending Docker socket repair.
+
+feat: add account controls and resilient requests (see Git history for hash)
+    - Account security screen; honest failed signout; bounded API waits; cancelled stale requests; storage fallback and pricing navigation. TypeScript and lint passed; account API tests 2 passed.

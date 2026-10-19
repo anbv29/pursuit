@@ -15,8 +15,9 @@ export function LandingNav() {
         <Logo />
         <nav aria-label="Account" className="flex items-center gap-1.5 sm:gap-2">
           <ThemeToggle />
+          <Link href="/#pricing" className="hidden text-sm font-medium text-ink-2 hover:text-ink sm:block">Pricing</Link>
           {ready && user ? (
-            <Link href="/w" className={buttonStyles("primary", "sm")}>Open workspace</Link>
+            <><Link href="/account" className={buttonStyles("ghost", "sm")}>Account</Link><Link href="/w" className={buttonStyles("primary", "sm")}>Open workspace</Link></>
           ) : (
             <>
               <Link href="/login" className={buttonStyles("ghost", "sm")}>Sign in</Link>

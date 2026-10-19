@@ -65,7 +65,7 @@ export function AuthForm({ mode }: { mode: "login" | "signup" }) {
       <Glass className="enter-rise w-full max-w-sm p-7 sm:p-8">
         <h1 className="font-display text-2xl font-bold tracking-tight">{mode === "login" ? "Welcome back" : "Create your account"}</h1>
         <p className="mt-1.5 text-sm text-ink-2">
-          {mode === "login" ? "Sign in to pick up where you left off." : "Say who you want to meet. Pursuit does the research."}
+          {mode === "login" ? "Sign in to pick up where you left off." : "Research your business, test your assumptions and keep track of what you learn."}
         </p>
         <form onSubmit={onSubmit} noValidate className="mt-6 space-y-4">
           {formError && <Notice tone="bad">{formError}</Notice>}

@@ -17,15 +17,18 @@ export function useApi<T>(path: string | null, refreshKey: unknown = 0) {
 
   useEffect(() => {
     if (!path) return;
+    const controller = new AbortController();
+    let active = true;
     const mine = ++seq.current;
-    api<T>(path)
+    api<T>(path, { signal: controller.signal })
       .then((d) => {
-        if (mine !== seq.current) return;
+        if (!active || mine !== seq.current) return;
         setData(d);
         setError(null);
       })
-      .catch((e) => mine === seq.current && setError(toApiError(e)))
-      .finally(() => mine === seq.current && setLoading(false));
+      .catch((e) => active && mine === seq.current && setError(toApiError(e)))
+      .finally(() => active && mine === seq.current && setLoading(false));
+    return () => { active = false; controller.abort(); };
   }, [path, refreshKey]);
 
   const reload = useCallback(async () => {

@@ -26,7 +26,7 @@ async function parseError(res: Response): Promise<ApiError> {
   } catch {
     /* non-JSON error body */
   }
-  const b = body as { error?: { code: string; message: string }; detail?: Detail[] } | null;
+  const b = body as { error?: { code: string; message: string }; detail?: Detail[] | string } | null;
   if (b?.error) return new ApiError(res.status, b.error.code, b.error.message);
   if (Array.isArray(b?.detail)) {
     const fields: Record<string, string> = {};
@@ -46,6 +46,7 @@ export async function api<T>(path: string, init: RequestInit & { json?: unknown 
   if (init.json !== undefined) headers.set("Content-Type", "application/json");
   if (method !== "GET" && csrfToken) headers.set("X-CSRF-Token", csrfToken);
   let res: Response;
+  const timeout = AbortSignal.timeout(45_000);
   try {
     res = await fetch(`/api${path}`, {
       ...init,
@@ -54,9 +55,12 @@ export async function api<T>(path: string, init: RequestInit & { json?: unknown 
       body: init.json !== undefined ? JSON.stringify(init.json) : init.body,
       credentials: "same-origin",
       cache: "no-store",
+      signal: init.signal ? AbortSignal.any([init.signal, timeout]) : timeout,
     });
   } catch {
-    throw new ApiError(0, "network", "Can't reach Pursuit. Check your connection.");
+    throw new ApiError(0, timeout.aborted ? "timeout" : "network", timeout.aborted
+      ? "Pursuit took too long to respond. Check the latest status before retrying an action."
+      : "Can't reach Pursuit. Check your connection.");
   }
   if (!res.ok) throw await parseError(res);
   if (res.status === 204) return undefined as T;

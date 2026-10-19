@@ -72,12 +72,3 @@ export const TRUST_POINTS = [
   { title: "Demo data is always labelled", body: "Simulated results never mix with real ones." },
   { title: "Control your workspace", body: "Owner-only export and deletion, with billing safeguards." },
 ];
-
-/** Mirrors the public plan catalogue (backend/app/services/plans.py). */
-export const PRICING = {
-  name: "Founder",
-  price: "$29",
-  interval: "per month",
-  features: ["3 company reports a month", "50 report questions a month", "Experiments, approvals and Fo outreach", "Export or delete your data any time"],
-  alternatives: "Try a single report for $15, or explore free with a sample report. Teams of up to five: $79 a month.",
-};

@@ -48,10 +48,12 @@ export function SessionProvider({ children }: { children: ReactNode }) {
   const logout = useCallback(async () => {
     try {
       await api("/auth/logout", { method: "POST" });
-    } finally {
-      setCsrf(null);
-      setUser(null);
+    } catch (e) {
+      // A revoked session is already signed out. Network failures are not.
+      if (!(e instanceof ApiError && e.status === 401)) throw e;
     }
+    setCsrf(null);
+    setUser(null);
   }, []);
 
   return <SessionCtx.Provider value={{ user, ready, login, register, logout }}>{children}</SessionCtx.Provider>;

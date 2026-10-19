@@ -8,8 +8,10 @@ import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { createContext, useContext, useMemo, useState, useSyncExternalStore, type ReactNode } from "react";
 import { useApi } from "@/lib/hooks";
+import { errorMessage } from "@/lib/api";
 import type { Workspace } from "@/lib/types";
 import { Logo } from "./brand";
+import { useFeedback } from "./feedback";
 import { CommandPalette, type Command } from "./command-palette";
 import { ReadingControls } from "./reading-mode";
 import { RouteProgress } from "./route-progress";
@@ -19,7 +21,7 @@ import { Avatar, Badge, cx, DemoBadge, Empty, Glass, Menu, Skeleton } from "./ui
 
 // Sidebar preference lives in localStorage; read it as an external store (SSR renders expanded).
 const SIDEBAR_KEY = "pursuit.sidebar";
-const readSidebar = () => localStorage.getItem(SIDEBAR_KEY) === "1";
+const readSidebar = () => { try { return localStorage.getItem(SIDEBAR_KEY) === "1"; } catch { return false; } };
 const subscribeSidebar = (cb: () => void) => {
   window.addEventListener(SIDEBAR_KEY, cb);
   window.addEventListener("storage", cb);
@@ -47,14 +49,19 @@ export function WorkspaceShell({ wsId, children }: { wsId: string; children: Rea
   const path = usePathname();
   const router = useRouter();
   const { user, logout } = useSession();
+  const { toast } = useFeedback();
   const theme = useTheme();
   const [paletteOpen, setPaletteOpen] = useState(false);
   const base = `/w/${wsId}`;
   const toggle = () => {
-    localStorage.setItem(SIDEBAR_KEY, collapsed ? "0" : "1");
+    try { localStorage.setItem(SIDEBAR_KEY, collapsed ? "0" : "1"); }
+    catch { toast("error", "Your browser could not save this preference."); return; }
     window.dispatchEvent(new Event(SIDEBAR_KEY));
   };
-  const signOut = async () => { await logout(); router.replace("/login"); };
+  const signOut = async () => {
+    try { await logout(); router.replace("/login"); }
+    catch (e) { toast("error", errorMessage(e)); }
+  };
 
   const nav: NavItem[] = [
     { href: base, label: "Dashboard", icon: LayoutDashboard, exact: true },
@@ -184,7 +191,8 @@ export function WorkspaceShell({ wsId, children }: { wsId: string; children: Rea
               {!!approvals.data?.length && <span className="absolute right-1.5 top-1.5 size-2 rounded-full bg-warning ring-2 ring-[var(--surface-solid)]" />}
             </Link>
             <ThemeToggle />
-            <Menu label="Account" items={[{ label: "Settings", onSelect: () => router.push(`${base}/settings`), icon: <Settings className="size-4" /> },
+            <Menu label="Account" items={[{ label: "Account security", onSelect: () => router.push("/account"), icon: <Settings className="size-4" /> },
+              { label: "Settings", onSelect: () => router.push(`${base}/settings`), icon: <Settings className="size-4" /> },
               { label: "Sign out", onSelect: () => void signOut(), icon: <LogOut className="size-4" />, danger: true }]}
               trigger={({ open, toggle: t, id }) => (
                 <button type="button" onClick={t} aria-haspopup="menu" aria-expanded={open} aria-controls={id} aria-label="Account menu"
