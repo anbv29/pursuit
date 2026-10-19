@@ -988,3 +988,6 @@ Matched manual and OS dark themes to charcoal, warm neutral surfaces and accessi
 
 style: simplify pricing and document design references (see Git history for hash)
 Replaced separate floating marketing plan cards with one divided pricing surface while preserving backend catalogue data and workspace purchase links. Adjusted signed-in phone navigation, documented actual reference trail and original implementation choices, and added keyboard/layout/dark-phone checks plus screenshot capture. Full frontend lint passed. Local production rebuild and browser checks are in progress; no push.
+
+fix: keep signed-in phone navigation inside viewport (see Git history for hash)
+Browser checks found the Account link's inline-flex button utility competing with its hidden utility on phones. Moved responsive visibility to a separate wrapper, retaining the account link above the phone breakpoint. The 16-check run had 15 passes and this one failure; final rebuild and focused rerun follow. Earlier sandbox browser launch failed before application assertions; rerun used the installed browser cache. Text/button token contrast checks measured 4.76:1 to 14.25:1. Existing 54-source local report still loads without regenerating research.
