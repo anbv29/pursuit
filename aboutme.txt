@@ -949,3 +949,6 @@ Added fail-closed checkout switch and HTTPS return-origin checks while keeping v
 
 feat: provision requested owner access for hosted launch (see Git history for hash)
 Added guarded local-to-Neon owner provisioning preserving existing credentials; requested Team grant verified in both databases. Documented real merchant/product/webhook configuration, launch gates and remaining hosting prerequisites. Fixed complimentary billing label. Full backend suite: 149 passed; frontend production build passed.
+
+docs: record hosted setup and remaining verification (see Git history for hash)
+Approved private Render credentials saved and verified; owner retained free preview and paused checkout. Deployed https://pursuit-coral.vercel.app and configured backend origin. Hosted browser suite: 20 passed, one AI spec skipped. Separate hosted Haiku report: 58 sources, persisted after refresh, exactly one live-mode credit consumed. Signed provider sample reached backend and was rejected for its different merchant; original filters restored. No hosting purchase or customer charge made. Detailed results in docs/HOSTED_VERIFICATION.md.

@@ -1,6 +1,7 @@
 # Deployment: Neon + Render + Vercel
 
-**Status: free preview deployment in progress.** No hosted application URL has been verified yet.
+**Status: free preview deployed at https://pursuit-coral.vercel.app.** Public proxy health, owner login,
+Team allowances, 20 browser checks and a separate real AI report passed. Checkout stays paused.
 
 ## Current deployment preparation (2026-10-18)
 
@@ -9,7 +10,7 @@
 - Commercial launch would require a suitable paid hosting plan; this preview is not a commercial payment launch. Do not buy or upgrade without separate spending approval.
 - Backend CI lint/format failures in generated migrations were corrected without changing operations. Test configuration explicitly excludes private live Dodo credentials and forces test mode.
 - `scripts/check_test_migrations.py` checks upgrade/downgrade/upgrade only on local `pursuit_test`; it refuses hosted URLs. This is never a production rollback command.
-- Live Dodo catalog/key remain local. The preview explicitly has empty Dodo API/webhook keys and test-mode configuration, so checkout is unavailable. Fo uses labelled demo mode. AI credentials are excluded, and the report polling worker is disabled to avoid continuously waking free Neon compute. Manual experiments and synthetic sample reports remain available.
+- Update 2026-10-19: the owner approved saving live Dodo API/signing keys and the Anthropic key privately in Render. These settings were saved with Haiku defaults and the report worker enabled. `BILLING_CHECKOUT_ENABLED=false` independently prevents purchases. Fo remains labelled demo mode. See `PAYMENT_LAUNCH_SETUP.md` for executed checks and remaining verification.
 - On free Render compute, apply migrations separately using the locally held Neon owner connection before deploying. Only the limited runtime connection belongs in Render. There is no free pre-deploy migration hook. `scripts/provision_preview.py` handles the initial migration and role setup from ignored `.env.preview`.
 - A new Neon owner password appeared in a setup screenshot; that file was deleted and the user reset the credential before use. Never capture screenshots of visible credential dialogs. No connection strings or encryption keys belong in Git.
 
@@ -53,13 +54,14 @@ Environment variables (set the secrets in the dashboard):
 | `CORS_ORIGINS` | your Vercel URL, e.g. `https://pursuit.vercel.app` |
 | `PUBLIC_APP_URL` | exact frontend HTTPS origin for OAuth and checkout returns |
 | `CONNECTION_ENCRYPTION_KEY` | stable privately provisioned Fernet key; preserve across redeploys |
-| `ANTHROPIC_API_KEY` | empty for this free preview |
+| `ANTHROPIC_API_KEY` | approved private server-side key; never a frontend variable |
 | `ANTHROPIC_MODEL` / `RESEARCH_MODEL` | `claude-haiku-5-5` |
 | `FO_MODE` | `demo` for labelled simulated actions, or `live` with verified per-user OAuth (see FO_INTEGRATION.md) |
 | `ACTIONS_DISABLED` | `false` (set `true` as an emergency stop) |
-| `DODO_PAYMENTS_ENVIRONMENT` | `test_mode` for the free preview; `live_mode` only for a future commercial launch |
-| `DODO_PAYMENTS_API_KEY` | empty for this free preview |
-| `DODO_PAYMENTS_WEBHOOK_KEY` | empty for this free preview |
+| `DODO_PAYMENTS_ENVIRONMENT` | `live_mode` for the approved merchant webhook configuration |
+| `BILLING_CHECKOUT_ENABLED` | `false` until commercial launch is separately approved and verified |
+| `DODO_PAYMENTS_API_KEY` | approved private Pursuit merchant key |
+| `DODO_PAYMENTS_WEBHOOK_KEY` | approved private signing key for the separate Pursuit endpoint |
 | `DODO_BUSINESS_ID` | merchant business identifier |
 | `DODO_SINGLE_PRODUCT` / `DODO_FOUNDER_PRODUCT` / `DODO_TEAM_PRODUCT` | live product IDs; see DODO_ACCOUNT_SETUP.md |
 
@@ -88,7 +90,7 @@ Then sign up, create a demo workspace, and check **Settings → Integrations**.
 
 ## Manual steps still required
 
-- Neon project and connection string, Render service, and Vercel project.
+- Neon, Render and Vercel are connected; frontend origin is `https://pursuit-coral.vercel.app`.
 - A stable encryption key and verified Fo OAuth connection if you want live actions.
-- An `ANTHROPIC_API_KEY` for production, if you want AI synthesis.
+- Hosted AI synthesis is verified; retain server-side keys and monitor the owner's Anthropic balance.
 - A custom domain and TLS, if desired (both platforms provide TLS by default).
