@@ -1009,3 +1009,6 @@ All three live Dodo products now include tax at USD 4.99/11.99/34.99. Updated pu
 
 docs: record tax-inclusive checkout verification (see Git history for hash)
 Implementation 7d2f858; deployed merge 4cd8fc5 preserves remote dd4bc68. The separate 140325b release checkpoint was not pushed after discovering newer remote work. Verified 28 backend tests, 3 browser checks (12.8s), Ruff/ESLint and production build/TypeScript. Vercel now serves inclusive-tax copy; Render confirms 4cd8fc5 Deploy succeeded | Live. Live checkouts show USD 4.99/11.99/34.99 including GST. No payment submitted. Fo and existing subscription contracts unchanged.
+
+style: refine landing footer (see Git history for hash)
+Added a cohesive footer with an editorial closing headline, grouped product/account navigation, existing brand tokens, keyboard focus states and a compact brand row. All links point to existing routes or sections. Used installed UI/UX Pro Max guidance. Targeted ESLint passed; production build and responsive verification in progress. Local preview only; no push.

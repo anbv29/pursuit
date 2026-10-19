@@ -1,6 +1,5 @@
 import { Eye, FileCheck2, Lock, ShieldCheck } from "lucide-react";
-import Link from "next/link";
-import { Logo } from "@/components/brand";
+import { Footer } from "@/components/marketing/footer";
 import { HeroDemo } from "@/components/marketing/hero-demo";
 import { HowItWorks } from "@/components/marketing/how-it-works";
 import { HeroCta, LandingNav } from "@/components/marketing/landing-nav";
@@ -69,16 +68,7 @@ export default function Home() {
         <Questions />
       </main>
 
-      <footer className="border-t border-line">
-        <div className="mx-auto flex max-w-6xl flex-wrap items-center justify-between gap-4 px-4 py-8 text-sm text-ink-3 sm:px-6">
-          <Logo />
-          <nav aria-label="Footer" className="flex gap-5">
-            <Link href="/login" className="hover:text-ink">Sign in</Link>
-            <Link href="/signup" className="hover:text-ink">Create an account</Link>
-          </nav>
-          <p>Pursuit. Built for evidence, not vanity metrics.</p>
-        </div>
-      </footer>
+      <Footer />
     </div>
   );
 }
