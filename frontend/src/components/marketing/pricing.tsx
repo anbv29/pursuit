@@ -19,8 +19,8 @@ export function Pricing() {
     {plans.error ? <Notice tone="bad">Prices could not be loaded. <Button variant="secondary" size="sm" onClick={() => plans.reload()}>Retry prices</Button></Notice>
       : !plans.data ? <div className="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-4" aria-label="Loading plans">{[0, 1, 2, 3].map(i => <Skeleton key={i} className="h-72" />)}</div>
         : <div className="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">{plans.data.map(plan => <Glass key={plan.id} className="flex min-w-0 flex-col p-5 sm:p-6">
-          <h3 className="font-display text-xl font-bold">{plan.name}</h3>
-          <p className="mt-3"><span className="font-display text-4xl font-bold">${plan.price_cents / 100}</span><span className="ml-1 text-sm text-ink-3">{plan.interval === "month" ? "/month" : plan.interval === "once" ? "once" : "free"}</span></p>
+          <h3 className="font-ui text-lg font-semibold">{plan.name}</h3>
+          <p className="mt-3"><span className="font-ui text-4xl font-semibold tabular-nums">${plan.price_cents / 100}</span><span className="ml-1 text-sm text-ink-3">{plan.interval === "month" ? "/month" : plan.interval === "once" ? "once" : "free"}</span></p>
           <ul className="my-6 flex-1 space-y-3 text-sm text-ink-2">
             <li>{plan.reports ? `${plan.reports} research credit${plan.reports === 1 ? "" : "s"}` : "Clearly labelled sample report"}</li>
             <li>{plan.questions ? `${plan.questions} AI answers` : "Free rule-based recommendations"}</li>

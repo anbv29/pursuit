@@ -18,7 +18,7 @@ export function Capabilities() {
       </div>
       <dl className="grid gap-x-8 gap-y-7 sm:grid-cols-2">
         {WORKFLOWS.map(([title, body]) => <div key={title} className="border-t border-line pt-4">
-          <dt className="font-display text-lg font-bold">{title}</dt>
+          <dt className="font-ui text-base font-semibold">{title}</dt>
           <dd className="mt-2 text-sm leading-relaxed text-ink-2">{body}</dd>
         </div>)}
       </dl>

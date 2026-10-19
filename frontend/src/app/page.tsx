@@ -23,7 +23,7 @@ export default function Home() {
               <span className="size-1.5 rounded-full bg-accent" aria-hidden /> Research and validation for founders
             </p>
             <h1 className="font-display text-[48px] font-normal leading-[1.04] tracking-[-0.025em] text-ink sm:text-6xl lg:text-[76px]">
-              Know what to test next. <span className="text-trail">Build on evidence.</span>
+              Know what to test next. <span className="block text-trail">Build on evidence.</span>
             </h1>
             <p className="mt-6 max-w-xl text-lg leading-relaxed text-ink-2">
               Start with your website and a description of your business. Pursuit helps you research customers,

@@ -964,3 +964,6 @@ Introduced self-hosted Instrument Serif titles, Manrope interface type and Sourc
 
 style: soften dark glass and button treatments (see Git history for hash)
 Unified automatic and manual dark themes around charcoal, sage and muted neutral decoration; replaced neon button glow with a soft shadow. Font build and strict TypeScript passed; targeted lint passed. Key light/dark button and muted text contrast ratios range from 5.19 to 8.56. Browser verification underway; local-only checkpoint with no push.
+
+style: finish contextual font roles and local preview (see Git history for hash)
+Reserved serif type for editorial titles; applied Manrope to pricing, counters, dialogs, breadcrumbs and compact labels, with Source Sans 3 for report reading. Refined hero wrapping. Final lint, production build/TypeScript and eight desktop/mobile/dark-theme browser checks passed. Browser confirmed all three self-hosted fonts and no horizontal report overflow. Local app remains at http://localhost:3000; no changes pushed or deployed.

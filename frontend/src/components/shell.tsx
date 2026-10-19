@@ -171,7 +171,7 @@ export function WorkspaceShell({ wsId, children }: { wsId: string; children: Rea
                   </ol>
                 </nav>
               ) : (
-                <p className="truncate font-display text-[15px] font-bold text-ink">{current?.label ?? "Pursuit"}</p>
+                <p className="truncate font-ui text-[14px] font-semibold text-ink">{current?.label ?? "Pursuit"}</p>
               )}
             </div>
             <div className="hidden items-center gap-2 lg:flex">

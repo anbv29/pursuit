@@ -246,6 +246,11 @@ h2, h3, h4, button, input, select, label, nav, .tabular-nums {
   font-family: var(--font-interface), system-ui, sans-serif;
 }
 h2, h3, h4 { letter-spacing: -0.025em; }
+.app-shell :is(h2, h3, h4), .font-ui {
+  font-family: var(--font-interface), system-ui, sans-serif;
+  font-weight: 600;
+}
+.tabular-nums { font-weight: 600; }
 .app-shell h1 { font-size: clamp(1.9rem, 2.8vw, 2.5rem); line-height: 1.12; }
 
 :focus-visible {

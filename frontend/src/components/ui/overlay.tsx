@@ -28,7 +28,7 @@ export function Dialog({ open, onClose, title, description, children, footer, si
         size === "sm" ? "max-w-sm" : size === "lg" ? "max-w-2xl" : "max-w-md")}>
       <div className="flex items-start justify-between gap-3 px-6 pt-6">
         <div>
-          <h2 id={`${id}-t`} className="font-display text-lg font-bold">{title}</h2>
+          <h2 id={`${id}-t`} className="font-ui text-lg font-semibold">{title}</h2>
           {description && <p id={`${id}-d`} className="mt-1 text-sm text-ink-2">{description}</p>}
         </div>
         <button type="button" onClick={onClose} aria-label="Close" className="press -mr-2 -mt-1 grid size-8 place-items-center rounded-lg text-ink-3 hover:bg-[var(--inset)] hover:text-ink">
@@ -56,7 +56,7 @@ export function Drawer({ open, onClose, title, children }: { open: boolean; onCl
     <dialog ref={ref} onCancel={(e) => { e.preventDefault(); onClose(); }} aria-labelledby={`${id}-t`}
       className="ui-drawer glass m-0 h-[85dvh] max-h-none w-full max-w-none p-0 text-ink sm:ml-auto sm:h-dvh sm:w-[440px]">
       <div className="flex items-center justify-between border-b border-[var(--glass-border)] px-5 py-4">
-        <h2 id={`${id}-t`} className="font-display text-lg font-bold">{title}</h2>
+        <h2 id={`${id}-t`} className="font-ui text-lg font-semibold">{title}</h2>
         <button type="button" onClick={onClose} aria-label="Close" className="press grid size-8 place-items-center rounded-lg text-ink-3 hover:bg-[var(--inset)] hover:text-ink">
           <X className="size-4" />
         </button>

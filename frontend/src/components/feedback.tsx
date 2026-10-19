@@ -92,7 +92,7 @@ function ConfirmDialog({ title, body, confirm, danger, onClose }: ConfirmOpts & 
           </span>
         )}
         <div className="min-w-0">
-          <h2 id="confirm-title" className="font-display text-lg font-bold">{title}</h2>
+          <h2 id="confirm-title" className="font-ui text-lg font-semibold">{title}</h2>
           <div className="mt-1.5 text-sm leading-relaxed text-ink-2">{body}</div>
         </div>
       </div>

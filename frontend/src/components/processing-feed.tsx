@@ -118,7 +118,7 @@ export function ProcessingFeed({ steps, current, detail, count, countLabel }: {
         })}
       </ol>
       {count !== undefined && count > 0 && (
-        <p className="text-sm text-ink-2"><span className="font-display text-xl font-bold text-ink"><CountUp value={count} /></span> {countLabel}</p>
+        <p className="text-sm text-ink-2"><span className="font-ui text-xl font-semibold text-ink"><CountUp value={count} /></span> {countLabel}</p>
       )}
       <div className="space-y-2.5 rounded-2xl border border-dashed border-line p-4" aria-hidden>
         <Skeleton className="h-4 w-1/3" />

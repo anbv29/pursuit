@@ -69,7 +69,7 @@ export function Empty({ icon, title, body, action }: { icon?: ReactNode; title: 
       <div className="mb-4 grid size-12 place-items-center rounded-2xl bg-accent-soft text-trail-strong ring-1 ring-[var(--glass-border)]">
         {icon ?? <Sparkles className="size-5" aria-hidden />}
       </div>
-      <p className="font-display text-base font-medium text-ink">{title}</p>
+      <p className="font-ui text-base font-medium text-ink">{title}</p>
       <p className="mt-1.5 max-w-sm text-[13.5px] leading-relaxed text-ink-3">{body}</p>
       {action && <div className="mt-5">{action}</div>}
     </div>
