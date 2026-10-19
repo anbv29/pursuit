@@ -931,3 +931,6 @@ fix: harden workspace loading and local lifecycle (see Git history for hash)
 
 chore: document reproducible setup and scan secrets (see Git history for hash)
     - README corrected and converted from UTF16 to UTF8; reusable count only private value and signature scan; bounded Alembic connections and IPv4 local startup. Secret scan zero matches; 145 backend files pass static checks; start stop confirmed ports released.
+
+test: verify local release and add browser CI (see Git history for hash)
+    - Final 141 backend tests and 20 browser checks passed; 1 live AI test explicitly skipped. Build lint types migration recovery runtime audits and scoped secret scan passed. CI browser job YAML validated but not run remotely. Production prerequisites and checkpoint hashes recorded.

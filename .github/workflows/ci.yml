@@ -61,6 +61,67 @@ jobs:
       - run: npm audit --omit=dev
       - run: npm run build
 
+  browser:
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:16-alpine
+        env:
+          POSTGRES_USER: pursuit
+          POSTGRES_PASSWORD: pursuit_local_only
+          POSTGRES_DB: pursuit_test
+        ports: ["5433:5432"]
+        options: >-
+          --health-cmd "pg_isready -U pursuit" --health-interval 5s --health-timeout 3s --health-retries 10
+    env:
+      APP_ENV: development
+      DATABASE_URL: postgresql+psycopg://pursuit:pursuit_local_only@127.0.0.1:5433/pursuit_test
+      TEST_DATABASE_URL: postgresql+psycopg://pursuit:pursuit_local_only@127.0.0.1:5433/pursuit_test
+      FO_MODE: demo
+      ANTHROPIC_API_KEY: ""
+      DODO_PAYMENTS_API_KEY: ""
+      DODO_PAYMENTS_WEBHOOK_KEY: ""
+      REPORT_WORKER_ENABLED: "false"
+      REGISTER_LIMIT_PER_HOUR: "1000"
+      LOGIN_LIMIT_PER_10MIN: "1000"
+      NEXT_DIST_DIR: .next-build
+      NODE_OPTIONS: --max-old-space-size=1536
+      BACKEND_URL: http://127.0.0.1:8000
+      E2E_SKIP_AI: "1"
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "24"
+          cache: npm
+          cache-dependency-path: frontend/package-lock.json
+      - run: pip install -r backend/requirements.txt
+      - run: python -m alembic upgrade head
+        working-directory: backend
+      - run: npm ci && npx playwright install --with-deps chromium && npm run build
+        working-directory: frontend
+      - name: Start isolated application services
+        run: |
+          (cd backend && python -m uvicorn app.main:app --host 127.0.0.1 --port 8000 --no-access-log > ../backend-ci.log 2>&1) &
+          (cd frontend && npm run start -- --hostname 127.0.0.1 > ../frontend-ci.log 2>&1) &
+          for attempt in $(seq 1 45); do
+            if curl --fail --silent http://127.0.0.1:3000/api/health; then exit 0; fi
+            sleep 1
+          done
+          exit 1
+      - run: npx playwright test
+        working-directory: frontend
+      - uses: actions/upload-artifact@v4
+        if: failure()
+        with:
+          name: synthetic-browser-failure-traces
+          path: frontend/test-results/
+          retention-days: 3
+
   secrets:
     runs-on: ubuntu-latest
     steps:
