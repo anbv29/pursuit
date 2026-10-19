@@ -59,4 +59,4 @@ A previously created Founder session also recalculated with tax included.
 No payment, subscription, customer contact details or card details submitted.
 Tax is included in merchant proceeds, rather than charged above these prices.
 Bank currency conversion charges remain outside Pursuit's control.
-Local build, browser tests and deployed wording verification pending.
+Verification: 28 backend billing/Fo tests passed; 3 desktop/mobile browser checks passed (12.8s). Ruff, ESLint, production compilation and TypeScript passed. Vercel serves the inclusive-tax wording with no old tax-exclusive copy. Render reports revision 4cd8fc5 Deploy succeeded | Live. Local implementation: 7d2f858; deployed merge: 4cd8fc5, preserving newer remote changes dd4bc68. Separate release-worktree commit 140325b was not pushed because the remote had advanced.
