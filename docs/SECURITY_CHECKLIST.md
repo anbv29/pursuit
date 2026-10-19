@@ -1,5 +1,62 @@
 # Pursuit security checklist (45 points)
 
+## Current local review (2026-10-19)
+
+The following matrix supersedes historical local assertions where they differ. PASS means the stated
+local control has evidence; it does not certify a deployment. External settings, legal retention and live
+provider behavior remain unverified. Critical FAIL/UNKNOWN findings block a production-ready claim.
+
+| # | Status | Current evidence and limits |
+| --- | --- | --- |
+| 1 | UNKNOWN | `.gitignore` excludes credentials; secret/bundle scan must be re-executed for this revision. Prior credential exposures required rotation; historical PASS is not an ongoing guarantee. |
+| 2 | UNKNOWN | `core/config.py` uses server-side SecretStr; hosted custody, scope and rotation require operator evidence. |
+| 3 | PASS | `config.py` rejects insecure production cookies, wildcard/non-HTTPS origins and invalid session TTL. `test_runtime_guards.py`; no auth bypass. Local launcher disables payments. |
+| 4 | UNKNOWN | Local `pursuit`/`pursuit_test` separation exists; final production isolation is not verified. |
+| 5 | FAIL | Runtime npm audit and backend pip-audit are clean; full npm audit reports five high development-only advisories rooted in braces. Suggested fix downgrades Next tooling across a major version. |
+| 6 | UNKNOWN | Deployment account permissions were not certified by this local review. |
+| 7 | PASS | README setup, pinned dependencies, Alembic and local launcher; clean-environment CI configuration exists. Fresh-machine setup was not repeated. |
+| 8 | PASS | `api/deps.py` authenticates private APIs; auth tests cover anonymous access. `/account` uses RequireAuth; authorization remains server-side. |
+| 9 | PASS | Owner/member dependencies protect resource mutation, billing, export and deletion; auth/billing tests. |
+| 10 | PASS | Foreign resources return no data: experiments/evidence/actions/report/billing isolation tests. |
+| 11 | PASS | Workspace-scoped service queries and membership dependencies; full API regression suite uses distinct users. |
+| 12 | UNKNOWN | Local role owns the database. Final hosted runtime privileges require inspection. |
+| 13 | PASS | Hashed sessions, Argon2, CSRF, secure production cookies; account tests verify all-session revocation. `auth.py` serializes login with password changes. Recovery is a separate open requirement (#38). |
+| 14 | PASS | Bounded single-instance sliding limiter and capacity/expiry tests; multi-instance shared store remains required. |
+| 15 | UNKNOWN | Application isolation is tested; production role/RLS/administrative access are not certified. |
+| 16 | PASS | Pydantic server schemas, literal account confirmation, SecretStr passwords and invalid-input API tests. |
+| 17 | PASS | SQLAlchemy parameterization; Ruff S rules; no model output executes as code or shell commands. |
+| 18 | PASS | React escaping, baseline frontend CSP and private noindex headers (`next.config.ts`); inline scripts/styles remain allowed. API CSP is stricter. Nonce-based CSP remains a strengthening opportunity. |
+| 19 | PASS | CSRF tests, explicit HTTPS production origins and pinned research fetching; no arbitrary client-selected callback origin. |
+| 20 | PASS | Bounded CSV validation and owner-only JSON export; funnel/export tests. |
+| 21 | PASS | Controlled domain errors and generic unexpected 500s; client timeouts preserve action uncertainty. Health reports no credentials. |
+| 22 | UNKNOWN | Fo credentials stay server-side/encrypted, but actual provider permission scope and live access were not reverified. |
+| 23 | PASS | Experiment membership, target and action-kind checks in actions/concierge routes; adversarial action tests. |
+| 24 | PASS | Fetch extraction strips executable content; instructions fence untrusted content; adversarial prompt tests. |
+| 25 | PASS | Server approval, allowance and resource checks remain outside model control; AI guard tests. |
+| 26 | PASS | Explicit approval and human confirmation requirements; actions and concierge API tests. |
+| 27 | UNKNOWN | Narrow Fo instructions exist; Pursuit cannot enforce the upstream agent's complete tool permissions. Verify provider account policy before live use. |
+| 28 | PASS | Schema validation, URL/recipient checks, allowlisted action types; models are not given SQL or shell tools. |
+| 29 | UNKNOWN | Aggregate synthesis and redacted callback/share access logs exist; hosted proxy and provider logging need review. |
+| 30 | PASS | Provider timeouts, bounded retry/budget reservations, leased report worker, bounded DB connect/pool waits. Runtime/job/allowance tests. |
+| 31 | PASS | Persisted approvals, execution transitions and audit events; action/worker regression tests. |
+| 32 | PASS | Sources include provenance/timestamps; evidence/report tests validate persistence. |
+| 33 | PASS | `fetcher.py` pins public DNS results, preserves Host/TLS name, checks each redirect and caps bytes/time. Fourteen fetcher tests passed. |
+| 34 | PASS | Approval, single-target instructions, daily limits and idempotent action requests; action tests. Provider enforcement still requires #27. |
+| 35 | PASS | Queued/executed/delivered/unknown are distinct; delivery and concierge provider tests. |
+| 36 | PASS | Unique keys, database locks, leases and approval claim checks; billing/action/worker tests. |
+| 37 | PASS | Persisted event metrics separate demo origin; synthetic fixtures are explicit. Public marketing labels fictional examples. |
+| 38 | FAIL | Owner export/workspace deletion and reauthenticated account deletion implemented; shared records intentionally retained. Verified-email recovery and provider/backup retention erasure procedures remain incomplete. |
+| 39 | PASS | Provider failures and uncertain outcomes do not grant success/credits; billing, Fo and worker failure-path tests. |
+| 40 | PASS | Real FastAPI routes against isolated PostgreSQL; current browser results recorded separately in verification document. |
+| 41 | PASS | Anonymous, cross-user, invalid-input, injection and unauthorized-action tests; account deletion preserves shared workspace. |
+| 42 | FAIL | Ruff/static checks and runtime dependency audits executed; development advisories remain. Fresh secret scan evidence is tracked under #1. |
+| 43 | FAIL | Local logs and access redaction exist. Hosted alerting, monitoring and proxy redaction are not configured/verified. |
+| 44 | UNKNOWN | Local migration up/down/up passed; hosted backup restoration and disaster recovery not demonstrated. |
+| 45 | PASS | `docs/INCIDENT_RESPONSE.md` covers credentials, data exposure, compromised accounts and emergency agent shutdown; operational drill not performed. |
+
+Full execution results and local limitations are in `LOCAL_READINESS.md` and the dated verification record.
+All older matrices below remain historical context, not a current production certification.
+
 ## Paid-plan addendum (2026-10-18)
 
 This addendum does not change historical production UNKNOWN/FAIL findings below.

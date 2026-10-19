@@ -922,3 +922,6 @@ feat: add safe local start and stop commands (see Git history for hash)
 
 fix: serialize login with account changes (see Git history for hash)
     - Login row lock prevents old password session races; shared workspace deletion regression; new public pricing and account browser checks. 18 authentication API tests passed; new browser checks pending serial run.
+
+docs: record local scope and current security findings (see Git history for hash)
+    - Current 45 point security matrix with evidence and explicit FAIL UNKNOWN findings; local scope and all plan allowances; live release prerequisites. Runtime audits clean; development advisories recorded; browser validation ongoing.
