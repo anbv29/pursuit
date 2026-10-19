@@ -982,3 +982,6 @@ Replaced the looping prospect feed with an original tabbed report artifact cover
 
 style: establish warm editorial identity (see Git history for hash)
 Changed light theme from cobalt to warm paper, charcoal and copper with quieter atmospheric color. Added Plus Jakarta Sans display type alongside Manrope controls and Source Sans 3 reading text. Introduced a layered report sheet and compact product navigation linking to real sections. Preserved original branding, glass navigation, session-aware actions and live functionality. Local-only checkpoint; dark counterpart and browser verification follow.
+
+style: pair charcoal theme with quieter process layout (see Git history for hash)
+Matched manual and OS dark themes to charcoal, warm neutral surfaces and accessible peach/copper accents. Simplified the process checklist into divided rows with aligned content. Fixed internal navigation links flagged by lint in the previous checkpoint; targeted lint now passes. No external dependencies added, no push or hosted changes. Full local build and UI checks follow.
