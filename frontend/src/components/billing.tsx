@@ -9,7 +9,7 @@ import { Badge, Button, Card, Empty, Notice, Skeleton } from "./ui";
 
 type Plan = { id: string; name: string; price_cents: number; interval: string; reports: number; questions: number; seats: number };
 type Billing = { plan: string; seats: number; seats_used: number; research_remaining: number; questions_remaining: number;
-  configured: boolean; environment: string; status: string; period_end: string | null; cancel_at_period_end: boolean;
+  configured: boolean; provider_connected?: boolean; environment: string; status: string; period_end: string | null; cancel_at_period_end: boolean;
   suspended: boolean; portal_available: boolean; purchasable: Record<string, boolean>;
   complimentary?: boolean; allowance_resets_at?: string | null;
   orders: { id: string; plan: string; status: string; created_at: string }[] };
@@ -52,7 +52,8 @@ export function BillingPanel() {
       <div><h1 className="text-2xl font-semibold tracking-tight">Plans & billing</h1><p className="mt-2 text-sm text-ink-2">Research when you need it. Keep your evidence and manual experiments on every plan.</p></div>
       <Badge tone={b.environment === "test_mode" ? "demo" : "trail"}>{b.environment === "test_mode" ? "Test payments" : "Live payments"}</Badge>
     </div>
-    {!b.configured && <Notice>Payments are not configured yet. You can compare plans, but checkout is unavailable and no payment will be taken.</Notice>}
+    {!b.configured && <Notice>{b.provider_connected ? "Billing is connected. Checkout is paused until launch configuration is complete. No payment will be taken."
+      : "Payments are not configured yet. You can compare plans, but checkout is unavailable and no payment will be taken."}</Notice>}
     {workspace.is_demo && <Notice tone="demo">This is a demo workspace. Create a company workspace before buying a plan.</Notice>}
     {b.suspended && <Notice tone="bad">Paid access is paused for payment review. Contact support; your saved data remains accessible.</Notice>}
     {b.complimentary && <Notice tone="trail">Complimentary {b.plan === "team" ? "Team" : "Founder"} access is active. No subscription was purchased and no recurring charge is scheduled.

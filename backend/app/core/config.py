@@ -36,6 +36,7 @@ class Settings(BaseSettings):
         default="test_mode", validation_alias="DODO_PAYMENTS_ENVIRONMENT"
     )
     dodo_business_id: str = ""
+    billing_checkout_enabled: bool = False
     dodo_single_product: str = ""
     dodo_founder_product: str = ""
     dodo_team_product: str = ""

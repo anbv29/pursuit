@@ -943,3 +943,6 @@ Integrated operator grants with seat and feature checks, monthly credit ledger, 
 
 feat: add private provider setup verification (see Git history for hash)
 Added count-safe webhook credential configuration and bounded AI key/model verification. Three complimentary-access tests cover idempotency, renewal, revocation, owner checks and suspension. Requested local Team grant applied; Haiku verified; approved live webhook created. Credentials stay ignored and server-side.
+
+fix: gate live checkout on explicit launch readiness (see Git history for hash)
+Added fail-closed checkout switch and HTTPS return-origin checks while keeping verified webhook fulfillment and billing management independent. Billing UI distinguishes connected provider from paused checkout. Added configured local services option. Eighteen focused billing and complimentary tests passed.

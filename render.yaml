@@ -38,6 +38,8 @@ services:
         value: "true"
       - key: DODO_PAYMENTS_ENVIRONMENT
         value: test_mode
+      - key: BILLING_CHECKOUT_ENABLED
+        value: "false"
       - key: DODO_PAYMENTS_API_KEY
         value: ""
       - key: DODO_PAYMENTS_WEBHOOK_KEY

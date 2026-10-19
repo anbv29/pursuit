@@ -25,6 +25,27 @@ def configured():
     )
 
 
+def portal_ready():
+    s = get_settings()
+    if not configured():
+        return False
+    if s.dodo_environment == "test_mode":
+        return True
+    origin = urlsplit(s.public_app_url)
+    return bool(
+        origin.scheme == "https"
+        and origin.hostname
+        and origin.hostname not in ("localhost", "127.0.0.1", "::1")
+        and not origin.hostname.endswith(".invalid")
+        and not origin.username
+        and not origin.password
+    )
+
+
+def checkout_ready():
+    return get_settings().billing_checkout_enabled and portal_ready()
+
+
 def client():
     s = get_settings()
     if not configured():

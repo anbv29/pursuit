@@ -92,6 +92,7 @@ def billing_provider(monkeypatch):
         "DODO_PAYMENTS_API_KEY": "synthetic-test-key",
         "DODO_PAYMENTS_WEBHOOK_KEY": SECRET,
         "DODO_PAYMENTS_ENVIRONMENT": "test_mode",
+        "BILLING_CHECKOUT_ENABLED": "true",
         "DODO_BUSINESS_ID": "bus-synthetic",
         "DODO_SINGLE_PRODUCT": "pdt-single",
         "DODO_FOUNDER_PRODUCT": "pdt-founder",

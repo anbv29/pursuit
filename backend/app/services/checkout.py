@@ -13,7 +13,7 @@ from app.services import audit, payment_provider
 def start(db, workspace_id, user, slug):
     s = get_settings()
     product_id = payment_provider.product_ids().get(slug)
-    if not product_id or not payment_provider.configured():
+    if not product_id or not payment_provider.checkout_ready():
         raise AppError(
             "This plan is not available for purchase yet. No payment was taken.", "billing_unavailable"
         )

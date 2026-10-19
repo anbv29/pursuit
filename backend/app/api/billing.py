@@ -45,9 +45,11 @@ def status(m: Membership = Depends(workspace_owner), db: Session = Depends(get_d
     )
     return entitlements.summary(db, m.workspace_id) | {
         "environment": s.dodo_environment,
-        "configured": payment_provider.configured(),
+        "configured": payment_provider.checkout_ready(),
+        "provider_connected": payment_provider.configured(),
         "purchasable": {
-            k: bool(v and payment_provider.configured()) for k, v in payment_provider.product_ids().items()
+            k: bool(v and payment_provider.checkout_ready())
+            for k, v in payment_provider.product_ids().items()
         },
         "status": account.status if account else "inactive",
         "suspended": bool(account and account.suspended),
@@ -56,7 +58,7 @@ def status(m: Membership = Depends(workspace_owner), db: Session = Depends(get_d
         "portal_available": bool(
             account
             and account.customer_id
-            and payment_provider.configured()
+            and payment_provider.portal_ready()
             and account.environment == s.dodo_environment
         ),
         "seats_used": db.scalar(
@@ -97,6 +99,8 @@ def portal(
     db: Session = Depends(get_db),
 ):
     limiter.check(f"portal:{user.id}", limit=10, window_seconds=600)
+    if not payment_provider.portal_ready():
+        raise AppError("Billing portal setup is incomplete. Contact the workspace operator.")
     account = db.get(BillingAccount, m.workspace_id)
     if not account or not account.customer_id or account.environment != get_settings().dodo_environment:
         raise AppError("This workspace has no linked billing customer.")
