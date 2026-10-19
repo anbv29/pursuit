@@ -4,13 +4,13 @@
  * It is never sent to or read from the backend.
  */
 
-export const HERO_REQUEST = "Practice managers at independent clinics who still reconcile insurance claims by hand";
+export const HERO_REQUEST = "We help independent clinics reconcile insurance claims. Who should we target first, and what should we test?";
 
 export const HERO_STEPS = [
   { label: "Reading your website", done: "Read your website" },
   { label: "Researching the market and competitors", done: "Researched the market and competitors" },
   { label: "Ranking who fits best", done: "Ranked who fits best" },
-  { label: "Drafting outreach in your voice", done: "Drafted outreach in your voice" },
+  { label: "Designing the next experiment", done: "Suggested an experiment to track" },
 ];
 
 export const HERO_SOURCES = 38;
@@ -39,38 +39,38 @@ export const HOW_IT_WORKS = [
   {
     id: "describe",
     tab: "Describe",
-    title: "Say who you want to meet",
-    body: "Enter your website and, in your own words, who you want to reach and what you want to learn. One sentence is enough to start.",
+    title: "Describe your business and your biggest question",
+    body: "Enter your website, what you offer and who you hope to help. Add the question you need to answer before investing more time or money.",
     points: ["Your website, read directly", "Your own description of the buyer", "Optional context: stage, pricing, competitors"],
   },
   {
     id: "research",
     tab: "Research",
     title: "Pursuit researches and explains the fit",
-    body: "It reads public sources, maps segments and competitors, and explains why each segment fits. Every claim is labelled as a sourced fact, an interpretation or an assumption.",
+    body: "With AI research configured and a research credit, build a report covering customer groups, buyer profiles, problems, competitors, positioning, pricing, messaging and suggested experiments. Facts, interpretations and assumptions are labelled separately.",
     points: ["Citations you can click and check", "Unsourced claims are flagged, not hidden", "Competitors, pricing and positioning gaps"],
   },
   {
     id: "reach",
-    tab: "Reach out",
-    title: "Drafts in your voice, sent only with your approval",
-    body: "Pursuit drafts messages and interview invites. Nothing leaves your account until you review the exact recipient and wording and approve it.",
-    points: ["One recipient per action", "Approve, edit or reject every send", "Simulated runs are always labelled"],
+    tab: "Test",
+    title: "Turn the findings into a test you can measure",
+    body: "Choose a suggested experiment or design your own. Define the customer group, question and success criteria, then collect evidence, interview notes or funnel data. Optional external actions require a supported integration and explicit approval.",
+    points: ["Six reusable experiment workflows", "Compare messages or import funnel CSVs", "Review every external action before approval"],
   },
   {
     id: "learn",
-    tab: "Book and learn",
-    title: "Book the call, then let the evidence decide",
-    body: "Approved invites go out through Fo to book the conversation. Outcomes feed experiments that tell you plainly whether to continue, iterate, pivot or stop.",
-    points: ["Interview booking through Fo", "Success criteria set before results", "Honest recommendations with their limits"],
+    tab: "Learn",
+    title: "Record what happened and decide what comes next",
+    body: "Capture actual outcomes and review the evidence for continuing, improving, changing direction or stopping. When there is not enough evidence, Pursuit says the result is inconclusive. A suggested action is never proof of a booked meeting or a sale.",
+    points: ["Persisted evidence and experiment history", "Confidence, contradictions and limitations", "A first-week checklist and next recommended action"],
   },
 ];
 
 export const TRUST_POINTS = [
-  { title: "Every claim shows its source", body: "Click through to the page it came from." },
+  { title: "Check the evidence", body: "Sources are linked; unsupported claims are flagged." },
   { title: "Nothing is sent without you", body: "Each outreach action waits for your approval." },
   { title: "Demo data is always labelled", body: "Simulated results never mix with real ones." },
-  { title: "Your workspace stays yours", body: "Export everything, or delete it, any time." },
+  { title: "Control your workspace", body: "Owner-only export and deletion, with billing safeguards." },
 ];
 
 /** Mirrors the public plan catalogue (backend/app/services/plans.py). */

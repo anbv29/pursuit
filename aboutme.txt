@@ -898,3 +898,6 @@ Free preview hosting checkpoint (see git log for hash):
 #137  (hash recorded in next commit)  test(ui): cover approvals, billing and settings in the visual smoke test
     - frontend/e2e/glass-ui.spec.ts: fixtures for approvals, integrations, members, plans and billing (shapes taken from the components' own types); approvals, billing and settings render without page errors or overflow; missing-endpoint responses exercise the error notices
     - Final checks on the finished redesign: npm run lint clean, tsc clean, next build succeeds, visual suite 4 passed against the production build
+
+feat: align marketing with research and validation (see Git history for hash)
+    - Preserve revamped UI; replace booking guarantees and show all four plans from server catalogue. TypeScript and lint pass.

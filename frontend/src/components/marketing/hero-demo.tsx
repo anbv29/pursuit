@@ -62,7 +62,7 @@ export function HeroDemo() {
       <div className="mt-4 min-h-[214px]">
         {done ? (
           <div key="result" className="enter-rise space-y-2.5">
-            <p className="text-[13px] text-ink-2"><span className="font-display text-lg font-bold text-ink"><CountUp value={HERO_SOURCES} /></span> sources read</p>
+            <p className="text-[13px] text-ink-2"><span className="font-display text-lg font-bold text-ink"><CountUp value={HERO_SOURCES} /></span> illustrative sources · fictional example</p>
             {HERO_MATCHES.map((m, i) => (
               <div key={m.who} className="enter-rise rounded-2xl bg-surface/85 p-3 ring-1 ring-line" style={{ "--i": i + 1 } as React.CSSProperties}>
                 <div className="flex items-center justify-between gap-2">

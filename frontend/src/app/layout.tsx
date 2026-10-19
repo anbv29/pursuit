@@ -13,7 +13,7 @@ const body = Figtree({ variable: "--font-figtree", subsets: ["latin"], weight: [
 
 export const metadata: Metadata = {
   title: { default: "Pursuit", template: "%s · Pursuit" },
-  description: "Say who you want to meet. Pursuit finds them, explains why they fit, and helps you book the call.",
+  description: "Research customers, competitors and pricing. Turn findings into measurable experiments, track evidence and decide what to test next with Pursuit.",
 };
 
 export const viewport: Viewport = {
