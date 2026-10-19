@@ -1,3 +1,4 @@
+import type { ReactNode } from "react";
 import type { Metadata, Viewport } from "next";
 import { Plus_Jakarta_Sans, Manrope, Source_Sans_3 } from "next/font/google";
 import { BackdropOrbs } from "@/components/backdrop";
@@ -27,7 +28,7 @@ export const viewport: Viewport = {
 // Applies a saved theme choice before first paint so the page never flashes the wrong theme.
 const themeScript = `try{var t=localStorage.getItem("pursuit.theme");if(t==="light"||t==="dark")document.documentElement.dataset.theme=t}catch(e){}`;
 
-export default function RootLayout({ children }: LayoutProps<"/">) {
+export default function RootLayout({ children }: { children: ReactNode }) {
   return (
     <html lang="en" suppressHydrationWarning className={`${display.variable} ${ui.variable} ${body.variable} h-full antialiased`}>
       <head>
