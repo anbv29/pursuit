@@ -8,7 +8,7 @@ provider behavior remain unverified. Critical FAIL/UNKNOWN findings block a prod
 
 | # | Status | Current evidence and limits |
 | --- | --- | --- |
-| 1 | UNKNOWN | `.gitignore` excludes credentials; secret/bundle scan must be re-executed for this revision. Prior credential exposures required rotation; historical PASS is not an ongoing guarantee. |
+| 1 | PASS | `scripts/scan_local_secrets.py` checked six known private values plus common signatures: zero matches in tracked files, Git patches or 52 browser JS bundles. `.gitignore` excludes credentials. This scoped scan cannot prove every unknown secret absent; hosted logs remain #29/#43. |
 | 2 | UNKNOWN | `core/config.py` uses server-side SecretStr; hosted custody, scope and rotation require operator evidence. |
 | 3 | PASS | `config.py` rejects insecure production cookies, wildcard/non-HTTPS origins and invalid session TTL. `test_runtime_guards.py`; no auth bypass. Local launcher disables payments. |
 | 4 | UNKNOWN | Local `pursuit`/`pursuit_test` separation exists; final production isolation is not verified. |
@@ -49,7 +49,7 @@ provider behavior remain unverified. Critical FAIL/UNKNOWN findings block a prod
 | 39 | PASS | Provider failures and uncertain outcomes do not grant success/credits; billing, Fo and worker failure-path tests. |
 | 40 | PASS | Real FastAPI routes against isolated PostgreSQL; current browser results recorded separately in verification document. |
 | 41 | PASS | Anonymous, cross-user, invalid-input, injection and unauthorized-action tests; account deletion preserves shared workspace. |
-| 42 | FAIL | Ruff/static checks and runtime dependency audits executed; development advisories remain. Fresh secret scan evidence is tracked under #1. |
+| 42 | FAIL | Ruff/static checks, count-only secret scan and runtime dependency audits executed; development advisories remain (#5). CI gitleaks has not been re-executed locally. |
 | 43 | FAIL | Local logs and access redaction exist. Hosted alerting, monitoring and proxy redaction are not configured/verified. |
 | 44 | UNKNOWN | Local migration up/down/up passed; hosted backup restoration and disaster recovery not demonstrated. |
 | 45 | PASS | `docs/INCIDENT_RESPONSE.md` covers credentials, data exposure, compromised accounts and emergency agent shutdown; operational drill not performed. |

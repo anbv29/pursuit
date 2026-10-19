@@ -928,3 +928,6 @@ docs: record local scope and current security findings (see Git history for hash
 
 fix: harden workspace loading and local lifecycle (see Git history for hash)
     - Key API results by resource path; settings retry and safe storage; truthful dashboard states; current onboarding tests; loopback database binding; numeric process identity checks. Production build TypeScript and lint passed; 141 backend tests passed.
+
+chore: document reproducible setup and scan secrets (see Git history for hash)
+    - README corrected and converted from UTF16 to UTF8; reusable count only private value and signature scan; bounded Alembic connections and IPv4 local startup. Secret scan zero matches; 145 backend files pass static checks; start stop confirmed ports released.

@@ -22,8 +22,8 @@ $started = @()
 Push-Location $root
 try {
     $env:APP_ENV = 'development'
-    $env:DATABASE_URL = 'postgresql+psycopg://pursuit:pursuit_local_only@localhost:5433/pursuit'
-    $env:TEST_DATABASE_URL = 'postgresql+psycopg://pursuit:pursuit_local_only@localhost:5433/pursuit_test'
+    $env:DATABASE_URL = 'postgresql+psycopg://pursuit:pursuit_local_only@127.0.0.1:5433/pursuit'
+    $env:TEST_DATABASE_URL = 'postgresql+psycopg://pursuit:pursuit_local_only@127.0.0.1:5433/pursuit_test'
     $env:COOKIE_SECURE = 'false'
     $env:PUBLIC_APP_URL = 'http://localhost:3000'
     $env:CORS_ORIGINS = 'http://localhost:3000'
