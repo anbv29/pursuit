@@ -22,7 +22,7 @@ export default function Home() {
             <p className="mb-5 inline-flex items-center gap-2 rounded-full border border-[var(--glass-border)] bg-surface/70 px-3 py-1 text-[13px] font-medium text-ink-2">
               <span className="size-1.5 rounded-full bg-accent" aria-hidden /> Research and validation for founders
             </p>
-            <h1 className="font-display text-[44px] font-bold leading-[1.02] tracking-[-0.035em] text-ink sm:text-6xl lg:text-[68px]">
+            <h1 className="font-display text-[48px] font-normal leading-[1.04] tracking-[-0.025em] text-ink sm:text-6xl lg:text-[76px]">
               Know what to test next. <span className="text-trail">Build on evidence.</span>
             </h1>
             <p className="mt-6 max-w-xl text-lg leading-relaxed text-ink-2">

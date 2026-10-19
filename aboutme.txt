@@ -958,3 +958,6 @@ Owner explicitly superseded the checkout pause. Enabled the hosted checkout flag
 
 fix: remove model branding from website (see Git history for hash)
 Removed model names from report/print headers, research allowances, billing copy, usage previews and records, settings integrations and recommendation badges. Removed the visible model selector while preserving the configured backend model and budget saving. Availability messages now use generic AI wording. Frontend lint, strict production build, six browser screen checks and eight backend report tests passed; changed backend files pass Ruff lint/format.
+
+style: refine local typography and light palette (see Git history for hash)
+Introduced self-hosted Instrument Serif titles, Manrope interface type and Source Sans 3 reading text. Softened light canvas, decorative colors, shadows and glass saturation while preserving motion. Updated brand wordmark and hero sizing. Targeted frontend lint and diff checks passed; full build and visual checks follow dark-theme refinement. Local preview only; no push authorized.

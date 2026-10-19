@@ -1,5 +1,5 @@
 import type { Metadata, Viewport } from "next";
-import { Bricolage_Grotesque, Figtree } from "next/font/google";
+import { Instrument_Serif, Manrope, Source_Sans_3 } from "next/font/google";
 import { BackdropOrbs } from "@/components/backdrop";
 import { FeedbackProvider } from "@/components/feedback";
 import { LensLoader } from "@/components/lens-loader";
@@ -8,8 +8,9 @@ import { ReadingProvider } from "@/components/reading-mode";
 import { SessionProvider } from "@/components/session";
 import "./globals.css";
 
-const display = Bricolage_Grotesque({ variable: "--font-bricolage", subsets: ["latin"], weight: ["500", "700"] });
-const body = Figtree({ variable: "--font-figtree", subsets: ["latin"], weight: ["400", "500", "600"] });
+const display = Instrument_Serif({ variable: "--font-editorial", subsets: ["latin"], weight: "400", display: "swap" });
+const ui = Manrope({ variable: "--font-interface", subsets: ["latin"], display: "swap" });
+const body = Source_Sans_3({ variable: "--font-reading", subsets: ["latin"], display: "swap" });
 
 export const metadata: Metadata = {
   title: { default: "Pursuit", template: "%s · Pursuit" },
@@ -18,8 +19,8 @@ export const metadata: Metadata = {
 
 export const viewport: Viewport = {
   themeColor: [
-    { media: "(prefers-color-scheme: light)", color: "#e6f3ef" },
-    { media: "(prefers-color-scheme: dark)", color: "#061417" },
+    { media: "(prefers-color-scheme: light)", color: "#f4f5f1" },
+    { media: "(prefers-color-scheme: dark)", color: "#151c1b" },
   ],
 };
 
@@ -28,7 +29,7 @@ const themeScript = `try{var t=localStorage.getItem("pursuit.theme");if(t==="lig
 
 export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
-    <html lang="en" suppressHydrationWarning className={`${display.variable} ${body.variable} h-full antialiased`}>
+    <html lang="en" suppressHydrationWarning className={`${display.variable} ${ui.variable} ${body.variable} h-full antialiased`}>
       <head>
         <script dangerouslySetInnerHTML={{ __html: themeScript }} />
       </head>

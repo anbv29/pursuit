@@ -8,37 +8,37 @@
  * the app (--paper, --surface, --trail, ...) are mapped onto the new system so
  * every screen picks up the theme (including dark mode) without markup changes.
  *
- * Contrast note: brand --accent (#0e8f84) is 3.98:1 against white, below AA for
- * button labels. Filled buttons and accent-coloured text use --accent-strong
- * (5.49:1); --accent stays for rings, progress, icons and decoration.
+ * Filled buttons and accent-coloured text use --accent-strong for readable
+ * contrast; --accent is reserved for rings, progress, icons and decoration.
+ * Typography: editorial titles, compact interface labels, readable long-form text.
  */
 
 :root {
   color-scheme: light;
 
   /* brand */
-  --bg: #e6f3ef;
-  --ink: #0c2a2b;
-  --muted: #4d6b6b;
+  --bg: #f4f5f1;
+  --ink: #24322d;
+  --muted: #5c6a63;
   --glass-1: rgba(255, 255, 255, 0.66);
   --glass-2: rgba(255, 255, 255, 0.26);
   --glass-border: rgba(255, 255, 255, 0.85);
-  --shadow: rgba(20, 80, 80, 0.22);
-  --orb-1: #2ec4b0;
-  --orb-2: #ffc46b;
-  --orb-3: #c9a2ff;
-  --accent: #0e8f84;
+  --shadow: rgba(35, 51, 43, 0.13);
+  --orb-1: #b5cfc3;
+  --orb-2: #ddd8c9;
+  --orb-3: #c8d1d5;
+  --accent: #52786b;
   --accent-ink: #ffffff;
   --inset: rgba(12, 42, 43, 0.07);
 
   /* semantic */
-  --accent-strong: #0b766d;
-  --accent-soft: #cdeee8;
-  --ink-soft: #2f4e4e;
-  --surface-solid: #f7fcfa;
-  --surface-sunken: #dcece7;
-  --hairline: #c9dfd8;
-  --hairline-strong: #a9c8bf;
+  --accent-strong: #386354;
+  --accent-soft: #e1eae3;
+  --ink-soft: #46564e;
+  --surface-solid: #fafbf8;
+  --surface-sunken: #e9ede6;
+  --hairline: #d8e0d7;
+  --hairline-strong: #b9c7bc;
   --success: #1e7a4c;
   --success-soft: #d6f1e2;
   --warning: #9a4a1f;
@@ -47,10 +47,10 @@
   --danger-soft: #fbe3df;
   --demo: #6d3fb8;
   --demo-soft: #ece2fb;
-  --focus-ring: #0b766d;
+  --focus-ring: #386354;
   --scrim: rgba(6, 26, 28, 0.36);
-  --orb-opacity: 0.85;
-  --specular: 0.6;
+  --orb-opacity: 0.55;
+  --specular: 0.4;
   --shimmer: rgba(255, 255, 255, 0.45);
 
   /* decisions (filled chips with white text; all >= 4.5:1) */
@@ -69,7 +69,7 @@
   --ink-2: var(--ink-soft);
   --ink-3: var(--muted);
   --trail: var(--accent-strong);
-  --trail-strong: #08605a;
+  --trail-strong: #2d5345;
   --trail-soft: var(--accent-soft);
   --flag: var(--warning);
   --flag-soft: var(--warning-soft);
@@ -213,8 +213,9 @@
   --color-d-pivot: var(--d-pivot);
   --color-d-stop: var(--d-stop);
   --color-d-inconclusive: var(--d-inconclusive);
-  --font-sans: var(--font-figtree);
-  --font-display: var(--font-bricolage);
+  --font-sans: var(--font-reading);
+  --font-display: var(--font-editorial);
+  --font-ui: var(--font-interface);
   --font-mono: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
   --shadow-card: 0 1px 2px var(--shadow), 0 8px 24px -16px var(--shadow);
   --shadow-pop: 0 18px 50px -12px var(--shadow), 0 4px 12px -6px var(--shadow);
@@ -231,14 +232,21 @@ html {
 body {
   background: transparent;
   color: var(--ink);
-  font-family: var(--font-figtree), system-ui, sans-serif;
+  font-family: var(--font-reading), system-ui, sans-serif;
+  line-height: 1.55;
   transition: background-color var(--dur-slow) var(--ease-out), color var(--dur-slow) var(--ease-out);
 }
-h1, h2, h3, .font-display {
-  font-family: var(--font-bricolage), var(--font-figtree), system-ui, sans-serif;
-  letter-spacing: -0.015em;
+h1, .font-display {
+  font-family: var(--font-editorial), Georgia, serif;
+  font-weight: 400;
+  letter-spacing: -0.025em;
+  text-wrap: balance;
 }
-h1 { letter-spacing: -0.025em; }
+h2, h3, h4, button, input, select, label, nav, .tabular-nums {
+  font-family: var(--font-interface), system-ui, sans-serif;
+}
+h2, h3, h4 { letter-spacing: -0.025em; }
+.app-shell h1 { font-size: clamp(1.9rem, 2.8vw, 2.5rem); line-height: 1.12; }
 
 :focus-visible {
   outline: 2px solid var(--focus-ring);
@@ -257,8 +265,8 @@ h1 { letter-spacing: -0.025em; }
   position: relative;
   isolation: isolate;
   background: linear-gradient(145deg, var(--glass-1), var(--glass-2));
-  -webkit-backdrop-filter: blur(26px) saturate(190%);
-  backdrop-filter: blur(26px) saturate(190%);
+  -webkit-backdrop-filter: blur(26px) saturate(125%);
+  backdrop-filter: blur(26px) saturate(125%);
   border: 1px solid var(--glass-border);
   border-radius: var(--radius-xl);
   box-shadow:
@@ -391,7 +399,7 @@ body:has(.app-shell) .backdrop-orbs { opacity: calc(var(--orb-opacity) * 0.45); 
   z-index: 60;
   transform-origin: left;
   background: linear-gradient(90deg, var(--orb-1), var(--accent), var(--orb-3));
-  box-shadow: 0 0 12px var(--accent);
+  box-shadow: 0 0 6px color-mix(in srgb, var(--accent) 35%, transparent);
   pointer-events: none;
 }
 
@@ -433,7 +441,7 @@ body:has(.app-shell) .backdrop-orbs { opacity: calc(var(--orb-opacity) * 0.45); 
   inset: 0;
   display: grid;
   place-items: center;
-  font-family: var(--font-bricolage), system-ui, sans-serif;
+  font-family: var(--font-editorial), Georgia, serif;
   font-weight: 700;
   font-size: clamp(52px, 17vw, 250px);
   letter-spacing: -0.04em;
@@ -471,7 +479,7 @@ body:has(.app-shell) .backdrop-orbs { opacity: calc(var(--orb-opacity) * 0.45); 
   left: 0;
   right: 0;
   text-align: center;
-  font: 600 13px/1 var(--font-figtree), system-ui, sans-serif;
+  font: 600 13px/1 var(--font-interface), system-ui, sans-serif;
   color: var(--ink);
   font-variant-numeric: tabular-nums;
 }

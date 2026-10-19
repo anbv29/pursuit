@@ -20,7 +20,7 @@ export function Logo({ href = "/", compact = false }: { href?: string; compact?:
         <circle cx="17" cy="7.5" r="2.2" fill="var(--accent-ink)" />
         <path d="M7 16.5 12 12l5-4.5" stroke="var(--accent-ink)" strokeWidth="1.2" strokeDasharray="1.5 1.8" fill="none" opacity=".7" />
       </svg>
-      {!compact && <span className="text-[18px] font-bold tracking-tight">Pursuit</span>}
+      {!compact && <span className="text-[23px] font-normal tracking-tight">Pursuit</span>}
     </Link>
   );
 }
