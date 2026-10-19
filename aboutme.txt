@@ -959,6 +959,7 @@ Owner explicitly superseded the checkout pause. Enabled the hosted checkout flag
 fix: remove model branding from website (see Git history for hash)
 Removed model names from report/print headers, research allowances, billing copy, usage previews and records, settings integrations and recommendation badges. Removed the visible model selector while preserving the configured backend model and budget saving. Availability messages now use generic AI wording. Frontend lint, strict production build, six browser screen checks and eight backend report tests passed; changed backend files pass Ruff lint/format.
 
+<<<<<<< HEAD
 style: refine local typography and light palette (see Git history for hash)
 Introduced self-hosted Instrument Serif titles, Manrope interface type and Source Sans 3 reading text. Softened light canvas, decorative colors, shadows and glass saturation while preserving motion. Updated brand wordmark and hero sizing. Targeted frontend lint and diff checks passed; full build and visual checks follow dark-theme refinement. Local preview only; no push authorized.
 
@@ -997,3 +998,8 @@ Final start-local.ps1 -ConfiguredServices -Build passed compilation, strict Type
 
 feat: lower launch prices with unchanged allowances (see Git history for hash)
 Changed shared catalogue to Single $4.99, Founder $11.99/month and Team $34.99/month; public and workspace pricing both use this API. Updated provider fixtures, frontend billing fixtures, current documentation and public catalogue assertions. Historical payment verification remains labelled with original prices. Existing Dodo products read successfully in live mode; provider writes and hosted rollout are pending. Ruff lint/format and diff checks passed; billing, usage and Fo regression suite is running. No model migration or Fo changes included.
+=======
+
+feat: lower launch prices without UI redesign (see Git history for hash)
+Pricing-only release: Single Report $4.99 once, Founder $11.99/month, Team $34.99/month. Existing credits, questions, seats, provider IDs and intervals retained. Local verification: 57 billing/usage/Fo tests and three browser checks passed; Ruff lint/format passed. No UI redesign or model migration included. Live provider edits and hosted rollout pending approval to publish.
+>>>>>>> origin/main
