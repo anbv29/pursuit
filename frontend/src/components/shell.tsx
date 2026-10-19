@@ -116,7 +116,7 @@ export function WorkspaceShell({ wsId, children }: { wsId: string; children: Rea
       <CommandPalette commands={commands} open={paletteOpen} onOpenChange={setPaletteOpen} />
 
       {/* Desktop sidebar */}
-      <aside className={cx("sticky top-0 hidden h-screen shrink-0 p-3 print:hidden md:block transition-[width] duration-300 ease-[var(--ease-out)]", collapsed ? "w-[88px]" : "w-[264px]")}>
+      <aside className={cx("sticky top-0 hidden h-screen shrink-0 p-4 print:hidden md:block transition-[width] duration-300 ease-[var(--ease-out)]", collapsed ? "w-[88px]" : "w-[224px] xl:w-[248px]")}>
         <Glass as="nav" aria-label="Primary" className="flex h-full flex-col p-3">
           <div className={cx("flex h-11 items-center", collapsed ? "justify-center" : "px-1.5")}>
             <Logo href={base} compact={collapsed} />
@@ -153,8 +153,8 @@ export function WorkspaceShell({ wsId, children }: { wsId: string; children: Rea
 
       <div className="flex min-w-0 flex-1 flex-col">
         {/* Top bar */}
-        <header className="sticky top-0 z-30 px-3 pt-3 print:hidden md:pl-0">
-          <Glass as="div" className="flex h-14 items-center gap-2 rounded-[20px] px-3 md:px-4">
+        <header className="sticky top-0 z-30 px-4 pt-4 print:hidden md:px-8">
+          <Glass as="div" className="mx-auto flex h-14 max-w-6xl items-center gap-2 rounded-[16px] px-3 md:px-4">
             <div className="md:hidden"><Logo href={base} compact /></div>
             <div className="min-w-0 flex-1">
               {crumbs ? (
@@ -174,17 +174,17 @@ export function WorkspaceShell({ wsId, children }: { wsId: string; children: Rea
                 <p className="truncate font-ui text-[14px] font-semibold text-ink">{current?.label ?? "Pursuit"}</p>
               )}
             </div>
-            <div className="hidden items-center gap-2 lg:flex">
+            <div className="hidden items-center gap-2 xl:flex">
               {ws.data?.is_demo ? <DemoBadge label="Demo workspace" /> : ws.data && <Badge tone="trail">Live workspace</Badge>}
             </div>
             <button type="button" onClick={() => setPaletteOpen(true)}
-              className="press hidden h-9 items-center gap-2 rounded-xl border border-line bg-surface/70 px-3 text-sm text-ink-3 hover:text-ink sm:flex"
+              className="press hidden h-9 items-center gap-2 rounded-xl border border-line bg-surface/70 px-3 text-sm text-ink-3 hover:text-ink xl:flex"
               aria-label="Open command palette" aria-keyshortcuts="Control+K Meta+K">
               <Search className="size-4" aria-hidden /> <span>Search</span>
               <kbd className="ml-2 rounded-md border border-line px-1.5 text-[11px]">Ctrl K</kbd>
             </button>
             <button type="button" onClick={() => setPaletteOpen(true)} aria-label="Open command palette"
-              className="press grid size-9 place-items-center rounded-xl text-ink-2 hover:bg-[var(--inset)] sm:hidden"><Search className="size-[18px]" /></button>
+              className="press grid size-9 place-items-center rounded-xl text-ink-2 hover:bg-[var(--inset)] xl:hidden"><Search className="size-[18px]" /></button>
             <Link href={`${base}/approvals`} aria-label={`Approvals${approvals.data?.length ? `, ${approvals.data.length} waiting` : ""}`}
               className="press relative grid size-9 place-items-center rounded-xl text-ink-2 hover:bg-[var(--inset)] hover:text-ink">
               <Bell className="size-[18px]" aria-hidden />
@@ -198,7 +198,7 @@ export function WorkspaceShell({ wsId, children }: { wsId: string; children: Rea
                 <button type="button" onClick={t} aria-haspopup="menu" aria-expanded={open} aria-controls={id} aria-label="Account menu"
                   className="press flex items-center gap-2 rounded-xl p-1 pr-1.5 hover:bg-[var(--inset)] sm:pr-2.5">
                   <Avatar name={user?.name ?? "?"} />
-                  <span className="hidden max-w-[9rem] truncate text-sm font-medium text-ink sm:inline">{user?.name}</span>
+                  <span className="hidden max-w-[9rem] truncate text-sm font-medium text-ink xl:inline">{user?.name}</span>
                 </button>
               )} />
           </Glass>

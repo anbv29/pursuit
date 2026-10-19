@@ -44,7 +44,7 @@ export function ReadingControls() {
     window.dispatchEvent(new Event(KEY));
   };
   return (
-    <div className="surface mx-auto mb-6 flex max-w-6xl flex-wrap items-center justify-between gap-x-4 gap-y-2 rounded-2xl px-4 py-2.5 print:hidden">
+    <div className="mx-auto mb-7 flex max-w-6xl flex-wrap items-center justify-between gap-x-4 gap-y-2 border-b border-line pb-4 print:hidden">
       <div>
         <p className="text-sm font-semibold text-ink">{advanced ? "Advanced view" : "Guided view"}</p>
         <p className="text-xs text-ink-3">{advanced ? "Industry labels with the full evidence and measurements." : "Plain-language labels and explanations. All evidence and measurements stay available."}</p>

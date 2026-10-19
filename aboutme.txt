@@ -970,3 +970,6 @@ Reserved serif type for editorial titles; applied Manrope to pricing, counters, 
 
 style: establish cobalt visual direction and layout grid (see Git history for hash)
 Applied installed brand, design-system, ui-styling and ui-ux-pro-max guidance. Replaced sage light palette with ink/cobalt and steel neutrals, introduced Sora headings, tightened surface radii, aligned landing columns and navigation, simplified the trust band and made report section navigation viewport-scrollable. Targeted lint and diff checks passed; dark tokens and stable hero follow. Local only, no push.
+
+style: align dark tokens and responsive app chrome (see Git history for hash)
+Matched automatic/manual dark palettes to ink-blue and cobalt; aligned header/content widths, reduced sidebar width on tablets, switched crowded tablet controls to compact forms, flattened reading controls, top-aligned page actions and removed color-dependent claim instructions. Key text/button contrasts exceed 5.2:1. Targeted lint and diff checks passed. Local-only checkpoint, no push.

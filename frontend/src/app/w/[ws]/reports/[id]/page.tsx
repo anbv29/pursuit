@@ -179,7 +179,7 @@ export default function ReportPage() {
             </>}
             action={<Button variant="secondary" onClick={() => window.print()} className="print:hidden"><Printer className="size-4" aria-hidden /> Print or save PDF</Button>} />
           <Notice tone="trail">
-            AI research from public web sources. Green dots are <b>sourced facts</b> (click the source to verify); grey are interpretations; orange are assumptions to test.
+            AI research from public web sources. Claims are labelled as <b>sourced facts</b>, interpretations or assumptions. Click a source to verify it.
             {v && v.downgraded_facts + v.dropped_source_refs > 0 && ` Pursuit removed ${v.dropped_source_refs} unverifiable citation(s) and downgraded ${v.downgraded_facts} unsourced "fact(s)".`}
           </Notice>
           <Summary c={c} />

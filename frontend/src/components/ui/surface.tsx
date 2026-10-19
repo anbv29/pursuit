@@ -99,7 +99,7 @@ export function PageHeader({ title, description, action, eyebrow }: {
   title: ReactNode; description?: ReactNode; action?: ReactNode; eyebrow?: ReactNode;
 }) {
   return (
-    <div className="flex flex-wrap items-end justify-between gap-4">
+    <div className="flex flex-wrap items-start justify-between gap-4">
       <div className="min-w-0">
         {eyebrow && <p className="mb-1 text-[13px] font-medium text-trail">{eyebrow}</p>}
         <h1 className="font-display text-[28px] font-bold leading-tight tracking-tight text-ink sm:text-[32px]">{title}</h1>
