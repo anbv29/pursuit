@@ -1,11 +1,13 @@
 # Merchant account setup status
 
-## Launch price revision — prepared 2026-10-19
+## Launch price revision — verified live 2026-10-19
 
 New purchase targets: Single Report USD 4.99 once, Founder USD 11.99/month,
 Team USD 34.99/month. Allowances, seats, product IDs, currency and billing intervals
-are unchanged. Provider update and hosted rollout must be verified together;
-the older setup records below retain their original historical prices.
+are unchanged. All three live product edits were saved in Dodo and passed the
+read-only catalogue verifier. The Vercel website returns the revised prices.
+Unconfirmed hosted checkout pages showed each USD base price before tax; no
+payment was submitted. The older records below retain their historical prices.
 Existing subscriptions are not migrated or repriced by this change.
 
 ## Live catalog — original setup

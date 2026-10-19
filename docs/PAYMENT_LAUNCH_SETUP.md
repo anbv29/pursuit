@@ -1,11 +1,13 @@
 # Payment and owner-access setup
 
-## Revised launch prices — prepared 2026-10-19
+## Revised launch prices — verified live 2026-10-19
 
-The application catalogue now targets Single Report $4.99 once, Founder $11.99/month
-and Team $34.99/month with existing allowances. Dodo product verification and hosted
-rollout are tracked in aboutme.txt. Earlier verification below is historical and
-does not establish that the revised prices have been deployed.
+The deployed application and Dodo catalogue now use Single Report $4.99 once,
+Founder $11.99/month and Team $34.99/month with existing allowances. Pricing-only
+commit `cebd954` was published with approval, excluding the local UI redesign.
+All three live products passed `scripts/verify_billing_catalog.py`; unconfirmed
+checkouts displayed each USD price before tax. No payment or subscription was
+created. See `docs/PRICING_REVISION.md` for verification scope and limits.
 
 ## Current checkout status — 2026-10-19 update
 
