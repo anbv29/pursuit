@@ -821,7 +821,7 @@ Free preview hosting checkpoint (see git log for hash):
     - Documented free-preview limitations, production upgrade boundaries, password-reset incident and current provider setup. No hosted URL verified yet.
 
 ----------------------------------------------------------------------
-#129  (hash recorded in next commit)  feat(ui): add sea-glass design system, primitives and lens loader
+#129  18c2b25  feat(ui): add sea-glass design system, primitives and lens loader
     - Frontend only (backend untouched). Design system in globals.css: brand tokens (light + dark via prefers-color-scheme guarded by :root:not([data-theme=light]) and repeated under [data-theme=dark]), semantic tokens (success/warning/danger/focus-ring/surface-solid), radius/space/type/motion scales; legacy token names (paper, surface, trail, ...) remapped so every screen inherits the theme and dark mode
     - Contrast fix vs brief: brand accent #0e8f84 is 3.98:1 with white (fails AA); filled buttons and accent text use --accent-strong #0b766d (5.49:1), #0e8f84 kept for rings/progress/decoration; iterate chip darkened to #92640c
     - Glass: .glass recipe (gradient, blur 26px saturate 190%, border, inset highlights), pointer-following specular moved by transform on one small layer (rAF-throttled, ignores touch) instead of inherited --mx/--my vars that would restyle every child; solid fallback for no backdrop-filter, reduced-transparency and more-contrast; .surface for dense content (no blur)
@@ -830,3 +830,11 @@ Free preview hosting checkpoint (see git log for hash):
     - Backdrop orbs (drifting, dimmed in-app); lens loader (first visit, sessionStorage, skipped under reduced motion, rAF writes styles directly, window/storage read only client-side)
     - Copy/contrast sweep: bg-trail/bg-ink + text-white fixed for dark mode; all-caps label styling removed
     - tsc clean
+
+----------------------------------------------------------------------
+#130  (hash recorded in next commit)  feat(ui): glass app shell with command palette, theme toggle and route progress
+    - Frontend only. components/shell.tsx re-skinned with identical logic (same workspace/approvals fetches, same nav routes incl. owner-only billing, same workspace switcher and sign-out, same context provider and ReadingControls)
+    - Floating glass sidebar (collapsible, state still in localStorage), slim glass top bar with page title or breadcrumbs (only for report/experiment detail and new report), search button + Ctrl/Cmd+K command palette (existing routes, theme switch, sign out), approvals bell with waiting count, theme toggle (system/light/dark, stored as pursuit.theme), account menu
+    - Phones: glass bottom tab bar (4 primary items + More menu), safe-area aware; workspace switcher below the top bar
+    - components/command-palette.tsx (native dialog, combobox/listbox roles, arrow/Enter keys), theme.tsx (useSyncExternalStore), route-progress.tsx (thin gradient bar on internal link navigation, DOM writes only)
+    - tsc and eslint clean on changed files
