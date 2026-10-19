@@ -14,7 +14,30 @@ const FIXTURES: Record<string, unknown> = {
   "/auth/me": { user: { id: "u1", email: "dana@example.com", name: "Dana Ruiz" }, csrf_token: "t" },
   "/workspaces": [{ id: WS, name: "Northwind Health", is_demo: false, created_at: now, role: "owner" }],
   [`/workspaces/${WS}`]: { id: WS, name: "Northwind Health", is_demo: false, created_at: now, role: "owner" },
-  [`/workspaces/${WS}/approvals`]: [{ id: "a1" }],
+  [`/workspaces/${WS}/approvals`]: [{
+    id: "a1", experiment_id: "e1", kind: "send_email", mode: "live", target: "ops@clinic.example", payload: {}, status: "PENDING_APPROVAL",
+    prospect_id: null, variant_id: null, decided_at: null, started_at: null, finished_at: null, attempts: 0,
+    result_summary: null, error: null, created_at: ago(20),
+  }],
+  [`/workspaces/${WS}/integrations`]: {
+    environment: "development", checked_at: now,
+    fo: { mode: "live", status: "connected", tools: ["ask_fo", "get_fo_reply"], verified_live: false, workspace_forced_demo: false, account_connected: true, oauth_configured: true },
+    ai: { enabled: true, model: "claude-haiku-5-5", detail: null },
+  },
+  [`/workspaces/${WS}/members`]: [
+    { user_id: "u1", name: "Dana Ruiz", email: "dana@example.com", role: "owner" },
+    { user_id: "u2", name: "Sam Patel", email: "sam@example.com", role: "member" },
+  ],
+  "/plans": [
+    { id: "single", name: "Single Report", price_cents: 1500, interval: "once", reports: 1, questions: 10, seats: 1 },
+    { id: "founder", name: "Founder", price_cents: 2900, interval: "month", reports: 3, questions: 50, seats: 1 },
+    { id: "team", name: "Team", price_cents: 7900, interval: "month", reports: 10, questions: 200, seats: 5 },
+  ],
+  [`/workspaces/${WS}/billing`]: {
+    plan: "founder", seats: 1, seats_used: 1, research_remaining: 2, questions_remaining: 41, configured: true, environment: "test_mode",
+    status: "active", period_end: ago(-60 * 24 * 12), cancel_at_period_end: false, suspended: false, portal_available: true,
+    purchasable: { single: true, founder: false, team: true }, orders: [],
+  },
   [`/workspaces/${WS}/allowance`]: { research_remaining: 2, questions_remaining: 41 },
   [`/workspaces/${WS}/reports`]: [
     { id: "r1", company_url: "https://northwind.example", company_name: "Northwind Health", status: "SUCCEEDED", progress: "Done", created_at: ago(90) },
@@ -80,6 +103,19 @@ for (const vp of [{ name: "desktop", width: 1280, height: 860 }, { name: "phone"
     await check(page, `${vp.name}-404`, errors);
   });
 }
+
+test("settings, billing and approvals render cleanly", async ({ page }) => {
+  const errors: string[] = [];
+  page.on("pageerror", (e) => errors.push(e.message));
+  await mockApi(page);
+  for (const [path, heading, name] of [
+    ["approvals", "Approvals", "approvals"], ["billing", /plan|billing/i, "billing"], ["settings", "Settings", "settings"],
+  ] as const) {
+    await page.goto(`/w/${WS}/${path}`);
+    await expect(page.getByRole("heading", { level: 1, name: heading }).first()).toBeVisible();
+    await check(page, name, errors);
+  }
+});
 
 test("dark theme dashboard", async ({ page }) => {
   const errors: string[] = [];

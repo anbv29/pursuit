@@ -888,8 +888,13 @@ Free preview hosting checkpoint (see git log for hash):
     - tsc + eslint (whole src) clean
 
 ----------------------------------------------------------------------
-#136  (hash recorded in next commit)  test(ui): mocked visual smoke test for app screens, plus fixes it found
+#136  d3944bb  test(ui): mocked visual smoke test for app screens, plus fixes it found
     - frontend/e2e/glass-ui.spec.ts: intercepts /api with fixtures shaped like real responses (no backend needed), renders dashboard, reports list, report generating state and 404 at 1280px and 375px plus a dark-theme dashboard; fails on any page error or horizontal overflow; saves screenshots to test-results/glass
     - Result: 3 passed against the production build
     - Fixes from reviewing those screenshots: approvals count badge used white on the light amber warning colour in dark mode (now text-bg, readable in both themes); stat tiles stacked into a tall column on phones (now a compact three-column row); the 'Guided view' reading-style bar is now a slim surface strip aligned with page content (same logic)
     - Sweep: no theme-sensitive background + white text pairs remain (white text only on fixed decision colours)
+
+----------------------------------------------------------------------
+#137  (hash recorded in next commit)  test(ui): cover approvals, billing and settings in the visual smoke test
+    - frontend/e2e/glass-ui.spec.ts: fixtures for approvals, integrations, members, plans and billing (shapes taken from the components' own types); approvals, billing and settings render without page errors or overflow; missing-endpoint responses exercise the error notices
+    - Final checks on the finished redesign: npm run lint clean, tsc clean, next build succeeds, visual suite 4 passed against the production build
