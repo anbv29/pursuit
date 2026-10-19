@@ -940,3 +940,6 @@ Added operator-only complimentary access model, migration and monthly allowance 
 
 feat: enforce complimentary Team allowances (see Git history for hash)
 Integrated operator grants with seat and feature checks, monthly credit ledger, idempotent commands and billing UI disclosure. No provider subscription is created. Eight focused complimentary/billing tests passed after fixing operator audit attribution.
+
+feat: add private provider setup verification (see Git history for hash)
+Added count-safe webhook credential configuration and bounded AI key/model verification. Three complimentary-access tests cover idempotency, renewal, revocation, owner checks and suspension. Requested local Team grant applied; Haiku verified; approved live webhook created. Credentials stay ignored and server-side.
