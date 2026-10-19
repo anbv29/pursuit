@@ -90,7 +90,7 @@ export function BillingPanel() {
       <p>One research credit covers one full report, selected-section refresh, or company discovery search—even if no matching companies are found. Refresh and discovery need Founder or Team.</p>
       <p>One AI answer covers a report question or optional AI-assisted experiment recommendation. First-week checklists and rule-based analysis use no credits.</p>
       <p>Prices are USD, per workspace, plus applicable taxes shown at checkout. Monthly plans renew automatically; unused monthly allowances expire at period end. Single Report credits do not expire. No automatic overage charges.</p>
-      <p>Failed jobs release their customer credit. Included AI runs on Haiku 5.5 with resource and cost safety limits. Fo and email-provider charges are separate; live action execution is not included in these prices.</p>
+      <p>Failed jobs release their customer credit. Included AI has resource and cost safety limits. Fo and email-provider charges are separate; live action execution is not included in these prices.</p>
     </div>
     {error && <Notice tone="bad">{error}</Notice>}
     {b.orders.length > 0 && <section><h2 className="mb-3 font-semibold">Recent checkout activity</h2><ul className="divide-y divide-line text-sm">{b.orders.map((o) => <li key={o.id} className="flex flex-wrap justify-between gap-2 py-3"><span className="capitalize">{o.plan}</span><span>{o.status} · {new Date(o.created_at).toLocaleString()}</span></li>)}</ul><p className="mt-2 text-xs text-ink-3">Use the billing portal for provider invoices and payment methods. An open checkout is not a completed purchase.</p></section>}

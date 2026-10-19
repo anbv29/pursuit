@@ -955,3 +955,6 @@ Approved private Render credentials saved and verified; owner retained free prev
 
 fix: activate and verify hosted Dodo checkout (see Git history for hash)
 Owner explicitly superseded the checkout pause. Enabled the hosted checkout flag and confirmed Render rollout Live. All three purchase buttons enabled; live catalog and signing key verified. Isolated synthetic workspace opened Founder checkout with HTTP 200 and displayed $29/month before tax. Order OPEN, free plan and zero credits verified; no payment submitted. Owner complimentary Team workspace untouched. Application code and local fail-closed defaults unchanged.
+
+fix: remove model branding from website (see Git history for hash)
+Removed model names from report/print headers, research allowances, billing copy, usage previews and records, settings integrations and recommendation badges. Removed the visible model selector while preserving the configured backend model and budget saving. Availability messages now use generic AI wording. Frontend lint, strict production build, six browser screen checks and eight backend report tests passed; changed backend files pass Ruff lint/format.

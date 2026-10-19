@@ -64,7 +64,7 @@ export function RecommendationPanel() {
                 <p className="text-sm font-medium">{DECISION_STYLE[latest.decision].blurb}</p>
                 <p className="text-xs text-ink-3">
                   {Math.round(latest.confidence * 100)}% confidence · {timeAgo(latest.created_at)} ·{" "}
-                  <span className="inline-flex items-center gap-1"><Bot className="size-3" />{latest.generated_by === "rules" ? "rule-based" : latest.generated_by.replace("claude:", "Claude · ")}</span>
+                  <span className="inline-flex items-center gap-1"><Bot className="size-3" />{latest.generated_by === "rules" ? "rule-based" : "AI-assisted"}</span>
                 </p>
               </div>
               {latest.includes_demo_data && <DemoBadge />}

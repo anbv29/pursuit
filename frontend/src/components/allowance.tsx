@@ -11,7 +11,7 @@ export function ResearchAllowance() {
   if (!balance.data) return <p className="text-sm text-ink-3">Checking research credits…</p>;
   return <div className="space-y-2 rounded-lg bg-trail-soft p-4 text-sm text-trail-strong">
     <p><b>{balance.data.research_remaining} research credits remaining.</b> A completed report uses one credit. Failed jobs return the customer credit.</p>
-    <p>Included research uses Haiku 5.5. There are no automatic overage charges.</p>
+    <p>There are no automatic overage charges for included research.</p>
     {workspace.role === "owner" ? <Link href={`${base}/billing`} className="inline-block font-medium underline">View plans and billing</Link> : <p>Ask your workspace owner to purchase more credits.</p>}
   </div>;
 }

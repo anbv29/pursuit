@@ -175,7 +175,7 @@ export default function ReportPage() {
           <PageHeader eyebrow={advanced ? "GTM report" : "Your customer and growth report"} title={r.company_name || r.company_url}
             description={<>
               <a href={r.company_url} target="_blank" rel="noopener noreferrer" className="break-all hover:text-trail">{r.company_url}</a>
-              {" · "}{r.sources.length} sources · {r.finished_at && new Date(r.finished_at).toLocaleString()} · {r.model}
+              {" · "}{r.sources.length} sources · {r.finished_at && new Date(r.finished_at).toLocaleString()}
             </>}
             action={<Button variant="secondary" onClick={() => window.print()} className="print:hidden"><Printer className="size-4" aria-hidden /> Print or save PDF</Button>} />
           <Notice tone="trail">

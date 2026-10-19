@@ -40,9 +40,7 @@ def list_for_workspace(db: Session, workspace_id: uuid.UUID):
 def create(db: Session, ws: Workspace, user: User, body: ReportIn) -> Report:
     db.execute(select(Workspace.id).where(Workspace.id == ws.id).with_for_update())
     if not get_settings().ai_enabled:
-        raise AppError(
-            "Reports need AI research, but ANTHROPIC_API_KEY isn't set on the server.", "ai_disabled"
-        )
+        raise AppError("AI research is unavailable. Please contact the workspace operator.", "ai_disabled")
     running = db.scalar(
         select(func.count(Report.id)).where(Report.workspace_id == ws.id, Report.status.in_(ACTIVE))
     )

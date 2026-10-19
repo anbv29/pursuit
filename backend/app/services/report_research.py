@@ -110,7 +110,7 @@ class ResearchError(Exception):
 def _client() -> anthropic.Anthropic:
     s = get_settings()
     if not s.ai_enabled:
-        raise ResearchError("Report generation needs ANTHROPIC_API_KEY on the server.")
+        raise ResearchError("AI research is unavailable. Please contact the workspace operator.")
     return anthropic.Anthropic(api_key=s.anthropic_api_key.get_secret_value(), timeout=600, max_retries=0)
 
 

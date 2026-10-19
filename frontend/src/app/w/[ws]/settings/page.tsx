@@ -124,11 +124,11 @@ export default function SettingsPage() {
               <Bot className="mt-0.5 size-5 text-trail" aria-hidden />
               <div className="flex-1">
                 <div className="flex items-center gap-2">
-                  <p className="font-medium">Claude — evidence synthesis</p>
+                  <p className="font-medium">AI evidence synthesis</p>
                   <Badge tone={integ.data.ai.enabled ? "good" : "muted"}>{integ.data.ai.enabled ? "Enabled" : "Off"}</Badge>
                 </div>
                 <p className="mt-1 text-[13px] text-ink-3">
-                  {integ.data.ai.enabled ? `Model ${integ.data.ai.model}. Receives aggregate metrics and evidence claims only — no prospect contact details.` : integ.data.ai.detail}
+                  {integ.data.ai.enabled ? "Receives aggregate metrics and evidence claims only — no prospect contact details." : "AI synthesis is unavailable. Rule-based recommendations remain available."}
                 </p>
               </div>
             </li>

@@ -157,7 +157,9 @@ def integrations(
         "ai": {
             "enabled": s.ai_enabled,
             "model": s.anthropic_model if s.ai_enabled else None,
-            "detail": None if s.ai_enabled else "ANTHROPIC_API_KEY not set; rule-based recommendations only.",
+            "detail": None
+            if s.ai_enabled
+            else "AI synthesis is unavailable; rule-based recommendations only.",
         },
         "checked_at": utcnow(),
     }
