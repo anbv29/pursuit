@@ -41,7 +41,7 @@ class Provider:
         return False
 
     def product(self, product_id):
-        amount = {"pdt-single": 1500, "pdt-founder": 2900, "pdt-team": 7900}[product_id]
+        amount = {"pdt-single": 499, "pdt-founder": 1199, "pdt-team": 3499}[product_id]
         recurring = product_id != "pdt-single"
         return NS(
             business_id="bus-synthetic",
@@ -79,7 +79,7 @@ class Provider:
             product_cart=[NS(product_id=self.sessions[-1]["product_cart"][0]["product_id"], quantity=1)],
             subscription_id=None,
             is_multi_subscription=False,
-            total_amount=1500,
+            total_amount=499,
         )
         values.update(changes)
         self.payments_data[payment_id] = NS(**values)

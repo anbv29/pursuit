@@ -18,9 +18,9 @@ Guided and advanced reading modes retain the same underlying evidence.
 | Plan | Price | Research credits | AI answers | Members |
 | --- | --- | --- | --- | --- |
 | Explore | Free | Sample only | Rule-based recommendations | 1 |
-| Single Report | $15 once | 1 | 10 | 1 |
-| Founder | $29/month | 3/month | 50/month | 1 |
-| Team | $79/month | 10/month | 200/month | 5 |
+| Single Report | $4.99 once | 1 | 10 | 1 |
+| Founder | $11.99/month | 3/month | 50/month | 1 |
+| Team | $34.99/month | 10/month | 200/month | 5 |
 
 Research credits cover reports, section refreshes or discovery searches. Refresh/discovery and share links
 require Founder or Team. A discovery attempt consumes its credit even with zero matches. Monthly

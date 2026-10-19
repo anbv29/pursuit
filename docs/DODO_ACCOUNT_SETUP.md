@@ -1,6 +1,14 @@
 # Merchant account setup status
 
-## Live catalog — current target
+## Launch price revision — prepared 2026-10-19
+
+New purchase targets: Single Report USD 4.99 once, Founder USD 11.99/month,
+Team USD 34.99/month. Allowances, seats, product IDs, currency and billing intervals
+are unchanged. Provider update and hosted rollout must be verified together;
+the older setup records below retain their original historical prices.
+Existing subscriptions are not migrated or repriced by this change.
+
+## Live catalog — original setup
 
 The user requested live mode after the test setup. Dodo's Verification page states **Live payments are active** and Product Information, Personal Information and Bank Verification are approved. No identity/bank details were changed.
 

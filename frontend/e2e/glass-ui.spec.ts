@@ -29,9 +29,9 @@ const FIXTURES: Record<string, unknown> = {
     { user_id: "u2", name: "Sam Patel", email: "sam@example.com", role: "member" },
   ],
   "/plans": [
-    { id: "single", name: "Single Report", price_cents: 1500, interval: "once", reports: 1, questions: 10, seats: 1 },
-    { id: "founder", name: "Founder", price_cents: 2900, interval: "month", reports: 3, questions: 50, seats: 1 },
-    { id: "team", name: "Team", price_cents: 7900, interval: "month", reports: 10, questions: 200, seats: 5 },
+    { id: "single", name: "Single Report", price_cents: 499, interval: "once", reports: 1, questions: 10, seats: 1 },
+    { id: "founder", name: "Founder", price_cents: 1199, interval: "month", reports: 3, questions: 50, seats: 1 },
+    { id: "team", name: "Team", price_cents: 3499, interval: "month", reports: 10, questions: 200, seats: 5 },
   ],
   [`/workspaces/${WS}/billing`]: {
     plan: "founder", seats: 1, seats_used: 1, research_remaining: 2, questions_remaining: 41, configured: true, environment: "test_mode",

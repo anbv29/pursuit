@@ -6,11 +6,11 @@ test("public page shows the real catalog and six workflows on a phone", async ({
   page.on("pageerror", (error) => errors.push(error.message));
   const response = await page.goto("/");
   expect(response?.headers()["content-security-policy"]).toContain("object-src 'none'");
-  await expect(page.getByRole("heading", { name: "Know what to test next. Build on evidence." })).toBeVisible();
+  await expect(page.getByRole("heading", { name: "A clearer picture. A smarter next move." })).toBeVisible();
   for (const name of ["Explore", "Single Report", "Founder", "Team"]) {
     await expect(page.getByRole("heading", { name, exact: true })).toBeVisible();
   }
-  for (const price of ["$15", "$29", "$79"]) await expect(page.getByText(price, { exact: true })).toBeVisible();
+  for (const price of ["$4.99", "$11.99", "$34.99"]) await expect(page.getByText(price, { exact: true })).toBeVisible();
   await expect(page.getByRole("heading", { name: "A company report is your starting point." })).toBeVisible();
   await expect(page.getByText("Find funnel drop-offs", { exact: true })).toBeVisible();
   await page.getByText("Does research prove that people will buy?", { exact: true }).click();

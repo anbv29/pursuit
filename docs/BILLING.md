@@ -5,15 +5,15 @@ Billing is per workspace in USD, plus taxes shown by Dodo Payments at checkout.
 | Plan | Price | Research credits | AI answers | Members |
 | --- | --- | --- | --- | --- |
 | Explore | Free | Sample report only | Rule-based analysis only | 1 |
-| Single Report | $15 once | 1 | 10 | 1 |
-| Founder | $29/month | 3 per cycle | 50 per cycle | 1 |
-| Team | $79/month | 10 per cycle | 200 per cycle | 5 |
+| Single Report | $4.99 once | 1 | 10 | 1 |
+| Founder | $11.99/month | 3 per cycle | 50 per cycle | 1 |
+| Team | $34.99/month | 10 per cycle | 200 per cycle | 5 |
 
 A research credit covers a full report, selected refresh, or discovery search (including zero matches). Refresh, discovery and creation of share links require an active subscription. Questions and optional AI experiment analysis consume one AI answer. Manual experiments, first-week plans, saved data and rule-based analysis remain available. Monthly allowances expire; one-time credits do not. No automatic overage billing. Failed work releases customer credits, but attempted provider calls retain their cost reservations.
 
 ## Configure the merchant account
 
-1. In Dodo test mode, create one fixed-price USD $15 one-time product and fixed-price USD $29 and $79 monthly products. Disable trials, pay-what-you-want, discounts, PPP and localized prices for these products. The server validates the catalog before checkout.
+1. In Dodo test mode, create one fixed-price USD $4.99 one-time product and fixed-price USD $11.99 and $34.99 monthly products. Disable trials, pay-what-you-want, discounts, PPP and localized prices for these products. The server validates the catalog before checkout.
 2. Set the server-only `DODO_PAYMENTS_API_KEY`, `DODO_PAYMENTS_WEBHOOK_KEY`, `DODO_PAYMENTS_ENVIRONMENT=test_mode`, `DODO_BUSINESS_ID`, `DODO_SINGLE_PRODUCT`, `DODO_FOUNDER_PRODUCT`, and `DODO_TEAM_PRODUCT`. See `.env.example`; never use a public frontend prefix for credentials.
 3. Register a publicly reachable HTTPS webhook at `/api/billing/webhook`. Subscribe to payment succeeded/failed/cancelled, subscription lifecycle events, refund.succeeded and dispute events. Enable the hosted customer portal for subscription changes and cancellation. Set `PUBLIC_APP_URL` to the actual frontend origin for returns.
 4. Apply Alembic migrations and restart the backend. Open a non-demo workspace's Plans & billing. Missing configuration disables purchases explicitly; demo workspaces cannot buy plans.

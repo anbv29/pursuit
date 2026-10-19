@@ -13,9 +13,9 @@ for (const width of [1280, 390]) {
         : path === "/api/workspaces" ? [ws]
           : path.endsWith("/plans") ? [
             { id: "free", name: "Explore", price_cents: 0, interval: "free", reports: 0, questions: 0, seats: 1 },
-            { id: "single", name: "Single Report", price_cents: 1500, interval: "once", reports: 1, questions: 10, seats: 1 },
-            { id: "founder", name: "Founder", price_cents: 2900, interval: "month", reports: 3, questions: 50, seats: 1 },
-            { id: "team", name: "Team", price_cents: 7900, interval: "month", reports: 10, questions: 200, seats: 5 },
+            { id: "single", name: "Single Report", price_cents: 499, interval: "once", reports: 1, questions: 10, seats: 1 },
+            { id: "founder", name: "Founder", price_cents: 1199, interval: "month", reports: 3, questions: 50, seats: 1 },
+            { id: "team", name: "Team", price_cents: 3499, interval: "month", reports: 10, questions: 200, seats: 5 },
           ] : path.endsWith("/billing") ? {
             plan: "free", seats: 1, seats_used: 1, research_remaining: 0, questions_remaining: 0,
             configured: false, environment: "test_mode", status: "inactive", period_end: null,

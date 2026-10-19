@@ -115,5 +115,5 @@ sign-in limits; set `E2E_SKIP_AI=1` in the browser test environment. Do not use 
 The application still enforces paid research allowances. Explore includes a labelled sample and
 manual experiments; the launcher does not grant free production credits or bypass billing.
 
-Plans advertised from the backend catalog: Explore $0, Single Report $15 once, Founder $29/month,
-and Team $79/month. See `docs/LOCAL_READINESS.md` for scope, verification and release prerequisites.
+Plans advertised from the backend catalog: Explore $0, Single Report $4.99 once, Founder $11.99/month,
+and Team $34.99/month. See `docs/LOCAL_READINESS.md` for scope, verification and release prerequisites.
