@@ -7,6 +7,7 @@ from fastapi.responses import JSONResponse
 from sqlalchemy import text
 
 from app.api import (
+    account,
     actions,
     analysis,
     auth,
@@ -92,6 +93,7 @@ def create_app() -> FastAPI:
 
     install_handlers(app)
     app.include_router(auth.router)
+    app.include_router(account.router)
     app.include_router(billing.router)
     app.include_router(payment_webhook.router)
     app.include_router(concierge.router)

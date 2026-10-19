@@ -904,3 +904,6 @@ feat: align marketing with research and validation (see Git history for hash)
 
 fix: pin research connections to validated public addresses (see Git history for hash)
     - Preserve HTTP Host and TLS identity; block credential URLs and private redirects. 14 offline fetcher tests pass.
+
+feat: add account security controls (see Git history for hash)
+    - Password change revokes all sessions; deletion requires reauthentication and owned workspace cleanup. Ruff passed; database tests pending Docker socket repair.
