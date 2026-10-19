@@ -17,3 +17,4 @@ ignore = ["B008"]  # FastAPI Depends() in defaults
 [tool.pytest.ini_options]
 testpaths = ["tests"]
 addopts = "-q"
+markers = ["no_database: pure unit test that does not read or write PostgreSQL"]

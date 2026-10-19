@@ -3,6 +3,8 @@ import pytest
 from app.services import fetcher
 from app.services.fetcher import FetchError
 
+pytestmark = pytest.mark.no_database
+
 
 @pytest.mark.parametrize(
     "url",

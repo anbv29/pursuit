@@ -29,9 +29,11 @@ from app.main import create_app  # noqa: E402
 
 
 @pytest.fixture(autouse=True)
-def _clean_db():
+def _clean_db(request):
     limiter.reset()
     yield
+    if request.node.get_closest_marker("no_database"):
+        return
     tables = [t.name for t in reversed(dbmod.Base.metadata.sorted_tables)]
     with dbmod.get_engine().begin() as conn:
         conn.execute(text(f"TRUNCATE {', '.join(tables)} CASCADE"))

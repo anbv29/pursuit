@@ -6,8 +6,8 @@
 Fetched content is untrusted: it is stored as an excerpt and never executed or
 treated as instructions.
 
-Known limitation: DNS could change between our check and httpx's own resolution
-(rebinding). Documented in docs/SECURITY_CHECKLIST.md.
+Connections use the validated IP directly, with the original HTTP Host and TLS
+server name preserved. Environment proxy settings cannot bypass the IP check.
 """
 
 import hashlib
@@ -39,20 +39,31 @@ class Fetched:
     sha256: str
 
 
-def _check_host(url: str) -> None:
-    parts = urlsplit(url)
+def _check_host(url: str) -> str:
+    try:
+        parts = urlsplit(url)
+        port = parts.port
+    except ValueError as exc:
+        raise FetchError("Invalid website address.") from exc
     if parts.scheme not in ("http", "https") or not parts.hostname:
         raise FetchError("Only http(s) URLs can be fetched.")
-    if parts.port not in (None, 80, 443):
+    if parts.username is not None or parts.password is not None:
+        raise FetchError("Website URLs cannot contain credentials.")
+    if port not in (None, 443 if parts.scheme == "https" else 80):
         raise FetchError("Non-standard ports are not allowed.")
     try:
         infos = socket.getaddrinfo(parts.hostname, None)
     except socket.gaierror as exc:
         raise FetchError("Could not resolve that host.") from exc
+    addresses = []
     for info in infos:
         ip = ipaddress.ip_address(info[4][0])
         if not ip.is_global or ip.is_multicast:
             raise FetchError("That address is not publicly routable and can't be fetched.")
+        addresses.append(ip)
+    if not addresses:
+        raise FetchError("Could not resolve that host.")
+    return str(next((ip for ip in addresses if ip.version == 4), addresses[0]))
 
 
 class _TextExtractor(HTMLParser):
@@ -89,11 +100,19 @@ def extract(html: str) -> tuple[str, str]:
 def fetch(url: str, client: httpx.Client | None = None) -> Fetched:
     s = get_settings()
     own = client is None
-    client = client or httpx.Client(timeout=s.research_fetch_timeout_seconds, follow_redirects=False)
+    client = client or httpx.Client(
+        timeout=s.research_fetch_timeout_seconds, follow_redirects=False, trust_env=False
+    )
     try:
         for _ in range(MAX_REDIRECTS + 1):
-            _check_host(url)
-            with client.stream("GET", url, headers={"User-Agent": "PursuitResearchBot/0.1"}) as r:
+            address = _check_host(url)
+            original = httpx.URL(url)
+            with client.stream(
+                "GET",
+                original.copy_with(host=address),
+                headers={"User-Agent": "PursuitResearchBot/0.1", "Host": original.netloc.decode("ascii")},
+                extensions={"sni_hostname": original.host},
+            ) as r:
                 if r.is_redirect:
                     url = urljoin(url, r.headers.get("location", ""))
                     continue
@@ -103,7 +122,7 @@ def fetch(url: str, client: httpx.Client | None = None) -> Fetched:
                 if ctype not in ALLOWED_TYPES:
                     raise FetchError("Only HTML or plain-text pages can be imported.")
                 body = b""
-                for chunk in r.iter_bytes():
+                for chunk in r.iter_bytes(chunk_size=65536):
                     body += chunk
                     if len(body) > s.research_fetch_max_bytes:
                         raise FetchError("The page is too large to import.")

@@ -901,3 +901,6 @@ Free preview hosting checkpoint (see git log for hash):
 
 feat: align marketing with research and validation (see Git history for hash)
     - Preserve revamped UI; replace booking guarantees and show all four plans from server catalogue. TypeScript and lint pass.
+
+fix: pin research connections to validated public addresses (see Git history for hash)
+    - Preserve HTTP Host and TLS identity; block credential URLs and private redirects. 14 offline fetcher tests pass.
