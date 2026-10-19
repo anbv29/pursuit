@@ -946,3 +946,6 @@ Added count-safe webhook credential configuration and bounded AI key/model verif
 
 fix: gate live checkout on explicit launch readiness (see Git history for hash)
 Added fail-closed checkout switch and HTTPS return-origin checks while keeping verified webhook fulfillment and billing management independent. Billing UI distinguishes connected provider from paused checkout. Added configured local services option. Eighteen focused billing and complimentary tests passed.
+
+feat: provision requested owner access for hosted launch (see Git history for hash)
+Added guarded local-to-Neon owner provisioning preserving existing credentials; requested Team grant verified in both databases. Documented real merchant/product/webhook configuration, launch gates and remaining hosting prerequisites. Fixed complimentary billing label. Full backend suite: 149 passed; frontend production build passed.

@@ -61,7 +61,7 @@ export function BillingPanel() {
       {b.portal_available && <> Any separately purchased subscription still needs to be managed in billing.</>}
     </Notice>}
     <Card className="space-y-4 p-5">
-      <div className="flex flex-wrap items-center justify-between gap-3"><h2 className="font-semibold">Your workspace allowance</h2><span className="text-sm capitalize">{b.plan === "free" ? "Explore" : b.plan} · {b.status}</span></div>
+      <div className="flex flex-wrap items-center justify-between gap-3"><h2 className="font-semibold">Your workspace allowance</h2><span className="text-sm capitalize">{b.plan === "free" ? "Explore" : b.plan} · {b.complimentary ? "Complimentary" : b.status}</span></div>
       <dl className="grid grid-cols-3 gap-3 text-sm">
         {[ ["Research credits", b.research_remaining], ["AI answers", b.questions_remaining], ["Members", `${b.seats_used}/${b.seats}`] ].map(([label, value]) => <div key={label}><dt className="text-ink-3">{label}</dt><dd className="mt-1 text-xl font-semibold tabular-nums">{value}</dd></div>)}
       </dl>
