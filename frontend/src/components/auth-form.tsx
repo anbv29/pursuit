@@ -8,7 +8,8 @@ import { ApiError, errorMessage } from "@/lib/api";
 import { useAction } from "@/lib/hooks";
 import { Logo } from "./brand";
 import { useSession } from "./session";
-import { Button, Card, Field, Input, Notice } from "./ui";
+import { ThemeToggle } from "./theme";
+import { Button, Field, Glass, Input, Notice, PasswordInput } from "./ui";
 
 const schemas = {
   login: z.object({
@@ -57,13 +58,16 @@ export function AuthForm({ mode }: { mode: "login" | "signup" }) {
 
   return (
     <main className="flex min-h-screen flex-col items-center justify-center px-4 py-12">
-      <Logo />
-      <Card className="mt-6 w-full max-w-sm p-6">
-        <h1 className="text-lg font-semibold">{mode === "login" ? "Welcome back" : "Create your account"}</h1>
-        <p className="mt-1 text-sm text-ink-3">
-          {mode === "login" ? "Sign in to continue your experiments." : "Start validating your riskiest assumption today."}
+      <div className="mb-8 flex w-full max-w-sm items-center justify-between">
+        <Logo />
+        <ThemeToggle />
+      </div>
+      <Glass className="enter-rise w-full max-w-sm p-7 sm:p-8">
+        <h1 className="font-display text-2xl font-bold tracking-tight">{mode === "login" ? "Welcome back" : "Create your account"}</h1>
+        <p className="mt-1.5 text-sm text-ink-2">
+          {mode === "login" ? "Sign in to pick up where you left off." : "Say who you want to meet. Pursuit does the research."}
         </p>
-        <form onSubmit={onSubmit} noValidate className="mt-5 space-y-4">
+        <form onSubmit={onSubmit} noValidate className="mt-6 space-y-4">
           {formError && <Notice tone="bad">{formError}</Notice>}
           {mode === "signup" && (
             <Field label="Name" error={errors.name}>
@@ -75,20 +79,20 @@ export function AuthForm({ mode }: { mode: "login" | "signup" }) {
           </Field>
           <Field label="Password" error={errors.password} hint={mode === "signup" ? "At least 10 characters." : undefined}>
             {(id, d) => (
-              <Input id={id} type="password" aria-describedby={d} aria-invalid={!!errors.password}
+              <PasswordInput id={id} aria-describedby={d} aria-invalid={!!errors.password}
                 autoComplete={mode === "login" ? "current-password" : "new-password"} value={values.password} onChange={set("password")} />
             )}
           </Field>
-          <Button type="submit" className="w-full" loading={submit.pending}>
+          <Button type="submit" size="lg" className="w-full" loading={submit.pending}>
             {mode === "login" ? "Sign in" : "Create account"}
           </Button>
         </form>
-      </Card>
-      <p className="mt-4 text-sm text-ink-3">
+      </Glass>
+      <p className="mt-6 text-sm text-ink-2">
         {mode === "login" ? (
-          <>New to Pursuit? <Link href="/signup" className="font-medium text-trail hover:underline">Create an account</Link></>
+          <>New to Pursuit? <Link href="/signup" className="font-semibold text-trail hover:underline">Create an account</Link></>
         ) : (
-          <>Already have an account? <Link href="/login" className="font-medium text-trail hover:underline">Sign in</Link></>
+          <>Already have an account? <Link href="/login" className="font-semibold text-trail hover:underline">Sign in</Link></>
         )}
       </p>
     </main>

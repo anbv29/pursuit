@@ -832,9 +832,17 @@ Free preview hosting checkpoint (see git log for hash):
     - tsc clean
 
 ----------------------------------------------------------------------
-#130  (hash recorded in next commit)  feat(ui): glass app shell with command palette, theme toggle and route progress
+#130  bf0669a  feat(ui): glass app shell with command palette, theme toggle and route progress
     - Frontend only. components/shell.tsx re-skinned with identical logic (same workspace/approvals fetches, same nav routes incl. owner-only billing, same workspace switcher and sign-out, same context provider and ReadingControls)
     - Floating glass sidebar (collapsible, state still in localStorage), slim glass top bar with page title or breadcrumbs (only for report/experiment detail and new report), search button + Ctrl/Cmd+K command palette (existing routes, theme switch, sign out), approvals bell with waiting count, theme toggle (system/light/dark, stored as pursuit.theme), account menu
     - Phones: glass bottom tab bar (4 primary items + More menu), safe-area aware; workspace switcher below the top bar
     - components/command-palette.tsx (native dialog, combobox/listbox roles, arrow/Enter keys), theme.tsx (useSyncExternalStore), route-progress.tsx (thin gradient bar on internal link navigation, DOM writes only)
     - tsc and eslint clean on changed files
+
+----------------------------------------------------------------------
+#131  (hash recorded in next commit)  feat(ui): glass auth screens and stepped onboarding
+    - Frontend only. auth-form.tsx: centered glass card on the backdrop, theme toggle, PasswordInput with visible show/hide toggle, larger submit; zod validation, login/register calls and redirects unchanged
+    - onboarding/page.tsx: two-step stepper (name, then how to start) with numbered progress, aria-current step and an aria-live step announcement; create() request, demo flag and redirects unchanged; Back button; same 'Give your workspace a name.' message when continuing with an empty name
+    - brand.tsx: logo uses accent tokens so it stays legible in dark mode; per-instance gradient id
+    - Not present in this app, so skipped: password reset, email verification, social sign-in
+    - tsc + eslint clean
