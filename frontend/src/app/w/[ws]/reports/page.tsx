@@ -14,7 +14,7 @@ export default function ReportsPage() {
   const { workspace, base } = useWorkspace();
   const { data, error } = useApi<ReportListItem[]>(`/workspaces/${workspace.id}/reports`);
   const cta = (
-    <Link href={`${base}/reports/new`} className="inline-flex h-9 items-center gap-1.5 rounded-lg bg-trail px-3.5 text-sm font-medium text-white shadow-card hover:bg-trail-strong">
+    <Link href={`${base}/reports/new`} className="inline-flex h-9 items-center gap-1.5 rounded-lg bg-trail px-3.5 text-sm font-medium text-accent-ink shadow-card hover:brightness-110">
       <Plus className="size-4" /> Analyze a company
     </Link>
   );

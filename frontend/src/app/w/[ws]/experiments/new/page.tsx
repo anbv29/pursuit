@@ -88,7 +88,7 @@ function NewExperiment() {
       <div className="grid gap-6 lg:grid-cols-5">
         <form className="space-y-5 lg:col-span-3" noValidate onSubmit={(e: FormEvent) => { e.preventDefault(); void create.run(); }}>
           <div>
-            <p className="text-xs font-medium uppercase tracking-wider text-trail">{tpl.name}</p>
+            <p className="text-xs font-medium text-trail">{tpl.name}</p>
             <h1 className="mt-1 text-2xl font-semibold tracking-tight">Define the experiment</h1>
           </div>
           {formError && <Notice tone="bad">{formError}</Notice>}
@@ -111,7 +111,7 @@ function NewExperiment() {
         <aside className="lg:col-span-2" aria-label="Preview">
           <Card className="sticky top-20 p-5">
             <div className="flex items-center justify-between">
-              <p className="text-xs font-medium uppercase tracking-wider text-ink-3">Preview</p>
+              <p className="text-xs font-medium text-ink-3">Preview</p>
               {workspace.is_demo && <DemoBadge />}
             </div>
             <p className="mt-3 font-semibold">{form.title || "Untitled experiment"}</p>

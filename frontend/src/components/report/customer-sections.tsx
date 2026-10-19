@@ -10,13 +10,13 @@ export function Summary({ c }: { c: ReportContent }) {
       <ul className="space-y-2.5">
         {c.executive_summary.map((t, i) => (
           <li key={i} className="flex gap-3 text-[15px] leading-relaxed">
-            <span className="mt-0.5 grid size-5 shrink-0 place-items-center rounded-full bg-trail text-[11px] font-semibold text-white">{i + 1}</span>
+            <span className="mt-0.5 grid size-5 shrink-0 place-items-center rounded-full bg-trail text-[11px] font-semibold text-accent-ink">{i + 1}</span>
             {t}
           </li>
         ))}
       </ul>
       <div className="mt-5 rounded-lg bg-trail-soft/70 px-4 py-3">
-        <p className="text-xs font-medium uppercase tracking-wide text-trail-strong">Focus first</p>
+        <p className="text-xs font-medium text-trail-strong">Focus first</p>
         <p className="mt-1 text-sm text-ink">{c.focus_first}</p>
       </div>
     </Section>

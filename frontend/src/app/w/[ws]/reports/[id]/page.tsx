@@ -69,7 +69,7 @@ function Experiments({ c, reportId }: { c: ReportContent; reportId: string }) {
       <ol className="space-y-3">
         {c.experiments.map((e, i) => (
           <li key={i} className="flex flex-col gap-3 rounded-lg border border-line p-4 sm:flex-row sm:items-start">
-            <span className="grid size-7 shrink-0 place-items-center rounded-full bg-ink text-sm font-semibold text-white">{i + 1}</span>
+            <span className="grid size-7 shrink-0 place-items-center rounded-full bg-ink text-sm font-semibold text-bg">{i + 1}</span>
             <div className="min-w-0 flex-1">
               <div className="flex flex-wrap items-center gap-2">
                 <p className="font-medium">{e.title}</p>
@@ -121,7 +121,7 @@ export default function ReportPage() {
         <h1 className="mt-3 text-lg font-semibold">{r.status === "CANCELLED" ? "Report cancelled" : "The report couldn't be generated"}</h1>
         <p className="mt-2 text-sm text-ink-2">{r.status === "CANCELLED" ? "Your saved research is kept. Resume when you are ready." : r.error ?? "Unknown error."}</p>
         <Button className="mt-4" loading={jobControl.pending} onClick={() => jobControl.run("retry")}>Resume saved progress</Button>
-        <Link href={`${base}/reports/new`} className="mt-5 inline-flex items-center gap-1.5 rounded-lg bg-trail px-3.5 py-2 text-sm font-medium text-white hover:bg-trail-strong">
+        <Link href={`${base}/reports/new`} className="mt-5 inline-flex items-center gap-1.5 rounded-lg bg-trail px-3.5 py-2 text-sm font-medium text-accent-ink hover:brightness-110">
           <RotateCw className="size-4" /> Try again
         </Link>
       </Card>
@@ -133,7 +133,7 @@ export default function ReportPage() {
     <SourcesProvider sources={r.sources}>
       <div className="mx-auto flex max-w-7xl gap-8">
         <nav aria-label="Report sections" className="sticky top-20 hidden h-fit w-44 shrink-0 xl:block print:hidden">
-          <p className="mb-2 text-xs font-medium uppercase tracking-wider text-ink-3">On this page</p>
+          <p className="mb-2 text-xs font-medium text-ink-3">On this page</p>
           <ul className="space-y-0.5 text-sm">
             {TOC.map(([k, label]) => <li key={k}><a href={`#${k}`} className="block rounded-md px-2 py-1 text-ink-2 hover:bg-sunken hover:text-ink">{!advanced && SECTION_HELP[k]?.[0] ? SECTION_HELP[k][0] : label}</a></li>)}
           </ul>
@@ -141,7 +141,7 @@ export default function ReportPage() {
         <div className="min-w-0 flex-1 space-y-6">
           <header className="flex flex-wrap items-end justify-between gap-3">
             <div>
-              <p className="text-xs font-medium uppercase tracking-wider text-ink-3">{advanced ? "GTM report" : "Your customer and growth report"}</p>
+              <p className="text-xs font-medium text-ink-3">{advanced ? "GTM report" : "Your customer and growth report"}</p>
               <h1 className="mt-1 text-2xl font-semibold tracking-tight">{r.company_name || r.company_url}</h1>
               <p className="mt-1 text-sm text-ink-3">
                 <a href={r.company_url} target="_blank" rel="noopener noreferrer" className="hover:text-trail">{r.company_url}</a>

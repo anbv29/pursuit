@@ -819,3 +819,14 @@ Free preview hosting checkpoint (see git log for hash):
     - Updated Render blueprint to free Singapore-targeted preview setup, with no live payment credentials or paid AI key and no continuously polling worker.
     - Owner migrations run separately; Render receives only a limited runtime database account. Preview credential transfer awaits explicit approval after automatic review rejection.
     - Documented free-preview limitations, production upgrade boundaries, password-reset incident and current provider setup. No hosted URL verified yet.
+
+----------------------------------------------------------------------
+#129  (hash recorded in next commit)  feat(ui): add sea-glass design system, primitives and lens loader
+    - Frontend only (backend untouched). Design system in globals.css: brand tokens (light + dark via prefers-color-scheme guarded by :root:not([data-theme=light]) and repeated under [data-theme=dark]), semantic tokens (success/warning/danger/focus-ring/surface-solid), radius/space/type/motion scales; legacy token names (paper, surface, trail, ...) remapped so every screen inherits the theme and dark mode
+    - Contrast fix vs brief: brand accent #0e8f84 is 3.98:1 with white (fails AA); filled buttons and accent text use --accent-strong #0b766d (5.49:1), #0e8f84 kept for rings/progress/decoration; iterate chip darkened to #92640c
+    - Glass: .glass recipe (gradient, blur 26px saturate 190%, border, inset highlights), pointer-following specular moved by transform on one small layer (rAF-throttled, ignores touch) instead of inherited --mx/--my vars that would restyle every child; solid fallback for no backdrop-filter, reduced-transparency and more-contrast; .surface for dense content (no blur)
+    - Fonts: Bricolage Grotesque (500/700) + Figtree (400/500/600) via next/font; theme applied pre-paint from localStorage
+    - components/ui/ folder (replaces ui.tsx; same import path): Button, IconButton, Spinner, Badge/Pill, Avatar, Progress (incl. segmented), Skeleton (shimmer), Field, Input, Textarea, Select, PasswordInput, Checkbox, Switch, Card, CardHeader, Glass, Empty/EmptyState, Notice, PageHeader, Dialog, Drawer (native dialog: focus trap, Esc), Tooltip, Menu (keyboard), Tabs (roving focus), TableWrap/Table/Th/Td (sticky header, self-scrolling)
+    - Backdrop orbs (drifting, dimmed in-app); lens loader (first visit, sessionStorage, skipped under reduced motion, rAF writes styles directly, window/storage read only client-side)
+    - Copy/contrast sweep: bg-trail/bg-ink + text-white fixed for dark mode; all-caps label styling removed
+    - tsc clean

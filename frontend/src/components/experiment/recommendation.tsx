@@ -16,7 +16,7 @@ function List({ icon: Icon, title, items, tone }: { icon: typeof Compass; title:
   if (!items.length) return null;
   return (
     <div>
-      <p className={`flex items-center gap-1.5 text-xs font-medium uppercase tracking-wide ${tone ?? "text-ink-3"}`}><Icon className="size-3.5" />{title}</p>
+      <p className={`flex items-center gap-1.5 text-xs font-medium ${tone ?? "text-ink-3"}`}><Icon className="size-3.5" />{title}</p>
       <ul className="mt-1.5 space-y-1 text-sm text-ink-2">
         {items.map((t, i) => <li key={i} className="flex gap-2"><span className="mt-2 size-1 shrink-0 rounded-full bg-ink-3" />{t}</li>)}
       </ul>

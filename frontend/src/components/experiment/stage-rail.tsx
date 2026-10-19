@@ -53,7 +53,7 @@ export function StageRail() {
               s.state === "current" && "bg-trail-soft")}>
             <div className="flex items-center gap-1.5">
               <span className={cx("grid size-5 shrink-0 place-items-center rounded-full text-[10px] font-semibold",
-                s.state === "done" ? "bg-trail text-white" : s.state === "current" ? "bg-surface text-trail ring-2 ring-trail" : "bg-sunken text-ink-3")}>
+                s.state === "done" ? "bg-trail text-accent-ink" : s.state === "current" ? "bg-surface text-trail ring-2 ring-trail" : "bg-sunken text-ink-3")}>
                 {s.state === "done" ? <Check className="size-3" /> : i + 1}
               </span>
               <span className={cx("truncate text-xs", s.state === "upcoming" ? "text-ink-3" : "font-medium text-ink")}>{STAGE_LABEL[s.stage]}</span>

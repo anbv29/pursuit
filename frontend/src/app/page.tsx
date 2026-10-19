@@ -23,11 +23,11 @@ export default function Home() {
         <Logo />
         <nav className="flex items-center gap-2 text-sm">
           {ready && user ? (
-            <Link href="/w" className="rounded-lg bg-trail px-3.5 py-2 font-medium text-white hover:bg-trail-strong">Open workspace</Link>
+            <Link href="/w" className="rounded-lg bg-trail px-3.5 py-2 font-medium text-accent-ink hover:brightness-110">Open workspace</Link>
           ) : (
             <>
               <Link href="/login" className="rounded-lg px-3 py-2 text-ink-2 hover:bg-sunken">Sign in</Link>
-              <Link href="/signup" className="rounded-lg bg-trail px-3.5 py-2 font-medium text-white hover:bg-trail-strong">Start free</Link>
+              <Link href="/signup" className="rounded-lg bg-trail px-3.5 py-2 font-medium text-accent-ink hover:brightness-110">Start free</Link>
             </>
           )}
         </nav>
@@ -46,18 +46,18 @@ export default function Home() {
             real-world actions, and tells you plainly what the data supports.
           </p>
           <div className="mt-8 flex flex-wrap gap-3">
-            <Link href={user ? "/w" : "/signup"} className="inline-flex items-center gap-2 rounded-lg bg-trail px-5 py-2.5 font-medium text-white shadow-card hover:bg-trail-strong">
+            <Link href={user ? "/w" : "/signup"} className="inline-flex items-center gap-2 rounded-lg bg-trail px-5 py-2.5 font-medium text-accent-ink shadow-card hover:brightness-110">
               {user ? "Go to your workspace" : "Create your first experiment"} <ArrowRight className="size-4" />
             </Link>
           </div>
         </section>
 
         <section aria-label="Experiment lifecycle" className="rounded-2xl border border-line bg-surface p-6 shadow-card">
-          <p className="text-xs font-medium uppercase tracking-wider text-ink-3">One loop for every GTM question</p>
+          <p className="text-xs font-medium text-ink-3">One loop for every GTM question</p>
           <ol className="mt-4 flex flex-wrap items-center gap-x-2 gap-y-3">
             {STAGES.map((s, i) => (
               <li key={s} className="flex items-center gap-2 text-sm">
-                <span className={`rounded-md px-2.5 py-1 ${i === 4 ? "bg-flag-soft text-flag" : i === 8 ? "bg-trail text-white" : "bg-sunken text-ink-2"}`}>
+                <span className={`rounded-md px-2.5 py-1 ${i === 4 ? "bg-flag-soft text-flag" : i === 8 ? "bg-trail text-accent-ink" : "bg-sunken text-ink-2"}`}>
                   {STAGE_LABEL[s]}
                 </span>
                 {i < STAGES.length - 1 && <span className="text-line-strong" aria-hidden>→</span>}

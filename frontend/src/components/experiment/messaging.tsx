@@ -52,7 +52,7 @@ export function MessagingPanel() {
                 return (
                   <div key={v.id} className="border-b border-line p-5 md:border-r">
                     <div className="flex items-center gap-2">
-                      <span className="grid size-7 place-items-center rounded-md bg-ink text-sm font-semibold text-white">{v.label}</span>
+                      <span className="grid size-7 place-items-center rounded-md bg-ink text-sm font-semibold text-bg">{v.label}</span>
                       <p className="truncate font-medium">{v.subject || v.angle || "Untitled"}</p>
                     </div>
                     {v.angle && <p className="mt-1 text-xs text-ink-3">Angle: {v.angle}</p>}

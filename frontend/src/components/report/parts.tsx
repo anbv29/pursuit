@@ -91,7 +91,7 @@ export function Section({ id, title, kicker, children }: { id: string; title: st
 
 export function Label({ children }: { children: ReactNode }) {
   const advanced = useAdvanced();
-  return <p className="mb-1.5 text-xs font-medium uppercase tracking-wide text-ink-3">
+  return <p className="mb-1.5 text-xs font-medium text-ink-3">
     {!advanced && typeof children === "string" ? SIMPLE_LABELS[children] ?? children : children}
   </p>;
 }

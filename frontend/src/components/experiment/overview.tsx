@@ -112,7 +112,7 @@ export function Overview() {
       <div className="space-y-6 xl:col-span-2">
         <Card className="p-5">
           <div className="flex items-center gap-2">
-            <p className="text-xs font-medium uppercase tracking-wider text-ink-3">Hypothesis</p>
+            <p className="text-xs font-medium text-ink-3">Hypothesis</p>
             {exp.is_demo && <DemoBadge />}
           </div>
           <p className="mt-2 text-[17px] leading-relaxed">{exp.hypothesis}</p>
