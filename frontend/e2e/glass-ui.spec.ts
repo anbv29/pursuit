@@ -75,11 +75,24 @@ async function check(page: Page, name: string, errors: string[]) {
   await page.waitForTimeout(900);
   const overflow = await page.evaluate(() => document.documentElement.scrollWidth - window.innerWidth);
   expect(overflow, `${name} scrolls sideways`).toBeLessThanOrEqual(1);
+  const controls = await page.locator(".app-shell header button, .app-shell header a").evaluateAll(elements => elements.map(e => {
+    const r = e.getBoundingClientRect();
+    return { label: e.getAttribute("aria-label") ?? e.textContent, left: r.left, right: r.right, top: r.top, bottom: r.bottom, width: r.width, height: r.height };
+  }).filter(r => r.width > 0 && r.height > 0));
+  for (let i = 0; i < controls.length; i++) {
+    expect(controls[i].left, `${name}: ${controls[i].label} offscreen`).toBeGreaterThanOrEqual(0);
+    expect(controls[i].right).toBeLessThanOrEqual(page.viewportSize()!.width + 1);
+    for (const other of controls.slice(i + 1)) {
+      const overlap = controls[i].right > other.left + 1 && other.right > controls[i].left + 1
+        && controls[i].bottom > other.top + 1 && other.bottom > controls[i].top + 1;
+      expect(overlap, `${name}: header controls overlap`).toBe(false);
+    }
+  }
   await page.screenshot({ path: `test-results/glass/app-${name}.png`, fullPage: true });
   expect(errors, `${name} page errors`).toEqual([]);
 }
 
-for (const vp of [{ name: "desktop", width: 1280, height: 860 }, { name: "phone", width: 375, height: 800 }]) {
+for (const vp of [{ name: "desktop", width: 1280, height: 860 }, { name: "tablet", width: 820, height: 900 }, { name: "phone", width: 375, height: 800 }]) {
   test(`app screens render cleanly (${vp.name})`, async ({ page }) => {
     const errors: string[] = [];
     page.on("pageerror", (e) => errors.push(e.message));

@@ -973,3 +973,6 @@ Applied installed brand, design-system, ui-styling and ui-ux-pro-max guidance. R
 
 style: align dark tokens and responsive app chrome (see Git history for hash)
 Matched automatic/manual dark palettes to ink-blue and cobalt; aligned header/content widths, reduced sidebar width on tablets, switched crowded tablet controls to compact forms, flattened reading controls, top-aligned page actions and removed color-dependent claim instructions. Key text/button contrasts exceed 5.2:1. Targeted lint and diff checks passed. Local-only checkpoint, no push.
+
+style: begin reference-led research experience (see Git history for hash)
+Reviewed Designeer Inspiration, its Minimal Gallery SaaS collection, Folk and Parallel, and 21st.dev cards/navigation. Reworked hero copy around the actual research-to-experiment workflow. Preserved stable preview sizing and added viewport/toolbar regression coverage. Earlier cobalt build and targeted browser checks ran before this reference revision; current preview rebuild remains pending. Local only; no push.
