@@ -976,3 +976,6 @@ Matched automatic/manual dark palettes to ink-blue and cobalt; aligned header/co
 
 style: begin reference-led research experience (see Git history for hash)
 Reviewed Designeer Inspiration, its Minimal Gallery SaaS collection, Folk and Parallel, and 21st.dev cards/navigation. Reworked hero copy around the actual research-to-experiment workflow. Preserved stable preview sizing and added viewport/toolbar regression coverage. Earlier cobalt build and targeted browser checks ran before this reference revision; current preview rebuild remains pending. Local only; no push.
+
+style: replace simulated feed with interactive research brief (see Git history for hash)
+Replaced the looping prospect feed with an original tabbed report artifact covering customers, competition and the next test. Every example includes evidence to seek, a limitation and a practical action; all synthetic content is explicitly labelled. Reused accessible tabs with keyboard support and reserved panel dimensions. Added matching interaction checks. Inspired by product presentation and 21st.dev card patterns; no third-party component source copied. Browser verification follows rebuild.

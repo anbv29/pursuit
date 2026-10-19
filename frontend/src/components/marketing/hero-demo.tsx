@@ -1,96 +1,65 @@
 "use client";
 
-import { Check, Search } from "lucide-react";
-import { useEffect, useState, useSyncExternalStore } from "react";
-import { HERO_DRAFT, HERO_MATCHES, HERO_REQUEST, HERO_SOURCES, HERO_STEPS } from "@/lib/ui-demo/demo-data";
-import { CountUp } from "../processing-feed";
-import { Badge, cx, Glass, Progress, Skeleton } from "../ui";
+import { ArrowUpRight, FileText, Globe2 } from "lucide-react";
+import { useId, useState } from "react";
+import { cx, Glass, Tabs } from "../ui";
 
-const q = "(prefers-reduced-motion: reduce)";
-const sub = (cb: () => void) => {
-  const m = window.matchMedia(q);
-  m.addEventListener("change", cb);
-  return () => m.removeEventListener("change", cb);
-};
+const SECTIONS = [
+  { id: "audience", label: "Customers", title: "Start with a narrower audience.",
+    body: "Independent design studios may feel the cost of scattered client feedback most acutely. Start with teams managing several projects at once.",
+    evidence: "Look for repeated complaints about revision rounds and approval delays.",
+    caveat: "A plausible audience, not yet a validated customer segment.", next: "Interview five studio owners about their last delayed project." },
+  { id: "competition", label: "Competition", title: "Your competition includes the workaround.",
+    body: "A shared document, email thread or project board can solve enough of the problem. Compare the switching effort as carefully as the feature list.",
+    evidence: "Check how teams collect feedback today and what they already pay for.",
+    caveat: "Public feature lists cannot tell you why customers switch.", next: "Ask each studio to walk through its current feedback process." },
+  { id: "next", label: "Next test", title: "Trade interest for a concrete commitment.",
+    body: "Offer a small, paid pilot on one real project. Define the outcome together before building a broader product.",
+    evidence: "Record an agreed price, budget owner and intended start date.",
+    caveat: "Friendly feedback and purchase intent are different kinds of evidence.", next: "Invite three interview participants to a paid pilot." },
+];
 
-/**
- * Illustrative product demo for the hero. Plays through the staged feed with
- * static example data, then shows the result; loops. Under reduced motion it
- * shows the finished state only.
- */
+/** Original illustrative report; selection changes content without running research. */
 export function HeroDemo() {
-  const reduced = useSyncExternalStore(sub, () => window.matchMedia(q).matches, () => false);
-  const [tick, setTick] = useState(0);
-  const total = HERO_STEPS.length + 3; // steps, then result shown for a few beats
-  useEffect(() => {
-    if (reduced) return;
-    const t = setInterval(() => setTick((n) => (n + 1) % (total + 1)), 1500);
-    return () => clearInterval(t);
-  }, [reduced, total]);
-  const step = reduced ? HERO_STEPS.length : Math.min(tick, HERO_STEPS.length);
-  const done = step >= HERO_STEPS.length;
-
+  const [selected, setSelected] = useState(SECTIONS[0].id);
+  const id = useId();
   return (
-    <Glass className="w-full overflow-hidden p-5 sm:p-6" aria-label="Example of Pursuit at work" role="img">
-      <div className="flex items-center justify-between gap-4 border-b border-line pb-4">
-        <div>
-          <p className="font-ui text-sm font-semibold text-ink">Company research</p>
-          <p className="mt-1 text-xs text-ink-3">A question. The evidence. Your next step.</p>
+    <div className="research-preview relative" role="region" aria-label="Example of Pursuit at work">
+      <div className="mb-3 flex items-center justify-between gap-3 px-1 font-ui text-xs text-ink-3">
+        <span className="inline-flex items-center gap-2"><FileText className="size-3.5" aria-hidden /> THE RESEARCH BRIEF</span>
+        <span>Fictional example</span>
+      </div>
+      <Glass className="report-sheet overflow-hidden">
+        <div className="flex items-start justify-between gap-4 border-b border-line p-5 sm:p-7">
+          <div><p className="font-ui text-xs text-ink-3">COMPANY / 001</p><h2 className="mt-2 font-display text-2xl tracking-tight">A feedback tool for studios.</h2></div>
+          <Globe2 className="mt-1 size-5 shrink-0 text-trail" aria-hidden />
         </div>
-        <Badge tone="neutral">Example</Badge>
-      </div>
-      <div className="mt-3 flex items-start gap-2.5 rounded-2xl bg-surface/80 px-3.5 py-3 ring-1 ring-line">
-        <Search className="mt-0.5 size-4 shrink-0 text-ink-3" aria-hidden />
-        <p className="text-[13.5px] leading-snug text-ink">{HERO_REQUEST}</p>
-      </div>
-
-      <div className="mb-2 mt-4 flex items-center justify-between text-xs text-ink-3"><span>Research progress</span><span>{done ? "Ready" : "Working…"}</span></div>
-      <Progress value={(Math.min(step + (done ? 0 : 0.5), HERO_STEPS.length) / HERO_STEPS.length) * 100} segments={HERO_STEPS.length} label="Example progress" />
-      <ol className="mt-4 grid gap-3 sm:grid-cols-2">
-        {HERO_STEPS.map((s, i) => {
-          const state = i < step ? "done" : i === step ? "active" : "todo";
-          return (
-            <li key={s.label} className="flex min-h-5 min-w-0 items-start gap-2 text-[12px] leading-5 sm:min-h-10">
-              <span className={cx("grid size-5 shrink-0 place-items-center rounded-full text-[10px] font-bold",
-                state === "done" ? "bg-accent-strong text-accent-ink" : state === "active" ? "bg-accent-soft text-trail-strong ring-2 ring-accent" : "bg-[var(--inset)] text-ink-3")}>
-                {state === "done" ? <Check className="size-3" aria-hidden /> : i + 1}
-              </span>
-              <span className={state === "todo" ? "text-ink-3" : "font-medium text-ink"}>
-                {state === "done" ? s.done : s.label}
-              </span>
-            </li>
-          );
-        })}
-      </ol>
-
-      {/* Overlapping grid cells reserve the finished content's intrinsic height. */}
-      <div className="mt-5 grid border-t border-line pt-4">
-          <div aria-hidden={!done} className={cx("col-start-1 row-start-1 space-y-2.5 transition-opacity duration-300", !done && "invisible opacity-0")}>
-            <p className="text-[13px] text-ink-2"><span className="font-ui text-lg font-semibold text-ink"><CountUp value={HERO_SOURCES} /></span> illustrative sources · fictional example</p>
-            {HERO_MATCHES.slice(0, 1).map((m, i) => (
-              <div key={m.who} className="enter-rise rounded-2xl bg-surface/85 p-3 ring-1 ring-line" style={{ "--i": i + 1 } as React.CSSProperties}>
-                <div className="flex items-center justify-between gap-2">
-                  <p className="text-[13.5px] font-semibold text-ink">{m.who}</p>
-                  <span className="flex gap-0.5" aria-label={`Fit ${m.fit} of 5`}>
-                    {[1, 2, 3, 4, 5].map((n) => <span key={n} className={cx("h-1.5 w-2.5 rounded-sm", n <= m.fit ? "bg-accent" : "bg-line")} />)}
-                  </span>
-                </div>
-                <p className="text-xs text-ink-3">{m.where}</p>
-                <p className="mt-1 text-[12.5px] leading-snug text-ink-2"><span className="font-semibold text-trail">Why they fit: </span>{m.why}</p>
-              </div>
-            ))}
-            <div className="enter-rise rounded-2xl border border-dashed border-line-strong p-3" style={{ "--i": 3 } as React.CSSProperties}>
-              <p className="text-xs font-semibold text-ink-3">Draft, waiting for your approval</p>
-              <p className="mt-1 text-[13px] font-semibold text-ink">{HERO_DRAFT.subject}</p>
-              <p className="mt-0.5 line-clamp-2 text-[12.5px] text-ink-2">{HERO_DRAFT.body}</p>
+        <div className="px-5 pt-2 sm:px-7">
+          <Tabs label="Explore the example report" value={selected} onChange={setSelected} idPrefix={id} panelId={`${id}-panel`}
+            tabs={SECTIONS.map((s) => ({ id: s.id, label: s.label }))} />
+        </div>
+        <div className="grid px-5 pb-6 pt-5 sm:px-7">
+          {SECTIONS.map((section) => <div key={section.id} role="tabpanel" id={selected === section.id ? `${id}-panel` : undefined}
+            aria-labelledby={`${id}-${section.id}`} aria-hidden={selected !== section.id} tabIndex={selected === section.id ? 0 : -1}
+            className={cx("col-start-1 row-start-1 transition-opacity duration-200", selected !== section.id && "invisible opacity-0")}>
+            <p className="font-ui text-xs font-semibold text-trail">RESEARCH DIRECTION</p>
+            <h3 className="mt-2 text-xl font-semibold leading-snug tracking-tight">{section.title}</h3>
+            <p className="mt-3 text-[15px] leading-6 text-ink-2">{section.body}</p>
+            <div className="my-5 border-l-2 border-accent pl-4">
+              <p className="font-ui text-xs font-semibold text-ink">Evidence to look for</p>
+              <p className="mt-1 text-sm leading-5 text-ink-2">{section.evidence}</p>
             </div>
-          </div>
-          <div className={cx("col-start-1 row-start-1 space-y-2.5", done && "invisible")} aria-hidden>
-            <Skeleton className="h-4 w-28" />
-            <Skeleton className="h-[70px]" />
-            <Skeleton className="h-12" />
-          </div>
-      </div>
-    </Glass>
+            <p className="text-xs leading-5 text-ink-3">{section.caveat}</p>
+            <div className="mt-5 flex items-start gap-3 rounded-xl bg-sunken p-4">
+              <ArrowUpRight className="mt-0.5 size-4 shrink-0 text-trail" aria-hidden />
+              <div><p className="font-ui text-xs font-semibold">YOUR NEXT MOVE</p><p className="mt-1 text-sm leading-5 text-ink-2">{section.next}</p></div>
+            </div>
+          </div>)}
+        </div>
+        <div className="flex items-center gap-2 border-t border-line px-5 py-3 text-xs text-ink-3 sm:px-7">
+          <span className="size-1.5 rounded-full bg-accent" aria-hidden /> Illustrative content. Your report includes source links.
+        </div>
+      </Glass>
+    </div>
   );
 }
