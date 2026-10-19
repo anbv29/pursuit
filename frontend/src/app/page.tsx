@@ -5,6 +5,7 @@ import { HeroDemo } from "@/components/marketing/hero-demo";
 import { HowItWorks } from "@/components/marketing/how-it-works";
 import { HeroCta, LandingNav } from "@/components/marketing/landing-nav";
 import { Pricing } from "@/components/marketing/pricing";
+import { Capabilities, Questions } from "@/components/marketing/capabilities";
 import { TRUST_POINTS } from "@/lib/ui-demo/demo-data";
 
 const TRUST_ICONS = [FileCheck2, ShieldCheck, Eye, Lock];
@@ -63,7 +64,9 @@ export default function Home() {
         </section>
 
         {/* Pricing */}
+        <Capabilities />
         <Pricing />
+        <Questions />
       </main>
 
       <footer className="border-t border-line">

@@ -6,6 +6,13 @@ import type { NextConfig } from "next";
 const backend = process.env.BACKEND_URL ?? "http://localhost:8000";
 
 const securityHeaders = [
+  { key: "Content-Security-Policy", value: [
+    "default-src 'self'", "base-uri 'self'", "object-src 'none'", "frame-ancestors 'none'",
+    "form-action 'self'", "img-src 'self' data: blob:", "font-src 'self'",
+    "style-src 'self' 'unsafe-inline'",
+    `script-src 'self' 'unsafe-inline'${process.env.NODE_ENV === "development" ? " 'unsafe-eval'" : ""}`,
+    `connect-src 'self'${process.env.NODE_ENV === "development" ? " ws: wss:" : ""}`,
+  ].join("; ") },
   { key: "X-Content-Type-Options", value: "nosniff" },
   { key: "X-Frame-Options", value: "DENY" },
   { key: "Referrer-Policy", value: "strict-origin-when-cross-origin" },
@@ -25,6 +32,9 @@ const nextConfig: NextConfig = {
   async headers() {
     return [
       { source: "/:path*", headers: securityHeaders },
+      ...["/w/:path*", "/account", "/onboarding", "/login", "/signup"].map(source => ({ source,
+        headers: [{ key: "X-Robots-Tag", value: "noindex, nofollow" }, { key: "Cache-Control", value: "private, no-store" }],
+      })),
       { source: "/shared/:path*", headers: [{ key: "Referrer-Policy", value: "no-referrer" },
         { key: "Cache-Control", value: "private, no-store" }, { key: "X-Robots-Tag", value: "noindex, nofollow" }] },
     ];

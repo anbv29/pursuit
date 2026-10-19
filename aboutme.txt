@@ -913,3 +913,6 @@ feat: add account controls and resilient requests (see Git history for hash)
 
 fix: bound runtime resources and validate production origins (see Git history for hash)
     - Rate limiter key capacity and expiry; database connection and pool timeouts; HTTPS origin and session TTL guards. Ruff passed and 7 runtime guard tests passed.
+
+feat: explain all workflows and protect private pages (see Git history for hash)
+    - Six workflow overview and FAQ; accurate billing disclosures; baseline CSP and private route noindex; robots rules. Lint passed; production build in progress.

@@ -34,7 +34,7 @@ export function Pricing() {
     <div className="mx-auto mt-6 max-w-3xl space-y-2 text-sm leading-relaxed text-ink-3">
       <p>Prices are USD, plus applicable taxes. Monthly plans renew automatically; unused monthly allowances expire. Single Report credits do not expire. No automatic overage charges.</p>
       <p>One research credit covers a full report, section refresh or company discovery search, even when no companies match. Refresh and discovery need Founder or Team. One AI answer covers a report question or optional AI-assisted recommendation.</p>
-      <p>Creating an account is free. Purchases happen inside an owner&apos;s workspace only when payments are configured. Demo mode does not charge or perform real actions. Fo and email-provider charges are separate.</p>
+      <p>Creating an account is free. Purchases happen inside an owner&apos;s workspace only when payments are configured. Sample workspaces cannot be billed; simulated actions do not send anything. Fo and email-provider charges are separate.</p>
     </div>
   </section>;
 }
