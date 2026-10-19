@@ -1,7 +1,8 @@
 # Deployment: Neon + Render + Vercel
 
 **Status: free preview deployed at https://pursuit-coral.vercel.app.** Public proxy health, owner login,
-Team allowances, 20 browser checks and a separate real AI report passed. Checkout stays paused.
+Team allowances, 20 browser checks and a separate real AI report passed. On 2026-10-19 the owner
+subsequently requested live checkout activation; it is now enabled and a no-charge checkout was verified.
 
 ## Current deployment preparation (2026-10-18)
 
@@ -59,7 +60,7 @@ Environment variables (set the secrets in the dashboard):
 | `FO_MODE` | `demo` for labelled simulated actions, or `live` with verified per-user OAuth (see FO_INTEGRATION.md) |
 | `ACTIONS_DISABLED` | `false` (set `true` as an emergency stop) |
 | `DODO_PAYMENTS_ENVIRONMENT` | `live_mode` for the approved merchant webhook configuration |
-| `BILLING_CHECKOUT_ENABLED` | `false` until commercial launch is separately approved and verified |
+| `BILLING_CHECKOUT_ENABLED` | hosted value `true`, explicitly requested after the initial paused preview; local default remains `false` |
 | `DODO_PAYMENTS_API_KEY` | approved private Pursuit merchant key |
 | `DODO_PAYMENTS_WEBHOOK_KEY` | approved private signing key for the separate Pursuit endpoint |
 | `DODO_BUSINESS_ID` | merchant business identifier |

@@ -1,5 +1,11 @@
 # Hosted preview verification — 2026-10-19
 
+Later billing activation: the owner superseded the checkout pause. The hosted checkout flag is now true;
+all three buttons are enabled, and a synthetic workspace opened a live Dodo Founder checkout showing
+$29/month plus tax. Order OPEN, free plan and zero credits confirm that opening checkout did not grant
+paid access. No charge or subscription was completed. Owner Team access remains complimentary.
+The checks below record the original preview validation; real payment fulfillment remains unverified.
+
 Website: https://pursuit-coral.vercel.app
 Backend: https://pursuit-preview-api.onrender.com
 Application commit: `ada6adb97a02528131f525c17cb66b7b525bbe61`.

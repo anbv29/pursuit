@@ -1,5 +1,18 @@
 # Payment and owner-access setup
 
+## Current checkout status — 2026-10-19 update
+
+The owner subsequently requested that billing work live, superseding the earlier checkout pause.
+`BILLING_CHECKOUT_ENABLED=true` is saved in Render. Deployment `dep-dbav2f3ncjis73ahrdk0` reached Live.
+All three purchase buttons are enabled on the public website. Read-only catalog verification passed
+for Single Report $15, Founder $29/month and Team $79/month, with the webhook signing key configured.
+A separate synthetic workspace created a real live Founder checkout (HTTP 200, order OPEN).
+Dodo displayed Pursuit — Founder at $29/month before applicable tax. No payment details were entered,
+no payment was submitted, and the test workspace retained zero research credits and its free plan.
+The owner's complimentary Team workspace was not used for this checkout and remains unchanged.
+This validates checkout creation and display, not completed payment fulfillment or renewals.
+The original paused-preview notes below describe the earlier stage and are retained as history.
+
 ## Completed configuration
 
 - The existing Dodo merchant dashboard reports identity, product and bank verification approved.
