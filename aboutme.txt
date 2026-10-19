@@ -870,10 +870,19 @@ Free preview hosting checkpoint (see git log for hash):
     - tsc + eslint clean
 
 ----------------------------------------------------------------------
-#134  (hash recorded in next commit)  fix(ui): production build, visible backdrop and calmer dark glass
+#134  9a3a3ab  fix(ui): production build, visible backdrop and calmer dark glass
     - Found by building and screenshotting the production output (light, dark, 1280px and 375px)
     - Server components could not call buttonStyles() from a 'use client' module: class helpers moved to components/ui/styles.ts (server-safe), re-exported from @/components/ui
     - Root layout read usePathname() to dim the orbs, which blocks prerendering of dynamic routes in Next 16: backdrop is now a JS-free server component; dimming is CSS-only via body:has(.app-shell)
     - Opaque body background painted over the z-index:-1 orbs, so they never showed: page colour now lives on <html> only
     - Glass top-edge specular and skeleton shimmer are theme tokens (--specular, --shimmer); dark mode no longer shows a grey band across glass panels
     - Verified: next build passes; landing, login and loader render correctly in both themes; 0px horizontal overflow at 375px; no page errors
+
+----------------------------------------------------------------------
+#135  (hash recorded in next commit)  feat(ui): system pages, route states, glass toasts and offline notice
+    - Frontend only
+    - app/not-found.tsx (404 glass card with ways back), app/error.tsx and app/w/[ws]/error.tsx (Next 16 error boundaries using retry(); workspace errors keep the shell usable), app/global-error.tsx (own document for root-layout failures), app/w/[ws]/loading.tsx (route-level skeleton shaped like a page), components/system-card.tsx
+    - components/offline-notice.tsx: calm glass notice while navigator is offline (useSyncExternalStore on online/offline events), mounted in the root layout
+    - feedback.tsx: same toast/confirm logic; toasts are glass, slide in, errors announced assertively (role=alert) and successes politely, stacked in one container above the mobile tab bar; confirm dialog uses the shared glass dialog styles with a danger icon and a fixed-colour danger button that keeps contrast in both themes
+    - Skipped: maintenance page (the app has no maintenance mode to reflect)
+    - tsc + eslint (whole src) clean

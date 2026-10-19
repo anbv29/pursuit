@@ -521,3 +521,7 @@ body:has(.app-shell) .backdrop-orbs { opacity: calc(var(--orb-opacity) * 0.45); 
 }
 .ui-pop { animation: pop-in var(--dur-fast) var(--ease-out); }
 @keyframes pop-in { from { opacity: 0; transform: scale(0.96) translateY(-4px); } }
+
+/* ---- toasts ------------------------------------------------------------------ */
+.toast-in { animation: toast-in var(--dur-slow) var(--ease-out); }
+@keyframes toast-in { from { opacity: 0; transform: translateY(10px) scale(0.98); } }

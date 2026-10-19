@@ -3,6 +3,7 @@ import { Bricolage_Grotesque, Figtree } from "next/font/google";
 import { BackdropOrbs } from "@/components/backdrop";
 import { FeedbackProvider } from "@/components/feedback";
 import { LensLoader } from "@/components/lens-loader";
+import { OfflineNotice } from "@/components/offline-notice";
 import { ReadingProvider } from "@/components/reading-mode";
 import { SessionProvider } from "@/components/session";
 import "./globals.css";
@@ -36,6 +37,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
         <SessionProvider>
           <ReadingProvider><FeedbackProvider>{children}</FeedbackProvider></ReadingProvider>
         </SessionProvider>
+        <OfflineNotice />
         <LensLoader />
       </body>
     </html>

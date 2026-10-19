@@ -37,18 +37,25 @@ export function FeedbackProvider({ children }: { children: ReactNode }) {
   return (
     <Ctx.Provider value={{ toast, confirm }}>
       {children}
-      <div aria-live="polite" className="pointer-events-none fixed bottom-4 right-4 z-50 flex w-80 flex-col gap-2">
-        {toasts.map((t) => (
-          <div key={t.id} className="pointer-events-auto flex items-start gap-2 rounded-lg border border-line bg-surface px-3 py-2.5 text-sm shadow-pop">
-            {t.kind === "success"
-              ? <CheckCircle2 className="mt-0.5 size-4 shrink-0 text-trail" aria-hidden />
-              : <AlertTriangle className="mt-0.5 size-4 shrink-0 text-d-stop" aria-hidden />}
-            <p className="flex-1 text-ink-2">{t.text}</p>
-            <button aria-label="Dismiss" onClick={() => setToasts((x) => x.filter((y) => y.id !== t.id))} className="text-ink-3 hover:text-ink">
-              <X className="size-3.5" />
-            </button>
-          </div>
-        ))}
+      <div className="pointer-events-none fixed inset-x-3 bottom-24 z-[70] flex flex-col gap-2 sm:inset-x-auto sm:right-5 sm:w-96 md:bottom-5">
+      {(["success", "error"] as const).map((kind) => (
+        <div key={kind} aria-live={kind === "error" ? "assertive" : "polite"} role={kind === "error" ? "alert" : "status"}
+          className="flex flex-col gap-2">
+          {toasts.filter((t) => t.kind === kind).map((t) => (
+            <div key={t.id} className="toast-in glass glass-dense pointer-events-auto flex w-full items-start gap-3 px-4 py-3 text-sm">
+              <span className={cx("mt-0.5 grid size-6 shrink-0 place-items-center rounded-full",
+                t.kind === "success" ? "bg-success-soft text-success" : "bg-danger-soft text-danger")}>
+                {t.kind === "success" ? <CheckCircle2 className="size-4" aria-hidden /> : <AlertTriangle className="size-4" aria-hidden />}
+              </span>
+              <p className="flex-1 pt-0.5 font-medium text-ink">{t.text}</p>
+              <button aria-label="Dismiss" onClick={() => setToasts((x) => x.filter((y) => y.id !== t.id))}
+                className="press -mr-1 grid size-7 place-items-center rounded-lg text-ink-3 hover:bg-[var(--inset)] hover:text-ink">
+                <X className="size-3.5" />
+              </button>
+            </div>
+          ))}
+        </div>
+      ))}
       </div>
       {dialog && (
         <ConfirmDialog
@@ -76,15 +83,22 @@ function ConfirmDialog({ title, body, confirm, danger, onClose }: ConfirmOpts & 
         onClose(false);
       }}
       aria-labelledby="confirm-title"
-      className="m-auto w-[min(440px,calc(100vw-2rem))] rounded-xl border border-line bg-surface p-0 shadow-pop backdrop:bg-ink/30"
+      className="ui-dialog glass m-auto w-[min(460px,calc(100vw-2rem))] p-0 text-ink"
     >
-      <div className="p-5">
-        <h2 id="confirm-title" className="text-base font-semibold text-ink">{title}</h2>
-        <div className="mt-2 text-sm text-ink-2">{body}</div>
+      <div className="flex gap-4 px-6 pt-6">
+        {danger && (
+          <span className="grid size-10 shrink-0 place-items-center rounded-2xl bg-danger-soft text-danger">
+            <AlertTriangle className="size-5" aria-hidden />
+          </span>
+        )}
+        <div className="min-w-0">
+          <h2 id="confirm-title" className="font-display text-lg font-bold">{title}</h2>
+          <div className="mt-1.5 text-sm leading-relaxed text-ink-2">{body}</div>
+        </div>
       </div>
-      <div className="flex justify-end gap-2 border-t border-line bg-paper px-5 py-3">
+      <div className="mt-6 flex flex-wrap justify-end gap-2 border-t border-[var(--glass-border)] px-6 py-4">
         <Button variant="secondary" onClick={() => onClose(false)} autoFocus>Cancel</Button>
-        <Button className={cx(danger && "bg-d-stop hover:bg-d-stop/90")} onClick={() => onClose(true)}>{confirm}</Button>
+        <Button className={cx(danger && "bg-d-stop text-white shadow-none hover:brightness-110")} onClick={() => onClose(true)}>{confirm}</Button>
       </div>
     </dialog>
   );
