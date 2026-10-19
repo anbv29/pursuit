@@ -25,7 +25,7 @@ for (const width of [390, 820, 1440]) {
     const after = await preview.boundingBox();
     const bandAfter = await bandY();
     expect(Math.abs(after!.height - before!.height), "preview height changed").toBeLessThanOrEqual(1);
-    expect(Math.abs(bandAfter!.y - bandBefore!.y), "content shifted below preview").toBeLessThanOrEqual(1);
+    expect(Math.abs(bandAfter - bandBefore), "content shifted below preview").toBeLessThanOrEqual(1);
     expect(await page.evaluate(() => document.documentElement.scrollWidth - innerWidth)).toBeLessThanOrEqual(1);
     await page.screenshot({ path: `test-results/landing-reference-${width}.png`, fullPage: true });
   });
