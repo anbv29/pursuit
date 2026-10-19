@@ -2,6 +2,7 @@
 
 from functools import lru_cache
 from typing import Literal
+from urllib.parse import urlsplit
 
 from pydantic import Field, SecretStr, field_validator, model_validator
 from pydantic_settings import BaseSettings, SettingsConfigDict
@@ -13,7 +14,7 @@ class Settings(BaseSettings):
     app_env: Literal["development", "test", "production"] = "development"
     database_url: str = "postgresql+psycopg://pursuit:pursuit_local_only@localhost:5433/pursuit"
     test_database_url: str = "postgresql+psycopg://pursuit:pursuit_local_only@localhost:5433/pursuit_test"
-    session_ttl_hours: int = 72
+    session_ttl_hours: int = Field(default=72, ge=1, le=720)
     cors_origins: str = "http://localhost:3000"
     cookie_secure: bool = False
     # Abuse limits (per client IP). Raise only for local E2E runs.
@@ -84,6 +85,21 @@ class Settings(BaseSettings):
                 raise ValueError("COOKIE_SECURE must be true in production")
             if "*" in self.cors_origin_list:
                 raise ValueError("Wildcard CORS is not allowed in production")
+            for origin in [self.public_app_url, *self.cors_origin_list]:
+                parsed = urlsplit(origin)
+                if (
+                    parsed.scheme != "https"
+                    or not parsed.hostname
+                    or parsed.username
+                    or parsed.password
+                    or parsed.path not in ("", "/")
+                    or parsed.query
+                    or parsed.fragment
+                    or parsed.hostname in ("localhost", "127.0.0.1", "::1")
+                ):
+                    raise ValueError("Production public URL and CORS entries must be HTTPS origins")
+            if not self.cors_origin_list:
+                raise ValueError("Production requires an explicit CORS origin")
         return self
 
 

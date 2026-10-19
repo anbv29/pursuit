@@ -16,7 +16,14 @@ def utcnow() -> datetime:
 
 
 def make_engine(url: str):
-    return create_engine(url, pool_pre_ping=True, future=True)
+    return create_engine(
+        url,
+        pool_pre_ping=True,
+        future=True,
+        connect_args={"connect_timeout": 5},
+        pool_timeout=10,
+        max_overflow=5,
+    )
 
 
 _engine = None

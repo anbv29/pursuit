@@ -910,3 +910,6 @@ feat: add account security controls (see Git history for hash)
 
 feat: add account controls and resilient requests (see Git history for hash)
     - Account security screen; honest failed signout; bounded API waits; cancelled stale requests; storage fallback and pricing navigation. TypeScript and lint passed; account API tests 2 passed.
+
+fix: bound runtime resources and validate production origins (see Git history for hash)
+    - Rate limiter key capacity and expiry; database connection and pool timeouts; HTTPS origin and session TTL guards. Ruff passed and 7 runtime guard tests passed.
