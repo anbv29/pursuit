@@ -919,3 +919,6 @@ feat: explain all workflows and protect private pages (see Git history for hash)
 
 feat: add safe local start and stop commands (see Git history for hash)
     - Windows local launcher pins local PostgreSQL; checks migrations build and health; simulates Fo and disables payments; tracks only its own processes. PowerShell syntax passed; 8 runtime guard tests passed; 139 backend regressions passed before last added guard.
+
+fix: serialize login with account changes (see Git history for hash)
+    - Login row lock prevents old password session races; shared workspace deletion regression; new public pricing and account browser checks. 18 authentication API tests passed; new browser checks pending serial run.

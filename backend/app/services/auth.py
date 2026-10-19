@@ -37,7 +37,14 @@ def register(db: Session, email: str, name: str, password: str) -> User:
 
 
 def login(db: Session, email: str, password: str) -> IssuedSession:
-    user = db.scalar(select(User).where(func.lower(User.email) == email.strip().lower()))
+    # Serialize session issuance with password changes/account deletion. A login
+    # must not issue a new session using a hash read before a password rotation.
+    user = db.scalar(
+        select(User)
+        .where(func.lower(User.email) == email.strip().lower())
+        .with_for_update()
+        .execution_options(populate_existing=True)
+    )
     if not verify_password(user.password_hash if user else None, password) or not user or not user.is_active:
         raise Unauthorized("Invalid email or password.")
     token, csrf = new_token(), new_token()

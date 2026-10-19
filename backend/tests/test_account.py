@@ -1,7 +1,8 @@
 from sqlalchemy import select
 
 from app.core import db as dbmod
-from app.models import User
+from app.models import Membership, User, Workspace
+from app.models.enums import Role
 
 
 def test_password_change_revokes_sessions(api, app):
@@ -68,3 +69,28 @@ def test_account_deletion_and_guards(api):
     assert api.get("/api/auth/me").status_code == 401
     with dbmod.new_session() as db:
         assert db.scalar(select(User).where(User.email == "founder@example.com")) is None
+
+
+def test_deleting_member_preserves_shared_workspace(api, other):
+    owner = api.signup()
+    workspace_id = api.workspace(paid=False)
+    member = other.get("/api/auth/me").json()["user"]
+    from uuid import UUID
+
+    with dbmod.new_session() as db:
+        db.add(Membership(workspace_id=UUID(workspace_id), user_id=UUID(member["id"]), role=Role.MEMBER))
+        db.commit()
+    response = other.client.request(
+        "DELETE",
+        "/api/account",
+        headers=other._h(),
+        json={
+            "current_password": "correct-horse-battery",
+            "confirmation": "DELETE MY ACCOUNT",
+        },
+    )
+    assert response.status_code == 204
+    with dbmod.new_session() as db:
+        assert db.get(Workspace, UUID(workspace_id)) is not None
+        assert db.get(User, UUID(owner["id"])) is not None
+        assert db.get(User, UUID(member["id"])) is None

@@ -27,7 +27,7 @@ class DeleteAccount(BaseModel):
     confirmation: str = Field(pattern="^DELETE MY ACCOUNT$")
 
 
-def reauthenticate(db, user, password):
+def reauthenticate(db: Session, user: User, password: SecretStr) -> None:
     limiter.check(f"account-security:{user.id}", limit=5, window_seconds=600)
     # Serialize password/deletion changes for a user; re-read to reject stale credentials.
     db.execute(select(User.id).where(User.id == user.id).with_for_update())
