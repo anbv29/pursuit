@@ -104,14 +104,14 @@ export default function Dashboard() {
         description={`${data.experiments.length} active experiment${data.experiments.length === 1 ? "" : "s"}${data.pending_actions.length > 0 ? ` · ${data.pending_actions.length} waiting on you` : ""}`}
         action={<>{analyzeBtn}{newBtn}</>} />
 
-      <ul className="grid gap-3 sm:grid-cols-3">
+      <ul className="grid grid-cols-3 gap-2 sm:gap-3">
         {stats.map((s, i) => (
           <li key={s.label} className="enter-rise" style={stagger(i)}>
-            <Card as="div" className="flex items-center gap-4 p-4">
-              <span className="grid size-11 place-items-center rounded-2xl bg-accent-soft text-trail-strong"><s.icon className="size-5" aria-hidden /></span>
+            <Card as="div" className="flex h-full flex-col gap-1 p-3 sm:flex-row sm:items-center sm:gap-4 sm:p-4">
+              <span className="hidden size-11 shrink-0 place-items-center rounded-2xl bg-accent-soft text-trail-strong sm:grid"><s.icon className="size-5" aria-hidden /></span>
               <span>
                 <span className="block font-display text-2xl font-bold tabular-nums text-ink">{s.value}</span>
-                <span className="block text-[13px] text-ink-3">{s.label}</span>
+                <span className="block text-xs leading-snug text-ink-3 sm:text-[13px]">{s.label}</span>
               </span>
             </Card>
           </li>

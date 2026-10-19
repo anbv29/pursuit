@@ -879,10 +879,17 @@ Free preview hosting checkpoint (see git log for hash):
     - Verified: next build passes; landing, login and loader render correctly in both themes; 0px horizontal overflow at 375px; no page errors
 
 ----------------------------------------------------------------------
-#135  (hash recorded in next commit)  feat(ui): system pages, route states, glass toasts and offline notice
+#135  efa7549  feat(ui): system pages, route states, glass toasts and offline notice
     - Frontend only
     - app/not-found.tsx (404 glass card with ways back), app/error.tsx and app/w/[ws]/error.tsx (Next 16 error boundaries using retry(); workspace errors keep the shell usable), app/global-error.tsx (own document for root-layout failures), app/w/[ws]/loading.tsx (route-level skeleton shaped like a page), components/system-card.tsx
     - components/offline-notice.tsx: calm glass notice while navigator is offline (useSyncExternalStore on online/offline events), mounted in the root layout
     - feedback.tsx: same toast/confirm logic; toasts are glass, slide in, errors announced assertively (role=alert) and successes politely, stacked in one container above the mobile tab bar; confirm dialog uses the shared glass dialog styles with a danger icon and a fixed-colour danger button that keeps contrast in both themes
     - Skipped: maintenance page (the app has no maintenance mode to reflect)
     - tsc + eslint (whole src) clean
+
+----------------------------------------------------------------------
+#136  (hash recorded in next commit)  test(ui): mocked visual smoke test for app screens, plus fixes it found
+    - frontend/e2e/glass-ui.spec.ts: intercepts /api with fixtures shaped like real responses (no backend needed), renders dashboard, reports list, report generating state and 404 at 1280px and 375px plus a dark-theme dashboard; fails on any page error or horizontal overflow; saves screenshots to test-results/glass
+    - Result: 3 passed against the production build
+    - Fixes from reviewing those screenshots: approvals count badge used white on the light amber warning colour in dark mode (now text-bg, readable in both themes); stat tiles stacked into a tall column on phones (now a compact three-column row); the 'Guided view' reading-style bar is now a slim surface strip aligned with page content (same logic)
+    - Sweep: no theme-sensitive background + white text pairs remain (white text only on fixed decision colours)

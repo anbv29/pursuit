@@ -44,22 +44,22 @@ export function ReadingControls() {
     window.dispatchEvent(new Event(KEY));
   };
   return (
-    <div className="mb-6 flex flex-wrap items-start justify-between gap-3 border-b border-line pb-3 print:hidden">
+    <div className="surface mx-auto mb-6 flex max-w-6xl flex-wrap items-center justify-between gap-x-4 gap-y-2 rounded-2xl px-4 py-2.5 print:hidden">
       <div>
-        <p className="text-sm font-medium">{advanced ? "Advanced view" : "Guided view"}</p>
+        <p className="text-sm font-semibold text-ink">{advanced ? "Advanced view" : "Guided view"}</p>
         <p className="text-xs text-ink-3">{advanced ? "Industry labels with the full evidence and measurements." : "Plain-language labels and explanations. All evidence and measurements stay available."}</p>
       </div>
       <div className="flex items-center gap-3">
         <label className="text-xs text-ink-2">Reading style
           <select aria-label="Reading style" value={advanced ? "advanced" : "guided"} onChange={(e) => set(e.target.value)}
-            className="ml-2 rounded-lg border border-line bg-surface px-2 py-1.5 text-sm">
+            className="ml-2 h-8 rounded-lg border border-line bg-surface px-2 text-sm text-ink">
             <option value="guided">Guided</option><option value="advanced">Advanced</option>
           </select>
         </label>
       </div>
       <details className="basis-full text-sm">
-        <summary className="w-fit cursor-pointer font-medium text-trail">Startup terms, explained</summary>
-        <dl className="mt-3 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+        <summary className="w-fit cursor-pointer text-[13px] font-semibold text-trail">Startup terms, explained</summary>
+        <dl className="mt-3 grid gap-4 pb-2 sm:grid-cols-2 lg:grid-cols-3">
           {TERMS.map(([term, meaning]) => <div key={term}><dt className="font-medium">{term}</dt><dd className="mt-1 text-xs leading-relaxed text-ink-2">{meaning}</dd></div>)}
         </dl>
       </details>

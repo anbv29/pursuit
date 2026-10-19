@@ -128,7 +128,7 @@ export function WorkspaceShell({ wsId, children }: { wsId: string; children: Rea
                     <n.icon className="size-[18px] shrink-0" aria-hidden />
                     {!collapsed && <span className="flex-1 truncate">{n.label}</span>}
                     {!!n.count && (
-                      <span className={cx("rounded-full bg-warning px-1.5 text-[11px] font-bold leading-5 text-white", collapsed && "absolute right-1.5 top-1")}>
+                      <span className={cx("rounded-full bg-warning px-1.5 text-[11px] font-bold leading-5 text-bg", collapsed && "absolute right-1.5 top-1")}>
                         {n.count}<span className="sr-only"> waiting</span>
                       </span>
                     )}
