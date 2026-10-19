@@ -961,3 +961,6 @@ Removed model names from report/print headers, research allowances, billing copy
 
 style: refine local typography and light palette (see Git history for hash)
 Introduced self-hosted Instrument Serif titles, Manrope interface type and Source Sans 3 reading text. Softened light canvas, decorative colors, shadows and glass saturation while preserving motion. Updated brand wordmark and hero sizing. Targeted frontend lint and diff checks passed; full build and visual checks follow dark-theme refinement. Local preview only; no push authorized.
+
+style: soften dark glass and button treatments (see Git history for hash)
+Unified automatic and manual dark themes around charcoal, sage and muted neutral decoration; replaced neon button glow with a soft shadow. Font build and strict TypeScript passed; targeted lint passed. Key light/dark button and muted text contrast ratios range from 5.19 to 8.56. Browser verification underway; local-only checkpoint with no push.
