@@ -916,3 +916,6 @@ fix: bound runtime resources and validate production origins (see Git history fo
 
 feat: explain all workflows and protect private pages (see Git history for hash)
     - Six workflow overview and FAQ; accurate billing disclosures; baseline CSP and private route noindex; robots rules. Lint passed; production build in progress.
+
+feat: add safe local start and stop commands (see Git history for hash)
+    - Windows local launcher pins local PostgreSQL; checks migrations build and health; simulates Fo and disables payments; tracks only its own processes. PowerShell syntax passed; 8 runtime guard tests passed; 139 backend regressions passed before last added guard.

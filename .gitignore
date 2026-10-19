@@ -29,3 +29,5 @@ test-results/
 Thumbs.db
 .vscode/
 .idea/
+.local/
+output/playwright/

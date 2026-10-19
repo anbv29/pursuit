@@ -63,6 +63,13 @@ class Settings(BaseSettings):
     def ai_enabled(self) -> bool:
         return bool(self.anthropic_api_key and self.anthropic_api_key.get_secret_value())
 
+    @field_validator(
+        "anthropic_api_key", "dodo_api_key", "dodo_webhook_key", "fo_access_token", mode="before"
+    )
+    @classmethod
+    def _trim_optional_secrets(cls, value):
+        return value.strip() if isinstance(value, str) else value
+
     @field_validator("database_url", "test_database_url")
     @classmethod
     def _psycopg_driver(cls, v: str) -> str:

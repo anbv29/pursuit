@@ -7,6 +7,12 @@ from app.core.ratelimit import RateLimiter
 pytestmark = pytest.mark.no_database
 
 
+def test_whitespace_does_not_enable_provider_calls():
+    settings = Settings(_env_file=None, anthropic_api_key=" ", DODO_PAYMENTS_API_KEY=" ")
+    assert not settings.ai_enabled
+    assert not settings.dodo_api_key.get_secret_value()
+
+
 def test_rate_limit_capacity_preserves_active_limits(monkeypatch):
     clock = [100.0]
     monkeypatch.setattr("app.core.ratelimit.time.monotonic", lambda: clock[0])
