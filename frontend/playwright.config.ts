@@ -13,6 +13,7 @@ export default defineConfig({
     baseURL: process.env.E2E_BASE_URL ?? "http://localhost:3000",
     trace: "retain-on-failure",
     screenshot: "only-on-failure",
+    reducedMotion: "reduce", // Functional checks stay independent of decorative entrance timing.
   },
   projects: [
     { name: "desktop", use: { ...devices["Desktop Chrome"] } },

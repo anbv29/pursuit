@@ -69,7 +69,7 @@ export default function SettingsPage() {
     }
   });
 
-  const remove = async () => {
+  const remove = useAction(async () => {
     const ok = await confirm({
       title: `Delete “${workspace.name}”?`, danger: true, confirm: "Delete permanently",
       body: "All experiments, evidence, prospects, actions and outcomes in this workspace are deleted for everyone. This can't be undone. Export first if you need a copy.",
@@ -77,12 +77,12 @@ export default function SettingsPage() {
     if (!ok) return;
     try {
       await api(base, { method: "DELETE" });
-      localStorage.removeItem("pursuit.lastWorkspace");
+      try { localStorage.removeItem("pursuit.lastWorkspace"); } catch { /* Workspace is already deleted. */ }
       router.replace("/w");
     } catch (e) {
       toast("error", errorMessage(e));
     }
-  };
+  });
 
   const fo = integ.data?.fo;
   const foTone = fo?.status === "connected" ? "good" : fo?.mode === "demo" ? "demo" : "bad";
@@ -94,7 +94,7 @@ export default function SettingsPage() {
 
       <Card>
         <CardHeader title="Integrations" description="Credentials live on the server only and are never shown here." action={<Button size="sm" variant="secondary" onClick={() => integ.reload()} loading={integ.loading}>Re-check</Button>} />
-        {!integ.data ? <div className="p-5"><Skeleton className="h-24" /></div> : (
+        {integ.error ? <div className="p-5"><Notice tone="bad">{integ.error.message} Use Re-check to retry.</Notice></div> : !integ.data ? <div className="p-5"><Skeleton className="h-24" /></div> : (
           <ul className="divide-y divide-line">
             <li className="flex items-start gap-3 px-5 py-4">
               <PlugZap className="mt-0.5 size-5 text-trail" aria-hidden />
@@ -111,11 +111,12 @@ export default function SettingsPage() {
                 </p>
                 <p className="mt-1 text-xs text-ink-3">Scope used: ask_fo / get_fo_reply only, with one narrowly worded instruction per approved action.</p>
                 <div className="mt-3 flex flex-wrap gap-2">
-                  <Button size="sm" loading={connectFo.pending} onClick={() => connectFo.run()}>
+                  <Button size="sm" disabled={!fo?.oauth_configured} loading={connectFo.pending} onClick={() => connectFo.run()}>
                     {fo?.account_connected ? "Reconnect my Fo account" : "Connect my Fo account"}
                   </Button>
                   {fo?.account_connected && <Button size="sm" variant="secondary" loading={disconnectFo.pending} onClick={() => disconnectFo.run()}>Disconnect</Button>}
                 </div>
+                {!fo?.oauth_configured && <p className="mt-2 text-xs text-ink-3">Fo connection is unavailable in this environment. Simulated actions remain available.</p>}
                 <p className="mt-2 text-xs text-ink-3">Sign in to your own Wajo account. Pursuit refreshes its access automatically; a revoked connection needs sign-in again.</p>
               </div>
             </li>
@@ -138,10 +139,11 @@ export default function SettingsPage() {
 
       <Card>
         <CardHeader title="Members" description="Members can see everything in this workspace. Contact details are owner-only." />
+        {members.error && <div className="p-4"><Notice tone="bad">{members.error.message} <Button size="sm" variant="secondary" onClick={() => members.reload()}>Retry members</Button></Notice></div>}
         <ul className="divide-y divide-line">
           {members.data?.map((m) => (
             <li key={m.user_id} className="flex items-center justify-between px-5 py-3 text-sm">
-              <span><span className="font-medium">{m.name}</span> <span className="text-ink-3">{m.email}</span></span>
+              <span className="min-w-0 break-words pr-3"><span className="font-medium">{m.name}</span> <span className="text-ink-3">{m.email}</span></span>
               <div className="flex shrink-0 items-center gap-2"><Badge tone={m.role === "owner" ? "trail" : "neutral"}>{m.role}</Badge>
                 {isOwner && m.role !== "owner" && <Button size="sm" variant="ghost" loading={removeMember.pending} onClick={() => removeMember.run(m)}>Remove member</Button>}
               </div>
@@ -166,7 +168,7 @@ export default function SettingsPage() {
           </div>
           <div className="flex flex-wrap items-center justify-between gap-3 border-t border-line px-5 py-4">
             <p className="text-sm text-ink-2">Permanently delete this workspace and all its data.</p>
-            <Button variant="danger" onClick={remove}><Trash2 className="size-3.5" /> Delete workspace</Button>
+            <Button variant="danger" loading={remove.pending} onClick={() => remove.run()}><Trash2 className="size-3.5" /> Delete workspace</Button>
           </div>
         </Card>
       )}

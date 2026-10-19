@@ -29,7 +29,7 @@ export default function Dashboard() {
   const [filter, setFilter] = useState<Filter>("all");
   const firstName = user?.name.split(" ")[0] ?? "there";
 
-  useEffect(() => localStorage.setItem("pursuit.lastWorkspace", workspace.id), [workspace.id]);
+  useEffect(() => { try { localStorage.setItem("pursuit.lastWorkspace", workspace.id); } catch { /* Optional preference. */ } }, [workspace.id]);
 
   if (error) {
     return (
@@ -68,7 +68,7 @@ export default function Dashboard() {
                 <span className="block truncate text-xs text-ink-3">{r.company_url}</span>
               </span>
               <Badge tone={r.status === "SUCCEEDED" ? "good" : r.status === "FAILED" ? "bad" : "neutral"}>
-                {r.status === "SUCCEEDED" ? "Ready" : r.status === "FAILED" ? "Failed" : "Generating…"}
+                {r.status === "SUCCEEDED" ? "Ready" : r.status === "FAILED" ? "Failed" : r.status === "CANCELLED" ? "Cancelled" : "Generating…"}
               </Badge>
             </Link>
           </li>
@@ -93,7 +93,7 @@ export default function Dashboard() {
 
   const shown = data.experiments.filter((e) => filter === "all" || (filter === "decided" ? !!e.latest_decision : !e.latest_decision));
   const stats = [
-    { label: "Active experiments", value: data.experiments.length, icon: FlaskConical },
+    { label: "Saved experiments", value: data.experiments.length, icon: FlaskConical },
     { label: "Waiting on you", value: data.pending_actions.length, icon: Inbox },
     { label: "Company reports", value: reports.data?.length ?? 0, icon: FileText },
   ];
@@ -101,7 +101,7 @@ export default function Dashboard() {
   return (
     <div className="mx-auto max-w-6xl space-y-6">
       <PageHeader title={`Hi ${firstName}`}
-        description={`${data.experiments.length} active experiment${data.experiments.length === 1 ? "" : "s"}${data.pending_actions.length > 0 ? ` · ${data.pending_actions.length} waiting on you` : ""}`}
+        description={`${data.experiments.length} saved experiment${data.experiments.length === 1 ? "" : "s"}${data.pending_actions.length > 0 ? ` · ${data.pending_actions.length} waiting on you` : ""}`}
         action={<>{analyzeBtn}{newBtn}</>} />
 
       <ul className="grid grid-cols-3 gap-2 sm:gap-3">

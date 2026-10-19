@@ -15,6 +15,7 @@ test("website + description -> full sourced report -> tracked experiment", async
   await v("Work email").fill(`report-${Date.now()}@example.com`);
   await v("Password").fill("report-tester-pass");
   await page.getByRole("button", { name: "Create account" }).click();
+  await page.getByRole("button", { name: "Continue", exact: true }).click();
   await page.getByText("Analyze my company").click();
   await page.getByRole("button", { name: "Create workspace" }).click();
   await expect(page.getByRole("heading", { name: "Analyze your company" })).toBeVisible({ timeout: 60_000 });

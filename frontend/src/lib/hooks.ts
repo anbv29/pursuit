@@ -10,9 +10,8 @@ const toApiError = (e: unknown) => (e instanceof ApiError ? e : new ApiError(0, 
  * `refreshKey` refetches when it changes (e.g. a sibling panel saved something).
  */
 export function useApi<T>(path: string | null, refreshKey: unknown = 0) {
-  const [data, setData] = useState<T | null>(null);
-  const [error, setError] = useState<ApiError | null>(null);
-  const [loading, setLoading] = useState(Boolean(path));
+  type Result = { path: string; data: T | null; error: ApiError | null; loading: boolean };
+  const [result, setResult] = useState<Result | null>(null);
   const seq = useRef(0);
 
   useEffect(() => {
@@ -23,32 +22,32 @@ export function useApi<T>(path: string | null, refreshKey: unknown = 0) {
     api<T>(path, { signal: controller.signal })
       .then((d) => {
         if (!active || mine !== seq.current) return;
-        setData(d);
-        setError(null);
+        setResult({ path, data: d, error: null, loading: false });
       })
-      .catch((e) => active && mine === seq.current && setError(toApiError(e)))
-      .finally(() => active && mine === seq.current && setLoading(false));
+      .catch((e) => {
+        if (active && mine === seq.current) setResult({ path, data: null, error: toApiError(e), loading: false });
+      });
     return () => { active = false; controller.abort(); };
   }, [path, refreshKey]);
 
   const reload = useCallback(async () => {
     if (!path) return;
     const mine = ++seq.current;
-    setLoading(true);
+    setResult((old) => ({ path, data: old?.path === path ? old.data : null, error: null, loading: true }));
     try {
       const d = await api<T>(path);
       if (mine === seq.current) {
-        setData(d);
-        setError(null);
+        setResult({ path, data: d, error: null, loading: false });
       }
     } catch (e) {
-      if (mine === seq.current) setError(toApiError(e));
-    } finally {
-      if (mine === seq.current) setLoading(false);
+      if (mine === seq.current) setResult({ path, data: null, error: toApiError(e), loading: false });
     }
   }, [path]);
 
-  return { data, error, loading, reload, setData };
+  // Never render another workspace's cached result while the new path loads.
+  const current = result?.path === path ? result : null;
+  return { data: current?.data ?? null, error: current?.error ?? null,
+    loading: Boolean(path) && (!current || current.loading), reload };
 }
 
 /** Wrap a mutation so it can't be double-submitted and exposes a pending flag. */

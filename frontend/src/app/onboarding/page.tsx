@@ -24,7 +24,7 @@ function Onboarding() {
     setError(null);
     try {
       const ws = await api<Workspace>("/workspaces", { json: { name: name.trim(), with_demo_data: demo } });
-      localStorage.setItem("pursuit.lastWorkspace", ws.id);
+      try { localStorage.setItem("pursuit.lastWorkspace", ws.id); } catch { /* Storage is optional. */ }
       router.replace(demo ? `/w/${ws.id}` : `/w/${ws.id}/reports/new`);
     } catch (e) {
       setError(errorMessage(e));

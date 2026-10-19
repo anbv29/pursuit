@@ -51,7 +51,7 @@ export default function NewReportPage() {
     <div className="mx-auto max-w-2xl py-4">
       <div className="text-center">
         <span className="inline-flex items-center gap-1.5 rounded-full border border-[var(--glass-border)] bg-surface/70 px-3 py-1 text-xs font-medium text-ink-2">
-          <Sparkles className="size-3.5 text-trail" aria-hidden /> Full report in about 3 minutes
+          <Sparkles className="size-3.5 text-trail" aria-hidden /> Source-backed company research
         </span>
         <h1 className="mt-4 font-display text-[32px] font-bold leading-tight tracking-tight sm:text-4xl">Analyze your company</h1>
         <p className="mx-auto mt-2 max-w-lg text-ink-2">

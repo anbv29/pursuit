@@ -18,9 +18,11 @@ test("founder runs a full experiment loop and an outsider is locked out", async 
 
   // Workspace
   await page.getByLabel("Workspace name", { exact: true }).filter({ visible: true }).fill("Clinic Startup");
+  await page.getByRole("button", { name: "Continue", exact: true }).click();
   await page.getByRole("button", { name: "Create workspace" }).click();
   // Onboarding now opens the company report form; manual experiments are one click away.
   await expect(page).toHaveURL(/reports\/new/);
+  await page.getByLabel("Reading style").selectOption("advanced");
   await page.getByRole("link", { name: "New experiment" }).filter({ visible: true }).first().click();
   await expect(page).toHaveURL(/experiments\/new/);
 

@@ -62,7 +62,7 @@ try {
     $started += $api
     $web = Start-Process (Get-Command node.exe).Source -ArgumentList 'node_modules/next/dist/bin/next','start','--hostname','127.0.0.1','--port','3000' -WorkingDirectory (Join-Path $root 'frontend') -WindowStyle Hidden -PassThru -RedirectStandardOutput (Join-Path $runtime 'frontend.log') -RedirectStandardError (Join-Path $runtime 'frontend-error.log')
     $started += $web
-    $started | ForEach-Object { @{ id = $_.Id; started = $_.StartTime.ToUniversalTime().ToString('o') } } | ConvertTo-Json | Set-Content (Join-Path $runtime 'processes.json')
+    $started | ForEach-Object { @{ id = $_.Id; start_ticks = $_.StartTime.ToUniversalTime().Ticks } } | ConvertTo-Json | Set-Content (Join-Path $runtime 'processes.json')
     $healthy = $false
     for ($i = 0; $i -lt 45; $i++) {
         try {

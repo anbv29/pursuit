@@ -925,3 +925,6 @@ fix: serialize login with account changes (see Git history for hash)
 
 docs: record local scope and current security findings (see Git history for hash)
     - Current 45 point security matrix with evidence and explicit FAIL UNKNOWN findings; local scope and all plan allowances; live release prerequisites. Runtime audits clean; development advisories recorded; browser validation ongoing.
+
+fix: harden workspace loading and local lifecycle (see Git history for hash)
+    - Key API results by resource path; settings retry and safe storage; truthful dashboard states; current onboarding tests; loopback database binding; numeric process identity checks. Production build TypeScript and lint passed; 141 backend tests passed.

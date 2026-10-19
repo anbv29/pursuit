@@ -7,8 +7,9 @@ test("demo workspace screens are labelled and responsive", async ({ page }, info
   await page.goto("/signup");
   await page.getByLabel("Name", { exact: true }).filter({ visible: true }).fill("Demo Viewer");
   await page.getByLabel("Work email").filter({ visible: true }).fill(email);
-  await page.getByLabel("Password").filter({ visible: true }).fill("demo-viewer-pass");
+  await page.getByLabel("Password", { exact: true }).filter({ visible: true }).fill("demo-viewer-pass");
   await page.getByRole("button", { name: "Create account" }).click();
+  await page.getByRole("button", { name: "Continue", exact: true }).click();
   await page.getByText("Explore with demo data").click();
   await page.getByRole("button", { name: "Create demo workspace" }).click();
   await expect(page.getByText("Demo workspace").first()).toBeVisible();
@@ -20,7 +21,7 @@ test("demo workspace screens are labelled and responsive", async ({ page }, info
     await page.screenshot({ path: `test-results/screens/${info.project.name}-${name}.png`, fullPage: true });
   };
 
-  await expect(page.getByRole("heading", { name: "Active experiments" })).toBeVisible();
+  await expect(page.getByRole("heading", { name: "Experiments", exact: true })).toBeVisible();
   await shot("dashboard");
 
   await page.getByRole("link", { name: /Clinic claims reconciliation/ }).first().click();

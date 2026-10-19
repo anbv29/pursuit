@@ -66,3 +66,26 @@ test("public pricing failure can be retried without reloading", async ({ page })
   await expect(page.getByRole("heading", { name: "Team", exact: true })).toBeVisible();
   expect(attempts).toBe(2);
 });
+
+test("blocked browser storage does not duplicate or prevent workspace creation", async ({ page }) => {
+  const errors: string[] = [];
+  page.on("pageerror", (error) => errors.push(error.message));
+  await page.addInitScript(() => {
+    for (const method of ["getItem", "setItem", "removeItem"]) {
+      Object.defineProperty(Storage.prototype, method, { value() { throw new DOMException("Storage blocked", "SecurityError"); } });
+    }
+  });
+  await page.goto("/signup");
+  await page.getByLabel("Name", { exact: true }).fill("Storage test");
+  await page.getByLabel("Work email", { exact: true }).fill(`storage-${Date.now()}@example.com`);
+  await page.getByLabel("Password", { exact: true }).fill("storage-test-password");
+  await page.getByRole("button", { name: "Create account" }).click();
+  await page.getByRole("button", { name: "Continue", exact: true }).click();
+  await page.getByRole("button", { name: "Create workspace", exact: true }).click();
+  await expect(page).toHaveURL(/reports\/new/);
+  const workspaces = await (await page.request.get("/api/workspaces")).json();
+  expect(workspaces).toHaveLength(1);
+  await page.goto(`/w/${workspaces[0].id}`);
+  await expect(page.getByRole("heading", { name: "Hi Storage", exact: true })).toBeVisible();
+  expect(errors).toEqual([]);
+});
