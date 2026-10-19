@@ -11,6 +11,7 @@ type Plan = { id: string; name: string; price_cents: number; interval: string; r
 type Billing = { plan: string; seats: number; seats_used: number; research_remaining: number; questions_remaining: number;
   configured: boolean; environment: string; status: string; period_end: string | null; cancel_at_period_end: boolean;
   suspended: boolean; portal_available: boolean; purchasable: Record<string, boolean>;
+  complimentary?: boolean; allowance_resets_at?: string | null;
   orders: { id: string; plan: string; status: string; created_at: string }[] };
 
 export function BillingPanel() {
@@ -54,6 +55,10 @@ export function BillingPanel() {
     {!b.configured && <Notice>Payments are not configured yet. You can compare plans, but checkout is unavailable and no payment will be taken.</Notice>}
     {workspace.is_demo && <Notice tone="demo">This is a demo workspace. Create a company workspace before buying a plan.</Notice>}
     {b.suspended && <Notice tone="bad">Paid access is paused for payment review. Contact support; your saved data remains accessible.</Notice>}
+    {b.complimentary && <Notice tone="trail">Complimentary {b.plan === "team" ? "Team" : "Founder"} access is active. No subscription was purchased and no recurring charge is scheduled.
+      {b.allowance_resets_at && <> Your included allowances reset on {new Date(b.allowance_resets_at).toLocaleDateString()} (UTC calendar month).</>}
+      {b.portal_available && <> Any separately purchased subscription still needs to be managed in billing.</>}
+    </Notice>}
     <Card className="space-y-4 p-5">
       <div className="flex flex-wrap items-center justify-between gap-3"><h2 className="font-semibold">Your workspace allowance</h2><span className="text-sm capitalize">{b.plan === "free" ? "Explore" : b.plan} · {b.status}</span></div>
       <dl className="grid grid-cols-3 gap-3 text-sm">

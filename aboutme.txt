@@ -937,3 +937,6 @@ test: verify local release and add browser CI (see Git history for hash)
 
 feat: separate complimentary workspace access (see Git history for hash)
 Added operator-only complimentary access model, migration and monthly allowance helpers; no fake subscriptions or payment records. Added read-only launch inspection. Ruff passed; migration/billing regression running.
+
+feat: enforce complimentary Team allowances (see Git history for hash)
+Integrated operator grants with seat and feature checks, monthly credit ledger, idempotent commands and billing UI disclosure. No provider subscription is created. Eight focused complimentary/billing tests passed after fixing operator audit attribution.

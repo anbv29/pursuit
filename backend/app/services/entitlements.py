@@ -9,11 +9,15 @@ from app.core.config import get_settings
 from app.core.db import utcnow
 from app.core.errors import PaymentRequired
 from app.models import BillingAccount, BillingUse, CreditGrant, Workspace
+from app.services import complimentary
 from app.services.plans import PLANS
 
 
 def plan(db, workspace_id):
     account = db.get(BillingAccount, workspace_id)
+    if account and account.suspended:
+        return "free"
+    paid = "free"
     if (
         account
         and account.environment == get_settings().dodo_environment
@@ -22,8 +26,10 @@ def plan(db, workspace_id):
         and account.period_end
         and account.period_end > utcnow()
     ):
-        return account.plan if account.plan in ("founder", "team") else "free"
-    return "free"
+        paid = account.plan if account.plan in ("founder", "team") else "free"
+    access = complimentary.active(db, workspace_id)
+    tiers = ["free", "founder", "team"]
+    return max([paid, access.plan if access else "free"], key=tiers.index)
 
 
 def eligible_grants(db, workspace_id):
@@ -41,11 +47,16 @@ def eligible_grants(db, workspace_id):
         .order_by(CreditGrant.expires_at.asc().nulls_last(), CreditGrant.created_at)
     )
     current = plan(db, workspace_id)
+    access = complimentary.active(db, workspace_id)
+    comp_key = complimentary.period(access)[0] if access else None
     return [
         g
         for g in rows
-        if g.subscription_id is None
-        or (current != "free" and account and g.subscription_id == account.subscription_id)
+        if (not g.source_key.startswith("complimentary:") or g.source_key == comp_key)
+        and (
+            g.subscription_id is None
+            or (current != "free" and account and g.subscription_id == account.subscription_id)
+        )
     ]
 
 
@@ -67,6 +78,9 @@ def require_feature(db, workspace_id):
 
 def reserve(db, workspace_id, kind, resource_key=None):
     db.execute(select(Workspace.id).where(Workspace.id == workspace_id).with_for_update())
+    account = db.get(BillingAccount, workspace_id)
+    if not account or not account.suspended:
+        complimentary.provision(db, workspace_id)
     for grant in eligible_grants(db, workspace_id):
         if remaining(db, grant, kind) > 0:
             row = BillingUse(
@@ -115,10 +129,15 @@ def metered(db, workspace_id, kind):
 def summary(db, workspace_id):
     current = plan(db, workspace_id)
     grants = eligible_grants(db, workspace_id)
+    account = db.get(BillingAccount, workspace_id)
+    access = complimentary.active(db, workspace_id) if not account or not account.suspended else None
+    research, questions = complimentary.unprovisioned_allowance(db, workspace_id) if access else (0, 0)
     return {
         "plan": current if current != "free" else ("single" if grants else "free"),
         "seats": PLANS[current]["seats"],
-        "research_remaining": sum(remaining(db, g, "research") for g in grants),
-        "questions_remaining": sum(remaining(db, g, "question") for g in grants),
+        "research_remaining": research + sum(remaining(db, g, "research") for g in grants),
+        "questions_remaining": questions + sum(remaining(db, g, "question") for g in grants),
         "advanced_research": current in ("founder", "team"),
+        "complimentary": bool(access),
+        "allowance_resets_at": complimentary.period(access)[1] if access else None,
     }

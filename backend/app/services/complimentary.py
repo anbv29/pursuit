@@ -30,7 +30,11 @@ def provision(db, workspace_id):
     if not access:
         return
     key, end = period(access)
-    if db.scalar(select(CreditGrant.id).where(CreditGrant.source_key == key)):
+    existing = db.scalar(select(CreditGrant).where(CreditGrant.source_key == key))
+    if existing:
+        existing.plan = access.plan
+        existing.reports = PLANS[access.plan]["reports"]
+        existing.questions = PLANS[access.plan]["questions"]
         return
     spec = PLANS[access.plan]
     db.add(
