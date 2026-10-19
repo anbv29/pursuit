@@ -24,5 +24,28 @@ for (const width of [390, 820, 1440]) {
     expect(Math.abs(after!.height - before!.height), "preview height changed").toBeLessThanOrEqual(1);
     expect(Math.abs(bandAfter!.y - bandBefore!.y), "content shifted below preview").toBeLessThanOrEqual(1);
     expect(await page.evaluate(() => document.documentElement.scrollWidth - innerWidth)).toBeLessThanOrEqual(1);
+    await page.screenshot({ path: `test-results/landing-reference-${width}.png`, fullPage: true });
   });
 }
+
+test("signed-in mobile navigation fits and dark report tabs remain usable", async ({ page }) => {
+  await page.setViewportSize({ width: 375, height: 812 });
+  await page.addInitScript(() => {
+    sessionStorage.setItem("pursuit.loaderDone", "1");
+    localStorage.setItem("pursuit.theme", "dark");
+  });
+  await page.route("**/api/auth/me", route => route.fulfill({ json: {
+    user: { id: "local-ui-user", name: "A founder with a very long name", email: "founder@example.com" }, csrf_token: "local-ui-test",
+  } }));
+  await page.goto("/");
+  const workspace = page.getByRole("link", { name: "Open workspace", exact: true });
+  await expect(workspace).toBeVisible();
+  const bounds = await workspace.boundingBox();
+  expect(bounds!.x + bounds!.width).toBeLessThanOrEqual(375);
+  await expect(page.locator("html")).toHaveAttribute("data-theme", "dark");
+  const preview = page.getByRole("region", { name: "Example of Pursuit at work" });
+  await preview.getByRole("tab", { name: "Next test", exact: true }).click();
+  await expect(preview.getByRole("heading", { name: "Trade interest for a concrete commitment." })).toBeVisible();
+  expect(await page.evaluate(() => document.documentElement.scrollWidth - innerWidth)).toBeLessThanOrEqual(1);
+  await page.screenshot({ path: "test-results/landing-reference-dark-mobile.png", fullPage: true });
+});

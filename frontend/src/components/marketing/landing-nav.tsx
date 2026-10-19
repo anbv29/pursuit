@@ -22,7 +22,7 @@ export function LandingNav() {
           <ThemeToggle />
           <Link href="/#pricing" className="hidden text-sm font-medium text-ink-2 hover:text-ink sm:block lg:hidden">Pricing</Link>
           {ready && user ? (
-            <><Link href="/account" className={buttonStyles("ghost", "sm")}>Account</Link><Link href="/w" className={buttonStyles("primary", "sm")}>Open workspace</Link></>
+            <><Link href="/account" className={buttonStyles("ghost", "sm", "hidden sm:inline-flex")}>Account</Link><Link href="/w" className={buttonStyles("primary", "sm")}>Open workspace</Link></>
           ) : (
             <>
               <Link href="/login" className={buttonStyles("ghost", "sm")}>Sign in</Link>
