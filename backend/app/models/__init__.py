@@ -16,6 +16,7 @@ from app.models.billing import (  # noqa: F401
     CheckoutOrder,
     CreditGrant,
 )
+from app.models.complimentary import ComplimentaryAccess  # noqa: F401
 from app.models.connection import FoAuthorization, FoConnection  # noqa: F401
 from app.models.experiment import (  # noqa: F401
     Evidence,

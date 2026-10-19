@@ -934,3 +934,6 @@ chore: document reproducible setup and scan secrets (see Git history for hash)
 
 test: verify local release and add browser CI (see Git history for hash)
     - Final 141 backend tests and 20 browser checks passed; 1 live AI test explicitly skipped. Build lint types migration recovery runtime audits and scoped secret scan passed. CI browser job YAML validated but not run remotely. Production prerequisites and checkpoint hashes recorded.
+
+feat: separate complimentary workspace access (see Git history for hash)
+Added operator-only complimentary access model, migration and monthly allowance helpers; no fake subscriptions or payment records. Added read-only launch inspection. Ruff passed; migration/billing regression running.
