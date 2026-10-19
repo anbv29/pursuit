@@ -79,6 +79,7 @@ def verify_product(product, slug):
         or product.is_recurring != recurring
         or price.currency != "USD"
         or price.price != spec["price_cents"]
+        or getattr(price, "tax_inclusive", False) is not True
         or getattr(price, "discount_bps", 0)
         or getattr(price, "discount", 0)
         or getattr(price, "pay_what_you_want", False)

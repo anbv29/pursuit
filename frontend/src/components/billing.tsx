@@ -89,7 +89,7 @@ export function BillingPanel() {
     <div className="space-y-2 text-sm text-ink-2">
       <p>One research credit covers one full report, selected-section refresh, or company discovery search—even if no matching companies are found. Refresh and discovery need Founder or Team.</p>
       <p>One AI answer covers a report question or optional AI-assisted experiment recommendation. First-week checklists and rule-based analysis use no credits.</p>
-      <p>Prices are USD, per workspace, plus applicable taxes shown at checkout. Monthly plans renew automatically; unused monthly allowances expire at period end. Single Report credits do not expire. No automatic overage charges.</p>
+      <p>Prices are in USD, per workspace, and include applicable taxes. No extra GST is added at checkout. Monthly plans renew automatically; unused monthly allowances expire at period end. Single Report credits do not expire. No automatic overage charges.</p>
       <p>Failed jobs release their customer credit. Included AI has resource and cost safety limits. Fo and email-provider charges are separate; live action execution is not included in these prices.</p>
     </div>
     {error && <Notice tone="bad">{error}</Notice>}

@@ -26,6 +26,7 @@ for (const width of [1280, 390]) {
     });
     await page.goto("/w/workspace/billing?payment=success");
     await expect(page.getByRole("heading", { name: "Plans & billing" })).toBeVisible();
+    await expect(page.getByText(/No extra GST is added at checkout/)).toBeVisible();
     await expect(page.getByText("Test payments", { exact: true })).toBeVisible();
     await expect(page.getByText(/Payments are not configured yet/)).toBeVisible();
     await expect(page.getByRole("button", { name: "Buy one report" })).toBeDisabled();

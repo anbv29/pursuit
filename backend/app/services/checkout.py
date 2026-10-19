@@ -69,7 +69,8 @@ def start(db, workspace_id, user, slug):
                 "customer": {"customer_id": account.customer_id},
                 "metadata": {"pursuit_order_id": str(order.id)},
                 "return_url": s.public_app_url.rstrip("/") + f"/w/{workspace_id}/billing",
-                "feature_flags": {"allow_discount_code": False},
+                "billing_currency": "USD",
+                "feature_flags": {"allow_discount_code": False, "allow_currency_selection": False},
             }
             if slug != "single":
                 kwargs["subscription_data"] = {"trial_period_days": 0}

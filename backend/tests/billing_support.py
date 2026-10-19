@@ -22,6 +22,7 @@ class Provider:
         self.payments_data, self.subscriptions_data, self.refunds_data = {}, {}, {}
         self.sessions = []
         self.bad_price = False
+        self.tax_inclusive = True
         self.products = NS(retrieve=self.product)
         self.customers = NS(
             create=lambda **kw: NS(customer_id="cus-synthetic"),
@@ -50,6 +51,7 @@ class Provider:
             pricing_mode=None,
             price=NS(
                 currency="USD",
+                tax_inclusive=self.tax_inclusive,
                 price=1 if self.bad_price else amount,
                 discount=0,
                 discount_bps=0,

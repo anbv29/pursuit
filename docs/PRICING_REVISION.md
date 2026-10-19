@@ -7,7 +7,7 @@
 | Founder | 11.99/month | 3/cycle | 50/cycle | 1 |
 | Team | 34.99/month | 10/cycle | 200/cycle | 5 |
 
-Prices exclude applicable taxes. Research credits still cover a report, refresh
+Current prices include applicable taxes (superseding the initial tax-exclusive launch below). Research credits still cover a report, refresh
 or discovery, subject to the existing feature gates. No model/provider migration
 was included, and Fo code and credentials were not changed.
 
@@ -42,3 +42,21 @@ was included, and Fo code and credentials were not changed.
   subsequently succeeded. No provider write was retried after an uncertain result.
 
 Screenshots remain in ignored `.local/`; no credentials were committed.
+
+## Tax-inclusive correction — 2026-10-19
+
+All three live products now have tax_inclusive=true. Checkout prices remain
+USD 4.99 once, USD 11.99/month and USD 34.99/month, including applicable tax.
+New sessions request USD and disable currency selection to match the website.
+The backend rejects a tax-exclusive product before creating a checkout.
+Existing subscription contracts were not migrated, and Fo was not changed.
+
+Live unconfirmed checkout pages verified with India GST:
+- Single: subtotal 4.23 + GST 0.76 = total USD 4.99.
+- Founder: subtotal 10.16 + GST 1.83 = total USD 11.99.
+- Team: subtotal 29.65 + GST 5.34 = total USD 34.99.
+A previously created Founder session also recalculated with tax included.
+No payment, subscription, customer contact details or card details submitted.
+Tax is included in merchant proceeds, rather than charged above these prices.
+Bank currency conversion charges remain outside Pursuit's control.
+Local build, browser tests and deployed wording verification pending.

@@ -1,6 +1,7 @@
 # ruff: noqa: F811
 from types import SimpleNamespace as NS
 
+import pytest
 from sqlalchemy import func, select
 
 from app.core.db import new_session
@@ -35,6 +36,8 @@ def start(api, plan="single"):
 def test_checkout_never_unlocks_and_uses_server_catalog(api, other, billing_provider):
     ws, path, order = start(api)
     assert billing_provider.sessions[0]["product_cart"] == [{"product_id": "pdt-single", "quantity": 1}]
+    assert billing_provider.sessions[0]["billing_currency"] == "USD"
+    assert billing_provider.sessions[0]["feature_flags"]["allow_currency_selection"] is False
     assert api.get(path).json()["research_remaining"] == 0
     assert other.get(path).status_code == 404
     assert other.post(path + "/checkout", {"plan": "team"}).status_code == 404
@@ -106,3 +109,14 @@ def test_unconfigured_billing_and_demo_workspace_do_not_simulate_purchases(api):
     demo = api.post("/api/workspaces", {"name": "Demo", "with_demo_data": True}).json()["id"]
     assert api.post(f"/api/workspaces/{demo}/billing/checkout", {"plan": "team"}).status_code == 400
     assert api.get(f"/api/workspaces/{demo}/reports").json()[0]["company_name"].endswith("synthetic example")
+
+
+@pytest.mark.parametrize("plan", ["single", "founder", "team"])
+def test_tax_exclusive_product_cannot_open_checkout(api, billing_provider, plan):
+    api.signup()
+    ws = api.workspace(paid=False)
+    billing_provider.tax_inclusive = False
+    response = api.post(f"/api/workspaces/{ws}/billing/checkout", {"plan": plan})
+    assert response.status_code == 400
+    assert billing_provider.sessions == []
+    assert api.get(f"/api/workspaces/{ws}/billing").json()["research_remaining"] == 0
