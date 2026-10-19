@@ -7,10 +7,13 @@ import { cx } from "./core";
 export type TabItem = { id: string; label: ReactNode };
 
 /** Tabs with roving focus (arrow keys move between tabs, as the ARIA pattern expects). */
-export function Tabs({ tabs, value, onChange, label, className }: {
+export function Tabs({ tabs, value, onChange, label, className, idPrefix, panelId }: {
   tabs: TabItem[]; value: string; onChange: (id: string) => void; label: string; className?: string;
+  /** Set both to link tabs to a tabpanel (aria-controls / aria-labelledby). */
+  idPrefix?: string; panelId?: string;
 }) {
-  const base = useId();
+  const generated = useId();
+  const base = idPrefix ?? generated;
   const refs = useRef<(HTMLButtonElement | null)[]>([]);
   const onKey = (e: React.KeyboardEvent, i: number) => {
     let n = -1;
@@ -31,7 +34,7 @@ export function Tabs({ tabs, value, onChange, label, className }: {
         const active = t.id === value;
         return (
           <button key={t.id} ref={(el) => { refs.current[i] = el; }} role="tab" id={`${base}-${t.id}`} type="button"
-            aria-selected={active} tabIndex={active ? 0 : -1}
+            aria-selected={active} aria-controls={panelId} tabIndex={active ? 0 : -1}
             onClick={() => onChange(t.id)} onKeyDown={(e) => onKey(e, i)}
             className={cx("press whitespace-nowrap rounded-xl px-3.5 py-2 text-sm transition-[background-color,color,box-shadow] duration-200",
               active ? "bg-surface font-semibold text-ink shadow-[0_2px_10px_-4px_var(--shadow)]" : "text-ink-3 hover:text-ink")}>

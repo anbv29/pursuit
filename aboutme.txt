@@ -848,7 +848,7 @@ Free preview hosting checkpoint (see git log for hash):
     - tsc + eslint clean
 
 ----------------------------------------------------------------------
-#132  (hash recorded in next commit)  feat(ui): dashboard, reports and staged processing feed
+#132  50aaafd  feat(ui): dashboard, reports and staged processing feed
     - Frontend only; all API calls, polling, job controls and redirects unchanged
     - Dashboard: page header, stat tiles from real data (active experiments, waiting on you, reports), experiment cards with stage bar and verdict pill, client-side filter tabs (all / no verdict / has a verdict), glass empty state, error state with retry (uses the hook's existing reload), content-shaped skeletons
     - Reports list: page header, row skeletons, error with retry, glass empty state, status pills
@@ -856,4 +856,15 @@ Free preview hosting checkpoint (see git log for hash):
     - Report detail: generating state is a staged processing feed (components/processing-feed.tsx) - segmented progress, scrambled label on the active step, count-up of the source count parsed from the server's own progress line, real elapsed time, content-shaped skeleton; nothing simulated. Success toast when a watched report finishes. Glass table of contents, page header, restyled experiment rows and disclosure panels, failure/cancelled card with resume + new report
     - ScrambleText and CountUp respect prefers-reduced-motion and expose the real text to screen readers
     - buttonStyles() helper so button-like links match Button exactly
+    - tsc + eslint clean
+
+----------------------------------------------------------------------
+#133  (hash recorded in next commit)  feat(ui): glass marketing page with live demo, walkthrough and pricing
+    - Frontend only. app/page.tsx is now a server component; only the nav, hero CTA, hero demo and walkthrough are client islands (less JS on the public page)
+    - Hero: 'Say who you want to meet. Pursuit books the call.' with an illustrative demo (components/marketing/hero-demo.tsx) that plays the staged feed - scrambled active step, segmented progress, count-up, skeletons, then example matches with 'why they fit' and a draft waiting for approval; loops; static finished state under reduced motion; labelled 'Example'
+    - Tabbed 'How it works' (components/marketing/how-it-works.tsx) with tab/tabpanel wiring
+    - Trust band of product commitments (sources shown, nothing sent without approval, demo labelled, export/delete) - no logos, testimonials or statistics
+    - One pricing card mirroring the real catalogue in backend/app/services/plans.py (Founder 9/month: 3 reports, 50 questions; single report 5; Team 9 for five)
+    - All demo content static in lib/ui-demo/demo-data.ts
+    - Tabs gained idPrefix/panelId for aria-controls/labelledby
     - tsc + eslint clean
