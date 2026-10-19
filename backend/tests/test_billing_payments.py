@@ -8,6 +8,21 @@ from app.models import BillingEvent, CheckoutOrder, CreditGrant
 from tests.billing_support import billing_provider, signed_event  # noqa: F401
 
 
+def test_public_catalog_has_launch_prices_and_original_allowances(api):
+    response = api.get("/api/plans")
+    assert response.status_code == 200
+    plans = {p["id"]: p for p in response.json()}
+    assert {
+        key: (p["price_cents"], p["interval"], p["reports"], p["questions"], p["seats"])
+        for key, p in plans.items()
+    } == {
+        "free": (0, "free", 0, 0, 1),
+        "single": (499, "once", 1, 10, 1),
+        "founder": (1199, "month", 3, 50, 1),
+        "team": (3499, "month", 10, 200, 5),
+    }
+
+
 def start(api, plan="single"):
     api.signup()
     ws = api.workspace(paid=False)

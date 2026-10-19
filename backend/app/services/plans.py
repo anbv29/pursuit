@@ -11,7 +11,7 @@ PLANS = {
     },
     "single": {
         "name": "Single Report",
-        "price_cents": 1500,
+        "price_cents": 499,
         "interval": "once",
         "reports": 1,
         "questions": 10,
@@ -19,7 +19,7 @@ PLANS = {
     },
     "founder": {
         "name": "Founder",
-        "price_cents": 2900,
+        "price_cents": 1199,
         "interval": "month",
         "reports": 3,
         "questions": 50,
@@ -27,7 +27,7 @@ PLANS = {
     },
     "team": {
         "name": "Team",
-        "price_cents": 7900,
+        "price_cents": 3499,
         "interval": "month",
         "reports": 10,
         "questions": 200,
