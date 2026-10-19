@@ -17,33 +17,33 @@ export default function Home() {
 
       <main className="mx-auto max-w-6xl px-4 sm:px-6">
         {/* Hero */}
-        <section className="grid items-center gap-10 pb-16 pt-12 md:pt-20 lg:grid-cols-[1.05fr_1fr] lg:gap-12">
-          <div className="enter-rise">
-            <p className="mb-5 inline-flex items-center gap-2 rounded-full border border-[var(--glass-border)] bg-surface/70 px-3 py-1 text-[13px] font-medium text-ink-2">
+        <section className="grid items-start gap-10 pb-14 pt-10 sm:pt-14 lg:grid-cols-[1.05fr_1fr] lg:gap-12">
+          <div className="enter-rise min-w-0 lg:pt-5">
+            <p className="mb-5 inline-flex items-center gap-2 text-[12px] font-semibold tracking-[0.08em] text-ink-3">
               <span className="size-1.5 rounded-full bg-accent" aria-hidden /> Research and validation for founders
             </p>
-            <h1 className="font-display text-[48px] font-normal leading-[1.04] tracking-[-0.025em] text-ink sm:text-6xl lg:text-[76px]">
+            <h1 className="font-display text-[42px] font-semibold leading-[1.08] tracking-[-0.055em] text-ink sm:text-[54px] xl:text-[58px]">
               Know what to test next. <span className="block text-trail">Build on evidence.</span>
             </h1>
-            <p className="mt-6 max-w-xl text-lg leading-relaxed text-ink-2">
+            <p className="mt-6 max-w-lg text-[17px] leading-7 text-ink-2">
               Start with your website and a description of your business. Pursuit helps you research customers,
               competitors, pricing and positioning, then turn the findings into experiments you can measure.
             </p>
             <div className="mt-8"><HeroCta /></div>
           </div>
-          <div className="enter-rise lg:pl-4" style={{ "--i": 2 } as React.CSSProperties}>
+          <div className="enter-rise min-w-0" style={{ "--i": 2 } as React.CSSProperties}>
             <HeroDemo />
           </div>
         </section>
 
         {/* Trust band: commitments, not logos or numbers */}
         <section aria-label="What you can rely on" className="pb-20">
-          <ul className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+          <ul className="grid gap-6 border-y border-line py-6 sm:grid-cols-2 lg:grid-cols-4">
             {TRUST_POINTS.map((t, i) => {
               const Icon = TRUST_ICONS[i];
               return (
-                <li key={t.title} className="surface flex items-start gap-3 rounded-[var(--radius-lg)] p-4">
-                  <span className="grid size-9 shrink-0 place-items-center rounded-xl bg-accent-soft text-trail-strong"><Icon className="size-[18px]" aria-hidden /></span>
+                <li key={t.title} className="flex min-w-0 items-start gap-3">
+                  <span className="grid size-6 shrink-0 place-items-center text-trail-strong"><Icon className="size-[18px]" aria-hidden /></span>
                   <span>
                     <span className="block text-sm font-semibold text-ink">{t.title}</span>
                     <span className="block text-[13px] text-ink-3">{t.body}</span>

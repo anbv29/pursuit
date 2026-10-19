@@ -162,8 +162,8 @@ export default function ReportPage() {
   const v = c.validation;
   return (
     <SourcesProvider sources={r.sources}>
-      <div className="mx-auto flex max-w-7xl gap-8">
-        <nav aria-label="Report sections" className="sticky top-24 hidden h-fit w-48 shrink-0 xl:block print:hidden">
+      <div className="mx-auto flex max-w-6xl items-start gap-6">
+        <nav aria-label="Report sections" className="sticky top-24 hidden max-h-[calc(100dvh-7rem)] w-44 shrink-0 overflow-y-auto xl:block print:hidden">
           <Glass dense className="p-3">
             <p className="mb-2 px-2 text-xs font-semibold text-ink-3">On this page</p>
             <ul className="space-y-0.5 text-sm">

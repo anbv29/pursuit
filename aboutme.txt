@@ -967,3 +967,6 @@ Unified automatic and manual dark themes around charcoal, sage and muted neutral
 
 style: finish contextual font roles and local preview (see Git history for hash)
 Reserved serif type for editorial titles; applied Manrope to pricing, counters, dialogs, breadcrumbs and compact labels, with Source Sans 3 for report reading. Refined hero wrapping. Final lint, production build/TypeScript and eight desktop/mobile/dark-theme browser checks passed. Browser confirmed all three self-hosted fonts and no horizontal report overflow. Local app remains at http://localhost:3000; no changes pushed or deployed.
+
+style: establish cobalt visual direction and layout grid (see Git history for hash)
+Applied installed brand, design-system, ui-styling and ui-ux-pro-max guidance. Replaced sage light palette with ink/cobalt and steel neutrals, introduced Sora headings, tightened surface radii, aligned landing columns and navigation, simplified the trust band and made report section navigation viewport-scrollable. Targeted lint and diff checks passed; dark tokens and stable hero follow. Local only, no push.

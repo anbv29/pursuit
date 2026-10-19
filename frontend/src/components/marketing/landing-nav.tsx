@@ -10,8 +10,8 @@ import { buttonStyles, Glass } from "../ui";
 export function LandingNav() {
   const { user, ready } = useSession();
   return (
-    <header className="sticky top-0 z-30 px-3 pt-3">
-      <Glass as="div" className="mx-auto flex h-14 max-w-6xl items-center justify-between gap-3 rounded-[20px] px-3 sm:px-4">
+    <header className="sticky top-0 z-30 px-4 pt-4 sm:px-6">
+      <Glass as="div" className="mx-auto flex h-16 max-w-6xl items-center justify-between gap-3 rounded-[16px] px-4 sm:px-5">
         <Logo />
         <nav aria-label="Account" className="flex items-center gap-1.5 sm:gap-2">
           <ThemeToggle />
