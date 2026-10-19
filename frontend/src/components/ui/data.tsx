@@ -2,7 +2,7 @@
 
 import type { ReactNode, TdHTMLAttributes, ThHTMLAttributes } from "react";
 import { useId, useRef } from "react";
-import { cx } from "./core";
+import { cx } from "./styles";
 
 export type TabItem = { id: string; label: ReactNode };
 

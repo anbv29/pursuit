@@ -44,7 +44,7 @@ function Onboarding() {
   };
 
   return (
-    <main className="mx-auto flex min-h-screen max-w-2xl flex-col justify-center px-4 py-12 sm:px-6">
+    <main className="app-shell mx-auto flex min-h-screen max-w-2xl flex-col justify-center px-4 py-12 sm:px-6">
       <div className="mb-8 flex items-center justify-between"><Logo /><ThemeToggle /></div>
       <Glass className="enter-rise p-6 sm:p-9">
         <ol className="flex items-center gap-3" aria-label="Setup progress">

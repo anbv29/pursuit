@@ -3,7 +3,7 @@
 import { X } from "lucide-react";
 import type { ReactNode } from "react";
 import { useEffect, useId, useRef, useState } from "react";
-import { cx } from "./core";
+import { cx } from "./styles";
 
 /**
  * Modal dialog on the native <dialog> element: real focus trap, Esc to close,

@@ -859,7 +859,7 @@ Free preview hosting checkpoint (see git log for hash):
     - tsc + eslint clean
 
 ----------------------------------------------------------------------
-#133  (hash recorded in next commit)  feat(ui): glass marketing page with live demo, walkthrough and pricing
+#133  12ceefe  feat(ui): glass marketing page with live demo, walkthrough and pricing
     - Frontend only. app/page.tsx is now a server component; only the nav, hero CTA, hero demo and walkthrough are client islands (less JS on the public page)
     - Hero: 'Say who you want to meet. Pursuit books the call.' with an illustrative demo (components/marketing/hero-demo.tsx) that plays the staged feed - scrambled active step, segmented progress, count-up, skeletons, then example matches with 'why they fit' and a draft waiting for approval; loops; static finished state under reduced motion; labelled 'Example'
     - Tabbed 'How it works' (components/marketing/how-it-works.tsx) with tab/tabpanel wiring
@@ -868,3 +868,12 @@ Free preview hosting checkpoint (see git log for hash):
     - All demo content static in lib/ui-demo/demo-data.ts
     - Tabs gained idPrefix/panelId for aria-controls/labelledby
     - tsc + eslint clean
+
+----------------------------------------------------------------------
+#134  (hash recorded in next commit)  fix(ui): production build, visible backdrop and calmer dark glass
+    - Found by building and screenshotting the production output (light, dark, 1280px and 375px)
+    - Server components could not call buttonStyles() from a 'use client' module: class helpers moved to components/ui/styles.ts (server-safe), re-exported from @/components/ui
+    - Root layout read usePathname() to dim the orbs, which blocks prerendering of dynamic routes in Next 16: backdrop is now a JS-free server component; dimming is CSS-only via body:has(.app-shell)
+    - Opaque body background painted over the z-index:-1 orbs, so they never showed: page colour now lives on <html> only
+    - Glass top-edge specular and skeleton shimmer are theme tokens (--specular, --shimmer); dark mode no longer shows a grey band across glass panels
+    - Verified: next build passes; landing, login and loader render correctly in both themes; 0px horizontal overflow at 375px; no page errors

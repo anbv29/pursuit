@@ -3,7 +3,7 @@
 import { AlertTriangle, CheckCircle2, Info, Sparkles } from "lucide-react";
 import type { HTMLAttributes, ReactNode } from "react";
 import { useEffect, useRef } from "react";
-import { cx } from "./core";
+import { cx } from "./styles";
 
 /** Calm, readable surface for content. No backdrop blur (cheap, legible over anything). */
 export function Card({ className, children, as: As = "section" }: { className?: string; children: ReactNode; as?: "section" | "div" | "article" }) {

@@ -50,6 +50,8 @@
   --focus-ring: #0b766d;
   --scrim: rgba(6, 26, 28, 0.36);
   --orb-opacity: 0.85;
+  --specular: 0.6;
+  --shimmer: rgba(255, 255, 255, 0.45);
 
   /* decisions (filled chips with white text; all >= 4.5:1) */
   --d-continue: #1e7a4c;
@@ -135,6 +137,8 @@
     --focus-ring: #5ff0dc;
     --scrim: rgba(0, 0, 0, 0.55);
     --orb-opacity: 0.55;
+    --specular: 0.12;
+    --shimmer: rgba(255, 255, 255, 0.06);
     --trail-strong: #9ff7ea;
   }
 }
@@ -171,6 +175,8 @@
   --focus-ring: #5ff0dc;
   --scrim: rgba(0, 0, 0, 0.55);
   --orb-opacity: 0.55;
+  --specular: 0.12;
+  --shimmer: rgba(255, 255, 255, 0.06);
   --trail-strong: #9ff7ea;
 }
 
@@ -217,10 +223,13 @@
 /* ---- base ------------------------------------------------------------------ */
 html {
   background: var(--bg);
+  transition: background-color var(--dur-slow) var(--ease-out);
   -webkit-text-size-adjust: 100%;
 }
+/* The page colour lives on <html> only: an opaque body background would paint
+   over the z-index:-1 backdrop orbs. */
 body {
-  background: var(--bg);
+  background: transparent;
   color: var(--ink);
   font-family: var(--font-figtree), system-ui, sans-serif;
   transition: background-color var(--dur-slow) var(--ease-out), color var(--dur-slow) var(--ease-out);
@@ -266,7 +275,7 @@ h1 { letter-spacing: -0.025em; }
   border-radius: inherit;
   pointer-events: none;
   background: linear-gradient(180deg, rgba(255, 255, 255, 0.35), transparent 38%);
-  opacity: 0.6;
+  opacity: var(--specular);
   z-index: -1;
 }
 .glass-dense { border-radius: var(--radius-md); }
@@ -324,7 +333,7 @@ h1 { letter-spacing: -0.025em; }
   opacity: var(--orb-opacity);
   transition: opacity var(--dur-slow) var(--ease-out);
 }
-.backdrop-orbs[data-dim="true"] { opacity: calc(var(--orb-opacity) * 0.45); }
+body:has(.app-shell) .backdrop-orbs { opacity: calc(var(--orb-opacity) * 0.45); }
 .backdrop-orbs .orb {
   position: absolute;
   width: 46vmax;
@@ -367,7 +376,7 @@ h1 { letter-spacing: -0.025em; }
   position: absolute;
   inset: 0;
   transform: translateX(-100%);
-  background: linear-gradient(90deg, transparent, color-mix(in srgb, white 35%, transparent), transparent);
+  background: linear-gradient(90deg, transparent, var(--shimmer), transparent);
   animation: shimmer 1.4s var(--ease-in-out) infinite;
 }
 @keyframes shimmer { to { transform: translateX(100%); } }

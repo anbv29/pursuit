@@ -3,7 +3,7 @@
 import { Check, Eye, EyeOff } from "lucide-react";
 import type { InputHTMLAttributes, ReactNode, SelectHTMLAttributes, TextareaHTMLAttributes } from "react";
 import { useId, useState } from "react";
-import { cx } from "./core";
+import { cx } from "./styles";
 
 export function Field({ label, hint, error, children }: {
   label: string; hint?: string; error?: string; children: (id: string, describedBy?: string) => ReactNode;

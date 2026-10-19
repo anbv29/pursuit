@@ -104,7 +104,7 @@ export function WorkspaceShell({ wsId, children }: { wsId: string; children: Rea
   const mobileMore = nav.slice(4);
 
   return (
-    <div className="flex min-h-screen">
+    <div className="app-shell flex min-h-screen">
       <RouteProgress />
       <CommandPalette commands={commands} open={paletteOpen} onOpenChange={setPaletteOpen} />
 
