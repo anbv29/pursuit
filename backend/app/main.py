@@ -4,7 +4,7 @@ from contextlib import asynccontextmanager
 from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
-from sqlalchemy import text
+from sqlalchemy import select, text
 
 from app.api import (
     account,
@@ -31,6 +31,7 @@ from app.core.config import get_settings
 from app.core.db import get_engine
 from app.core.errors import install_handlers
 from app.core.log_redaction import AccessRedaction, safe_path
+from app.models import FirstLook, FoChatTurn
 
 logger = logging.getLogger("pursuit")
 
@@ -117,15 +118,25 @@ def create_app() -> FastAPI:
 
     @app.get("/api/health", tags=["ops"])
     def health():
+        db_ok, schema_ok = False, False
         try:
             with get_engine().connect() as conn:
                 conn.execute(text("SELECT 1"))
-            db_ok = True
+                db_ok = True
+                # Verify deployed columns and runtime access without reading any customer data.
+                conn.execute(select(FoChatTurn).limit(0))
+                conn.execute(select(FirstLook).limit(0))
+                schema_ok = True
         except Exception:
-            logger.exception("Health check DB probe failed")
-            db_ok = False
-        body = {"status": "ok" if db_ok else "degraded", "database": db_ok, "fo_mode": settings.fo_mode}
-        return JSONResponse(status_code=200 if db_ok else 503, content=body)
+            logger.warning("Readiness probe failed; database schema or runtime access requires review")
+        ready = db_ok and schema_ok
+        body = {
+            "status": "ok" if ready else "degraded",
+            "database": db_ok,
+            "schema": schema_ok,
+            "fo_mode": settings.fo_mode,
+        }
+        return JSONResponse(status_code=200 if ready else 503, content=body)
 
     return app
 

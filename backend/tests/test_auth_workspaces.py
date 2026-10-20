@@ -1,7 +1,7 @@
 def test_health(api):
     r = api.get("/api/health")
     assert r.status_code == 200
-    assert r.json() == {"status": "ok", "database": True, "fo_mode": "demo"}
+    assert r.json() == {"status": "ok", "database": True, "schema": True, "fo_mode": "demo"}
     assert r.headers["X-Content-Type-Options"] == "nosniff"
 
 
