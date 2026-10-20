@@ -1,5 +1,6 @@
 "use client";
 
+import { FounderRealitySummary } from "@/components/founder-reality";
 import { plainCopy } from "@/lib/plain-copy";
 
 import { AlertTriangle, FlaskConical, Printer, RotateCw } from "lucide-react";
@@ -184,6 +185,7 @@ export default function ReportPage() {
             AI research from public web sources. Claims are labelled as <b>sourced facts</b>, interpretations or assumptions. Click a source to verify it.
             {v && v.downgraded_facts + v.dropped_source_refs > 0 && ` Pursuit removed ${v.dropped_source_refs} unverifiable citation(s) and downgraded ${v.downgraded_facts} unsourced "fact(s)".`}
           </Notice>
+          <FounderRealitySummary value={r.inputs.founder_reality ?? {}} />
           <Summary c={c} />
           {workspace.role === "owner" && <ReportSharing path={reportPath} />}
           <ReportPlan path={reportPath} />

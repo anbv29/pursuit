@@ -1073,3 +1073,7 @@ Changes: Up to five diverse company pages; compare candidate explanations and ch
 Validation: 23 research/free-provider unit checks passed; TypeScript, targeted ESLint, Ruff and diff checks passed. Database API tests interrupted because local PostgreSQL port 5433 is stopped; browser and real-provider quality validation not rerun. Owner subsequently authorized commit and push after verification.
 
 Final verification: combined First Look API/free-provider/deep-research suite passed (35 tests); frontend production build including TypeScript and Ruff passed. Three browser checks passed (11.6s), covering 390px/1280px decision rendering, reload, single submission and unconfigured state. Initial browser run failed because the temporary server was unavailable; rerun passed after confirmed startup. Real-company quality evaluation remains pending.
+
+Commit: feat: add founder reality check
+Changes: reusable five-question optional form for free and paid research; bounded typed API input, untrusted founder testimony in existing model passes, private saved-context panels and prompt-injection/provenance instructions. No extra calls, Fo changes, migrations or allowance resets.
+Validation: 35 backend First Look/free-provider/paid report tests passed; three responsive browser checks passed (30.8s), including answer submission and context after reload; production build passed, final TypeScript/targeted ESLint and backend Ruff/diff checks passed. Real-provider qualitative evaluation not performed. Owner authorized commit and push to main.

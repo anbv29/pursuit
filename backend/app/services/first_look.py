@@ -20,9 +20,9 @@ PAGE_UNAVAILABLE = (
 )
 
 
-def inspect(page, audience, description=""):
+def inspect(page, audience, description="", founder_reality=None):
     gathered, sources = preview_sources.collect(page)
-    content = free_research.generate(gathered, audience, description)
+    content = free_research.generate(gathered, audience, description, founder_reality)
     return {
         "title": content["snapshot"]["name"],
         "source_url": page.url,
@@ -31,6 +31,7 @@ def inspect(page, audience, description=""):
         "excerpt": page.text[:700],
         "assessment_version": ASSESSMENT_VERSION,
         "content": content,
+        "founder_reality": founder_reality or {},
         "sources": sources,
         "research_depth": "focused_company_investigation",
         "audience": audience,
@@ -112,7 +113,9 @@ def run(db, workspace, user, body):
             raise fetcher.FetchError(
                 "The homepage has too little readable text. Try a public page with more content."
             )
-        result, error = inspect(page, row.audience, body.description), None
+        result, error = inspect(
+            page, row.audience, body.description, body.founder_reality.model_dump(exclude_defaults=True)
+        ), None
     except free_research.PreviewError:
         result, error = None, free_research.UNAVAILABLE
     except fetcher.FetchError:

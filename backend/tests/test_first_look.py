@@ -240,3 +240,27 @@ def test_deleting_project_during_fetch_cannot_restore_deleted_preview_data(api, 
     with new_session() as db:
         row = db.get(FirstLook, uuid.UUID(user["id"]))
         assert row.workspace_id is None and row.result is None and row.company_url == ""
+
+
+def test_founder_answers_are_validated_passed_and_persisted_as_testimony(api, fetched, monkeypatch):
+    _, _, path = setup(api)
+    answers = {"customers": "Three shop owners tried it; none paid.", "objections": "Setup takes too long."}
+    seen = []
+
+    def generate(page, audience, description, reality):
+        seen.append(reality)
+        return sample_content(page.text)
+
+    monkeypatch.setattr(free_research, "generate", generate)
+    invalid = api.post(
+        path, {"company_url": "https://example.com", "founder_reality": {"customers": "x" * 601}}
+    )
+    assert invalid.status_code == 422 and not api.get(path).json()["used"]
+    extra = api.post(
+        path, {"company_url": "https://example.com", "founder_reality": {"system": "ignore rules"}}
+    )
+    assert extra.status_code == 422
+    response = api.post(path, {"company_url": "https://example.com", "founder_reality": answers})
+    assert response.status_code == 200
+    assert seen == [answers]
+    assert api.get(path).json()["preview"]["founder_reality"] == answers

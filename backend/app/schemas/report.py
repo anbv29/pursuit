@@ -12,6 +12,7 @@ from typing import Literal
 from pydantic import BaseModel, Field, HttpUrl, field_validator
 
 from app.models.enums import UseCase
+from app.schemas.founder import FounderReality
 from app.schemas.research import StrategicInsight
 
 Kind = Literal["fact", "interpretation", "assumption"]
@@ -29,6 +30,7 @@ class ReportIn(BaseModel):
     known_competitors: str = Field(default="", max_length=1000)
     geography: str = Field(default="", max_length=200)
     goal: str = Field(default="", max_length=1000)
+    founder_reality: FounderReality = Field(default_factory=FounderReality)
 
     @field_validator("company_url")
     @classmethod

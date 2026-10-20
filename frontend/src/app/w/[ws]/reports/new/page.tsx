@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { useState, type FormEvent } from "react";
 import { z } from "zod";
 import { useWorkspace } from "@/components/shell";
+import { FounderRealityCheck, type FounderReality } from "@/components/founder-reality";
 import { ResearchAllowance } from "@/components/allowance";
 import { Button, cx, Field, Glass, Input, Notice, Select, Textarea } from "@/components/ui";
 import { api, ApiError, errorMessage } from "@/lib/api";
@@ -27,6 +28,7 @@ export default function NewReportPage() {
   const { workspace, base } = useWorkspace();
   const router = useRouter();
   const [f, setF] = useState(EMPTY);
+  const [reality, setReality] = useState<FounderReality>({});
   const [more, setMore] = useState(false);
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [formError, setFormError] = useState<string | null>(null);
@@ -39,7 +41,7 @@ export default function NewReportPage() {
     setErrors({});
     setFormError(null);
     try {
-      const report = await api<Report>(`/workspaces/${workspace.id}/reports`, { json: { ...f, company_url: url.data } });
+      const report = await api<Report>(`/workspaces/${workspace.id}/reports`, { json: { ...f, founder_reality: reality, company_url: url.data } });
       router.push(`${base}/reports/${report.id}`);
     } catch (e) {
       if (e instanceof ApiError && e.fields) setErrors(e.fields);
@@ -102,6 +104,7 @@ export default function NewReportPage() {
             </div>
           )}
         </Glass>
+        <FounderRealityCheck value={reality} onChange={setReality} disabled={submit.pending} />
         {formError && <Notice tone="bad">{formError}</Notice>}
         <ResearchAllowance />
         <Button type="submit" size="lg" loading={submit.pending} className="w-full">Generate report</Button>

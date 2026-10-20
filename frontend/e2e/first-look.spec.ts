@@ -30,18 +30,20 @@ for (const width of [390, 1280]) {
       const request = route.request();
       const path = new URL(request.url()).pathname;
       if (path.endsWith("/first-look") && request.method() === "POST") {
-        expect(request.postDataJSON()).toMatchObject({ company_url: "https://example.com/", description: "Inventory for shops" });
+        expect(request.postDataJSON()).toMatchObject({ company_url: "https://example.com/", description: "Inventory for shops", founder_reality: { customers: "Three owners tried it; none paid." } });
         submissions++; completed = true;
       }
       const data = path.endsWith("/auth/me") ? { user: { id: "user", name: "Founder", email: "preview@example.com" }, csrf_token: "synthetic" }
         : path.endsWith("/first-look") ? { used: completed, available: true, can_retry: false, status: completed ? "SUCCEEDED" : null, error: null,
-          preview: completed ? { title: "Shop toolkit", source_url: "https://example.com/", retrieved_at: "2026-10-20T00:00:00Z", content, limitations: "An AI-generated preview based on one public page and your optional description." } : null }
+          preview: completed ? { title: "Shop toolkit", source_url: "https://example.com/", retrieved_at: "2026-10-20T00:00:00Z", founder_reality: { customers: "Three owners tried it; none paid." }, content, limitations: "An AI-generated preview based on one public page and your optional description." } : null }
           : path.endsWith("/approvals") ? [] : path === "/api/workspaces" ? [ws] : ws;
       await route.fulfill({ json: data });
     });
     await page.goto(`/w/${ws.id}/first-look`);
     await page.getByLabel("Your website", { exact: true }).fill("example.com");
     await page.getByLabel("What does your company do?", { exact: true }).fill("Inventory for shops");
+    await page.getByText("Founder reality check", { exact: false }).click();
+    await page.getByLabel("Who has actually used or paid for this?", { exact: true }).fill("Three owners tried it; none paid.");
     await page.getByRole("button", { name: "Get my free first look" }).click();
     for (const name of ["Executive summary", "Company snapshot", "Potential customer segments", "Customer personas"]) {
       await expect(page.getByRole("heading", { name, exact: true })).toBeVisible();
@@ -61,6 +63,8 @@ for (const width of [390, 1280]) {
     await page.reload();
     await expect(page.getByRole("heading", { name: "Executive summary", exact: true })).toBeVisible();
     await expect(page.getByRole("button", { name: "Get my free first look" })).toHaveCount(0);
+    await page.getByText("Your founder context (1/5 answered)", { exact: true }).click();
+    await expect(page.getByText("Three owners tried it; none paid.", { exact: true })).toBeVisible();
     expect(submissions).toBe(1);
     expect(errors).toEqual([]);
   });
