@@ -48,7 +48,7 @@ function FirstLookForm() {
   return <div className="mx-auto max-w-3xl space-y-6">
     <header><p className="mb-3 font-ui text-xs font-semibold uppercase tracking-widest text-trail">A first step, on us</p>
       <h1 className="font-display text-3xl font-semibold tracking-tight">Website First Look</h1>
-      <p className="mt-3 max-w-2xl text-base leading-relaxed text-ink-2">Try Pursuit with your actual website. Get the first four sections of your research: an executive summary, company snapshot, potential customers and personas.</p>
+      <p className="mt-3 max-w-2xl text-base leading-relaxed text-ink-2">Try Pursuit with your actual website. Get one focused investigation alongside four compact research sections: an executive summary, company snapshot, potential customers and personas.</p>
       <div className="mt-4 flex flex-wrap gap-2"><Badge>Free · once per account</Badge><Badge>No card needed</Badge></div>
     </header>
     <Notice tone="trail">Your free preview uses your public page and optional description. It is a starting point for research, not proof of demand. The remaining report sections are included in paid plans.</Notice>
@@ -63,7 +63,7 @@ function FirstLookForm() {
           <Field label="Your website">{id => <Input id={id} required maxLength={2048} value={url} onChange={event => setUrl(event.target.value)} placeholder="example.com" disabled={!!running} />}</Field>
           <Field label="What does your company do?" hint="Optional. Your description helps add context; it is not treated as independent evidence.">{id => <Input id={id} maxLength={1500} value={description} onChange={event => setDescription(event.target.value)} placeholder="Describe the product and the problem it solves" disabled={!!running} />}</Field>
           <Field label="Who do you think this helps?" hint="Optional. This is your assumption, not a validated customer segment.">{id => <Input id={id} maxLength={300} value={audience} onChange={event => setAudience(event.target.value)} placeholder="For example, independent shop owners" disabled={!!running} />}</Field>
-          <p className="text-sm text-ink-3">One free research preview per account. Failed requests don’t consume your preview; retries are limited. Only text from up to three public company pages and these optional details are shared with our AI provider.</p>
+          <p className="text-sm text-ink-3">One free research preview per account. Failed requests don’t consume your preview; retries are limited. Only text from up to five public company pages and these optional details are shared with our AI provider.</p>
           <Button type="submit" disabled={!data || !data.available || !!running || !url.trim() || workspace.is_demo}>{running ? "Writing your preview…" : data?.can_retry ? "Retry free first look" : "Get my free first look"}<ArrowRight className="size-4" aria-hidden /></Button>
           {running && <p className="text-sm text-ink-2" role="status">If this takes too long, refresh the status. A stalled check can be retried after three minutes.</p>}
         </form>}

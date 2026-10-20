@@ -142,3 +142,42 @@ def test_minimax_uses_bounded_required_reasoning_without_paid_fallback(monkeypat
     monkeypatch.setattr(httpx, "Client", lambda **kw: original(transport=httpx.MockTransport(respond), **kw))
     page = fetcher.Fetched("https://example.com", "Shop", "A toolkit for independent shops.", "a")
     assert len(free_research.generate(page, "")["executive_summary"]) == 2
+
+
+def test_focused_insight_preserves_decisions_and_rejects_fabricated_support():
+    content = sample_content()
+    insight = {
+        "finding": "Owners may be users while their bookkeepers influence adoption.",
+        "quote": "A toolkit for independent shops.",
+        "reasoning": "Test who approves a change before choosing a sales audience.",
+        "counterargument": "Owners may handle bookkeeping themselves without outside approval.",
+        "next_test": "Interview five owners this week; proceed if three report approval friction.",
+        "why_now": "Buying timing is unknown from the available pages.",
+        "decision_if_supported": "Test a bookkeeper-assisted onboarding offer.",
+        "decision_if_rejected": "Keep owner-led onboarding and test another constraint.",
+    }
+    content["snapshot"]["investigation"] = [insight]
+    result = free_research.validate(json.dumps(content), insight["quote"])
+    assert result["snapshot"]["investigation"][0] == insight
+    insight["quote"] = "Invented independent customer validation"
+    result = free_research.validate(json.dumps(content), "A toolkit for independent shops.", downgrade=True)
+    assert not result["snapshot"].get("investigation")
+
+
+def test_company_evidence_is_diverse_bounded_and_all_pages_reach_model(monkeypatch):
+    from app.services.preview_sources import collect
+
+    links = [f"/product/{i}" for i in range(12)] + ["/pricing", "/customers", "/about"]
+    page = fetcher.Fetched("https://example.com", "Home", "H" * 10000, "home", links)
+    calls = []
+
+    def fetch(url, **kwargs):
+        calls.append(url)
+        return fetcher.Fetched(url, "Evidence", (url + " ") * 500, "hash")
+
+    monkeypatch.setattr(fetcher, "fetch", fetch)
+    gathered, sources = collect(page)
+    assert len(calls) == 4 and len(sources) == 5
+    assert calls[:2] == ["https://example.com/pricing", "https://example.com/customers"]
+    assert "https://example.com/about" in calls
+    assert all("PUBLIC PAGE: " + source["url"] in gathered.text[:16000] for source in sources)

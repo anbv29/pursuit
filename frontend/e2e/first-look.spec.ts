@@ -15,6 +15,9 @@ for (const width of [390, 1280]) {
         reasoning: "A repeated stock-check workflow may involve several people and a different budget owner.",
         counterargument: "The owner may do stock checks personally and see no reason to delegate.",
         next_test: "Ask five owners who last approved software spending and why.",
+        why_now: "The buying trigger remains unknown.",
+        decision_if_supported: "Test owner-approved team onboarding.",
+        decision_if_rejected: "Keep the owner as the primary user.",
       }] },
       segments: [{ name: "Independent shops", rationale: assumption }],
       personas: [{ title: "Shop owner", needs: assumption }],
@@ -43,7 +46,9 @@ for (const width of [390, 1280]) {
     for (const name of ["Executive summary", "Company snapshot", "Potential customer segments", "Customer personas"]) {
       await expect(page.getByRole("heading", { name, exact: true })).toBeVisible();
     }
-    await expect(page.getByRole("heading", { name: "An angle worth investigating", exact: true })).toBeVisible();
+    await expect(page.getByRole("heading", { name: "Your strongest investigation angle", exact: true })).toBeVisible();
+    await expect(page.getByText("Test owner-approved team onboarding.", { exact: false })).toBeVisible();
+    await expect(page.getByText("Keep the owner as the primary user.", { exact: false })).toBeVisible();
     await expect(page.getByText(/The owner may do stock checks personally/)).toBeVisible();
     await page.getByText("Supporting website quote", { exact: true }).first().click();
     await expect(page.getByText("“Inventory software for independent shops.”", { exact: true }).first()).toBeVisible();

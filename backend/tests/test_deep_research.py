@@ -213,5 +213,5 @@ def test_free_source_collection_is_same_origin_bounded_and_tolerates_missing_pag
 
     monkeypatch.setattr(fetcher, "fetch", fetch)
     gathered, sources = collect(page)
-    assert calls == ["https://example.com/about", "https://example.com/product"]
-    assert len(sources) == 2 and "real features" in gathered.text
+    assert calls == ["https://example.com/customers", "https://example.com/product", "https://example.com/about"]
+    assert len(sources) == 3 and "real features" in gathered.text

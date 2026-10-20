@@ -13,7 +13,7 @@ from app.models.enums import DataOrigin, EvidenceKind, Stance, UseCase
 from app.services import audit, fetcher, free_research, preview_sources
 
 logger = logging.getLogger("pursuit.first_look")
-ASSESSMENT_VERSION = 4
+ASSESSMENT_VERSION = 5
 PAGE_UNAVAILABLE = (
     "We couldn't read this page yet. Try another public page from the same website, "
     "such as About or Product, or try again later. Your free First Look hasn't been used."
@@ -32,14 +32,14 @@ def inspect(page, audience, description=""):
         "assessment_version": ASSESSMENT_VERSION,
         "content": content,
         "sources": sources,
-        "research_depth": "company_pages_with_challenge_pass",
+        "research_depth": "focused_company_investigation",
         "audience": audience,
         "hypothesis": (
             f"At least 3 of 5 people in {audience or content['segments'][0]['name']} "
             "can describe a recent instance of the problem this product addresses."
         ),
         "limitations": (
-            "An AI-generated preview based on up to three public company pages "
+            "An AI-generated preview based on up to five public company pages "
             "and your optional description. "
             "Website statements are not independently verified. Customer segments and personas "
             "are hypotheses. No web search, competitor research or market validation was performed."

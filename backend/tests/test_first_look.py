@@ -195,7 +195,7 @@ def test_earlier_rule_based_result_can_be_replaced_once(api, fetched):
         db.commit()
     status = api.get(path).json()
     assert not status["used"] and status["updated_check_available"] and status["preview"] is None
-    assert run(api, path).json()["preview"]["assessment_version"] == 4
+    assert run(api, path).json()["preview"]["assessment_version"] == 5
     assert run(api, path).status_code == 409
 
 
