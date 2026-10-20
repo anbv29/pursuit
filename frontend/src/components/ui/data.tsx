@@ -29,7 +29,7 @@ export function Tabs({ tabs, value, onChange, label, className, idPrefix, panelI
   };
   return (
     <div role="tablist" aria-label={label}
-      className={cx("flex gap-1 overflow-x-auto rounded-2xl bg-[var(--inset)] p-1 [scrollbar-width:none]", className)}>
+      className={cx("flex min-w-0 max-w-full gap-1 overflow-x-auto rounded-2xl bg-[var(--inset)] p-1 [scrollbar-width:none]", className)}>
       {tabs.map((t, i) => {
         const active = t.id === value;
         return (

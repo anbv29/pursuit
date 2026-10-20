@@ -1058,3 +1058,7 @@ Validation: production build, TypeScript, ESLint and diff checks passed; desktop
 Commit: pricing fixx now on main page
 Changes: Render homepage pricing from a shared JSON catalogue at build time instead of waiting for the backend plans request. Backend checkout and public API use the same catalogue; prices and allowances unchanged.
 Validation: frontend production build, TypeScript, ESLint, backend Ruff and catalogue price checks passed. Verified all four plans and prices appear in initial localhost HTML without JavaScript or a pricing API request. Local services rebuilt successfully. No push requested.
+
+Commit: alignment fixe
+Changes: Center desktop product navigation; align workspace reading controls and page content widths; improve mobile safe-area spacing, responsive settings/member rows and billing allowance layout; contain tab bars and long report claims; improve shared header wrapping and drawer sizing. Add responsive layout audit covering nine workspace screens and authentication form centring.
+Validation: production build, TypeScript, ESLint and diff checks passed. Ten browser checks passed across final runs: four landing checks, three nine-screen viewport audits, two existing responsive workflow checks, and one authentication centring check. Corrected an audit navigation-wait race and reran a mobile trace-output collision separately. No commit push requested.

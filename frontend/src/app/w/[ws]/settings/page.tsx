@@ -73,8 +73,8 @@ export default function SettingsPage() {
         {members.error && <div className="p-4"><Notice tone="bad">{members.error.message} <Button size="sm" variant="secondary" onClick={() => members.reload()}>Retry members</Button></Notice></div>}
         <ul className="divide-y divide-line">
           {members.data?.map((m) => (
-            <li key={m.user_id} className="flex items-center justify-between px-5 py-3 text-sm">
-              <span className="min-w-0 break-words pr-3"><span className="font-medium">{m.name}</span> <span className="text-ink-3">{m.email}</span></span>
+            <li key={m.user_id} className="flex flex-wrap items-center justify-between gap-3 px-5 py-3 text-sm">
+              <span className="min-w-0 flex-1 basis-40 [overflow-wrap:anywhere]"><span className="font-medium">{m.name}</span> <span className="text-ink-3">{m.email}</span></span>
               <div className="flex shrink-0 items-center gap-2"><Badge tone={m.role === "owner" ? "trail" : "neutral"}>{m.role}</Badge>
                 {isOwner && m.role !== "owner" && <Button size="sm" variant="ghost" loading={removeMember.pending} onClick={() => removeMember.run(m)}>Remove member</Button>}
               </div>
@@ -82,8 +82,8 @@ export default function SettingsPage() {
           ))}
         </ul>
         {isOwner && (
-          <form onSubmit={(e: FormEvent) => { e.preventDefault(); void invite.run(); }} className="flex items-end gap-2 border-t border-line p-4">
-            <div className="flex-1"><Field label="Add an existing Pursuit user by email">{(id) => <Input id={id} type="email" value={email} onChange={(e) => setEmail(e.target.value)} />}</Field></div>
+          <form onSubmit={(e: FormEvent) => { e.preventDefault(); void invite.run(); }} className="flex flex-col items-stretch gap-3 border-t border-line p-4 sm:flex-row sm:items-end">
+            <div className="min-w-0 flex-1"><Field label="Add an existing Pursuit user by email">{(id) => <Input id={id} type="email" value={email} onChange={(e) => setEmail(e.target.value)} />}</Field></div>
             <Button type="submit" loading={invite.pending} disabled={!email}><UserPlus className="size-3.5" /> Add</Button>
           </form>
         )}

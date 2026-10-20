@@ -12,8 +12,8 @@ export function Card({ className, children, as: As = "section" }: { className?: 
 
 export function CardHeader({ title, description, action }: { title: ReactNode; description?: ReactNode; action?: ReactNode }) {
   return (
-    <div className="flex items-start justify-between gap-4 border-b border-line px-5 py-4">
-      <div className="min-w-0">
+    <div className="flex flex-wrap items-start justify-between gap-4 border-b border-line px-5 py-4">
+      <div className="min-w-0 flex-1 basis-48">
         <h2 className="text-[15px] font-semibold text-ink">{title}</h2>
         {description && <p className="mt-0.5 text-[13px] text-ink-3">{description}</p>}
       </div>
@@ -100,12 +100,12 @@ export function PageHeader({ title, description, action, eyebrow }: {
 }) {
   return (
     <div className="flex flex-wrap items-start justify-between gap-4">
-      <div className="min-w-0">
+      <div className="min-w-0 flex-1 basis-48">
         {eyebrow && <p className="mb-1 text-[13px] font-medium text-trail">{eyebrow}</p>}
         <h1 className="font-display text-[28px] font-bold leading-tight tracking-tight text-ink sm:text-[32px]">{title}</h1>
         {description && <p className="mt-1.5 max-w-2xl text-[14.5px] text-ink-3">{description}</p>}
       </div>
-      {action && <div className="flex shrink-0 flex-wrap gap-2">{action}</div>}
+      {action && <div className="flex max-w-full flex-wrap items-center gap-2">{action}</div>}
     </div>
   );
 }

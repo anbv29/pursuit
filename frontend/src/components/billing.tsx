@@ -62,7 +62,7 @@ export function BillingPanel() {
     </Notice>}
     <Card className="space-y-4 p-5">
       <div className="flex flex-wrap items-center justify-between gap-3"><h2 className="font-semibold">Your workspace allowance</h2><span className="text-sm capitalize">{b.plan === "free" ? "Explore" : b.plan} · {b.complimentary ? "Complimentary" : b.status}</span></div>
-      <dl className="grid grid-cols-3 gap-3 text-sm">
+      <dl className="grid gap-4 text-sm min-[400px]:grid-cols-3">
         {[ ["Research credits", b.research_remaining], ["AI answers", b.questions_remaining], ["Members", `${b.seats_used}/${b.seats}`] ].map(([label, value]) => <div key={label}><dt className="text-ink-3">{label}</dt><dd className="mt-1 text-xl font-semibold tabular-nums">{value}</dd></div>)}
       </dl>
       {b.period_end && <p className="text-sm text-ink-3">{b.cancel_at_period_end ? "Scheduled to end" : "Current period ends"}: {new Date(b.period_end).toLocaleString()}</p>}

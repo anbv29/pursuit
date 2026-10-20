@@ -74,6 +74,10 @@ export function WorkspaceShell({ wsId, children }: { wsId: string; children: Rea
   ];
   const isActive = (n: NavItem) => (n.exact ? path === n.href : path.startsWith(n.href));
   const current = nav.find(isActive);
+  const contentWidth = path.endsWith("/reports/new") ? "max-w-2xl"
+    : /\/(settings|fo|first-look)$/.test(path) ? "max-w-3xl"
+    : /\/(reports|approvals)$/.test(path) ? "max-w-4xl"
+    : /\/(billing|experiments\/new)$/.test(path) ? "max-w-5xl" : "max-w-6xl";
 
   // Breadcrumbs only below two levels (a single report or experiment).
   const crumbs = path.match(/\/reports\/(?!new$)[^/]+$/) ? [{ href: `${base}/reports`, label: "Company reports" }, { label: "Report" }]
@@ -123,7 +127,7 @@ export function WorkspaceShell({ wsId, children }: { wsId: string; children: Rea
       <CommandPalette commands={commands} open={paletteOpen} onOpenChange={setPaletteOpen} />
 
       {/* Desktop sidebar */}
-      <aside className={cx("sticky top-0 hidden h-screen shrink-0 p-4 print:hidden md:block transition-[width] duration-300 ease-[var(--ease-out)]", collapsed ? "w-[88px]" : "w-[224px] xl:w-[248px]")}>
+      <aside className={cx("sticky top-0 hidden h-dvh shrink-0 p-4 print:hidden md:block transition-[width] duration-300 ease-[var(--ease-out)]", collapsed ? "w-[88px]" : "w-[224px] xl:w-[248px]")}>
         <Glass as="nav" aria-label="Primary" className="flex h-full flex-col p-3">
           <div className={cx("flex h-11 items-center", collapsed ? "justify-center" : "px-1.5")}>
             <Logo href={base} compact={collapsed} />
@@ -224,11 +228,13 @@ export function WorkspaceShell({ wsId, children }: { wsId: string; children: Rea
           <div className="mt-2 md:hidden">{switcher}</div>
         </header>
 
-        <main className="flex-1 px-4 pb-28 pt-6 md:px-8 md:pb-10">
+        <main className="flex-1 px-4 pb-[calc(7rem+env(safe-area-inset-bottom))] pt-6 md:px-8 md:pb-10">
           {ws.data ? (
             <WorkspaceCtx.Provider value={{ workspace: ws.data, base, refreshApprovals: approvals.reload }}>
-              <ReadingControls />
-              {children}
+              <div className={cx("mx-auto w-full min-w-0", contentWidth)}>
+                <ReadingControls />
+                {children}
+              </div>
             </WorkspaceCtx.Provider>
           ) : (
             <div className="mx-auto max-w-6xl space-y-4" aria-busy>

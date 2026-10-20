@@ -48,10 +48,10 @@ export function ClaimLine({ c, compact }: { c: Claim; compact?: boolean }) {
   return (
     <li className={cx("flex gap-2", compact ? "text-[13px]" : "text-sm")}>
       <span className={cx("mt-2 size-1.5 shrink-0 rounded-full", c.kind === "fact" ? "bg-trail" : c.kind === "assumption" ? "bg-flag" : "bg-ink-3")} aria-hidden />
-      <span className="text-ink">
+      <span className="min-w-0 [overflow-wrap:anywhere] text-ink">
         {c.text}
         <Cites ids={c.source_ids} />
-        <span className="ml-1.5 inline-flex gap-1 align-middle">
+        <span className="ml-1.5 inline-flex max-w-full flex-wrap gap-1 align-middle">
           <Badge tone={k.tone} title={c.unsourced ? "The model called this a fact, but cited no source we retrieved, so Pursuit downgraded it." : undefined}>
             {c.unsourced ? "Unsourced" : k.label}
           </Badge>
