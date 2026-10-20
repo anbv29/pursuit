@@ -18,7 +18,7 @@ const STATUS: Record<CriterionResult["status"], { label: string; tone: "good" | 
 const SYMBOL: Record<string, string> = { ">=": "≥", "<=": "≤", ">": ">", "<": "<" };
 
 const fmt = (metric: string, v: number | null) =>
-  v === null ? "—" : isRate(metric) ? `${Math.round(v * 100)}%` : String(Math.round(v * 100) / 100);
+  v === null ? "Not available" : isRate(metric) ? `${Math.round(v * 100)}%` : String(Math.round(v * 100) / 100);
 
 export function CriteriaResults() {
   const { path, version } = useExperiment();

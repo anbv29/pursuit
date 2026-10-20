@@ -169,6 +169,8 @@ def integrations(
 def export(m: Membership = Depends(workspace_owner), db: Session = Depends(get_db)):
     """Owner-only JSON export of all workspace data (data portability)."""
     ws_id = m.workspace_id
+    from app.models import FirstLook, FoChatTurn
+
     exps = db.scalars(select(Experiment).where(Experiment.workspace_id == ws_id)).all()
     ids = [e.id for e in exps]
 
@@ -193,6 +195,12 @@ def export(m: Membership = Depends(workspace_owner), db: Session = Depends(get_d
     db.commit()
     return {
         "workspace": {"id": ws_id, "name": m.workspace.name, "is_demo": m.workspace.is_demo},
+        "first_look": scoped(FirstLook, (FirstLook.workspace_id == ws_id) & (FirstLook.user_id == m.user_id)),
+        "fo_chat": scoped(
+            FoChatTurn,
+            (FoChatTurn.workspace_id == ws_id) & (FoChatTurn.user_id == m.user_id),
+            ("provider_ref", "request_key", "service_user_id", "report_context"),
+        ),
         "experiments": [{c.name: getattr(e, c.name) for c in Experiment.__table__.columns} for e in exps],
         "evidence": rows(Evidence),
         "prospects": rows(Prospect),

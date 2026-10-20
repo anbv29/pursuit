@@ -1,10 +1,10 @@
 import uuid
 
-from sqlalchemy import func, select
+from sqlalchemy import func, select, update
 from sqlalchemy.orm import Session
 
 from app.core.errors import AppError, Conflict, NotFound, PaymentRequired
-from app.models import BillingAccount, Membership, User, Workspace
+from app.models import BillingAccount, FirstLook, Membership, User, Workspace
 from app.models.enums import Role
 from app.services import audit, entitlements
 
@@ -86,6 +86,12 @@ def delete(db: Session, actor: User, ws: Workspace) -> None:
             "Open Plans & billing to manage it."
         )
     audit.record(db, "workspace.delete", actor_id=actor.id, detail={"workspace_id": str(ws.id)})
+    # Keep only the account-level usage marker, not deleted project content.
+    db.execute(
+        update(FirstLook)
+        .where(FirstLook.workspace_id == ws.id)
+        .values(result=None, company_url="", audience="", error=None)
+    )
     db.delete(ws)
     db.commit()
 

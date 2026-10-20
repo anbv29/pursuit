@@ -1,5 +1,21 @@
 import { expect, test } from "@playwright/test";
 
+test("desktop product navigation has concise labels and working section links", async ({ page }) => {
+  await page.setViewportSize({ width: 1280, height: 900 });
+  await page.addInitScript(() => sessionStorage.setItem("pursuit.loaderDone", "1"));
+  await page.goto("/");
+  const nav = page.getByRole("navigation", { name: "Product", exact: true });
+  await expect(nav).toBeVisible();
+  await expect(nav.getByRole("link", { name: "The process", exact: true })).toHaveCount(0);
+  await nav.getByRole("link", { name: "Process", exact: true }).click();
+  await expect(page).toHaveURL(/#how-it-works$/);
+  await expect(page.locator("#how-it-works")).toBeInViewport();
+  await nav.getByRole("link", { name: "Pricing", exact: true }).click();
+  await expect(page).toHaveURL(/#pricing$/);
+  await page.goto("/");
+  await page.screenshot({ path: "test-results/landing-nav.png" });
+});
+
 test("public page shows the real catalog and six workflows on a phone", async ({ page }) => {
   await page.setViewportSize({ width: 375, height: 812 });
   const errors: string[] = [];
@@ -8,7 +24,7 @@ test("public page shows the real catalog and six workflows on a phone", async ({
   expect(response?.headers()["content-security-policy"]).toContain("object-src 'none'");
   await expect(page.getByRole("heading", { name: "A clearer picture. A smarter next move." })).toBeVisible();
   for (const name of ["Explore", "Single Report", "Founder", "Team"]) {
-    await expect(page.getByRole("heading", { name, exact: true })).toBeVisible();
+    await expect(page.locator("#pricing").getByRole("heading", { name, exact: true })).toBeVisible();
   }
   for (const price of ["$4.99", "$11.99", "$34.99"]) await expect(page.getByText(price, { exact: true })).toBeVisible();
   await expect(page.getByRole("heading", { name: "A company report is your starting point." })).toBeVisible();

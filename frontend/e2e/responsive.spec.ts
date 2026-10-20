@@ -48,6 +48,8 @@ test("demo workspace screens are labelled and responsive", async ({ page }, info
   await shot("funnel");
 
   await page.goto(page.url().split("/experiments/")[0] + "/settings");
-  await expect(page.getByText("Demo mode").first()).toBeVisible();
+  await expect(page.getByRole("heading", { name: "Settings", exact: true })).toBeVisible();
+  await expect(page.getByRole("heading", { name: "Your data", exact: true })).toBeVisible();
+  await expect(page.getByText("AI safety settings", { exact: true })).toHaveCount(0);
   await shot("settings");
 });

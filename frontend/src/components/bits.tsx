@@ -32,7 +32,7 @@ export function StageBar({ stage }: { stage: Stage }) {
   );
 }
 
-/** A rate with its denominator and 95% interval — never a bare percentage. */
+/** A rate with its denominator and 95% interval, never a bare percentage. */
 export function RateView({ rate, label }: { rate: Rate; label?: string }) {
   const advanced = useAdvanced();
   if (rate.value === null) {
@@ -45,7 +45,7 @@ export function RateView({ rate, label }: { rate: Rate; label?: string }) {
     <span className="inline-flex flex-wrap items-baseline gap-x-1.5">
       <span className="text-base font-semibold tabular-nums">{p(rate.value)}%</span>
       <span className="text-xs tabular-nums text-ink-3">
-        {rate.numerator.toLocaleString()}/{rate.denominator.toLocaleString()} · {advanced ? "95% CI" : "95% uncertainty range"} {p(rate.ci_low)}–{p(rate.ci_high)}%
+        {rate.numerator.toLocaleString()}/{rate.denominator.toLocaleString()} · {advanced ? "95% CI" : "95% uncertainty range"} {p(rate.ci_low)}-{p(rate.ci_high)}%
       </span>
     </span>
   );

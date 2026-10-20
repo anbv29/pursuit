@@ -15,7 +15,7 @@ function verdict(a: Analysis["metrics"]["variants"], minSample: number): string 
   if (small.length) return `Not enough data: ${small.map((v) => `${v.label} has ${v.sent}/${minSample} sends`).join(", ")}. Any difference so far could be noise.`;
   const [x, y] = [...a].sort((p, q) => (q.positive_reply.value ?? 0) - (p.positive_reply.value ?? 0));
   if ((x.positive_reply.ci_low ?? 0) > (y.positive_reply.ci_high ?? 1)) return `Variant ${x.label} is clearly ahead (95% intervals don't overlap).`;
-  return `Variant ${x.label} leads, but the intervals overlap — not distinguishable yet.`;
+  return `Variant ${x.label} leads, but the intervals overlap, not distinguishable yet.`;
 }
 
 export function MessagingPanel() {
@@ -60,8 +60,8 @@ export function MessagingPanel() {
                     <dl className="mt-4 space-y-2 text-sm">
                       <div className="flex justify-between"><dt className="text-ink-3">Sent</dt><dd className="tabular-nums">{s?.sent ?? 0}</dd></div>
                       <div className="flex justify-between"><dt className="text-ink-3">Delivered</dt><dd className="tabular-nums">{s?.delivered || "not reported"}</dd></div>
-                      <div><dt className="text-ink-3">Reply rate</dt><dd>{s ? <RateView rate={s.reply} /> : "—"}</dd></div>
-                      <div><dt className="text-ink-3">Positive reply rate</dt><dd>{s ? <RateView rate={s.positive_reply} /> : "—"}</dd></div>
+                      <div><dt className="text-ink-3">Reply rate</dt><dd>{s ? <RateView rate={s.reply} /> : "Not available"}</dd></div>
+                      <div><dt className="text-ink-3">Positive reply rate</dt><dd>{s ? <RateView rate={s.positive_reply} /> : "Not available"}</dd></div>
                       {s && <IntervalBar rate={s.positive_reply} target={target} />}
                       <div className="flex justify-between"><dt className="text-ink-3">Meetings</dt><dd className="tabular-nums">{s?.meetings ?? 0}</dd></div>
                     </dl>

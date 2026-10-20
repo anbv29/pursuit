@@ -5,6 +5,10 @@ import os
 os.environ["APP_ENV"] = "test"
 os.environ["FO_MODE"] = "demo"
 os.environ["ANTHROPIC_API_KEY"] = ""  # tests must never call the real model
+os.environ["OPENCODE_API_KEY"] = ""  # free provider calls must also be mocked
+os.environ["OPENROUTER_API_KEY"] = ""
+os.environ["FREE_PREVIEW_ENABLED"] = "false"
+os.environ["FREE_RESEARCH_MODEL"] = "google/gemma-4-31b-it:free"
 os.environ["DODO_PAYMENTS_ENVIRONMENT"] = "test_mode"
 os.environ["BILLING_CHECKOUT_ENABLED"] = "false"
 # Never inherit merchant credentials or product mappings from a private .env.

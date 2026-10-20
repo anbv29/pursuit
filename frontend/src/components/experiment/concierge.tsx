@@ -55,7 +55,7 @@ export function InterviewConcierge({ prospects }: { prospects: Prospect[] }) {
           <div className="grid gap-3 sm:grid-cols-2">
             <Field label="Interview title">{(id) => <Input id={id} required minLength={3} maxLength={200} value={form.title} onChange={edit("title")} />}</Field>
             <Field label="Interview length (minutes)">{(id) => <Input id={id} required type="number" min={15} max={60} value={form.duration_minutes} onChange={(e) => { setForm((f) => ({ ...f, duration_minutes: Number(e.target.value) })); setReview(false); }} />}</Field>
-            <Field label="Available times" hint="Include dates and hours, for example Nov 2–6, 2–5 pm.">{(id) => <Input id={id} required minLength={5} maxLength={200} value={form.window} onChange={edit("window")} />}</Field>
+            <Field label="Available times" hint="Include dates and hours, for example Nov 2-6, 2-5 pm.">{(id) => <Input id={id} required minLength={5} maxLength={200} value={form.window} onChange={edit("window")} />}</Field>
             <Field label="Scheduling timezone">{(id) => <Input id={id} required maxLength={100} value={form.timezone} onChange={edit("timezone")} placeholder="Asia/Kolkata" />}</Field>
             <Field label="Stop coordination by" hint="Within 14 days. Enter this deadline in your device's local timezone.">{(id) => <Input id={id} required type="datetime-local" value={form.deadline} onChange={edit("deadline")} />}</Field>
             <Field label="Reminder permission">{(id) => <Select id={id} value={form.max_followups} onChange={(e) => { setForm((f) => ({ ...f, max_followups: Number(e.target.value) })); setReview(false); }}>

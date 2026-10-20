@@ -26,6 +26,15 @@ class Settings(BaseSettings):
     anthropic_api_key: SecretStr | None = None
     anthropic_model: str = "claude-haiku-5-5"
     research_model: str = "claude-haiku-5-5"
+    openrouter_api_key: SecretStr | None = None
+    # Enable only after provider approval for third-party application use.
+    free_preview_enabled: bool = False
+    # Explicit free model IDs only: never fall back to a paid provider/model.
+    free_research_model: Literal[
+        "google/gemma-4-31b-it:free",
+        "google/gemma-4-26b-a4b-it:free",
+        "minimax/minimax-m3.1-flash:free",
+    ] = "minimax/minimax-m3.1-flash:free"
     report_worker_enabled: bool = True
     resend_api_key: SecretStr | None = None
     resend_workspace_id: str = ""
@@ -65,7 +74,12 @@ class Settings(BaseSettings):
         return bool(self.anthropic_api_key and self.anthropic_api_key.get_secret_value())
 
     @field_validator(
-        "anthropic_api_key", "dodo_api_key", "dodo_webhook_key", "fo_access_token", mode="before"
+        "anthropic_api_key",
+        "openrouter_api_key",
+        "dodo_api_key",
+        "dodo_webhook_key",
+        "fo_access_token",
+        mode="before",
     )
     @classmethod
     def _trim_optional_secrets(cls, value):

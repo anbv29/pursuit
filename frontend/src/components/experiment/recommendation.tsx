@@ -55,7 +55,7 @@ export function RecommendationPanel() {
       {recs.loading && !recs.data ? <div className="p-5"><Skeleton className="h-28" /></div>
         : !latest ? (
           <Empty icon={<Compass className="size-4" />} title="No recommendation yet"
-            body={generate.pending ? "Analysing… this can take up to a minute when AI synthesis is on." : "Generate one at any time — with little data it will honestly say Inconclusive."} />
+            body={generate.pending ? "Analysing… this can take up to a minute when AI synthesis is on." : "Generate one at any time, with little data it will honestly say Inconclusive."} />
         ) : (
           <div className="space-y-4 p-5">
             <div className="flex flex-wrap items-center gap-3">
@@ -81,7 +81,7 @@ export function RecommendationPanel() {
             <p className="text-xs text-ink-3">Cites {latest.evidence_ids.length} supporting evidence item{latest.evidence_ids.length === 1 ? "" : "s"}. {recs.data && recs.data.length > 1 && `${recs.data.length - 1} earlier recommendation(s) kept in history.`}</p>
           </div>
         )}
-      {exp.criteria.length === 0 && <p className="border-t border-line px-5 py-2.5 text-xs text-flag">Add success criteria — without them every verdict is Inconclusive.</p>}
+      {exp.criteria.length === 0 && <p className="border-t border-line px-5 py-2.5 text-xs text-flag">Add success criteria, without them every verdict is Inconclusive.</p>}
     </Card>
   );
 }

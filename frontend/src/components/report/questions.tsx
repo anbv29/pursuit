@@ -1,4 +1,5 @@
 "use client";
+import { plainCopy } from "@/lib/plain-copy";
 
 import { useState, type FormEvent } from "react";
 import { api, errorMessage } from "@/lib/api";
@@ -34,7 +35,7 @@ export function ReportQuestions({ path }: { path: string }) {
       {history.error ? <Notice tone="bad">{history.error.message}</Notice> : history.data?.length ?
         <ol className="mt-5 divide-y divide-line">{history.data.map((row) => <li key={row.id} className="space-y-2 py-4">
           <p className="font-medium">{row.payload.question}</p>
-          <p className="whitespace-pre-wrap text-sm leading-relaxed">{row.payload.answer}</p>
+          <p className="whitespace-pre-wrap text-sm leading-relaxed">{plainCopy(row.payload.answer)}</p>
           <Cites ids={row.payload.source_ids} />
           {row.payload.limitations.map((t, i) => <p key={i} className="text-xs text-ink-3">{t}</p>)}
         </li>)}</ol> : <Empty title="Your questions stay here" body="Ask about a finding, unfamiliar term, or recommended next step." />}

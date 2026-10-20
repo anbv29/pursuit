@@ -56,10 +56,10 @@ export function OutcomesPanel() {
         <form onSubmit={(e: FormEvent) => { e.preventDefault(); void record.run(); }} className="space-y-3 p-4">
           <Field label="What happened">{(id) => <Select id={id} value={f.kind} onChange={(e) => setF({ ...f, kind: e.target.value })}>{KINDS.map(([v, l]) => <option key={v} value={v}>{l}</option>)}</Select>}</Field>
           {!!variants.data?.length && (
-            <Field label="Variant">{(id) => <Select id={id} value={f.variant_id} onChange={(e) => setF({ ...f, variant_id: e.target.value })}><option value="">—</option>{variants.data!.map((v) => <option key={v.id} value={v.id}>Variant {v.label}</option>)}</Select>}</Field>
+            <Field label="Variant">{(id) => <Select id={id} value={f.variant_id} onChange={(e) => setF({ ...f, variant_id: e.target.value })}><option value="">Not selected</option>{variants.data!.map((v) => <option key={v.id} value={v.id}>Variant {v.label}</option>)}</Select>}</Field>
           )}
           {!!prospects.data?.length && (
-            <Field label="Prospect">{(id) => <Select id={id} value={f.prospect_id} onChange={(e) => setF({ ...f, prospect_id: e.target.value })}><option value="">—</option>{prospects.data!.map((p) => <option key={p.id} value={p.id}>{p.name}</option>)}</Select>}</Field>
+            <Field label="Prospect">{(id) => <Select id={id} value={f.prospect_id} onChange={(e) => setF({ ...f, prospect_id: e.target.value })}><option value="">Not selected</option>{prospects.data!.map((p) => <option key={p.id} value={p.id}>{p.name}</option>)}</Select>}</Field>
           )}
           {(f.kind === "commitment" || f.kind === "pricing_feedback") && (
             <Field label="Amount ($)" hint="Committed or quoted amount, if any.">{(id) => <Input id={id} type="number" min={0} value={f.value} onChange={(e) => setF({ ...f, value: e.target.value })} />}</Field>
@@ -75,7 +75,7 @@ export function OutcomesPanel() {
           <ul className="max-h-[32rem] divide-y divide-line overflow-y-auto">
             {[...list.data].reverse().map((o) => (
               <li key={o.id} className="group flex items-center gap-3 px-4 py-2.5 text-sm">
-                <span className="flex-1">{label(o.kind)}{o.value !== null && ` · $${o.value}`}{o.note && <span className="text-ink-3"> — {o.note}</span>}</span>
+                <span className="flex-1">{label(o.kind)}{o.value !== null && ` · $${o.value}`}{o.note && <span className="text-ink-3">, {o.note}</span>}</span>
                 {o.origin === "demo" ? <DemoBadge label="Demo" /> : <Badge tone={o.origin === "fo" ? "trail" : "neutral"}>{o.origin}</Badge>}
                 <span className="w-16 text-right text-xs text-ink-3">{timeAgo(o.occurred_at)}</span>
                 <button onClick={() => remove(o)} aria-label="Delete outcome" className="text-ink-3 opacity-0 hover:text-d-stop focus:opacity-100 group-hover:opacity-100"><Trash2 className="size-3.5" /></button>

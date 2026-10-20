@@ -43,7 +43,7 @@ export const ACTION_STATUS: Record<ActionStatus, { label: string; tone: Tone; he
 export type Tone = "neutral" | "good" | "bad" | "flag" | "muted" | "trail" | "demo";
 
 export const pct = (v: number | null | undefined, digits = 0) =>
-  v === null || v === undefined ? "—" : `${(v * 100).toFixed(digits)}%`;
+  v === null || v === undefined ? "Not available" : `${(v * 100).toFixed(digits)}%`;
 
 export const humanMetric = (m: string) => m.replace(/_/g, " ").replace(/\brate\b/, "rate");
 

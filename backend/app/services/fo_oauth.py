@@ -53,7 +53,7 @@ def request(path: str, *, form=None, data=None) -> dict:
     return result
 
 
-def start(db, user_id, workspace_id) -> str:
+def start(db, user_id, workspace_id, chat_context=None) -> str:
     cipher()  # refuse before any external registration if encryption is unavailable
     callback = get_settings().public_app_url.rstrip("/") + "/api/fo/oauth/callback"
     registration = request(
@@ -77,7 +77,7 @@ def start(db, user_id, workspace_id) -> str:
             workspace_id=workspace_id,
             client_id=client_id,
             state_hash=hashlib.sha256(state.encode()).hexdigest(),
-            verifier_blob=seal({"verifier": verifier, "callback": callback}),
+            verifier_blob=seal({"verifier": verifier, "callback": callback, "chat_context": chat_context}),
             expires_at=utcnow() + timedelta(minutes=10),
         )
     )
@@ -99,7 +99,7 @@ def start(db, user_id, workspace_id) -> str:
     )
 
 
-def complete(db, user_id, code: str, state: str):
+def complete(db, user_id, code: str, state: str, with_context=False):
     pending = db.scalar(
         select(FoAuthorization)
         .where(
@@ -132,7 +132,7 @@ def complete(db, user_id, code: str, state: str):
     workspace_id = pending.workspace_id
     db.delete(pending)
     db.commit()
-    return workspace_id
+    return (workspace_id, saved.get("chat_context")) if with_context else workspace_id
 
 
 def _validate_tokens(tokens):

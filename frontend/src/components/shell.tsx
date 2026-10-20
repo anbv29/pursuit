@@ -2,7 +2,7 @@
 
 import {
   Bell, ChevronRight, ChevronsLeft, ChevronsRight, CreditCard, FileText, Inbox, LayoutDashboard, LogOut,
-  MoreHorizontal, Moon, Plus, Search, Settings,
+  MessageCircle, MoreHorizontal, Moon, Plus, Search, Settings,
 } from "lucide-react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
@@ -68,6 +68,8 @@ export function WorkspaceShell({ wsId, children }: { wsId: string; children: Rea
     { href: `${base}/reports`, label: "Company reports", icon: FileText },
     { href: `${base}/experiments/new`, label: "New experiment", icon: Plus },
     { href: `${base}/approvals`, label: "Approvals", icon: Inbox, count: approvals.data?.length },
+    { href: `${base}/fo`, label: "Fo Assistant", icon: MessageCircle },
+    ...(ws.data?.role === "owner" ? [{ href: `${base}/first-look`, label: "Free first look", icon: FileText }] : []),
     ...(ws.data?.role === "owner" ? [{ href: `${base}/billing`, label: "Plans & billing", icon: CreditCard }] : []),
     { href: `${base}/settings`, label: "Settings", icon: Settings },
   ];

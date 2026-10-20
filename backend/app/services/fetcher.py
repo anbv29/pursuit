@@ -67,21 +67,58 @@ def _check_host(url: str) -> str:
 
 
 class _TextExtractor(HTMLParser):
-    SKIP = {"script", "style", "noscript", "svg", "template"}
+    SKIP = {"script", "style", "noscript", "svg", "template", "nav", "footer"}
+    BLOCKS = {"p", "div", "section", "article", "main", "h1", "h2", "h3", "li", "br"}
 
     def __init__(self) -> None:
         super().__init__()
         self.title, self.parts, self._skip, self._in_title = "", [], 0, False
+        self._stack = []
 
     def handle_starttag(self, tag, attrs):
-        if tag in self.SKIP:
+        attributes = dict(attrs)
+        skip = (
+            tag in self.SKIP
+            or attributes.get("role") in {"navigation", "contentinfo", "menu", "menubar"}
+            or "hidden" in attributes
+            or attributes.get("aria-hidden") == "true"
+        )
+        if tag not in {
+            "area",
+            "base",
+            "br",
+            "col",
+            "embed",
+            "hr",
+            "img",
+            "input",
+            "link",
+            "meta",
+            "param",
+            "source",
+            "track",
+            "wbr",
+        }:
+            self._stack.append((tag, skip))
+        else:
+            skip = False
+        if skip:
             self._skip += 1
-        self._in_title = tag == "title"
+        if tag == "title":
+            self._in_title = True
+        if tag in self.BLOCKS and not self._skip:
+            self.parts.append("\n")
 
     def handle_endtag(self, tag):
-        if tag in self.SKIP and self._skip:
-            self._skip -= 1
-        self._in_title = False
+        for index in range(len(self._stack) - 1, -1, -1):
+            if self._stack[index][0] == tag:
+                self._skip -= sum(skipped for _, skipped in self._stack[index:])
+                del self._stack[index:]
+                break
+        if tag == "title":
+            self._in_title = False
+        if tag in self.BLOCKS and not self._skip:
+            self.parts.append("\n")
 
     def handle_data(self, data):
         if self._in_title and not self.title:
@@ -93,7 +130,8 @@ class _TextExtractor(HTMLParser):
 def extract(html: str) -> tuple[str, str]:
     p = _TextExtractor()
     p.feed(html)
-    text = re.sub(r"\s+", " ", " ".join(p.parts)).strip()
+    lines = [re.sub(r"\s+", " ", line).strip() for line in " ".join(p.parts).splitlines()]
+    text = "\n".join(dict.fromkeys(line for line in lines if line))
     return p.title[:300], text
 
 

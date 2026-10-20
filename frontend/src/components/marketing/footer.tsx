@@ -4,7 +4,7 @@ import { Logo } from "@/components/brand";
 
 const links = [
   { title: "Explore", items: [
-    { label: "The process", href: "/#how-it-works" },
+    { label: "Process", href: "/#how-it-works" },
     { label: "What you can do", href: "/#capabilities" },
     { label: "Plans & pricing", href: "/#pricing" },
   ] },

@@ -1,5 +1,6 @@
-param([switch]$TestMode, [switch]$Build, [switch]$ConfiguredServices)
+param([switch]$TestMode, [switch]$Build, [switch]$ConfiguredServices, [switch]$LiveFo)
 if ($TestMode -and $ConfiguredServices) { throw 'Choose test mode or configured services, not both.' }
+if ($TestMode -and $LiveFo) { throw 'Test mode cannot enable live Fo actions.' }
 $ErrorActionPreference = 'Stop'
 $root = Split-Path $PSScriptRoot -Parent
 $runtime = Join-Path $root '.local'
@@ -16,7 +17,7 @@ if (!(Test-Path $python) -or !(Test-Path (Join-Path $root 'frontend\node_modules
 $keys = @('APP_ENV', 'DATABASE_URL', 'TEST_DATABASE_URL', 'COOKIE_SECURE', 'PUBLIC_APP_URL', 'CORS_ORIGINS',
     'FO_MODE', 'DODO_PAYMENTS_API_KEY', 'DODO_PAYMENTS_WEBHOOK_KEY', 'DODO_PAYMENTS_ENVIRONMENT',
     'NEXT_DIST_DIR', 'NODE_OPTIONS', 'BACKEND_URL', 'ANTHROPIC_API_KEY', 'REPORT_WORKER_ENABLED',
-    'REGISTER_LIMIT_PER_HOUR', 'LOGIN_LIMIT_PER_10MIN', 'BILLING_CHECKOUT_ENABLED')
+    'REGISTER_LIMIT_PER_HOUR', 'LOGIN_LIMIT_PER_10MIN', 'BILLING_CHECKOUT_ENABLED', 'FREE_PREVIEW_ENABLED')
 $saved = @{}
 foreach ($key in $keys) { $saved[$key] = [Environment]::GetEnvironmentVariable($key, 'Process') }
 $started = @()
@@ -28,7 +29,7 @@ try {
     $env:COOKIE_SECURE = 'false'
     $env:PUBLIC_APP_URL = 'http://localhost:3000'
     $env:CORS_ORIGINS = 'http://localhost:3000'
-    $env:FO_MODE = 'demo'
+    $env:FO_MODE = if ($LiveFo) { 'live' } else { 'demo' }
     # Spaces override any private .env merchant keys; they are never printed or changed on disk.
     if (!$ConfiguredServices) {
         $env:DODO_PAYMENTS_API_KEY = ' '
@@ -40,6 +41,7 @@ try {
     $env:NODE_OPTIONS = '--max-old-space-size=1536'
     $env:BACKEND_URL = 'http://127.0.0.1:8000'
     if ($TestMode) {
+        $env:FREE_PREVIEW_ENABLED = 'false'
         $env:ANTHROPIC_API_KEY = ' '
         $env:REPORT_WORKER_ENABLED = 'false'
         $env:REGISTER_LIMIT_PER_HOUR = '1000'
@@ -75,7 +77,8 @@ try {
         } catch { Start-Sleep -Seconds 1 }
     }
     if (!$healthy) { throw 'Local services did not become healthy. See .local logs.' }
-    Write-Host 'Pursuit is ready at http://localhost:3000 (simulated Fo; payments disabled).'
+    $foLabel = if ($LiveFo) { 'live Fo; user connection and approval required' } else { 'simulated Fo' }
+    Write-Host "Pursuit is ready at http://localhost:3000 ($foLabel; payments disabled)."
 } catch {
     foreach ($process in $started) { taskkill.exe /PID $process.Id /T /F *> $null }
     throw

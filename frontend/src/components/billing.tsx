@@ -74,7 +74,8 @@ export function BillingPanel() {
       {plans.data.map((p) => <Card key={p.id} className="flex flex-col p-5">
         <h2 className="font-semibold">{p.name}</h2><p className="mt-3 text-3xl font-semibold">${p.price_cents / 100}<span className="text-sm font-normal text-ink-3">{p.interval === "month" ? "/month" : p.interval === "once" ? " once" : ""}</span></p>
         <ul className="my-5 flex-1 space-y-2 text-sm text-ink-2">
-          <li>{p.reports ? `${p.reports} research credit${p.reports === 1 ? "" : "s"}` : "Sample report and manual experiments"}</li>
+          <li>{p.reports ? `${p.reports} research credit${p.reports === 1 ? "" : "s"}` : "1 four-section research preview per account"}</li>
+          {p.id === "free" && <li>Sample report and manual experiments</li>}
           <li>{p.questions ? `${p.questions} AI answers` : "Free rule-based recommendations"}</li>
           <li>{p.seats} member{p.seats === 1 ? "" : "s"}, including the owner</li>
           {["founder", "team"].includes(p.id) && <><li>Selective refresh and company discovery</li><li>Share links and report history</li></>}
@@ -87,7 +88,7 @@ export function BillingPanel() {
     </div>
     {subscription && <p className="text-sm text-ink-2">Use Manage billing to change or cancel your existing subscription. A second subscription cannot be started here.</p>}
     <div className="space-y-2 text-sm text-ink-2">
-      <p>One research credit covers one full report, selected-section refresh, or company discovery search—even if no matching companies are found. Refresh and discovery need Founder or Team.</p>
+      <p>One research credit covers one full report, selected-section refresh, or company discovery search, even if no matching companies are found. Refresh and discovery need Founder or Team.</p>
       <p>One AI answer covers a report question or optional AI-assisted experiment recommendation. First-week checklists and rule-based analysis use no credits.</p>
       <p>Prices are in USD, per workspace, and include applicable taxes. No extra GST is added at checkout. Monthly plans renew automatically; unused monthly allowances expire at period end. Single Report credits do not expire. No automatic overage charges.</p>
       <p>Failed jobs release their customer credit. Included AI has resource and cost safety limits. Fo and email-provider charges are separate; live action execution is not included in these prices.</p>

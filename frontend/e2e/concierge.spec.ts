@@ -26,7 +26,7 @@ for (const width of [1280, 390]) {
     await page.getByRole("tab", { name: "Prospects & interviews" }).click();
     await expect(page.getByRole("heading", { name: "Interview concierge", exact: true })).toBeVisible();
     await page.getByRole("checkbox", { name: /Dana/ }).check();
-    await page.getByLabel("Available times", { exact: true }).fill("Weekdays 2–5pm next week");
+    await page.getByLabel("Available times", { exact: true }).fill("Weekdays 2-5pm next week");
     const future = new Date(Date.now() + 7 * 86400000);
     const localFuture = new Date(future.getTime() - future.getTimezoneOffset() * 60000).toISOString().slice(0, 16);
     await page.getByLabel("Stop coordination by", { exact: true }).fill(localFuture);

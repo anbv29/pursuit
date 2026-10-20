@@ -12,6 +12,7 @@ export function ResearchAllowance() {
   return <div className="space-y-2 rounded-lg bg-trail-soft p-4 text-sm text-trail-strong">
     <p><b>{balance.data.research_remaining} research credits remaining.</b> A completed report uses one credit. Failed jobs return the customer credit.</p>
     <p>There are no automatic overage charges for included research.</p>
+    {workspace.role === "owner" && balance.data.research_remaining === 0 && <p>Trying Pursuit first? <Link href={`${base}/first-look`} className="font-medium underline">Get your free Website First Look</Link>, one per account, with no research credit needed.</p>}
     {workspace.role === "owner" ? <Link href={`${base}/billing`} className="inline-block font-medium underline">View plans and billing</Link> : <p>Ask your workspace owner to purchase more credits.</p>}
   </div>;
 }

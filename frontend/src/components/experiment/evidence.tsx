@@ -142,7 +142,7 @@ export function EvidencePanel() {
       </div>
 
       {ev.loading && !ev.data ? <Skeleton className="h-40" /> : !ev.data?.length ? (
-        <Card><Empty title="No evidence yet" body="Add sources and record what they show — including anything that contradicts your hypothesis." /></Card>
+        <Card><Empty title="No evidence yet" body="Add sources and record what they show, including anything that contradicts your hypothesis." /></Card>
       ) : (
         <div className="grid gap-4 lg:grid-cols-3">
           {(Object.keys(KIND) as (keyof typeof KIND)[]).map((k) => {

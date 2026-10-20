@@ -94,7 +94,7 @@ export function FunnelPanel() {
         </Card>
         {f?.bottleneck && (
           <Card>
-            <CardHeader title={`Why does “${f.bottleneck.from} → ${f.bottleneck.to}” leak?`} description="Competing explanations — run the test that tells them apart before changing anything." />
+            <CardHeader title={`Why does “${f.bottleneck.from} → ${f.bottleneck.to}” leak?`} description="Competing explanations, run the test that tells them apart before changing anything." />
             <ul className="divide-y divide-line">
               {f.explanations.map((x, i) => (
                 <li key={i} className="px-5 py-3">

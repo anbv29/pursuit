@@ -29,3 +29,18 @@ def test_extract_ignores_scripts_and_gets_title():
     title, text = fetcher.extract(html)
     assert title == "Acme Pricing"
     assert "steal" not in text and "Pro $49" in text
+
+
+def test_extract_removes_menus_hidden_content_and_footer_but_keeps_main_message():
+    html = """<title>Toolkit</title><nav><div>Industries Pricing Blog</div></nav>
+    <main><h1>Inventory without spreadsheets</h1><p>Track stock across your shops.</p>
+    <div role="navigation"><span>Hidden menu</span></div><p hidden>Private filler</p>
+    <p aria-hidden="true">Duplicate menu</p><p>Start free</p></main>
+    <footer>Copyright Support Sign in</footer>"""
+    title, text = fetcher.extract(html)
+    assert title == "Toolkit"
+    assert text.splitlines() == [
+        "Inventory without spreadsheets",
+        "Track stock across your shops.",
+        "Start free",
+    ]

@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { useId } from "react";
 
-/** Pursuit mark: a trail of three ascending steps — hypothesis, evidence, decision. */
+/** Pursuit mark: a trail of three ascending steps, hypothesis, evidence, decision. */
 export function Logo({ href = "/", compact = false }: { href?: string; compact?: boolean }) {
   const grad = `pm${useId().replace(/:/g, "")}`;
   return (

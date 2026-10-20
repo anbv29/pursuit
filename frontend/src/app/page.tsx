@@ -25,7 +25,7 @@ export default function Home() {
               A clearer picture.<br /><span className="text-trail">A smarter next move.</span>
             </h1>
             <p className="mt-6 max-w-lg text-[17px] leading-7 text-ink-2">
-              Your business has questions. Start with your website and an idea. Get a source-linked view of your customers, competition and pricing — and a practical plan for what to test next.
+              Your business has questions. Start with your website and an idea. Get a source-linked view of your customers, competition and pricing, and a practical plan for what to test next.
             </p>
             <div className="mt-8"><HeroCta /></div>
             <p className="mt-5 text-sm text-ink-3">Explore a sample first. No card needed.</p>

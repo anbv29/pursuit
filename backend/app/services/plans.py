@@ -3,6 +3,7 @@
 PLANS = {
     "free": {
         "name": "Explore",
+        "first_looks": 1,
         "price_cents": 0,
         "interval": "free",
         "reports": 0,

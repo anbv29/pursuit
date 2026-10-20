@@ -102,7 +102,7 @@ function NewExperiment() {
             {(id, d) => <Input id={id} aria-describedby={d} value={form.target_audience} onChange={set("target_audience")} />}
           </Field>
           <div className="space-y-2">
-            <p className="text-[13px] font-medium text-ink-2">Success criteria <span className="font-normal text-ink-3">— decided before you see results</span></p>
+            <p className="text-[13px] font-medium text-ink-2">Success criteria <span className="font-normal text-ink-3">(decided before you see results)</span></p>
             <CriteriaEditor value={criteria} onChange={setCriteria} />
           </div>
           <Button type="submit" loading={create.pending}>Create experiment</Button>
@@ -119,7 +119,7 @@ function NewExperiment() {
             {form.target_audience && <p className="mt-2 text-xs text-ink-3">Audience: {form.target_audience}</p>}
             <p className="mt-4 text-xs font-medium text-ink-3">It succeeds if</p>
             <ul className="mt-1.5 space-y-1">
-              {criteria.length === 0 && <li className="text-sm text-flag">No criteria — results cannot be judged.</li>}
+              {criteria.length === 0 && <li className="text-sm text-flag">No criteria, results cannot be judged.</li>}
               {criteria.map((c, i) => (
                 <li key={i} className="flex gap-2 text-sm"><Check className="mt-0.5 size-3.5 shrink-0 text-trail" />
                   <span>{label(c.metric)} {c.comparator} {isRate(c.metric) ? `${Math.round(c.target * 100)}%` : c.target}

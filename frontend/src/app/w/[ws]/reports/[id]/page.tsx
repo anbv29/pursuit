@@ -1,5 +1,7 @@
 "use client";
 
+import { plainCopy } from "@/lib/plain-copy";
+
 import { AlertTriangle, FlaskConical, Printer, RotateCw } from "lucide-react";
 import Link from "next/link";
 import { useParams, useRouter } from "next/navigation";
@@ -43,7 +45,7 @@ function Progress({ r, onCancel, pending }: { r: Report; onCancel: () => void; p
     <Glass className="enter-rise mx-auto mt-4 max-w-xl p-6 sm:p-8">
       <p className="text-[13px] font-medium text-trail">{r.status === "QUEUED" ? "Queued" : "Working"} · <Elapsed since={r.started_at ?? r.created_at} /></p>
       <h1 className="mt-1 font-display text-2xl font-bold tracking-tight">Analyzing {r.company_name || r.company_url}</h1>
-      <p className="mt-1.5 text-sm text-ink-2">Usually 2–4 minutes. You can leave this page; the report keeps generating.</p>
+      <p className="mt-1.5 text-sm text-ink-2">Usually 2-4 minutes. You can leave this page; the report keeps generating.</p>
       <div className="mt-6" aria-live="polite">
         <ProcessingFeed steps={STEPS} current={step} detail={r.progress} count={sources} countLabel="sources gathered" />
       </div>
@@ -158,7 +160,7 @@ export default function ReportPage() {
       </Glass>
     );
   }
-  const c = r.content;
+  const c = plainCopy(r.content);
   const v = c.validation;
   return (
     <SourcesProvider sources={r.sources}>

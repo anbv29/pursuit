@@ -95,3 +95,12 @@ Then sign up, create a demo workspace, and check **Settings → Integrations**.
 - A stable encryption key and verified Fo OAuth connection if you want live actions.
 - Hosted AI synthesis is verified; retain server-side keys and monitor the owner's Anthropic balance.
 - A custom domain and TLS, if desired (both platforms provide TLS by default).
+
+
+## Fo chat and free-preview release prerequisites
+
+Before activating this release on the hosted backend, apply Alembic migrations through `22d93a2c4b64` using the migration owner connection. This adds the private Fo chat tables/context and account-level free-preview storage. The Render free-plan start command deliberately does not run owner-level migrations; pushing GitHub code alone does not apply them. Ensure the limited runtime role has the required table privileges after migration.
+
+Provision `OPENROUTER_API_KEY` privately on the backend only, set `FREE_RESEARCH_MODEL=minimax/minimax-m3.1-flash:free`, and enable `FREE_PREVIEW_ENABLED=true` only after checking inference with the hosted account. The default is disabled. Free-provider capacity can fluctuate; no paid fallback is configured. Never add these secrets to Vercel public variables or Git.
+
+For live Fo chat, preserve the existing encryption key, configure `FO_MODE=live` and the exact public OAuth callback origin, and verify a personal Wajo connection with explicit report-sharing consent. Local mock tests do not establish live hosted OAuth/report-context delivery. Fo chat does not use Anthropic research credits.

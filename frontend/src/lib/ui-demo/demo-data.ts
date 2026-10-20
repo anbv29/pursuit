@@ -18,7 +18,7 @@ export const HERO_SOURCES = 38;
 export const HERO_MATCHES = [
   {
     who: "Practice manager",
-    where: "Independent outpatient clinics, 5–30 staff",
+    where: "Independent outpatient clinics, 5-30 staff",
     fit: 5,
     why: "Owns claim follow-up personally and reports spending an afternoon a week matching remittances.",
   },

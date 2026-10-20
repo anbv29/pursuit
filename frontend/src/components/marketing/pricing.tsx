@@ -23,7 +23,8 @@ export function Pricing() {
           <h3 className="font-ui text-lg font-semibold">{plan.name}</h3>
           <p className="mt-3"><span className="font-ui text-4xl font-semibold tabular-nums">${plan.price_cents / 100}</span><span className="ml-1 text-sm text-ink-3">{plan.interval === "month" ? "/month" : plan.interval === "once" ? "once" : "free"}</span></p>
           <ul className="my-6 flex-1 space-y-3 text-sm text-ink-2">
-            <li>{plan.reports ? `${plan.reports} research credit${plan.reports === 1 ? "" : "s"}` : "Clearly labelled sample report"}</li>
+            <li>{plan.reports ? `${plan.reports} research credit${plan.reports === 1 ? "" : "s"}` : "1 four-section research preview per account"}</li>
+            {plan.id === "free" && <li>Sample full report to explore</li>}
             <li>{plan.questions ? `${plan.questions} AI answers` : "Free rule-based recommendations"}</li>
             <li>{plan.seats} member{plan.seats === 1 ? "" : "s"}, including the owner</li>
             <li>All six manual experiment workflows</li>

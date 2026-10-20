@@ -28,8 +28,8 @@ export function Competitors({ c }: { c: ReportContent }) {
                 <td className="py-3 pr-4 text-ink-2">{x.positioning}</td>
                 <td className="py-3 pr-4 text-ink-2">{x.target_customers}</td>
                 <td className="py-3 pr-4">{x.pricing || <span className="italic text-ink-3">Unknown</span>}</td>
-                <td className="py-3 pr-4"><Bullets items={x.strengths} empty="—" /></td>
-                <td className="py-3 pr-4"><Bullets items={x.weaknesses} empty="—" /></td>
+                <td className="py-3 pr-4"><Bullets items={x.strengths} empty="Not available" /></td>
+                <td className="py-3 pr-4"><Bullets items={x.weaknesses} empty="Not available" /></td>
               </tr>
             ))}
           </tbody>

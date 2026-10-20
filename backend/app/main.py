@@ -16,6 +16,8 @@ from app.api import (
     discovery,
     evidence,
     experiments,
+    first_look,
+    fo_chat,
     fo_oauth,
     overview,
     payment_webhook,
@@ -107,6 +109,8 @@ def create_app() -> FastAPI:
     app.include_router(overview.router)
     app.include_router(reports.router)
     app.include_router(fo_oauth.router)
+    app.include_router(fo_chat.router)
+    app.include_router(first_look.router)
     app.include_router(report_tools.router)
     app.include_router(report_sharing.router)
     app.include_router(usage.router)

@@ -1,6 +1,6 @@
 from fastapi import APIRouter, Depends, Query
 from fastapi.responses import RedirectResponse
-from sqlalchemy import delete
+from sqlalchemy import delete, select
 from sqlalchemy.orm import Session
 
 from app.api.deps import current_user, workspace_member
@@ -10,7 +10,8 @@ from app.core.errors import AppError
 from app.core.ratelimit import limiter
 from app.models import Membership, User
 from app.models.connection import FoAuthorization, FoConnection
-from app.services import audit, fo_oauth
+from app.models.enums import Role
+from app.services import audit, fo_context, fo_oauth
 
 router = APIRouter(tags=["Fo connection"])
 
@@ -33,7 +34,7 @@ def callback(
     db: Session = Depends(get_db),
 ):
     try:
-        ws_id = fo_oauth.complete(db, user.id, code, state)
+        ws_id, chat_context = fo_oauth.complete(db, user.id, code, state, with_context=True)
     except AppError:
         db.rollback()
         return RedirectResponse(
@@ -41,6 +42,31 @@ def callback(
         )
     audit.record(db, "fo.connect", actor_id=user.id, workspace_id=ws_id)
     db.commit()
+    if chat_context:
+        membership = db.scalar(
+            select(Membership).where(
+                Membership.workspace_id == ws_id, Membership.user_id == user.id, Membership.role == Role.OWNER
+            )
+        )
+        if membership is not None:
+            try:
+                fo_context.share(
+                    db,
+                    membership.workspace,
+                    user,
+                    chat_context["report"],
+                    chat_context["request_key"],
+                    fresh_conversation=True,
+                )
+            except AppError:
+                db.rollback()
+                return RedirectResponse(
+                    get_settings().public_app_url.rstrip("/") + f"/w/{ws_id}/fo?context=review",
+                    status_code=303,
+                )
+        return RedirectResponse(
+            get_settings().public_app_url.rstrip("/") + f"/w/{ws_id}/fo?fo=connected", status_code=303
+        )
     return RedirectResponse(
         get_settings().public_app_url.rstrip("/") + f"/w/{ws_id}/settings?fo=connected", status_code=303
     )

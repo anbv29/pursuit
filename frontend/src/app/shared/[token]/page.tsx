@@ -1,4 +1,6 @@
 "use client";
+
+import { plainCopy } from "@/lib/plain-copy";
 import { Suspense } from "react";
 import { useParams } from "next/navigation";
 import { useApi } from "@/lib/hooks";
@@ -14,7 +16,7 @@ function SharedReport() {
   const report = useApi<{ company_name: string; content: ReportContent; sources: ReportSource[]; expires_at: string }>(`/shared-reports/${token}`);
   if (report.error) return <Empty title="This report link is unavailable" body="It may have expired or been revoked. Ask its owner for a new link." />;
   if (!report.data) return <Skeleton className="mx-auto mt-12 h-64 max-w-4xl" />;
-  const r = report.data, c = r.content;
+  const r = report.data, c = plainCopy(r.content);
   return <main className="mx-auto max-w-5xl space-y-6 px-4 py-8">
     <h1 className="text-2xl font-semibold">{r.company_name} · shared report</h1>
     <p className="text-sm text-ink-3">Read-only snapshot · link expires {new Date(r.expires_at).toLocaleString()}</p>

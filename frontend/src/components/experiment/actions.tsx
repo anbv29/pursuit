@@ -73,7 +73,7 @@ function RequestForm({ kinds, onDone }: { kinds: Action["kind"][]; onDone: () =>
         <div className="grid gap-3 md:grid-cols-2">
           <Field label="Prospect (optional)">{(id) => (
             <Select id={id} value={f.prospect_id} onChange={(e) => pickProspect(e.target.value)}>
-              <option value="">—</option>{prospects.data?.map((p) => <option key={p.id} value={p.id}>{p.name}{p.company && ` · ${p.company}`}</option>)}
+              <option value="">Not selected</option>{prospects.data?.map((p) => <option key={p.id} value={p.id}>{p.name}{p.company && ` · ${p.company}`}</option>)}
             </Select>)}</Field>
           <Field label="Recipient email" error={errors.email ?? errors.target}>{(id, d) => <Input id={id} type="email" aria-describedby={d} value={f.target} onChange={set("target")} placeholder="one recipient only" />}</Field>
         </div>

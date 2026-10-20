@@ -13,10 +13,12 @@ export function LandingNav() {
     <header className="sticky top-0 z-30 px-4 pt-4 sm:px-6">
       <Glass as="div" className="landing-nav mx-auto flex h-16 max-w-6xl items-center justify-between gap-3 rounded-[16px] px-4 sm:px-5">
         <Logo />
-        <nav aria-label="Product" className="hidden items-center gap-7 text-sm text-ink-2 lg:flex">
-          <Link href="/#how-it-works" className="py-3 hover:text-ink">The process</Link>
-          <Link href="/#capabilities" className="py-3 hover:text-ink">What you can do</Link>
-          <Link href="/#pricing" className="py-3 hover:text-ink">Pricing</Link>
+        <nav aria-label="Product" className="hidden items-center gap-1 rounded-full border border-line/70 bg-sunken/50 p-1 font-ui text-[13px] font-medium tracking-[0.01em] text-ink-2 lg:flex">
+          {[
+            ["Process", "/#how-it-works"],
+            ["What you can do", "/#capabilities"],
+            ["Pricing", "/#pricing"],
+          ].map(([label, href]) => <Link key={href} href={href} className="group relative inline-flex min-h-10 items-center gap-2 rounded-full px-4 transition-colors hover:bg-surface hover:text-ink focus-visible:bg-surface focus-visible:text-ink focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-trail motion-reduce:transition-none"><span className="size-1 rounded-full bg-trail opacity-40 transition-opacity group-hover:opacity-100 group-focus-visible:opacity-100 motion-reduce:transition-none" aria-hidden />{label}</Link>)}
         </nav>
         <nav aria-label="Account" className="flex items-center gap-1.5 sm:gap-2">
           <ThemeToggle />
