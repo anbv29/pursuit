@@ -23,6 +23,9 @@ test("founder runs a full experiment loop and an outsider is locked out", async 
   // Onboarding now opens the company report form; manual experiments are one click away.
   await expect(page).toHaveURL(/reports\/new/);
   await page.getByLabel("Reading style").selectOption("advanced");
+  // Sidebar no longer carries "New experiment"; it lives on the dashboard now.
+  await page.getByRole("link", { name: "Dashboard" }).filter({ visible: true }).first().click();
+  await expect(page).toHaveURL(/\/w\/[^/]+$/);
   await page.getByRole("link", { name: "New experiment" }).filter({ visible: true }).first().click();
   await expect(page).toHaveURL(/experiments\/new/);
 
