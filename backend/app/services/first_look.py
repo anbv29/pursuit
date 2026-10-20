@@ -113,9 +113,12 @@ def run(db, workspace, user, body):
             raise fetcher.FetchError(
                 "The homepage has too little readable text. Try a public page with more content."
             )
-        result, error = inspect(
-            page, row.audience, body.description, body.founder_reality.model_dump(exclude_defaults=True)
-        ), None
+        result, error = (
+            inspect(
+                page, row.audience, body.description, body.founder_reality.model_dump(exclude_defaults=True)
+            ),
+            None,
+        )
     except free_research.PreviewError:
         result, error = None, free_research.UNAVAILABLE
     except fetcher.FetchError:

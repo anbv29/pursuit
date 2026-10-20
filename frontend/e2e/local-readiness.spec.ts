@@ -70,17 +70,15 @@ test("account password change signs out and account deletion persists", async ({
   expect(result.status()).toBe(401);
 });
 
-test("public pricing failure can be retried without reloading", async ({ page }) => {
+test("public pricing renders without waiting on the plans API", async ({ page }) => {
   let attempts = 0;
   await page.route("**/api/plans", async (route) => {
-    if (++attempts === 1) await route.fulfill({ status: 503, json: { error: { code: "server", message: "Unavailable" } } });
-    else await route.continue();
+    ++attempts;
+    await route.abort();
   });
   await page.goto("/");
-  await expect(page.getByText("Prices could not be loaded.", { exact: false })).toBeVisible();
-  await page.getByRole("button", { name: "Retry prices" }).click();
   await expect(page.getByRole("heading", { name: "Team", exact: true })).toBeVisible();
-  expect(attempts).toBe(2);
+  expect(attempts).toBe(0);
 });
 
 test("blocked browser storage does not duplicate or prevent workspace creation", async ({ page }) => {
