@@ -2,7 +2,7 @@
 
 import {
   Bell, ChevronRight, ChevronsLeft, ChevronsRight, CreditCard, FileText, Inbox, LayoutDashboard, LogOut,
-  MessageCircle, MoreHorizontal, Moon, Plus, Search, Settings,
+  MessageCircle, MoreHorizontal, Moon, Search, Settings,
 } from "lucide-react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
@@ -66,7 +66,6 @@ export function WorkspaceShell({ wsId, children }: { wsId: string; children: Rea
   const nav: NavItem[] = [
     { href: base, label: "Dashboard", icon: LayoutDashboard, exact: true },
     { href: `${base}/reports`, label: "Company reports", icon: FileText },
-    { href: `${base}/experiments/new`, label: "New experiment", icon: Plus },
     { href: `${base}/approvals`, label: "Approvals", icon: Inbox, count: approvals.data?.length },
     { href: `${base}/fo`, label: "Fo Assistant", icon: MessageCircle },
     ...(ws.data?.role === "owner" ? [{ href: `${base}/first-look`, label: "Free first look", icon: FileText }] : []),
@@ -109,8 +108,14 @@ export function WorkspaceShell({ wsId, children }: { wsId: string; children: Rea
     </select>
   ) : <Skeleton className="h-9 w-full" />;
 
-  const mobilePrimary = nav.slice(0, 4);
-  const mobileMore = nav.slice(4);
+  const groups = [
+    { label: "Overview", items: nav.filter((n) => n.exact) },
+    { label: "Research", items: nav.filter((n) => [ `${base}/reports`, `${base}/first-look` ].includes(n.href)) },
+    { label: "Take action", items: nav.filter((n) => [ `${base}/approvals`, `${base}/fo` ].includes(n.href)) },
+    { label: "Workspace", items: nav.filter((n) => [ `${base}/billing`, `${base}/settings` ].includes(n.href)) },
+  ];
+  const mobilePrimary = nav.filter((n) => n.exact || n.href === `${base}/reports` || n.href === `${base}/fo`);
+  const mobileMore = groups.flatMap((g) => g.items).filter((n) => !mobilePrimary.includes(n));
 
   return (
     <div className="app-shell flex min-h-screen">
@@ -124,28 +129,40 @@ export function WorkspaceShell({ wsId, children }: { wsId: string; children: Rea
             <Logo href={base} compact={collapsed} />
           </div>
           {!collapsed && <div className="mt-3">{switcher}</div>}
-          <ul className="mt-4 flex-1 space-y-1">
-            {nav.map((n) => {
-              const active = isActive(n);
-              return (
-                <li key={n.href}>
-                  <Link href={n.href} title={collapsed ? n.label : undefined} aria-current={active ? "page" : undefined}
-                    className={cx("press relative flex h-10 items-center gap-3 rounded-xl px-3 text-sm transition-[background-color,color] duration-150",
-                      active ? "bg-surface font-semibold text-ink shadow-[0_4px_14px_-8px_var(--shadow)] ring-1 ring-[var(--glass-border)]" : "text-ink-2 hover:bg-[var(--inset)] hover:text-ink",
-                      collapsed && "justify-center px-0")}>
-                    {active && <span className="absolute left-0 top-2 h-6 w-1 rounded-r-full bg-accent" aria-hidden />}
-                    <n.icon className="size-[18px] shrink-0" aria-hidden />
-                    {!collapsed && <span className="flex-1 truncate">{n.label}</span>}
-                    {!!n.count && (
-                      <span className={cx("rounded-full bg-warning px-1.5 text-[11px] font-bold leading-5 text-bg", collapsed && "absolute right-1.5 top-1")}>
-                        {n.count}<span className="sr-only"> waiting</span>
-                      </span>
-                    )}
-                  </Link>
-                </li>
-              );
-            })}
-          </ul>
+          <div className="mt-5 flex min-h-0 flex-1 flex-col overflow-y-auto overscroll-contain pb-3">
+            {groups.map((group) => (
+              <div key={group.label} className={cx(
+                group.label === "Workspace" ? "mt-auto border-t border-line pt-4" : "mb-3",
+                collapsed && group.label !== "Overview" && "border-t border-line pt-3",
+              )}>
+                {group.label !== "Overview" && !collapsed && (
+                  <p className="mb-2 px-3 font-ui text-[10px] font-semibold uppercase tracking-[0.14em] text-ink-3">{group.label}</p>
+                )}
+                <ul aria-label={group.label} className="space-y-1">
+                  {group.items.map((n) => {
+                    const active = isActive(n);
+                    return (
+                      <li key={n.href}>
+                        <Link href={n.href} title={collapsed ? n.label : undefined} aria-label={collapsed ? n.label : undefined} aria-current={active ? "page" : undefined}
+                          className={cx("press relative flex min-h-11 items-center gap-3 rounded-xl px-3 py-2 text-sm transition-[background-color,color] duration-150",
+                            active ? "bg-surface font-semibold text-ink ring-1 ring-[var(--glass-border)]" : "text-ink-2 hover:bg-[var(--inset)] hover:text-ink",
+                            collapsed && "justify-center px-0")}>
+                          {active && <span className="absolute left-0 top-2 h-6 w-1 rounded-r-full bg-accent" aria-hidden />}
+                          <n.icon className="size-[18px] shrink-0" aria-hidden />
+                          {!collapsed && <span className="flex-1 truncate">{n.label}</span>}
+                          {!!n.count && (
+                            <span className={cx("rounded-full bg-warning px-1.5 text-[11px] font-bold leading-5 text-bg", collapsed && "absolute right-1.5 top-1")}>
+                              {n.count}<span className="sr-only"> waiting</span>
+                            </span>
+                          )}
+                        </Link>
+                      </li>
+                    );
+                  })}
+                </ul>
+              </div>
+            ))}
+          </div>
           <button onClick={toggle} className="press flex h-10 w-full items-center justify-center gap-2 rounded-xl text-sm text-ink-3 hover:bg-[var(--inset)] hover:text-ink"
             aria-label={collapsed ? "Expand sidebar" : "Collapse sidebar"}>
             {collapsed ? <ChevronsRight className="size-4" /> : <><ChevronsLeft className="size-4" /> <span>Collapse</span></>}
