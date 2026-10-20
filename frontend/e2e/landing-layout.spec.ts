@@ -10,8 +10,11 @@ for (const width of [390, 820, 1440]) {
     await page.evaluate(() => document.fonts.ready);
     const preview = page.getByRole("region", { name: "Example of Pursuit at work" });
     const band = page.getByRole("region", { name: "What you can rely on" });
+    // Document-relative Y for the band: viewport-relative boxes move with the
+    // page scroll Playwright performs to click the tab on narrow viewports.
+    const bandY = async () => await band.evaluate((el) => el.getBoundingClientRect().top + window.scrollY);
     const before = await preview.boundingBox();
-    const bandBefore = await band.boundingBox();
+    const bandBefore = await bandY();
     expect(before).not.toBeNull();
     expect(bandBefore).not.toBeNull();
     await preview.getByRole("tab", { name: "Competition", exact: true }).click();
@@ -20,9 +23,9 @@ for (const width of [390, 820, 1440]) {
     await expect(preview.getByRole("tab", { name: "Next test", exact: true })).toHaveAttribute("aria-selected", "true");
     await expect(preview.getByRole("heading", { name: "Trade interest for a concrete commitment." })).toBeVisible();
     const after = await preview.boundingBox();
-    const bandAfter = await band.boundingBox();
+    const bandAfter = await bandY();
     expect(Math.abs(after!.height - before!.height), "preview height changed").toBeLessThanOrEqual(1);
-    expect(Math.abs(bandAfter!.y - bandBefore!.y), "content shifted below preview").toBeLessThanOrEqual(1);
+    expect(Math.abs(bandAfter - bandBefore), "content shifted below preview").toBeLessThanOrEqual(1);
     expect(await page.evaluate(() => document.documentElement.scrollWidth - innerWidth)).toBeLessThanOrEqual(1);
     await page.screenshot({ path: `test-results/landing-reference-${width}.png`, fullPage: true });
   });
