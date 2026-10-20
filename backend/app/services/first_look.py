@@ -10,9 +10,10 @@ from app.core.db import utcnow
 from app.core.errors import AppError, Conflict, RateLimited
 from app.models import Evidence, Experiment, FirstLook, Source, SuccessCriterion, User
 from app.models.enums import DataOrigin, EvidenceKind, Stance, UseCase
-from app.services import audit, fetcher, free_research
+from app.services import audit, fetcher, free_research, preview_sources
 
 logger = logging.getLogger("pursuit.first_look")
+ASSESSMENT_VERSION = 4
 PAGE_UNAVAILABLE = (
     "We couldn't read this page yet. Try another public page from the same website, "
     "such as About or Product, or try again later. Your free First Look hasn't been used."
@@ -20,22 +21,26 @@ PAGE_UNAVAILABLE = (
 
 
 def inspect(page, audience, description=""):
-    content = free_research.generate(page, audience, description)
+    gathered, sources = preview_sources.collect(page)
+    content = free_research.generate(gathered, audience, description)
     return {
         "title": content["snapshot"]["name"],
         "source_url": page.url,
         "source_sha256": page.sha256,
         "retrieved_at": utcnow().isoformat(),
         "excerpt": page.text[:700],
-        "assessment_version": 3,
+        "assessment_version": ASSESSMENT_VERSION,
         "content": content,
+        "sources": sources,
+        "research_depth": "company_pages_with_challenge_pass",
         "audience": audience,
         "hypothesis": (
             f"At least 3 of 5 people in {audience or content['segments'][0]['name']} "
             "can describe a recent instance of the problem this product addresses."
         ),
         "limitations": (
-            "An AI-generated preview based on one public page and your optional description. "
+            "An AI-generated preview based on up to three public company pages "
+            "and your optional description. "
             "Website statements are not independently verified. Customer segments and personas "
             "are hypotheses. No web search, competitor research or market validation was performed."
         ),
@@ -44,7 +49,7 @@ def inspect(page, audience, description=""):
 
 def summary(db, workspace_id, user_id):
     row = db.get(FirstLook, user_id)
-    outdated = bool(row and row.result and row.result.get("assessment_version", 1) < 3)
+    outdated = bool(row and row.result and row.result.get("assessment_version", 1) < ASSESSMENT_VERSION)
     return {
         "used": bool(row and row.status == "SUCCEEDED" and not outdated),
         "updated_check_available": outdated,
@@ -81,7 +86,7 @@ def run(db, workspace, user, body):
         )
     db.execute(select(User.id).where(User.id == user.id).with_for_update())
     row = db.get(FirstLook, user.id)
-    outdated = bool(row and row.result and row.result.get("assessment_version", 1) < 3)
+    outdated = bool(row and row.result and row.result.get("assessment_version", 1) < ASSESSMENT_VERSION)
     if row and row.status == "SUCCEEDED" and not outdated:
         raise Conflict(
             "Your account's free first look has already been used. Your saved result remains available."
@@ -93,6 +98,8 @@ def run(db, workspace, user, body):
     if row is None:
         row = FirstLook(user_id=user.id, attempts=0)
         db.add(row)
+    elif outdated:
+        row.attempts = 0
     row.workspace_id, row.company_url, row.audience = workspace.id, str(body.company_url), body.audience
     row.status, row.error, row.result = "RUNNING", None, None
     row.attempts += 1

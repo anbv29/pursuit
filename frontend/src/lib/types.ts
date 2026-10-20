@@ -115,9 +115,10 @@ export interface TimelineItem { id: string; action: string; actor_name: string |
 
 // ---- company reports ----------------------------------------------------------
 export type ClaimKind = "fact" | "interpretation" | "assumption";
-export interface Claim { text: string; kind: ClaimKind; confidence: "high" | "medium" | "low"; source_ids: string[]; unsourced?: boolean }
-export interface ReportSource { id: string; url: string; title: string; via: string }
+export interface Claim { text: string; kind: ClaimKind; confidence: "high" | "medium" | "low"; source_ids: string[]; unsourced?: boolean; supporting_quote?: string }
+export interface ReportSource { id: string; url: string; title: string; via: string; retrieved_at?: string | null }
 export interface ReportContent {
+  decision_brief?: StrategicInsight[];
   executive_summary: string[];
   snapshot: { name: string; one_liner: string; offering: string; business_model: string; stage_assessment: string; observed_pricing: Claim[]; key_facts: Claim[] };
   segments: { name: string; description: string; pains: string[]; buying_trigger: string; decision_maker: string; fit_score: number; rationale: Claim }[];
@@ -133,6 +134,12 @@ export interface ReportContent {
   risks_and_unknowns: string[];
   focus_first: string;
   validation?: { dropped_source_refs: number; downgraded_facts: number; fixed_metrics: number };
+}
+export interface StrategicInsight {
+  title: string; finding: string; reasoning: string; implication: string; counterargument: string;
+  next_test: string; decision_if_supported: string; decision_if_rejected: string;
+  evidence: { source_id: string; quote: string }[];
+  confidence: "low" | "medium" | "high"; status: "interpretation" | "hypothesis"; limitations: string[];
 }
 export interface Report {
   id: string; company_url: string; company_name: string; inputs: Record<string, string>;

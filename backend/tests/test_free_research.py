@@ -58,6 +58,7 @@ def test_provider_is_bounded_free_only_without_tools_or_fallback(monkeypatch, mo
         assert payload["provider"]["data_collection"] == "deny"
         assert payload["provider"]["allow_fallbacks"] is False
         assert payload["response_format"] == {"type": "json_object"}
+        assert {"id": "web", "enabled": False} in payload["plugins"]
         assert "tools" not in payload and len(payload["messages"]) == 2
         assert "untrusted" in payload["messages"][0]["content"]
         if mode == "timeout":
@@ -90,7 +91,7 @@ def test_provider_is_bounded_free_only_without_tools_or_fallback(monkeypatch, mo
         with pytest.raises(free_research.PreviewError) as error:
             free_research.generate(page, "")
         assert "private provider detail" not in str(error.value)
-    assert len(calls) == 1
+    assert len(calls) == (2 if mode in ("success", "invalid_json") else 1)
 
 
 def test_missing_key_never_opens_network(monkeypatch):
@@ -104,6 +105,18 @@ def test_key_presence_does_not_enable_unverified_provider(monkeypatch):
     monkeypatch.setattr(get_settings(), "openrouter_api_key", SecretStr("test-only-key"))
     monkeypatch.setattr(get_settings(), "free_preview_enabled", False)
     assert not free_research.available()
+
+
+def test_final_unsupported_quotes_are_downgraded_never_repaired_or_presented_as_facts():
+    content = sample_content()
+    content["snapshot"]["offering"] = {
+        "text": "Customers pay for this product.",
+        "kind": "fact",
+        "quote": "Invented customer evidence",
+    }
+    result = free_research.validate(json.dumps(content), "A toolkit for independent shops.", downgrade=True)
+    assert result["snapshot"]["offering"]["kind"] == "assumption"
+    assert result["snapshot"]["offering"]["quote"] == ""
 
 
 def test_minimax_uses_bounded_required_reasoning_without_paid_fallback(monkeypatch):

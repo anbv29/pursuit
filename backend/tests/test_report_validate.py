@@ -3,7 +3,7 @@ from app.services.report_validate import validate
 
 
 def claim(text, kind="fact", ids=("S1",)):
-    return {"text": text, "kind": kind, "confidence": "high", "source_ids": list(ids)}
+    return {"text": text, "kind": kind, "confidence": "high", "source_ids": list(ids), "supporting_quote": ""}
 
 
 def sample(**over):

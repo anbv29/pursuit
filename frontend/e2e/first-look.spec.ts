@@ -9,7 +9,13 @@ for (const width of [390, 1280]) {
     const assumption = { text: "Shop owners may need faster stock checks.", kind: "assumption", quote: "" };
     const content = {
       executive_summary: [claim, assumption],
-      snapshot: { name: "Shop toolkit", offering: claim, business_model: assumption },
+      snapshot: { name: "Shop toolkit", offering: claim, business_model: assumption, investigation: [{
+        finding: "An operations lead may buy while shop staff use the tool.",
+        quote: "Inventory software for independent shops.",
+        reasoning: "A repeated stock-check workflow may involve several people and a different budget owner.",
+        counterargument: "The owner may do stock checks personally and see no reason to delegate.",
+        next_test: "Ask five owners who last approved software spending and why.",
+      }] },
       segments: [{ name: "Independent shops", rationale: assumption }],
       personas: [{ title: "Shop owner", needs: assumption }],
     };
@@ -37,6 +43,8 @@ for (const width of [390, 1280]) {
     for (const name of ["Executive summary", "Company snapshot", "Potential customer segments", "Customer personas"]) {
       await expect(page.getByRole("heading", { name, exact: true })).toBeVisible();
     }
+    await expect(page.getByRole("heading", { name: "An angle worth investigating", exact: true })).toBeVisible();
+    await expect(page.getByText(/The owner may do stock checks personally/)).toBeVisible();
     await page.getByText("Supporting website quote", { exact: true }).first().click();
     await expect(page.getByText("“Inventory software for independent shops.”", { exact: true }).first()).toBeVisible();
     await expect(page.getByRole("heading", { name: "Competitors", exact: true })).toHaveCount(0);

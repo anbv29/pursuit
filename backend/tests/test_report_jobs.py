@@ -41,3 +41,17 @@ def test_cancelled_job_cannot_write_over_cancellation(api, ws, fake_ai, monkeypa
     reports.run(rid)
     assert api.get(f"/api/workspaces/{ws}/reports/{rid}").json()["status"] == "CANCELLED"
     assert api.post(f"/api/workspaces/{ws}/reports/{rid}/retry").json()["status"] == "QUEUED"
+
+
+def test_manual_retry_renews_only_missing_research_pass_budget(api, ws, fake_ai):
+    rid = api.post(f"/api/workspaces/{ws}/reports", BODY).json()["id"]
+    with new_session() as db:
+        row = db.get(Report, rid)
+        row.status = "FAILED"
+        row.checkpoint = {"investigations": {"search_allocated": 24, "customers": {"notes": "saved"}}}
+        db.commit()
+    assert api.post(f"/api/workspaces/{ws}/reports/{rid}/retry").status_code == 200
+    with new_session() as db:
+        row = db.get(Report, rid)
+        assert row.checkpoint["investigations"]["search_allocated"] == 8
+        assert row.checkpoint["investigations"]["customers"]["notes"] == "saved"

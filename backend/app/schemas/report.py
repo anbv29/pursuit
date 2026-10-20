@@ -12,6 +12,7 @@ from typing import Literal
 from pydantic import BaseModel, Field, HttpUrl, field_validator
 
 from app.models.enums import UseCase
+from app.schemas.research import StrategicInsight
 
 Kind = Literal["fact", "interpretation", "assumption"]
 Confidence = Literal["high", "medium", "low"]
@@ -43,6 +44,7 @@ class Claim(BaseModel):
     kind: Kind
     confidence: Confidence
     source_ids: list[str]
+    supporting_quote: str = ""
 
 
 class Snapshot(BaseModel):
@@ -137,6 +139,7 @@ class ExperimentIdea(BaseModel):
 
 
 class ReportContent(BaseModel):
+    decision_brief: list[StrategicInsight] = Field(default_factory=list)
     executive_summary: list[str]
     snapshot: Snapshot
     segments: list[Segment]
@@ -158,6 +161,7 @@ class SourceOut(BaseModel):
     url: str
     title: str
     via: str
+    retrieved_at: str | None = None
 
 
 class ReportOut(BaseModel):

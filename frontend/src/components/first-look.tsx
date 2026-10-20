@@ -11,7 +11,7 @@ import { useAction, useApi } from "@/lib/hooks";
 
 type Preview = {
   title: string; source_url: string; retrieved_at: string; excerpt: string;
-  content: FreeContent; limitations: string;
+  content: FreeContent; limitations: string; sources?: { url: string; title: string; retrieved_at: string }[];
 };
 type Status = { used: boolean; available: boolean; status: string | null; can_retry: boolean; updated_check_available?: boolean; preview: Preview | null; error: string | null; experiment_id: string | null };
 
@@ -63,7 +63,7 @@ function FirstLookForm() {
           <Field label="Your website">{id => <Input id={id} required maxLength={2048} value={url} onChange={event => setUrl(event.target.value)} placeholder="example.com" disabled={!!running} />}</Field>
           <Field label="What does your company do?" hint="Optional. Your description helps add context; it is not treated as independent evidence.">{id => <Input id={id} maxLength={1500} value={description} onChange={event => setDescription(event.target.value)} placeholder="Describe the product and the problem it solves" disabled={!!running} />}</Field>
           <Field label="Who do you think this helps?" hint="Optional. This is your assumption, not a validated customer segment.">{id => <Input id={id} maxLength={300} value={audience} onChange={event => setAudience(event.target.value)} placeholder="For example, independent shop owners" disabled={!!running} />}</Field>
-          <p className="text-sm text-ink-3">One free research preview per account. Failed requests don’t consume your preview; retries are limited. Only your public page text and these optional details are shared with our AI provider.</p>
+          <p className="text-sm text-ink-3">One free research preview per account. Failed requests don’t consume your preview; retries are limited. Only text from up to three public company pages and these optional details are shared with our AI provider.</p>
           <Button type="submit" disabled={!data || !data.available || !!running || !url.trim() || workspace.is_demo}>{running ? "Writing your preview…" : data?.can_retry ? "Retry free first look" : "Get my free first look"}<ArrowRight className="size-4" aria-hidden /></Button>
           {running && <p className="text-sm text-ink-2" role="status">If this takes too long, refresh the status. A stalled check can be retried after three minutes.</p>}
         </form>}
@@ -72,6 +72,7 @@ function FirstLookForm() {
           <section className="rounded-2xl border border-line bg-surface p-5 sm:p-6">
             <div className="flex items-start gap-3"><Globe className="mt-1 size-5 shrink-0 text-trail" aria-hidden /><div className="min-w-0"><h2 className="break-words font-display text-xl font-semibold">{result.title}</h2><a className="mt-1 inline-block break-all text-sm text-trail underline" href={result.source_url} target="_blank" rel="noopener noreferrer">View checked page</a><p className="mt-1 text-xs text-ink-3">Retrieved {new Date(result.retrieved_at).toLocaleString()}</p></div></div>
           </section>
+          {!!result.sources?.length && <details className="rounded-xl border border-line p-4 text-sm"><summary className="cursor-pointer font-medium">Company pages checked ({result.sources.length})</summary><ul className="mt-3 space-y-2">{result.sources.map((source, i) => <li key={i}><a className="break-all text-trail underline" href={source.url} target="_blank" rel="noopener noreferrer">{source.title || source.url}</a><p className="mt-1 text-xs text-ink-3">Retrieved {new Date(source.retrieved_at).toLocaleString()}</p></li>)}</ul><p className="mt-3 text-xs text-ink-3">Company-page research only. Broader market and competitor investigation is included in paid reports.</p></details>}
           <FreeReportContent content={result.content} />
           <section className="flex flex-col items-start gap-4 rounded-2xl bg-sunken p-5 sm:flex-row sm:items-center sm:justify-between"><div><h2 className="font-semibold">Ready for the wider picture?</h2><p className="mt-1 text-sm text-ink-2">Unlock the remaining research: competitors, positioning, pricing, messaging and a practical first-week plan.</p></div><Link className="shrink-0 font-ui text-sm font-semibold text-trail underline underline-offset-4" href={`${base}/billing`}>See paid plans →</Link></section>
         </>}

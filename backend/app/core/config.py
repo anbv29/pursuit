@@ -26,6 +26,7 @@ class Settings(BaseSettings):
     anthropic_api_key: SecretStr | None = None
     anthropic_model: str = "claude-haiku-5-5"
     research_model: str = "claude-haiku-5-5"
+    research_job_limit_usd: float = Field(default=1.0, ge=0.1, le=2.0)
     openrouter_api_key: SecretStr | None = None
     # Enable only after provider approval for third-party application use.
     free_preview_enabled: bool = False

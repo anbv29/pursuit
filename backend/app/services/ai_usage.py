@@ -106,7 +106,13 @@ def reserve(model_id, max_tokens, searches=0, operation="research", max_input=1_
                 .join(BillingUse, BillingUse.id == UsageCall.billing_use_id)
                 .where(BillingUse.grant_id == grant.id)
             )
-            job_limit = Decimal("0.10") if use.kind == "question" else Decimal("2.00")
+            from app.core.config import get_settings
+
+            job_limit = (
+                Decimal("0.10")
+                if use.kind == "question"
+                else Decimal(str(get_settings().research_job_limit_usd))
+            )
             grant_limit = Decimal(PLANS[grant.plan]["price_cents"]) / 100 * Decimal("0.30")
             if (
                 model_id != "claude-haiku-5-5"
@@ -162,7 +168,8 @@ def stream(client, **kwargs):
 
 
 def parse(client, **kwargs):
-    call = reserve(kwargs["model"], kwargs["max_tokens"], operation="answer", max_input=prompt_bound(kwargs))
+    operation = kwargs.pop("usage_operation", "answer")
+    call = reserve(kwargs["model"], kwargs["max_tokens"], operation=operation, max_input=prompt_bound(kwargs))
     result = None
     try:
         result = client.messages.parse(**kwargs)

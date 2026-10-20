@@ -14,7 +14,7 @@ import hashlib
 import ipaddress
 import re
 import socket
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from html.parser import HTMLParser
 from urllib.parse import urljoin, urlsplit
 
@@ -37,6 +37,7 @@ class Fetched:
     title: str
     text: str
     sha256: str
+    links: list[str] = field(default_factory=list)
 
 
 def _check_host(url: str) -> str:
@@ -166,10 +167,31 @@ def fetch(url: str, client: httpx.Client | None = None) -> Fetched:
                         raise FetchError("The page is too large to import.")
             raw = body.decode(r.encoding or "utf-8", errors="replace")
             title, text = extract(raw) if ctype != "text/plain" else ("", raw)
-            return Fetched(url=url, title=title, text=text[:8000], sha256=hashlib.sha256(body).hexdigest())
+            links = _Links()
+            if ctype != "text/plain":
+                links.feed(raw)
+            return Fetched(
+                url=url,
+                title=title,
+                text=text[:8000],
+                sha256=hashlib.sha256(body).hexdigest(),
+                links=links.urls,
+            )
         raise FetchError("Too many redirects.")
     except httpx.HTTPError as exc:
         raise FetchError("Couldn't reach that page (timeout or connection error).") from exc
     finally:
         if own:
             client.close()
+
+
+class _Links(HTMLParser):
+    def __init__(self):
+        super().__init__()
+        self.urls = []
+
+    def handle_starttag(self, tag, attrs):
+        if tag == "a" and len(self.urls) < 200:
+            href = dict(attrs).get("href", "")
+            if href:
+                self.urls.append(href)

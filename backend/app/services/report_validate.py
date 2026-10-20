@@ -6,6 +6,8 @@
 - list lengths are capped so a runaway response can't bloat the database
 """
 
+import re
+
 from app.schemas.report import ReportContent
 from app.services.report_research import ALLOWED_METRICS
 from app.services.use_cases import TEMPLATES
@@ -20,11 +22,18 @@ RATE_METRICS = {
 CAP = 12
 
 
-def _claim(c: dict, valid: set[str], stats: dict) -> dict:
+def _claim(c: dict, valid: dict, stats: dict) -> dict:
     ids = [i for i in c.get("source_ids", []) if i in valid]
     stats["dropped_source_refs"] += len(c.get("source_ids", [])) - len(ids)
     c["source_ids"] = ids
-    if c.get("kind") == "fact" and not ids:
+
+    def normalize(s):
+        return re.sub(r"\s+", " ", s).strip().casefold()
+
+    quote = normalize(c.get("supporting_quote", ""))
+    source_checked = any("excerpt" in s for s in valid.values())
+    supported = len(quote) >= 12 and any(quote in normalize(valid[i].get("excerpt", "")) for i in ids)
+    if c.get("kind") == "fact" and (not ids or (source_checked and not supported)):
         c["kind"] = "interpretation"
         c["confidence"] = "low"
         c["unsourced"] = True
@@ -58,7 +67,7 @@ def _experiment(e: dict, stats: dict) -> dict:
 
 
 def validate(content: ReportContent, sources: list[dict]) -> tuple[dict, dict]:
-    valid = {s["id"] for s in sources}
+    valid = {s["id"]: s for s in sources}
     stats = {"dropped_source_refs": 0, "downgraded_facts": 0, "fixed_metrics": 0}
     data = _walk(content.model_dump(mode="json"), valid, stats)
     for comp in data["competitors"]:

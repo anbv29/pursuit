@@ -148,6 +148,8 @@ def run(report_id: uuid.UUID) -> None:
                         "url": page.url,
                         "title": page.title or "Company website",
                         "via": "pursuit_fetch",
+                        "excerpt": page.text[:2500],
+                        "retrieved_at": utcnow().isoformat(),
                     },
                 }
             except fetcher.FetchError as exc:
@@ -160,31 +162,42 @@ def run(report_id: uuid.UUID) -> None:
         site_text = site["text"]
         if site.get("note"):
             inputs["website_note"] = site["note"]
+
+        def save_investigation(state):
+            checkpoint["investigations"] = state
+            _set(db, report_id, owner, checkpoint=checkpoint)
+
         if "research" not in checkpoint:
-            found = report_research.research(
-                report.company_url,
-                site_text,
-                inputs,
-                on_progress=lambda p: _set(db, report_id, owner, progress=p),
-            )
-            if site.get("source"):
+            with report_research.checkpoints(checkpoint.get("investigations", {}), save_investigation):
+                found = report_research.research(
+                    report.company_url,
+                    site_text,
+                    inputs,
+                    on_progress=lambda p: _set(db, report_id, owner, progress=p),
+                )
+            if site.get("source") and not any(s["id"] == "S0" for s in found.sources):
                 found.sources.insert(0, site["source"])
             found.sources.extend(checkpoint.get("base_sources", []))
-            checkpoint["research"] = {"notes": found.notes, "sources": found.sources}
+            checkpoint["research"] = {
+                "notes": found.notes,
+                "sources": found.sources,
+                "insights": found.insights,
+            }
             _set(db, report_id, owner, checkpoint=checkpoint)
         found = report_research.Research(**checkpoint["research"])
         _set(db, report_id, owner, progress=f"Writing the report from {len(found.sources)} sources…")
-        if checkpoint.get("sections"):
-            content = report_research.synthesize(
-                report.company_url,
-                site_text,
-                inputs,
-                found,
-                base=checkpoint["base_content"],
-                sections=checkpoint["sections"],
-            )
-        else:
-            content = report_research.synthesize(report.company_url, site_text, inputs, found)
+        with report_research.checkpoints(checkpoint.get("investigations", {}), save_investigation):
+            if checkpoint.get("sections"):
+                content = report_research.synthesize(
+                    report.company_url,
+                    site_text,
+                    inputs,
+                    found,
+                    base=checkpoint["base_content"],
+                    sections=checkpoint["sections"],
+                )
+            else:
+                content = report_research.synthesize(report.company_url, site_text, inputs, found)
         data, stats = report_validate.validate(content, found.sources)
         # A cancelled or reclaimed job must never overwrite its replacement.
         db.refresh(report)
@@ -329,6 +342,15 @@ def retry(db, report, user):
     ):
         raise Conflict("A report is already running in this workspace.")
     use_id = entitlements.reserve(db, report.workspace_id, "research")
+    checkpoint = dict(report.checkpoint or {})
+    if checkpoint.get("investigations"):
+        investigation = dict(checkpoint["investigations"])
+        # Only an explicit customer retry gets a new execution budget. Worker lease
+        # recovery keeps previous allocations, including uncertain provider calls.
+        investigation["search_allocated"] = 8 * sum(
+            key in investigation for key in ("customers", "market", "challenge")
+        )
+        checkpoint["investigations"] = investigation
     result = db.execute(
         update(Report)
         .where(Report.id == report.id, Report.status.in_(["FAILED", "CANCELLED"]))
@@ -341,6 +363,7 @@ def retry(db, report, user):
             finished_at=None,
             error=None,
             billing_use_id=use_id,
+            checkpoint=checkpoint,
         )
     )
     if not result.rowcount:

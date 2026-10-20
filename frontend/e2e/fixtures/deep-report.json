@@ -1,0 +1,141 @@
+{
+  "decision_brief": [
+    {
+      "title": "Budget owner differs from user",
+      "finding": "The buyer may be an operations lead.",
+      "reasoning": "The public page describes a repeated team approval problem.",
+      "implication": "Test approval delays with team leads before individual users.",
+      "counterargument": "The team may tolerate delays rather than pay to remove them.",
+      "next_test": "Ask five leads about their last delayed approval and existing spending.",
+      "decision_if_supported": "Focus interviews on team leads.",
+      "decision_if_rejected": "Investigate the individual workflow instead.",
+      "evidence": [
+        {
+          "source_id": "S1",
+          "quote": "Approvals take three days."
+        }
+      ],
+      "confidence": "high",
+      "status": "interpretation",
+      "limitations": []
+    }
+  ],
+  "executive_summary": [
+    "Sells claims software to clinics."
+  ],
+  "snapshot": {
+    "name": "Acme",
+    "one_liner": "Claims automation",
+    "offering": "SaaS",
+    "business_model": "Subscription",
+    "stage_assessment": "Early",
+    "observed_pricing": [
+      {
+        "text": "Pro is $49/mo",
+        "kind": "fact",
+        "confidence": "high",
+        "source_ids": [
+          "S1"
+        ],
+        "supporting_quote": ""
+      }
+    ],
+    "key_facts": [
+      {
+        "text": "Founded 2024",
+        "kind": "fact",
+        "confidence": "high",
+        "source_ids": [
+          "S99"
+        ],
+        "supporting_quote": ""
+      },
+      {
+        "text": "Has 3 customers",
+        "kind": "fact",
+        "confidence": "high",
+        "source_ids": [],
+        "supporting_quote": ""
+      }
+    ]
+  },
+  "segments": [
+    {
+      "name": "Clinics",
+      "description": "d",
+      "pains": [
+        "p"
+      ],
+      "buying_trigger": "t",
+      "decision_maker": "Owner",
+      "fit_score": 9,
+      "rationale": {
+        "text": "why",
+        "kind": "interpretation",
+        "confidence": "high",
+        "source_ids": [],
+        "supporting_quote": ""
+      }
+    }
+  ],
+  "personas": [],
+  "problems": [],
+  "competitors": [
+    {
+      "name": "X",
+      "url": "https://x.example",
+      "positioning": "p",
+      "target_customers": "t",
+      "pricing": "$1",
+      "strengths": [],
+      "weaknesses": [],
+      "source_ids": [
+        "S1",
+        "S42"
+      ]
+    }
+  ],
+  "positioning": {
+    "gaps": [],
+    "recommended_statement": "s",
+    "differentiators": []
+  },
+  "pricing": {
+    "market_benchmarks": [],
+    "hypotheses": [],
+    "wtp_questions": []
+  },
+  "messaging": [],
+  "prospecting": {
+    "signals": [],
+    "channels": [],
+    "search_queries": []
+  },
+  "funnel_risks": [],
+  "experiments": [
+    {
+      "use_case": "messaging",
+      "title": "t",
+      "hypothesis": "h",
+      "metric": "made_up_metric",
+      "comparator": ">=",
+      "target": 3.0,
+      "min_sample": 10,
+      "why_first": "w",
+      "effort": "low"
+    },
+    {
+      "use_case": "messaging",
+      "title": "t2",
+      "hypothesis": "h",
+      "metric": "positive_reply_rate",
+      "comparator": ">=",
+      "target": 12.0,
+      "min_sample": 99999,
+      "why_first": "w",
+      "effort": "low"
+    }
+  ],
+  "risks_and_unknowns": [],
+  "focus_first": "Talk to clinics."
+}

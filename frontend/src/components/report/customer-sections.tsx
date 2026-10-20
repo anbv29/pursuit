@@ -3,6 +3,7 @@
 import type { ReportContent } from "@/lib/types";
 import { Badge, cx } from "../ui";
 import { Bullets, ClaimLine, Claims, Label, Section } from "./parts";
+import { DecisionBrief } from "./decision-brief";
 
 export function Summary({ c }: { c: ReportContent }) {
   return (
@@ -19,6 +20,7 @@ export function Summary({ c }: { c: ReportContent }) {
         <p className="text-xs font-medium text-trail-strong">Focus first</p>
         <p className="mt-1 text-sm text-ink">{c.focus_first}</p>
       </div>
+      <DecisionBrief insights={c.decision_brief} />
     </Section>
   );
 }
