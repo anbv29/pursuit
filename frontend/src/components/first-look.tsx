@@ -39,7 +39,7 @@ function FirstLookForm() {
     if (!["https:", "http:"].includes(parsed.protocol) || parsed.username || parsed.password) {
       setError("Use a public HTTP or HTTPS website without credentials."); return;
     }
-    try { await api(path, { json: { company_url: parsed.href, audience: audience.trim(), description: description.trim(), founder_reality: reality } }); }
+    try { await api(path, { timeoutMs: 120_000, json: { company_url: parsed.href, audience: audience.trim(), description: description.trim(), founder_reality: reality } }); }
     catch (e) { setError(errorMessage(e)); }
     await saved.reload();
   });
@@ -57,7 +57,7 @@ function FirstLookForm() {
     {workspace.role !== "owner" ? <Notice tone="flag">The project owner can run their free first look.</Notice>
       : saved.loading && !data ? <Skeleton className="h-48" /> : <>
         {(error || saved.error) && <Notice tone="bad">{error ?? saved.error?.message}</Notice>}
-        {data?.error && !error && <Notice tone="flag"><p className="font-semibold">Let’s try a different page</p><p className="mt-1">{data.error}</p></Notice>}
+        {data?.error && !error && <Notice tone="flag"><p className="font-semibold">{data.error.includes("preview couldn't be completed") ? "Your preview needs another try" : "Let’s try a different page"}</p><p className="mt-1">{data.error}</p></Notice>}
         {data?.updated_check_available && <Notice tone="trail">Your earlier website check can now be replaced with a free four-section research preview.</Notice>}
         {data && !data.available && !result && <Notice tone="flag">Free previews are temporarily unavailable. Your allowance is unchanged. You can still explore the sample report and manual experiments.</Notice>}
         <div className="flex justify-end"><Button size="sm" variant="ghost" disabled={saved.loading || run.pending} onClick={() => void saved.reload()}><RefreshCw className="size-4" aria-hidden />Refresh status</Button></div>

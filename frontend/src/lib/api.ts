@@ -40,16 +40,17 @@ async function parseError(res: Response): Promise<ApiError> {
   return new ApiError(res.status, "http", `Request failed (${res.status}).`);
 }
 
-export async function api<T>(path: string, init: RequestInit & { json?: unknown } = {}): Promise<T> {
+export async function api<T>(path: string, init: RequestInit & { json?: unknown; timeoutMs?: number } = {}): Promise<T> {
+  const { timeoutMs = 45_000, ...requestInit } = init;
   const method = (init.method ?? (init.json !== undefined ? "POST" : "GET")).toUpperCase();
   const headers = new Headers(init.headers);
   if (init.json !== undefined) headers.set("Content-Type", "application/json");
   if (method !== "GET" && csrfToken) headers.set("X-CSRF-Token", csrfToken);
   let res: Response;
-  const timeout = AbortSignal.timeout(45_000);
+  const timeout = AbortSignal.timeout(timeoutMs);
   try {
     res = await fetch(`/api${path}`, {
-      ...init,
+      ...requestInit,
       method,
       headers,
       body: init.json !== undefined ? JSON.stringify(init.json) : init.body,

@@ -1,6 +1,7 @@
 """Two bounded, source-only free passes. No Anthropic, Fo, paid search or paid fallback."""
 
 import json
+import logging
 import re
 from typing import Literal
 
@@ -10,6 +11,7 @@ from pydantic import BaseModel, ConfigDict, Field, ValidationError
 from app.core.config import get_settings
 
 ENDPOINT = "https://openrouter.ai/api/v1/chat/completions"
+logger = logging.getLogger("pursuit.free_research")
 UNAVAILABLE = (
     "Your preview couldn't be completed right now. Please try again later. "
     "Your free preview hasn't been used."
@@ -40,9 +42,9 @@ class Snapshot(StrictModel):
 class PreviewInsight(StrictModel):
     finding: str = Field(min_length=10, max_length=500)
     quote: str = Field(min_length=12, max_length=300)
-    reasoning: str = Field(min_length=10, max_length=600)
-    counterargument: str = Field(min_length=10, max_length=500)
-    next_test: str = Field(min_length=10, max_length=500)
+    reasoning: str = Field(min_length=10, max_length=1200)
+    counterargument: str = Field(min_length=10, max_length=1000)
+    next_test: str = Field(min_length=10, max_length=1000)
     why_now: str = Field(default="", max_length=350)
     decision_if_supported: str = Field(default="", max_length=350)
     decision_if_rejected: str = Field(default="", max_length=350)
@@ -72,6 +74,16 @@ def available() -> bool:
 
 
 def validate(content: str, site_text: str, *, downgrade: bool = False) -> dict:
+    # Some free endpoints append a closing brace to an otherwise complete object.
+    # Extract only a complete JSON value; never fill missing fields or repair values.
+    stripped = content.strip()
+    if stripped.startswith("```json\n") and stripped.endswith("\n```"):
+        stripped = stripped[8:-4].strip()
+    parsed, end = json.JSONDecoder().raw_decode(stripped)
+    tail = stripped[end:].strip()
+    if not isinstance(parsed, dict) or tail not in ("", "}", "}}"):
+        raise PreviewError("Unexpected content after preview JSON")
+    content = json.dumps(parsed)
     report = PreviewContent.model_validate_json(content)
     source = re.sub(r"\s+", " ", site_text).strip().casefold()
     claims = [*report.executive_summary, report.snapshot.offering, report.snapshot.business_model]
@@ -97,7 +109,10 @@ def validate(content: str, site_text: str, *, downgrade: bool = False) -> dict:
 def generate(page, audience: str, description: str = "", founder_reality: dict | None = None) -> dict:
     try:
         return _generate(page, audience, description, founder_reality)
-    except (ValidationError, json.JSONDecodeError):
+    except (ValidationError, json.JSONDecodeError) as exc:
+        # Only field paths/error categories, never prompts, values or provider bodies.
+        issues = [(e["loc"], e["type"]) for e in exc.errors()] if isinstance(exc, ValidationError) else []
+        logger.warning("Free preview schema failure: %s", issues)
         raise PreviewError("Free preview returned an invalid structured response") from None
 
 
@@ -141,7 +156,12 @@ def _generate(page, audience: str, description: str = "", founder_reality: dict 
     payload = {
         "model": settings.free_research_model,
         "max_tokens": 2200,
-        "response_format": {"type": "json_object"},
+        "response_format": {"type": "json_object"}
+        if settings.free_research_model.startswith("minimax/")
+        else {
+            "type": "json_schema",
+            "json_schema": {"name": "free_preview", "strict": True, "schema": output_schema()},
+        },
         "plugins": [{"id": "web", "enabled": False}],
         "provider": {
             "allow_fallbacks": False,
@@ -195,6 +215,25 @@ def _generate(page, audience: str, description: str = "", founder_reality: dict 
     return validate(_request(payload, settings), site_text, downgrade=True)
 
 
+def output_schema():
+    schema = PreviewContent.model_json_schema()
+
+    def strict(node):
+        if isinstance(node, dict):
+            node.pop("default", None)
+            if node.get("type") == "object":
+                node["required"] = list(node.get("properties", {}))
+                node["additionalProperties"] = False
+            for value in node.values():
+                strict(value)
+        elif isinstance(node, list):
+            for value in node:
+                strict(value)
+
+    strict(schema)
+    return schema
+
+
 def _request(payload, settings):
     try:
         # No retries, tools, redirects, client URLs or provider switching.
@@ -223,7 +262,11 @@ def _request(payload, settings):
     except PreviewError:
         raise
     except httpx.HTTPStatusError as exc:
+        logger.warning("Free preview provider HTTP status=%s", exc.response.status_code)
         raise PreviewError(f"Provider HTTP {exc.response.status_code}") from None
+    except httpx.TimeoutException:
+        logger.warning("Free preview provider timed out")
+        raise PreviewError("Free preview provider timeout") from None
     except Exception:
         # Provider bodies can contain prompts, identifiers or credentials: never log/return them.
         raise PreviewError("Free preview unavailable") from None

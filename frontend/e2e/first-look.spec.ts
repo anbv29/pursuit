@@ -84,3 +84,19 @@ test("free preview is honest and disabled until the provider is configured", asy
   await page.getByLabel("Your website", { exact: true }).fill("example.com");
   await expect(page.getByRole("button", { name: "Get my free first look" })).toBeDisabled();
 });
+
+
+test("provider failure does not blame the company page", async ({ page }) => {
+  const ws = { id: "provider-failure", name: "Preview", role: "owner", is_demo: false };
+  await page.route("**/api/**", async route => {
+    const path = new URL(route.request().url()).pathname;
+    const data = path.endsWith("/auth/me") ? { user: { id: "user", name: "Founder" }, csrf_token: "synthetic" }
+      : path.endsWith("/first-look") ? { used: false, available: true, status: "FAILED", can_retry: true,
+        preview: null, error: "Your preview couldn't be completed right now. Please try again later. Your free preview hasn't been used." }
+        : path.endsWith("/approvals") ? [] : path === "/api/workspaces" ? [ws] : ws;
+    await route.fulfill({ json: data });
+  });
+  await page.goto(`/w/${ws.id}/first-look`);
+  await expect(page.getByText("Your preview needs another try", { exact: true })).toBeVisible();
+  await expect(page.getByText("Let’s try a different page", { exact: true })).toHaveCount(0);
+});

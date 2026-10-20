@@ -57,7 +57,8 @@ def test_provider_is_bounded_free_only_without_tools_or_fallback(monkeypatch, mo
         assert payload["provider"]["max_price"] == {"prompt": 0, "completion": 0}
         assert payload["provider"]["data_collection"] == "deny"
         assert payload["provider"]["allow_fallbacks"] is False
-        assert payload["response_format"] == {"type": "json_object"}
+        assert payload["response_format"]["type"] == "json_schema"
+        assert payload["response_format"]["json_schema"]["strict"] is True
         assert {"id": "web", "enabled": False} in payload["plugins"]
         assert "tools" not in payload and len(payload["messages"]) == 2
         assert "untrusted" in payload["messages"][0]["content"]
@@ -202,3 +203,40 @@ def test_founder_context_reaches_both_passes_without_becoming_website_evidence(m
     page = fetcher.Fetched("https://example.com", "Shop", "A toolkit for independent shops.", "a")
     free_research.generate(page, "", founder_reality=answers)
     assert len(calls) == 2
+
+
+@pytest.mark.parametrize("suffix", ["", "}", "}}"])
+def test_complete_json_with_redundant_closing_braces_remains_strict(suffix):
+    content = sample_content()
+    assert free_research.validate(json.dumps(content) + suffix, "A toolkit for independent shops.") == content
+
+
+@pytest.mark.parametrize("suffix", [" commentary", '{"admin":true}', "}}}"])
+def test_extra_text_or_second_json_object_is_rejected(suffix):
+    with pytest.raises(free_research.PreviewError):
+        free_research.validate(json.dumps(sample_content()) + suffix, "A toolkit for independent shops.")
+
+
+def test_missing_braces_and_fields_are_never_invented():
+    with pytest.raises(json.JSONDecodeError):
+        free_research.validate(json.dumps(sample_content())[:-1], "A toolkit for independent shops.")
+    with pytest.raises(ValidationError):
+        free_research.validate('{"executive_summary": []}', "A toolkit for independent shops.")
+
+
+def test_practical_test_just_over_old_limit_does_not_discard_preview():
+    content = sample_content()
+    content["snapshot"]["investigation"] = [
+        {
+            "finding": "The person using the product may differ from its buyer.",
+            "quote": "A toolkit for independent shops.",
+            "reasoning": "Identify who owns approval before committing to a sales audience.",
+            "counterargument": "The shop owner may be both the user and the buyer.",
+            "next_test": "x" * 502,
+        }
+    ]
+    result = free_research.validate(json.dumps(content) + "}", "A toolkit for independent shops.")
+    assert len(result["snapshot"]["investigation"][0]["next_test"]) == 502
+    content["snapshot"]["investigation"][0]["next_test"] = "x" * 1001
+    with pytest.raises(ValidationError):
+        free_research.validate(json.dumps(content), "A toolkit for independent shops.")
