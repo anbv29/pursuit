@@ -1054,3 +1054,7 @@ Production verification 2026-10-20: user explicitly approved live Fo activation.
 Commit: some cuts and edits hehe
 Changes: Group sidebar navigation into Overview, Research, Take action and Workspace; anchor billing/settings below; improve compact navigation accessibility and mobile primary links; remove duplicate New experiment navigation while preserving the dashboard button.
 Validation: production build, TypeScript, ESLint and diff checks passed; desktop/mobile responsive checks passed before the final duplicate-link removal. Local preview rebuilt successfully. No push requested.
+
+Commit: pricing fixx now on main page
+Changes: Render homepage pricing from a shared JSON catalogue at build time instead of waiting for the backend plans request. Backend checkout and public API use the same catalogue; prices and allowances unchanged.
+Validation: frontend production build, TypeScript, ESLint, backend Ruff and catalogue price checks passed. Verified all four plans and prices appear in initial localhost HTML without JavaScript or a pricing API request. Local services rebuilt successfully. No push requested.
