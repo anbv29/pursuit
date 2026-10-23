@@ -1146,3 +1146,6 @@ Retire tests exclusive to deleted paid functionality; replace purchase gating wi
 
 Commit: test: retire paid allowance scenarios
 Retire tests exclusive to deleted paid functionality; replace purchase gating with free-access/security tests in the integration phase. Staged diff reviewed and whitespace checks passed.
+
+Commit: test: retire plan access and launch scenarios
+Retire tests exclusive to deleted paid functionality; replace purchase gating with free-access/security tests in the integration phase. Staged diff reviewed and whitespace checks passed.
