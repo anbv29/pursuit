@@ -1,3 +1,5 @@
+> Historical archive: payment integration was removed from the current application on 2026-10-24. This is not current setup guidance. See FREE_MODE.md. Existing merchant subscriptions require separate cancellation.
+
 # Payment and owner-access setup
 
 ## Revised launch prices — verified live 2026-10-19

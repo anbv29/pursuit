@@ -1,3 +1,5 @@
+> Historical archive: payment integration was removed from the current application on 2026-10-24. This is not current setup guidance. See FREE_MODE.md. Existing merchant subscriptions require separate cancellation.
+
 # Paid plans
 
 Billing is per workspace in USD, including applicable taxes. Advertised totals are $4.99 once, $11.99/month and $34.99/month. GST is included rather than added. New checkouts use USD with currency selection disabled; banks may apply their own currency conversion fees.

@@ -1,3 +1,5 @@
+> Historical archive: payment integration was removed from the current application on 2026-10-24. This is not current setup guidance. See FREE_MODE.md. Existing merchant subscriptions require separate cancellation.
+
 # Launch pricing revision â€” 2026-10-19
 
 | Plan | New USD price | Research credits | AI answers | Members |
@@ -43,7 +45,7 @@ was included, and Fo code and credentials were not changed.
 
 Screenshots remain in ignored `.local/`; no credentials were committed.
 
-## Tax-inclusive correction — 2026-10-19
+## Tax-inclusive correction ï¿½ 2026-10-19
 
 All three live products now have tax_inclusive=true. Checkout prices remain
 USD 4.99 once, USD 11.99/month and USD 34.99/month, including applicable tax.
