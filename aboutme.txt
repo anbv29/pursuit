@@ -1104,3 +1104,6 @@ Replace the spend/grant reservation implementation with a zero-priced call audit
 
 Commit: refactor: remove checkout and billing endpoints
 Remove paid-plan catalogue, checkout and portal routes. Replace them with an authenticated free-feature availability route; unmount payment webhooks and internal paid-budget endpoints. Payment history tables are preserved for retention. Ruff and app route assertions passed: no billing, checkout or plan endpoints are mounted.
+
+Commit: refactor: remove payment fulfillment
+Removed retired payment-only modules: backend/app/services/billing_fulfillment.py. No payment or database records deleted. Ruff and staged diff checks passed.
