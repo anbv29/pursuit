@@ -1176,3 +1176,6 @@ Remove the last Team-only collaborator-write check while retaining owner-only ad
 
 Commit: test: cover free homepage and report setup
 Replace the retired checkout browser scenarios with desktop/mobile checks for one free-access offer, no paid tier cards, no billing navigation, and research setup without a credit gate. Update public navigation checks. Tests use clearly synthetic mocked accounts, not hosted customer data. Diff/TypeScript verification is included in final checks.
+
+Commit: docs: document free-only setup and rollout limits
+Update the read-only launch helper and README, add current free-mode configuration, evidence coverage, fair-use limits, provider retirement/rate-limit findings and historical subscription handling. Clearly separate local code changes from merchant cancellation and deployment. Ruff/import/diff checks passed.

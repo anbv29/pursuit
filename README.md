@@ -1,5 +1,7 @@
 # Pursuit
 
+Pursuit is free: no subscription, checkout or purchased credits. All research uses the configured zero-priced provider.
+
 Pursuit combines company research reports with six GTM experimentation workflows for founders.
 Start with your website and business description, then turn uncertain business hypotheses into
 measurable experiments, collect source-backed evidence, take human-approved real-world actions
@@ -32,7 +34,7 @@ docs/      security checklist, Fo integration, deployment, incident response
 ```
 
 - **Auth:** server-side sessions. The httpOnly SameSite=Lax cookie holds only a random token, which is stored hashed. A CSRF header is required on all mutations. Every resource is resolved through workspace membership, so foreign IDs return 404.
-- **Calculations:** all arithmetic (rates, Wilson intervals, funnel conversions) is deterministic Python. Claude is optional and only synthesises recommendations. Its output is schema-validated and then guarded server-side.
+- **Calculations:** all arithmetic (rates, Wilson intervals, funnel conversions) is deterministic Python. The free research provider synthesises recommendations. Its output is schema-validated and then guarded server-side.
 - **External actions:** nothing runs without explicit human approval. Demo and live are separated in the data model (`origin`, `mode`, `is_demo`), and simulated events never count toward live metrics.
 
 ## Local setup
@@ -66,8 +68,15 @@ four synthetic experiments. Demo workspaces are always simulated, even when the 
 
 ### AI synthesis
 
-Set `ANTHROPIC_API_KEY` to have Claude (`ANTHROPIC_MODEL`, default `claude-haiku-5-5`) refine
-recommendations. Without it, Pursuit uses its rule-based engine and labels the recommendation accordingly.
+Set `OPENROUTER_API_KEY` in `backend/.env`. All research uses
+`FREE_RESEARCH_MODEL=google/gemma-4-31b-it:free`, with a server-enforced zero-price ceiling,
+no paid fallback, and no hosted search plugin. Without the key, deterministic calculations
+and labelled rule-based recommendations remain available.
+
+Reports analyse fetched public company pages and up to three competitor URLs supplied by the
+founder. There is no bundled general web search. Missing independent evidence is a limitation,
+not an invitation to invent competitors, customer demand or citations. Free-provider capacity
+can fluctuate; a configured key does not guarantee availability. See [free-mode notes](docs/FREE_MODE.md).
 
 ## Testing
 

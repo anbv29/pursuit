@@ -6,7 +6,7 @@ from sqlalchemy import select
 
 from app.core.config import get_settings
 from app.core.db import new_session
-from app.models import BillingAccount, Membership, User, Workspace
+from app.models import Membership, User, Workspace
 
 parser = argparse.ArgumentParser()
 parser.add_argument("email")
@@ -16,10 +16,6 @@ print(
     {
         "ai_configured": settings.ai_enabled,
         "fo_mode": settings.fo_mode,
-        "billing_mode": settings.dodo_environment,
-        "webhook_key_configured": bool(
-            settings.dodo_webhook_key and settings.dodo_webhook_key.get_secret_value()
-        ),
     }
 )
 with new_session() as db:
@@ -28,14 +24,12 @@ with new_session() as db:
     if user:
         rows = db.execute(select(Workspace, Membership).join(Membership).where(Membership.user_id == user.id))
         for workspace, membership in rows:
-            billing = db.get(BillingAccount, workspace.id)
             print(
                 {
                     "workspace_id": str(workspace.id),
                     "name": workspace.name,
                     "role": membership.role.value,
                     "demo": workspace.is_demo,
-                    "billing_plan": billing.plan if billing else "free",
-                    "has_subscription": bool(billing and billing.subscription_id),
+                    "access": "free",
                 }
             )
