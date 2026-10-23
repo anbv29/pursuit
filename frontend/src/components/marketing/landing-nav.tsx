@@ -17,12 +17,12 @@ export function LandingNav() {
           {[
             ["Process", "/#how-it-works"],
             ["What you can do", "/#capabilities"],
-            ["Pricing", "/#pricing"],
+            ["Free access", "/#pricing"],
           ].map(([label, href]) => <Link key={href} href={href} className="group relative inline-flex min-h-10 items-center gap-2 rounded-full px-4 transition-colors hover:bg-surface hover:text-ink focus-visible:bg-surface focus-visible:text-ink focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-trail motion-reduce:transition-none"><span className="size-1 rounded-full bg-trail opacity-40 transition-opacity group-hover:opacity-100 group-focus-visible:opacity-100 motion-reduce:transition-none" aria-hidden />{label}</Link>)}
         </nav>
         <nav aria-label="Account" className="flex items-center justify-end gap-1.5 sm:gap-2 lg:justify-self-end">
           <ThemeToggle />
-          <Link href="/#pricing" className="hidden text-sm font-medium text-ink-2 hover:text-ink sm:block lg:hidden">Pricing</Link>
+          <Link href="/#pricing" className="hidden text-sm font-medium text-ink-2 hover:text-ink sm:block lg:hidden">Free access</Link>
           {ready && user ? (
             <><span className="hidden sm:inline-flex"><Link href="/account" className={buttonStyles("ghost", "sm")}>Account</Link></span><Link href="/w" className={buttonStyles("primary", "sm")}>Open workspace</Link></>
           ) : (

@@ -1125,3 +1125,6 @@ Removed retired payment-only modules: backend/app/api/usage.py. No payment or da
 
 Commit: feat: retire the paid billing screen
 Remove checkout, subscription and portal controls. Old billing bookmarks redirect to their workspace instead of showing dead purchase buttons. Existing visual style is unchanged. Route reviewed against installed Next.js page conventions; diff checks passed. Frontend integration checks follow after navigation cleanup.
+
+Commit: feat: present the complete toolkit as free
+Replace the multi-tier homepage with one free-access section and honest provider-capacity/source limitations. Remove credit counters, purchase links and billing navigation; retain established design tokens. Diff review passed; frontend build/ESLint are verified in the final integration phase.

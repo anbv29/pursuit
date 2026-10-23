@@ -1,7 +1,7 @@
 "use client";
 
 import {
-  Bell, ChevronRight, ChevronsLeft, ChevronsRight, CreditCard, FileText, Inbox, LayoutDashboard, LogOut,
+  Bell, ChevronRight, ChevronsLeft, ChevronsRight, FileText, Inbox, LayoutDashboard, LogOut,
   MessageCircle, MoreHorizontal, Moon, Search, Settings,
 } from "lucide-react";
 import Link from "next/link";
@@ -69,7 +69,6 @@ export function WorkspaceShell({ wsId, children }: { wsId: string; children: Rea
     { href: `${base}/approvals`, label: "Approvals", icon: Inbox, count: approvals.data?.length },
     { href: `${base}/fo`, label: "Fo Assistant", icon: MessageCircle },
     ...(ws.data?.role === "owner" ? [{ href: `${base}/first-look`, label: "Free first look", icon: FileText }] : []),
-    ...(ws.data?.role === "owner" ? [{ href: `${base}/billing`, label: "Plans & billing", icon: CreditCard }] : []),
     { href: `${base}/settings`, label: "Settings", icon: Settings },
   ];
   const isActive = (n: NavItem) => (n.exact ? path === n.href : path.startsWith(n.href));

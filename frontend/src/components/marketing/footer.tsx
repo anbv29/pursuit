@@ -6,7 +6,7 @@ const links = [
   { title: "Explore", items: [
     { label: "Process", href: "/#how-it-works" },
     { label: "What you can do", href: "/#capabilities" },
-    { label: "Plans & pricing", href: "/#pricing" },
+    { label: "Free access", href: "/#pricing" },
   ] },
   { title: "Your next move", items: [
     { label: "Create an account", href: "/signup" },
