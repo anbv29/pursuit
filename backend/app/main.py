@@ -7,11 +7,11 @@ from fastapi.responses import JSONResponse
 from sqlalchemy import select, text
 
 from app.api import (
+    access,
     account,
     actions,
     analysis,
     auth,
-    billing,
     concierge,
     discovery,
     evidence,
@@ -20,11 +20,9 @@ from app.api import (
     fo_chat,
     fo_oauth,
     overview,
-    payment_webhook,
     report_sharing,
     report_tools,
     reports,
-    usage,
     workspaces,
 )
 from app.core.config import get_settings
@@ -97,8 +95,7 @@ def create_app() -> FastAPI:
     install_handlers(app)
     app.include_router(auth.router)
     app.include_router(account.router)
-    app.include_router(billing.router)
-    app.include_router(payment_webhook.router)
+    app.include_router(access.router)
     app.include_router(concierge.router)
     app.include_router(workspaces.router)
     app.include_router(experiments.router)
@@ -114,7 +111,6 @@ def create_app() -> FastAPI:
     app.include_router(first_look.router)
     app.include_router(report_tools.router)
     app.include_router(report_sharing.router)
-    app.include_router(usage.router)
 
     @app.get("/api/health", tags=["ops"])
     def health():

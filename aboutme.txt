@@ -1101,3 +1101,6 @@ Remove subscription/credit checks from the shared entitlement service. All authe
 
 Commit: refactor: remove paid model budgeting from research
 Replace the spend/grant reservation implementation with a zero-priced call audit ledger. Reject every model except the configured free model and reject hosted search tools. Preserve completed/unknown call tracking and existing historical rows without deriving new paid estimates or granting subscriptions. This is a coherent module replacement; Ruff and direct free-model guard assertions passed.
+
+Commit: refactor: remove checkout and billing endpoints
+Remove paid-plan catalogue, checkout and portal routes. Replace them with an authenticated free-feature availability route; unmount payment webhooks and internal paid-budget endpoints. Payment history tables are preserved for retention. Ruff and app route assertions passed: no billing, checkout or plan endpoints are mounted.
