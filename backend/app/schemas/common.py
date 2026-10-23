@@ -11,7 +11,7 @@ class ORM(BaseModel):
 class RegisterIn(BaseModel):
     email: EmailStr
     name: str = Field(min_length=1, max_length=120)
-    password: str = Field(min_length=10, max_length=200)
+    password: str = Field(min_length=8, max_length=200)
 
 
 class LoginIn(BaseModel):

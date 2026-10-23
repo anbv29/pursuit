@@ -44,10 +44,10 @@ function AccountSecurity() {
         <p className="mt-2 break-words text-ink-3">Signed in as {user?.email}</p></div>
       <Glass className="space-y-5 p-6">
         <h2 className="font-display text-xl font-bold">Change your password</h2>
-        <p className="text-sm text-ink-3">Use at least 10 characters. Changing your password signs out every device.</p>
+        <p className="text-sm text-ink-3">Use at least 8 characters. Changing your password signs out every device.</p>
         <form onSubmit={(e) => void submit(e, false)} className="space-y-4">
           <Field label="Current password">{(id) => <PasswordInput id={id} required autoComplete="current-password" maxLength={200} value={current} onChange={(e) => setCurrent(e.target.value)} />}</Field>
-          <Field label="New password">{(id) => <PasswordInput id={id} required autoComplete="new-password" minLength={10} maxLength={200} value={password} onChange={(e) => setPassword(e.target.value)} />}</Field>
+          <Field label="New password">{(id) => <PasswordInput id={id} required autoComplete="new-password" minLength={8} maxLength={200} value={password} onChange={(e) => setPassword(e.target.value)} />}</Field>
           <Button type="submit" disabled={pending}>{pending ? "Working…" : "Change password"}</Button>
         </form>
       </Glass>

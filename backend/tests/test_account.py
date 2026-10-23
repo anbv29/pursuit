@@ -94,3 +94,22 @@ def test_deleting_member_preserves_shared_workspace(api, other):
         assert db.get(Workspace, UUID(workspace_id)) is not None
         assert db.get(User, UUID(owner["id"])) is not None
         assert db.get(User, UUID(member["id"])) is None
+
+
+def test_eight_character_password_registration_and_login(api):
+    body = {"email": "eight@example.com", "name": "Founder", "password": "1234567"}
+    assert api.post("/api/auth/register", body).status_code == 422
+    body["password"] = "12345678"
+    result = api.post("/api/auth/register", body)
+    assert result.status_code == 201
+    api.csrf = result.json()["csrf_token"]
+    assert api.post("/api/auth/logout").status_code == 204
+    result = api.post("/api/auth/login", {"email": body["email"], "password": body["password"]})
+    assert result.status_code == 200
+    api.csrf = result.json()["csrf_token"]
+    path = "/api/account/password"
+    change = {"current_password": body["password"], "new_password": "abcdefg"}
+    assert api.post(path, change).status_code == 422
+    change["new_password"] = "abcdefgh"
+    assert api.post(path, change).status_code == 204
+    assert api.post("/api/auth/login", {"email": body["email"], "password": "abcdefgh"}).status_code == 200

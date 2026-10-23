@@ -8,7 +8,7 @@ test("demo workspace screens are labelled and responsive", async ({ page }, info
   await page.getByLabel("Name", { exact: true }).filter({ visible: true }).fill("Demo Viewer");
   await page.getByLabel("Work email").filter({ visible: true }).fill(email);
   await page.getByLabel("Password", { exact: true }).filter({ visible: true }).fill("demo-viewer-pass");
-  await page.getByRole("button", { name: "Create account" }).click();
+  await page.getByRole("button", { name: "Create free account" }).click();
   await page.getByRole("button", { name: "Continue", exact: true }).click();
   await page.getByText("Explore with demo data").click();
   await page.getByRole("button", { name: "Create demo workspace" }).click();

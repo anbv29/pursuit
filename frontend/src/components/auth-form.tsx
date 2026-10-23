@@ -20,7 +20,7 @@ const schemas = {
   signup: z.object({
     name: z.string().trim().min(1, "Tell us your name.").max(120),
     email: z.email("Enter a valid email address."),
-    password: z.string().min(10, "Use at least 10 characters.").max(200),
+    password: z.string().min(8, "Use at least 8 characters.").max(200),
   }),
 };
 
@@ -65,8 +65,15 @@ export function AuthForm({ mode }: { mode: "login" | "signup" }) {
       <Glass className="enter-rise w-full max-w-sm p-7 sm:p-8">
         <h1 className="font-display text-2xl font-bold tracking-tight">{mode === "login" ? "Welcome back" : "Create your account"}</h1>
         <p className="mt-1.5 text-sm text-ink-2">
-          {mode === "login" ? "Sign in to pick up where you left off." : "Research your business, test your assumptions and keep track of what you learn."}
+          {mode === "login" ? "Sign in to pick up where you left off." : "Your free workspace for company research, customer experiments and clearer decisions."}
         </p>
+        {mode === "signup" && (
+          <div className="mt-5 rounded-xl border border-line bg-surface p-4">
+            <p className="text-sm font-semibold text-ink">Everything you need to get started, free.</p>
+            <p className="mt-1 text-sm leading-relaxed text-ink-2">Full reports, follow-up questions and all six experiment workflows. No payment details needed.</p>
+            <p className="mt-2 text-xs text-ink-3">Fair-use limits and research availability apply.</p>
+          </div>
+        )}
         <form onSubmit={onSubmit} noValidate className="mt-6 space-y-4">
           {formError && <Notice tone="bad">{formError}</Notice>}
           {mode === "signup" && (
@@ -77,14 +84,15 @@ export function AuthForm({ mode }: { mode: "login" | "signup" }) {
           <Field label="Work email" error={errors.email}>
             {(id, d) => <Input id={id} type="email" aria-describedby={d} aria-invalid={!!errors.email} autoComplete="email" value={values.email} onChange={set("email")} />}
           </Field>
-          <Field label="Password" error={errors.password} hint={mode === "signup" ? "At least 10 characters." : undefined}>
+          <Field label="Password" error={errors.password} hint={mode === "signup" ? "At least 8 characters." : undefined}>
             {(id, d) => (
               <PasswordInput id={id} aria-describedby={d} aria-invalid={!!errors.password}
+                minLength={mode === "signup" ? 8 : undefined} maxLength={200}
                 autoComplete={mode === "login" ? "current-password" : "new-password"} value={values.password} onChange={set("password")} />
             )}
           </Field>
           <Button type="submit" size="lg" className="w-full" loading={submit.pending}>
-            {mode === "login" ? "Sign in" : "Create account"}
+            {mode === "login" ? "Sign in" : "Create free account"}
           </Button>
         </form>
       </Glass>

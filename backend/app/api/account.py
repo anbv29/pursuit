@@ -19,7 +19,7 @@ router = APIRouter(prefix="/api/account", tags=["account security"])
 
 class PasswordChange(BaseModel):
     current_password: SecretStr = Field(min_length=1, max_length=200)
-    new_password: SecretStr = Field(min_length=10, max_length=200)
+    new_password: SecretStr = Field(min_length=8, max_length=200)
 
 
 class DeleteAccount(BaseModel):

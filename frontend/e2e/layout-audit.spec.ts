@@ -8,7 +8,7 @@ for (const width of [390, 820, 1440]) {
     await page.getByLabel("Name", { exact: true }).filter({ visible: true }).fill("Layout Review Founder");
     await page.getByLabel("Work email").fill(`layout-${Date.now()}-${width}@example.com`);
     await page.getByLabel("Password", { exact: true }).filter({ visible: true }).fill("layout-review-password");
-    await page.getByRole("button", { name: "Create account" }).click();
+    await page.getByRole("button", { name: "Create free account" }).click();
     await page.getByRole("button", { name: "Continue", exact: true }).click();
     await page.getByText("Explore with demo data").click();
     await page.getByRole("button", { name: "Create demo workspace" }).click();

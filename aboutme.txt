@@ -1194,3 +1194,6 @@ Replace retired paid-search budgets with bounded source fetching, zero-price rou
 
 Commit: docs: record free-mode verification and rollout blockers
 Record 197 full-suite and 45 final targeted backend passes, ten browser passes, production build and lint evidence. Archive retired billing guides and disclose provider retirement/rate limits and external subscription cancellation. No push or deployment.
+
+Commit: feat: align free onboarding and eight-character passwords
+Clarify free access in signup and workspace status, keep existing styling, and lower new-password minimum to eight on both frontend and backend. Preserve sign-in compatibility and longer passwords. Add real registration/login/password-change boundary coverage and update browser selectors. Four account tests passed, TypeScript and frontend ESLint passed, Ruff and diff checks passed. Local only; no push.
