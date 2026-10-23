@@ -1,7 +1,7 @@
-"""Optional Claude synthesis for recommendations.
+"""Optional source-grounded AI synthesis for recommendations.
 
 Security posture:
-- Claude gets no tools: it can only return a schema-validated object.
+- The model gets no tools: it can only return a schema-validated object.
 - Evidence text is untrusted (it may come from fetched web pages), so it is passed
   as JSON data and the system prompt says to ignore instructions inside it.
 - Only aggregate metrics and evidence claims are sent: no prospect names or emails.

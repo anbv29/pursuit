@@ -342,7 +342,7 @@ def retry(db, report, user):
         investigation = dict(checkpoint["investigations"])
         # Only an explicit customer retry gets a new execution budget. Worker lease
         # recovery keeps previous allocations, including uncertain provider calls.
-        investigation["search_allocated"] = 8 * sum(
+        investigation["passes_allocated"] = sum(
             key in investigation for key in ("customers", "market", "challenge")
         )
         checkpoint["investigations"] = investigation

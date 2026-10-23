@@ -1,6 +1,6 @@
 """Report inputs and the report content contract.
 
-`ReportContent` is both the structured-output schema Claude must fill and the
+`ReportContent` is both the structured-output schema the research model must fill and the
 shape the API returns. Every claim carries `kind` (fact / interpretation /
 assumption) and `source_ids`; the server re-validates both after generation.
 """

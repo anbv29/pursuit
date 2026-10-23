@@ -92,7 +92,7 @@ def test_three_focused_passes_deduplicate_sources_and_resume_without_provider_ca
     with report_research.checkpoints({}, lambda s: saved.append(copy.deepcopy(s))):
         result = report_research.research("https://company.example", "Company page", {}, lambda _: None)
     assert calls.count("search") == 3 and len(result.sources) == 2
-    assert saved[-1]["search_allocated"] == 24
+    assert saved[-1]["passes_allocated"] == 3
     assert result.insights
     calls.clear()
     with report_research.checkpoints(saved[-1], lambda s: None):
@@ -108,7 +108,7 @@ def test_source_fetch_failure_is_not_fabricated_evidence(monkeypatch):
     assert result.insights[0]["status"] == "hypothesis"
 
 
-def test_interrupted_pass_resumes_completed_work_and_never_exceeds_search_allocation(monkeypatch):
+def test_interrupted_pass_resumes_completed_work_and_never_exceeds_pass_allocation(monkeypatch):
     calls = setup_provider(monkeypatch)
     original = report_research.research_pass
     saved = []
@@ -128,10 +128,10 @@ def test_interrupted_pass_resumes_completed_work_and_never_exceeds_search_alloca
     monkeypatch.setattr(report_research, "research_pass", original)
     with (
         report_research.checkpoints(saved[-1], lambda s: saved.append(copy.deepcopy(s))),
-        pytest.raises(report_research.ResearchError, match="search limit"),
+        pytest.raises(report_research.ResearchError, match="pass limit"),
     ):
         report_research.research("https://company.example", "Company page", {}, lambda _: None)
-    assert saved[-1]["search_allocated"] == 24
+    assert saved[-1]["passes_allocated"] == 3
 
 
 def test_cancellation_stops_before_provider_work(monkeypatch):

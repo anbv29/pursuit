@@ -39,3 +39,21 @@ def test_incomplete_results_never_become_success(monkeypatch):
     monkeypatch.setattr(free_research, "_request", lambda *_: '{"wrong":true}')
     with pytest.raises(free_provider.APIError):
         free_provider.Client().parse(system="Test", messages=[], output_format=Answer)
+
+
+def test_rate_limits_are_not_hidden_or_retried(monkeypatch):
+    monkeypatch.setattr(
+        free_provider,
+        "get_settings",
+        lambda: SimpleNamespace(ai_enabled=True, free_research_model="google/gemma-4-31b-it:free"),
+    )
+    calls = []
+
+    def failed(*args):
+        calls.append(1)
+        raise free_research.PreviewError("Provider HTTP 429")
+
+    monkeypatch.setattr(free_research, "_request", failed)
+    with pytest.raises(free_provider.RateLimitError, match="busy"):
+        free_provider.Client().parse(system="Test", messages=[], output_format=Answer)
+    assert calls == [1]

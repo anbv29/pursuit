@@ -139,10 +139,10 @@ def investigate(company_url, site_text, inputs, on_progress, task=None):
     for key, stage_progress, question in tracks:
         progress(stage_progress)
         if key not in state:
-            allocated = state.get("search_allocated", 0)
-            if allocated + 8 > 24:
-                raise provider.ResearchError("Research reached its search limit. Completed passes are saved.")
-            save("search_allocated", allocated + 8)
+            allocated = state.get("passes_allocated", 0)
+            if allocated + 1 > 3:
+                raise provider.ResearchError("Research reached its investigation pass limit. Completed passes are saved.")
+            save("passes_allocated", allocated + 1)
             prior = "\n".join(state[k]["notes"][:3500] for k, _, _ in tracks if k in state)
             result = provider.research_pass(
                 company_url,

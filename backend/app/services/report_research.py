@@ -99,7 +99,8 @@ PARTS = [
     ),
     (
         PartMarket,
-        "Write: competitors (3-6 real ones from the research), positioning (gaps, a recommended "
+        "Write: competitors (only organizations directly supported by fetched sources; empty if none), "
+        "positioning (gaps, a recommended "
         "positioning statement, differentiators), pricing (market benchmarks, pricing hypotheses, "
         "willingness-to-pay questions).",
     ),
@@ -132,23 +133,6 @@ def _client() -> free_provider.Client:
     if not s.ai_enabled:
         raise ResearchError("AI research is unavailable. Please contact the workspace operator.")
     return free_provider.Client(api_key=None, timeout=90, max_retries=0)
-
-
-def _collect_sources(blocks, seen: dict[str, dict]) -> None:
-    """Record URLs that actually came back from web tools (not ones Claude merely wrote)."""
-    for b in blocks:
-        btype = getattr(b, "type", "")
-        if btype == "web_search_tool_result" and isinstance(getattr(b, "content", None), list):
-            for r in b.content:
-                url = getattr(r, "url", None)
-                if url and url not in seen:
-                    seen[url] = {"url": url, "title": getattr(r, "title", "") or "", "via": "web_search"}
-        elif btype == "web_fetch_tool_result":
-            c = getattr(b, "content", None)
-            url = getattr(c, "url", None)
-            if url and url not in seen:
-                doc = getattr(c, "content", None)
-                seen[url] = {"url": url, "title": getattr(doc, "title", "") or "", "via": "web_fetch"}
 
 
 def research(

@@ -1179,3 +1179,6 @@ Replace the retired checkout browser scenarios with desktop/mobile checks for on
 
 Commit: docs: document free-only setup and rollout limits
 Update the read-only launch helper and README, add current free-mode configuration, evidence coverage, fair-use limits, provider retirement/rate-limit findings and historical subscription handling. Clearly separate local code changes from merchant cancellation and deployment. Ruff/import/diff checks passed.
+
+Commit: refactor: enforce bounded source-only investigation passes
+Replace obsolete search-allocation counters with three bounded investigation passes, remove unused hosted-search response parsing, and require empty competitor lists when sources do not support candidates. Add a no-retry provider rate-limit regression and neutralize retired SDK wording. Ruff/diff checks passed; targeted pipeline regression tests follow.
