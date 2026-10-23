@@ -32,7 +32,7 @@ export function Questions() {
     ["Does research prove that people will buy?", "No. Reports link available sources and highlight assumptions and limitations. Customer conversations, actual commitments and measured outcomes provide stronger evidence."],
     ["Will Pursuit contact people automatically?", "Every external action needs your approval. Real outreach also needs a connected Fo account and the required permissions. Simulated actions are labelled and never send anything."],
     ["Can I explore before paying?", "Yes. Explore includes a labelled sample report and all six manual experiment workflows. Generating a new company report needs a research credit and an available research service."],
-    ["Where do I manage a paid plan?", "Workspace owners can see allowances, available checkout options and billing management in Plans & billing. A disabled checkout means purchases are not available in that environment."],
+    ["Is Pursuit free?", "Yes. Reports, questions, refresh, sharing and experiments are free. Fair-use and provider capacity limits apply; no paid fallback is used."],
   ];
   return <section aria-labelledby="questions-h" className="mx-auto max-w-3xl pb-24">
     <h2 id="questions-h" className="mb-6 font-display text-3xl font-bold tracking-tight">Before you start</h2>

@@ -57,7 +57,7 @@ export default function NewReportPage() {
         </span>
         <h1 className="mt-4 font-display text-[32px] font-bold leading-tight tracking-tight sm:text-4xl">Analyze your company</h1>
         <p className="mx-auto mt-2 max-w-lg text-ink-2">
-          Drop your website. Pursuit reads it, researches your market and competitors on the web, and
+          Drop your website. Pursuit reads it, analyses accessible public pages and source URLs you provide, and
           builds a sourced report: who to sell to, how to position, what to charge, what to say, and which
           experiments to run first.
         </p>
@@ -99,7 +99,7 @@ export default function NewReportPage() {
               <div className="sm:col-span-2"><Field label="Who you sell to today">{(id) => <Input id={id} value={f.target_customers} onChange={set("target_customers")} placeholder="Roles, company size, industry" />}</Field></div>
               <Field label="Business model">{(id) => <Input id={id} value={f.business_model} onChange={set("business_model")} placeholder="B2B SaaS, marketplace…" />}</Field>
               <Field label="Current pricing">{(id) => <Input id={id} value={f.pricing} onChange={set("pricing")} placeholder="$49/seat/month" />}</Field>
-              <Field label="Competitors you know of">{(id) => <Input id={id} value={f.known_competitors} onChange={set("known_competitors")} />}</Field>
+              <Field label="Competitor source URLs (optional)">{(id) => <Input id={id} value={f.known_competitors} onChange={set("known_competitors")} />}</Field>
               <Field label="Region">{(id) => <Input id={id} value={f.geography} onChange={set("geography")} placeholder="US, EU…" />}</Field>
             </div>
           )}
@@ -109,7 +109,7 @@ export default function NewReportPage() {
         <ResearchAllowance />
         <Button type="submit" size="lg" loading={submit.pending} className="w-full">Generate report</Button>
         <p className="text-center text-xs text-ink-3">
-          Research uses public web sources only. Every claim in the report is labelled as a sourced fact, an interpretation or an assumption.
+          Research uses accessible company pages and source URLs you provide; it does not include a general web-search service. Every claim in the report is labelled as a sourced fact, an interpretation or an assumption.
         </p>
       </form>
     </div>

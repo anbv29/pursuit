@@ -47,7 +47,7 @@ export const HOW_IT_WORKS = [
     id: "research",
     tab: "Research",
     title: "Pursuit researches and explains the fit",
-    body: "With AI research configured and a research credit, build a report covering customer groups, buyer profiles, problems, competitors, positioning, pricing, messaging and suggested experiments. Facts, interpretations and assumptions are labelled separately.",
+    body: "With research configured, build a report covering customer groups, buyer profiles, problems, competitors, positioning, pricing, messaging and suggested experiments. Facts, interpretations and assumptions are labelled separately.",
     points: ["Citations you can click and check", "Unsourced claims are flagged, not hidden", "Competitors, pricing and positioning gaps"],
   },
   {
@@ -70,5 +70,5 @@ export const TRUST_POINTS = [
   { title: "Check the evidence", body: "Sources are linked; unsupported claims are flagged." },
   { title: "Nothing is sent without you", body: "Each outreach action waits for your approval." },
   { title: "Demo data is always labelled", body: "Simulated results never mix with real ones." },
-  { title: "Control your workspace", body: "Owner-only export and deletion, with billing safeguards." },
+  { title: "Control your workspace", body: "Owner-only export and deletion, with authorization safeguards." },
 ];

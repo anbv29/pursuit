@@ -34,7 +34,7 @@ const TOC = [
 ];
 const STEPS: FeedStep[] = [
   { label: "Reading the company website", done: "Read the company website" },
-  { label: "Researching market, competitors and pricing", done: "Researched market, competitors and pricing" },
+  { label: "Analysing verified pages and source evidence", done: "Analysed verified pages and source evidence" },
   { label: "Writing the report", done: "Wrote the report" },
 ];
 

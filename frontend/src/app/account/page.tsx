@@ -53,7 +53,7 @@ function AccountSecurity() {
       </Glass>
       <Glass className="space-y-5 p-6">
         <h2 className="font-display text-xl font-bold">Delete your account</h2>
-        <p className="text-sm text-ink-3">First export and delete workspaces you own in workspace settings. Active subscriptions must be ended before deleting a workspace. Records belonging to shared workspaces are retained there.</p>
+        <p className="text-sm text-ink-3">First export and delete workspaces you own in workspace settings. Any historical subscription must be cancelled with its provider before workspace deletion. Records belonging to shared workspaces are retained there.</p>
         <form onSubmit={(e) => void submit(e, true)} className="space-y-4">
           <Field label="Confirm current password">{(id) => <PasswordInput id={id} required autoComplete="current-password" value={current} maxLength={200} onChange={(e) => setCurrent(e.target.value)} />}</Field>
           <Field label="Type DELETE MY ACCOUNT">{(id) => <Input id={id} required pattern="DELETE MY ACCOUNT" value={confirmation} onChange={(e) => setConfirmation(e.target.value)} />}</Field>

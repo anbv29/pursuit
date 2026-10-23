@@ -47,7 +47,7 @@ function FoChatPanel() {
   const connect = useAction(async () => {
     if (!selectedReport) return;
     if (!await confirm({ title: chat.data?.connected ? "Share this report with Fo?" : "Connect Wajo and share this report?",
-      body: `Pursuit will send the generated report for ${selectedReport.name}, including its source links, to your own Wajo account after you approve. Raw inputs, billing information and other projects are excluded. Wajo’s own limits apply.`,
+      body: `Pursuit will send the generated report for ${selectedReport.name}, including its source links, to your own Wajo account after you approve. Raw inputs, private account information and other projects are excluded. Wajo’s own limits apply.`,
       confirm: chat.data?.connected ? "Share report" : "Continue to Wajo",
     })) return;
     setError(null);
