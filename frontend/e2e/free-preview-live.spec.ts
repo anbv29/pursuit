@@ -34,8 +34,8 @@ test("live free preview persists four sections without paid allowances", async (
     headers: { "X-CSRF-Token": session.csrf_token }, data: { company_url: "https://pancake.ai" },
   });
   expect(duplicate.status()).toBe(409);
-  const billing = await page.request.get(`/api/workspaces/${ws.id}/billing`);
-  expect(await billing.json()).toMatchObject({ plan: "free", research_remaining: 0, questions_remaining: 0 });
+  const billing = await page.request.get(`/api/workspaces/${ws.id}/allowance`);
+  expect(await billing.json()).toMatchObject({ plan: "free", research_remaining: null, questions_remaining: null });
   const anonymous = await playwright.request.newContext();
   try { expect((await anonymous.get(`http://localhost:3000${path}`)).status()).toBe(401); }
   finally { await anonymous.dispose(); }

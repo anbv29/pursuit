@@ -34,8 +34,8 @@ for (const width of [390, 1280]) {
     await page.reload();
     await expect(page.getByText("Simulated reply · nothing sent", { exact: true })).toBeVisible();
     await expect(input).toBeEnabled();
-    const billing = await page.request.get(`/api/workspaces/${ws.id}/billing`);
-    expect((await billing.json()).questions_remaining).toBe(0);
+    const billing = await page.request.get(`/api/workspaces/${ws.id}/allowance`);
+    expect((await billing.json()).questions_remaining).toBeNull();
     expect(await page.evaluate(() => document.documentElement.scrollWidth - innerWidth)).toBeLessThanOrEqual(1);
     await page.screenshot({ path: `test-results/fo-chat-${width}.png`, fullPage: true });
     expect(errors).toEqual([]);
@@ -96,7 +96,7 @@ test("Wajo connection discloses the selected report and waits for sharing consen
   const button = page.getByRole("button", { name: "Connect Wajo & share report" });
   await button.click();
   await expect(page.getByRole("dialog")).toContainText("Selected company");
-  await expect(page.getByRole("dialog")).toContainText("Raw inputs, billing information and other projects are excluded");
+  await expect(page.getByRole("dialog")).toContainText("Raw inputs, private account information and other projects are excluded");
   await page.getByRole("dialog").getByRole("button", { name: "Cancel", exact: true }).click();
   expect(connects).toBe(0);
   await button.click();

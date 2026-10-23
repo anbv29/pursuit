@@ -117,12 +117,12 @@ for (const vp of [{ name: "desktop", width: 1280, height: 860 }, { name: "tablet
   });
 }
 
-test("settings, billing and approvals render cleanly", async ({ page }) => {
+test("settings and approvals render cleanly", async ({ page }) => {
   const errors: string[] = [];
   page.on("pageerror", (e) => errors.push(e.message));
   await mockApi(page);
   for (const [path, heading, name] of [
-    ["approvals", "Approvals", "approvals"], ["billing", /plan|billing/i, "billing"], ["settings", "Settings", "settings"],
+    ["approvals", "Approvals", "approvals"], ["settings", "Settings", "settings"],
   ] as const) {
     await page.goto(`/w/${WS}/${path}`);
     await expect(page.getByRole("heading", { level: 1, name: heading }).first()).toBeVisible();

@@ -1,3 +1,9 @@
+> Free-only conversion note (2026-10-24): the checklist below records historical evidence.
+> Paid-provider, payment and grant controls have been removed. Their historical PASS entries
+> are not evidence for the current version. See FREE_MODE.md for current routing/privacy controls
+> and FREE_MODE_VERIFICATION.md for executed checks. Historical payment data is retained;
+> external subscription cancellation and production deployment are not implied by local changes.
+
 # Pursuit security checklist (45 points)
 
 ## Current local review (2026-10-19)

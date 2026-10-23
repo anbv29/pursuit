@@ -76,7 +76,7 @@ export function WorkspaceShell({ wsId, children }: { wsId: string; children: Rea
   const contentWidth = path.endsWith("/reports/new") ? "max-w-2xl"
     : /\/(settings|fo|first-look)$/.test(path) ? "max-w-3xl"
     : /\/(reports|approvals)$/.test(path) ? "max-w-4xl"
-    : /\/(billing|experiments\/new)$/.test(path) ? "max-w-5xl" : "max-w-6xl";
+    : /\/(experiments\/new)$/.test(path) ? "max-w-5xl" : "max-w-6xl";
 
   // Breadcrumbs only below two levels (a single report or experiment).
   const crumbs = path.match(/\/reports\/(?!new$)[^/]+$/) ? [{ href: `${base}/reports`, label: "Company reports" }, { label: "Report" }]
@@ -115,7 +115,7 @@ export function WorkspaceShell({ wsId, children }: { wsId: string; children: Rea
     { label: "Overview", items: nav.filter((n) => n.exact) },
     { label: "Research", items: nav.filter((n) => [ `${base}/reports`, `${base}/first-look` ].includes(n.href)) },
     { label: "Take action", items: nav.filter((n) => [ `${base}/approvals`, `${base}/fo` ].includes(n.href)) },
-    { label: "Workspace", items: nav.filter((n) => [ `${base}/billing`, `${base}/settings` ].includes(n.href)) },
+    { label: "Workspace", items: nav.filter((n) => [ `${base}/settings` ].includes(n.href)) },
   ];
   const mobilePrimary = nav.filter((n) => n.exact || n.href === `${base}/reports` || n.href === `${base}/fo`);
   const mobileMore = groups.flatMap((g) => g.items).filter((n) => !mobilePrimary.includes(n));

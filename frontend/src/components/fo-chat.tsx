@@ -99,7 +99,7 @@ function FoChatPanel() {
       <h2 className="font-ui text-sm font-semibold">{chat.data.connected ? "Your report context" : "Connect your Wajo account"}</h2>
       {selectedReport ? <><label htmlFor="fo-report" className="mt-3 block text-sm text-ink-2">Report to share with Fo</label>
         <select id="fo-report" value={selectedReport.id} onChange={event => setReportId(event.target.value)} disabled={connect.pending || active} className="mt-2 min-h-11 w-full rounded-xl border border-line bg-paper px-3 text-ink">{reports.map(report => <option key={report.id} value={report.id}>{report.name}</option>)}</select>
-        <p className="mt-2 text-sm text-ink-2">The complete generated report and source links will be sent to your own Fo account. No research credits or report-question allowance are used.</p>
+        <p className="mt-2 text-sm text-ink-2">The complete generated report and source links will be sent to your own Fo account. Fo remains separate from report research; your Wajo account limits apply.</p>
         <Button className="mt-3" disabled={connect.pending || active || chat.data.actions_disabled} onClick={() => void connect.run()}><Link2 className="size-4" aria-hidden />{connect.pending ? "Preparing…" : chat.data.connected ? "Share selected report" : "Connect Wajo & share report"}</Button>
       </> : <p className="mt-3 text-sm text-ink-2"><Link className="underline" href={`/w/${workspace.id}/reports/new`}>Generate a company report</Link> first to give Fo the context for your questions.</p>}
     </section>}
