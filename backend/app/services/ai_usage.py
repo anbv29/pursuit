@@ -11,7 +11,6 @@ from app.core.errors import AppError
 from app.models.usage import UsageCall
 
 CONTEXT = ContextVar("ai_usage_context", default=None)
-BILLING_USE = ContextVar("legacy_billing_use", default=None)
 
 
 @contextmanager

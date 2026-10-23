@@ -8,7 +8,6 @@ from app.core.errors import AppError, NotFound
 from app.models import Report, Workspace
 from app.models.report_entry import ReportEntry
 from app.schemas.report import ReportContent
-from app.services import entitlements
 
 SECTIONS = set(ReportContent.model_fields)
 
@@ -35,8 +34,6 @@ def refresh(db, report, user, correction, sections):
         raise AppError("Another report is already running in this workspace.")
     if not sections or not set(sections) <= SECTIONS:
         raise AppError("Select one or more supported report sections.")
-    entitlements.require_feature(db, report.workspace_id)
-    report.billing_use_id = entitlements.reserve(db, report.workspace_id, "research")
     db.add(
         ReportEntry(
             report_id=report.id,

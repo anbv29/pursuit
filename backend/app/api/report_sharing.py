@@ -16,7 +16,7 @@ from app.core.db import get_db, utcnow
 from app.core.errors import AppError, NotFound
 from app.models import Membership
 from app.models.sharing import ReportShare
-from app.services import audit, entitlements
+from app.services import audit
 
 router = APIRouter(tags=["Report sharing"])
 PREFIX = "/api/workspaces/{workspace_id}/reports/{report_id}/shares"
@@ -44,7 +44,6 @@ def create(
 ):
     if report.status != "SUCCEEDED" or not report.content:
         raise AppError("Only finished reports can be shared.")
-    entitlements.require_feature(db, owner.workspace_id)
     token = secrets.token_urlsafe(32)
     snapshot = {
         "company_name": report.company_name,

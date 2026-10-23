@@ -6,7 +6,7 @@ from sqlalchemy.orm import Session
 from app.core.errors import AppError, Conflict, NotFound
 from app.models import BillingAccount, FirstLook, Membership, User, Workspace
 from app.models.enums import Role
-from app.services import audit, entitlements
+from app.services import audit
 
 
 def create(db: Session, user: User, name: str, is_demo: bool = False) -> Workspace:
@@ -51,7 +51,7 @@ def add_member(db: Session, actor: User, workspace_id: uuid.UUID, email: str) ->
         raise Conflict("That person is already a member.")
     db.execute(select(Workspace.id).where(Workspace.id == workspace_id).with_for_update())
     used = db.scalar(select(func.count(Membership.id)).where(Membership.workspace_id == workspace_id))
-    if used >= entitlements.PLANS[entitlements.plan(db, workspace_id)]["seats"]:
+    if used >= 25:
         raise AppError("The workspace member safety limit is 25 accounts.")
     db.add(Membership(workspace_id=workspace_id, user_id=user.id, role=Role.MEMBER))
     audit.record(db, "workspace.member_add", actor_id=actor.id, workspace_id=workspace_id, target_id=user.id)

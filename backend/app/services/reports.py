@@ -17,7 +17,6 @@ from app.schemas.report import ReportIn
 from app.services import (
     ai_usage,
     audit,
-    entitlements,
     fetcher,
     free_provider,
     report_research,
@@ -71,7 +70,6 @@ def create(db: Session, ws: Workspace, user: User, body: ReportIn) -> Report:
     )
     db.add(report)
     db.flush()
-    report.billing_use_id = entitlements.reserve(db, ws.id, "research", f"report:{report.id}")
     audit.record(
         db,
         "report.request",
@@ -97,8 +95,6 @@ def _set(db: Session, report_id: uuid.UUID, owner=None, **values) -> None:
     if owner is not None and result.rowcount != 1:
         db.rollback()
         raise JobStopped
-    if values.get("status") in ("FAILED", "CANCELLED"):
-        entitlements.finish(db, db.get(Report, report_id).billing_use_id, False)
     db.commit()
 
 
@@ -108,7 +104,6 @@ def run(report_id: uuid.UUID) -> None:
     owner = uuid.uuid4().hex
     stop = threading.Event()
     usage_token = None
-    billing_token = None
     try:
         claimed = db.execute(
             update(Report)
@@ -127,10 +122,6 @@ def run(report_id: uuid.UUID) -> None:
         if claimed.rowcount != 1:
             return
         report = db.get(Report, report_id)
-        if report.billing_use_id is None:
-            report.billing_use_id = entitlements.reserve(db, report.workspace_id, "research")
-            db.commit()
-        billing_token = ai_usage.BILLING_USE.set(report.billing_use_id)
         usage_token = ai_usage.CONTEXT.set(
             (report.workspace_id, report.id, get_settings().free_research_model)
         )
@@ -242,7 +233,6 @@ def run(report_id: uuid.UUID) -> None:
             target_id=report.id,
             detail={"sources": len(found.sources), **stats},
         )
-        entitlements.finish(db, report.billing_use_id, True)
         db.commit()
     except JobStopped:
         db.rollback()
@@ -297,8 +287,6 @@ def run(report_id: uuid.UUID) -> None:
                 finished_at=utcnow(),
             )
     finally:
-        if billing_token is not None:
-            ai_usage.BILLING_USE.reset(billing_token)
         if usage_token is not None:
             ai_usage.CONTEXT.reset(usage_token)
         stop.set()
@@ -333,7 +321,6 @@ def cancel(db, report, user):
     )
     if not result.rowcount:
         raise Conflict("Only queued or running reports can be cancelled.")
-    entitlements.finish(db, report.billing_use_id, False)
     audit.record(db, "report.cancel", actor_id=user.id, workspace_id=report.workspace_id, target_id=report.id)
     db.commit()
     db.refresh(report)
@@ -350,7 +337,6 @@ def retry(db, report, user):
         select(Report.id).where(Report.workspace_id == report.workspace_id, Report.status.in_(ACTIVE))
     ):
         raise Conflict("A report is already running in this workspace.")
-    use_id = entitlements.reserve(db, report.workspace_id, "research")
     checkpoint = dict(report.checkpoint or {})
     if checkpoint.get("investigations"):
         investigation = dict(checkpoint["investigations"])
@@ -371,7 +357,6 @@ def retry(db, report, user):
             lease_until=None,
             finished_at=None,
             error=None,
-            billing_use_id=use_id,
             checkpoint=checkpoint,
         )
     )

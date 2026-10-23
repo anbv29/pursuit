@@ -43,13 +43,6 @@ def workspace_member(
     )
     if membership is None:
         raise NotFound("Workspace not found.")
-    if membership.role != Role.OWNER and request.method not in SAFE_METHODS:
-        from app.services.entitlements import plan
-
-        if plan(db, workspace_id) != "team":
-            raise Forbidden(
-                "An active Team plan is required for members to make changes. Existing data stays readable."
-            )
     return membership
 
 

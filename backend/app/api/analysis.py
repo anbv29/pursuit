@@ -14,7 +14,7 @@ from app.core.ratelimit import limiter
 from app.models import Experiment, User
 from app.models.enums import DataOrigin, Decision
 from app.schemas.common import ORM
-from app.services import ai_usage, entitlements, funnel, recommendations
+from app.services import ai_usage, funnel, recommendations
 
 router = APIRouter(prefix="/api/workspaces/{workspace_id}/experiments/{experiment_id}", tags=["analysis"])
 
@@ -71,11 +71,8 @@ def generate(
         return recommendations.generate(db, exp, user, use_ai=False)
     with (
         ai_usage.scope(exp.workspace_id, selected_model=get_settings().free_research_model),
-        entitlements.metered(db, exp.workspace_id, "question") as use_id,
     ):
         result = recommendations.generate(db, exp, user, use_ai=True)
-        if result.generated_by == "rules":
-            entitlements.finish(db, use_id, False)
         return result
 
 

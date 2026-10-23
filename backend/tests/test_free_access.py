@@ -68,3 +68,15 @@ def test_free_transport_never_silently_ignores_search_tools(monkeypatch):
     )
     with pytest.raises(free_provider.APIError, match="source-only"):
         free_provider.Client().parse(system="Research", messages=[], tools=[{"name": "web_search"}])
+
+
+def test_free_members_can_collaborate_but_not_take_owner_actions(api, other):
+    from tests.test_experiments import EXP
+
+    api.signup()
+    workspace = api.workspace(paid=False)
+    assert (
+        api.post(f"/api/workspaces/{workspace}/members", {"email": "intruder@example.com"}).status_code == 201
+    )
+    assert other.post(f"/api/workspaces/{workspace}/experiments", EXP).status_code == 201
+    assert other.delete(f"/api/workspaces/{workspace}").status_code == 403

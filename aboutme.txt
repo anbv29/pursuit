@@ -1170,3 +1170,6 @@ Remove operator helpers exclusive to retired payment/premium functionality. No r
 
 Commit: fix: align local setup and Fo checks with free access
 Remove retired paid-provider variables from Render, local startup and CI; rewrite the operator smoke check for the zero-priced provider. Treat responses without usage metadata as unknown, never completed. Update unchanged Fo quota/context tests to inspect free availability rather than removed billing routes. Ruff and diff checks passed; the three full-suite failures identified were fixture/usage compatibility issues now corrected.
+
+Commit: refactor: remove residual purchase gates from workflows
+Remove the last Team-only collaborator-write check while retaining owner-only administration. Remove dead credit reservation/context calls from reports, refresh, questions, recommendations and sharing; retain historical foreign-key columns without reading them as permissions. Add a free-member write/owner-protection test. Ruff and diff checks passed; full regression validation continues.
