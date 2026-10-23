@@ -1188,3 +1188,6 @@ Replace obsolete payment/paid-model setup with free-only backend configuration, 
 
 Commit: test: align remaining browser flows with free mode
 Remove billing route expectations from visual/layout audits and switch Fo isolation checks to free availability metadata. Retain Wajo independence in product copy. Flag the historical security checklist as requiring current-version review rather than treating removed payment checks as current PASS evidence. Diff checks passed; browser regressions are recorded in final verification.
+
+Commit: docs: align deep research architecture with free mode
+Replace retired paid-search budgets with bounded source fetching, zero-price routing and unchanged Fo controls. Documentation-only checkpoint; diff checks passed.
