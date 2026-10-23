@@ -13,7 +13,7 @@ from contextlib import contextmanager
 from contextvars import ContextVar, copy_context
 from dataclasses import dataclass, field
 
-from pydantic import ValidationError
+from pydantic import BaseModel, Field, ValidationError
 
 from app.core.config import get_settings
 from app.schemas.report import PartMarket, PartPlan, PartProfile, ReportContent
@@ -119,6 +119,10 @@ class Research:
     insights: list[dict] = field(default_factory=list)
 
 
+class ResearchNotes(BaseModel):
+    notes: str = Field(min_length=20, max_length=20000)
+
+
 class ResearchError(Exception):
     """Raised with a user-safe message."""
 
@@ -156,44 +160,38 @@ def research(
 
 
 def research_pass(company_url, site_text, inputs, on_progress, task):
-    s = get_settings()
-    client = _client()
-    user = NL.join(
-        [
-            f"Company website: {company_url}",
-            f"<company_site>{site_text[:12000]}</company_site>",
-            f"<founder_inputs>{json.dumps(inputs, ensure_ascii=False)}</founder_inputs>",
-            task or "Research this company's market, customers, competitors and pricing.",
-        ]
+    from app.services.research_sources import collect
+
+    context = CHECKPOINTS.get()
+    cache = context[0] if context else {}
+    if "free_sources" not in cache:
+        on_progress("Reading accessible company pages and supplied source URLs…")
+        cache["free_sources"] = collect(company_url, inputs)
+    sources = cache["free_sources"]
+    result = ai_usage.parse(
+        _client(),
+        model=get_settings().free_research_model,
+        max_tokens=6000,
+        system=RESEARCH_SYSTEM + "\nNo search tools are available. Use only these fetched sources. "
+        "Do not invent URLs, competitors or market measurements. When independent evidence is missing, "
+        "say so and propose a test. Return a JSON object with a notes string.",
+        messages=[
+            {
+                "role": "user",
+                "content": json.dumps(
+                    {
+                        "company_url": company_url,
+                        "company_site": site_text[:12000],
+                        "founder_inputs": inputs,
+                        "question": task,
+                        "sources": sources,
+                    }
+                ),
+            }
+        ],
+        output_format=ResearchNotes,
     )
-    messages: list[dict] = [{"role": "user", "content": user}]
-    tools = [
-        {"type": "web_search_20260209", "name": "web_search", "max_uses": 8},
-        {"type": "web_fetch_20260209", "name": "web_fetch", "max_uses": 2},
-    ]
-    seen: dict[str, dict] = {}
-    texts: list[str] = []
-    # No repeated tool-enabled turns: the three passes share a strict 24-search ceiling.
-    for _attempt in range(1):
-        with ai_usage.stream(
-            client,
-            model=ai_usage.model(s.research_model),
-            max_tokens=6000,
-            system=RESEARCH_SYSTEM,
-            tools=tools,
-            messages=messages,
-            output_config={"effort": "medium"},
-        ) as stream:
-            msg = stream.get_final_message()
-        _collect_sources(msg.content, seen)
-        if msg.stop_reason == "refusal":
-            raise ResearchError("The research step was declined by the model's safety system.")
-        texts = [b.text for b in msg.content if getattr(b, "type", "") == "text"]
-        if msg.stop_reason in ("pause_turn", "max_tokens"):
-            texts.append("LIMITATION: Research was incomplete within its execution limit.")
-        break
-    sources = [{"id": f"S{i + 1}", **v} for i, v in enumerate(seen.values())]
-    return Research(notes=NL.join(texts).strip(), sources=sources)
+    return Research(notes=result.parsed_output.notes, sources=sources)
 
 
 def _synthesize_part(client, model: str, context: str, part_model, instruction: str):

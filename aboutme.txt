@@ -1092,3 +1092,6 @@ Reuse and review the pre-existing untracked free-provider adapter and its tests 
 
 Commit: refactor: route AI workflows through free provider
 Switch recommendation synthesis, report questions, company discovery and report clients to the reviewed free transport; derive all new report model selections from the free-provider setting. Zero-priced usage records reserve zero spend and reject paid search allocation. Anthropic credentials no longer enable AI. Ruff passed; import/config smoke checks validate this checkpoint. Source collection and entitlement removal follow.
+
+Commit: feat: gather verified sources without paid search
+Replace hosted search-tool calls with bounded SSRF-protected page collection: company pages and up to three competitor URLs explicitly supplied by the founder. Reuse verified source text across the three investigation passes and require structured research notes. No synthetic search results or model-invented citations. Ruff and module import checks passed; full workflow tests follow after entitlement removal.
