@@ -1161,3 +1161,6 @@ Add route tests proving reports and multiple workspaces need no purchased record
 
 Commit: fix: select an available free-only research configuration
 Live verification found that MiniMax's free launch endpoint retired on 2026-10-22. Select the still-listed zero-priced Gemma model using the same private key; preserve strict no-training routing and refuse paid fallback. Both privacy-compatible Gemma endpoints currently return provider 429; a different zero-priced provider required a weaker data policy and was not used. Standardize JSON-object requests with server schema verification, increase bounded read timeout, and classify capacity failures safely. No claim of live inference success while quota is unavailable. Ruff/diff checks passed.
+
+Commit: chore: remove payment provisioning scripts
+Remove operator helpers exclusive to retired payment/premium functionality. No remote merchant settings, subscriptions or existing records changed. Diff reviewed and whitespace checks passed.
