@@ -1095,3 +1095,6 @@ Switch recommendation synthesis, report questions, company discovery and report 
 
 Commit: feat: gather verified sources without paid search
 Replace hosted search-tool calls with bounded SSRF-protected page collection: company pages and up to three competitor URLs explicitly supplied by the founder. Reuse verified source text across the three investigation passes and require structured research notes. No synthetic search results or model-invented citations. Ruff and module import checks passed; full workflow tests follow after entitlement removal.
+
+Commit: feat: unlock all product features without purchases
+Remove subscription/credit checks from the shared entitlement service. All authenticated workspaces receive report research, questions, refresh, discovery, sharing and collaboration without purchases; existing route-level authorization and abuse limits remain. Legacy billing rows are preserved, never used as access gates. Null remaining-credit values mean no purchased allowance is required. This cohesive module replacement exceeds the line checkpoint slightly because retaining half of the old paid entitlement logic would be unsafe. Ruff and direct service assertions passed.
