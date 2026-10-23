@@ -1182,3 +1182,6 @@ Update the read-only launch helper and README, add current free-mode configurati
 
 Commit: refactor: enforce bounded source-only investigation passes
 Replace obsolete search-allocation counters with three bounded investigation passes, remove unused hosted-search response parsing, and require empty competitor lists when sources do not support candidates. Add a no-retry provider rate-limit regression and neutralize retired SDK wording. Ruff/diff checks passed; targeted pipeline regression tests follow.
+
+Commit: docs: replace retired paid deployment instructions
+Replace obsolete payment/paid-model setup with free-only backend configuration, preserved Fo encryption/auth, safe historical subscription handling and explicit rollout verification. Correct the long-line Ruff issue introduced in the previous pipeline checkpoint; final Ruff now passes. Production builds and ten browser checks have passed; live-provider quota remains an external blocker.
