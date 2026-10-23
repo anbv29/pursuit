@@ -1098,3 +1098,6 @@ Replace hosted search-tool calls with bounded SSRF-protected page collection: co
 
 Commit: feat: unlock all product features without purchases
 Remove subscription/credit checks from the shared entitlement service. All authenticated workspaces receive report research, questions, refresh, discovery, sharing and collaboration without purchases; existing route-level authorization and abuse limits remain. Legacy billing rows are preserved, never used as access gates. Null remaining-credit values mean no purchased allowance is required. This cohesive module replacement exceeds the line checkpoint slightly because retaining half of the old paid entitlement logic would be unsafe. Ruff and direct service assertions passed.
+
+Commit: refactor: remove paid model budgeting from research
+Replace the spend/grant reservation implementation with a zero-priced call audit ledger. Reject every model except the configured free model and reject hosted search tools. Preserve completed/unknown call tracking and existing historical rows without deriving new paid estimates or granting subscriptions. This is a coherent module replacement; Ruff and direct free-model guard assertions passed.

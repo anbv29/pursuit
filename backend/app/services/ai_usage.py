@@ -1,25 +1,17 @@
-"""Meter provider-reported tokens; reserve estimated budgets before each request.
-
-Rates verified 2026-10-18 against Anthropic pricing. Estimates are not invoices.
-Unknown/failed calls retain reservations, since a timed-out call may be billable.
-"""
+"""Zero-priced research audit ledger; no payment grants or spend reservations."""
 
 import json
 from contextlib import contextmanager
 from contextvars import ContextVar
 from decimal import Decimal
 
-from sqlalchemy import func, select
-
+from app.core.config import get_settings
 from app.core.db import new_session, utcnow
 from app.core.errors import AppError
-from app.models import BillingUse, Workspace
-from app.models.usage import UsageCall, WorkspaceBudget
-from app.services.plans import PLANS
+from app.models.usage import UsageCall
 
-MODELS = {"claude-haiku-5-5": (0.10, 0.50), "claude-sonnet-5-5": (2, 10), "claude-opus-5-5": (4, 20)}
 CONTEXT = ContextVar("ai_usage_context", default=None)
-BILLING_USE = ContextVar("billing_use", default=None)
+BILLING_USE = ContextVar("legacy_billing_use", default=None)
 
 
 @contextmanager
@@ -31,14 +23,11 @@ def scope(workspace_id, report_id=None, selected_model=None):
         CONTEXT.reset(token)
 
 
-def model(fallback):
-    current = CONTEXT.get()
-    return current[2] if current and current[2] else fallback
+def model(fallback=None):
+    return get_settings().free_research_model
 
 
 def preferred_model(db, workspace_id):
-    from app.core.config import get_settings
-
     return get_settings().free_research_model
 
 
@@ -47,108 +36,24 @@ def month_start():
 
 
 def estimate(model_id, usage):
-    if model_id.endswith(":free"):
-        return Decimal("0")
-    base, output = MODELS[model_id]
-    raw = int(usage.get("input_tokens", 0))
-    read = int(usage.get("cache_read_input_tokens", 0) or 0)
-    write = int(usage.get("cache_creation_input_tokens", 0) or 0)
-    if model_id == "claude-haiku-5-5" and raw + read + write > 100_000:
-        base, output = 0.5, 2.5
-    searches = (usage.get("server_tool_use") or {}).get("web_search_requests", 0)
-    # Conservative 1h cache-write price; requests here do not explicitly enable caching.
-    amount = (
-        raw * base + read * base * 0.1 + write * base * 2 + int(usage.get("output_tokens", 0)) * output
-    ) / 1_000_000
-    return Decimal(str(amount + searches * 0.01)).quantize(Decimal("0.000001"))
+    if model_id != get_settings().free_research_model:
+        raise AppError("Only the configured free model is allowed.")
+    return Decimal("0")
 
 
-def reserve(model_id, max_tokens, searches=0, operation="research", max_input=1_000_000):
+def reserve(model_id, max_tokens, searches=0, operation="research", max_input=1000000):
+    if model_id != get_settings().free_research_model or searches:
+        raise AppError("Paid models and search tools are disabled.")
     current = CONTEXT.get()
     if current is None:
         return None
-    if model_id.endswith(":free"):
-        if searches:
-            raise AppError("Paid search tools are unavailable in free research.")
-        with new_session() as db:
-            row = UsageCall(
-                workspace_id=current[0],
-                report_id=current[1],
-                model=model_id,
-                operation=operation,
-                reserved_usd=Decimal("0"),
-            )
-            db.add(row)
-            db.commit()
-            return row.id
-    if model_id not in MODELS:
-        raise AppError("This model has no configured pricing. Choose a supported model in Settings.")
-    # Reserve at the long-context rate for a whole context window plus output and search.
-    base, output = MODELS[model_id]
-    if model_id == "claude-haiku-5-5" and max_input > 100_000:
-        base, output = 0.5, 2.5
-    amount = Decimal(str((max_input * base + max_tokens * output) / 1_000_000 + searches * 0.01))
     with new_session() as db:
-        db.execute(select(Workspace.id).where(Workspace.id == current[0]).with_for_update())
-        budget = db.get(WorkspaceBudget, current[0])
-        limit = budget.monthly_limit_usd if budget else Decimal("25")
-        used = db.scalar(
-            select(
-                func.coalesce(func.sum(func.coalesce(UsageCall.estimated_usd, UsageCall.reserved_usd)), 0)
-            ).where(UsageCall.workspace_id == current[0], UsageCall.created_at >= month_start())
-        )
-        if used + amount > limit:
-            raise AppError(
-                "Workspace AI budget reached. An owner can adjust it in Settings.", "budget_exceeded"
-            )
-        use_id = BILLING_USE.get()
-        if use_id:
-            use = db.get(BillingUse, use_id)
-            from app.services.entitlements import eligible_grants
-
-            allowed = {g.id: g for g in eligible_grants(db, current[0])}
-            if (
-                not use
-                or use.workspace_id != current[0]
-                or use.status != "RESERVED"
-                or use.grant_id not in allowed
-            ):
-                raise AppError("This research allowance is no longer available.", "allowance_unavailable")
-            grant = allowed[use.grant_id]
-            total = func.coalesce(UsageCall.estimated_usd, UsageCall.reserved_usd)
-            job_cost = db.scalar(
-                select(func.coalesce(func.sum(total), 0)).where(UsageCall.billing_use_id == use_id)
-            )
-            grant_cost = db.scalar(
-                select(func.coalesce(func.sum(total), 0))
-                .join(BillingUse, BillingUse.id == UsageCall.billing_use_id)
-                .where(BillingUse.grant_id == grant.id)
-            )
-            from app.core.config import get_settings
-
-            job_limit = (
-                Decimal("0.10")
-                if use.kind == "question"
-                else Decimal(str(get_settings().research_job_limit_usd))
-            )
-            grant_limit = Decimal(PLANS[grant.plan]["price_cents"]) / 100 * Decimal("0.30")
-            if (
-                model_id != "claude-haiku-5-5"
-                or job_cost + amount > job_limit
-                or grant_cost + amount > grant_limit
-            ):
-                raise AppError(
-                    "AI safety budget reached for this request or allowance. "
-                    "Contact support; no extra charge was made.",
-                    "budget_exceeded",
-                )
         row = UsageCall(
             workspace_id=current[0],
             report_id=current[1],
             model=model_id,
             operation=operation,
-            billing_use_id=use_id,
-            reserved_usd=amount,
+            reserved_usd=Decimal("0"),
         )
         db.add(row)
         db.commit()
@@ -160,13 +65,9 @@ def settle(call_id, message):
         return
     with new_session() as db:
         row = db.get(UsageCall, call_id)
-        if message is None or not getattr(message, "usage", None):
-            row.status = "UNKNOWN"
-        else:
-            raw = message.usage.model_dump(mode="json")
-            row.usage = raw
-            row.estimated_usd = estimate(row.model, raw)
-            row.status = "COMPLETED"
+        row.status = "COMPLETED" if message is not None else "UNKNOWN"
+        row.usage = message.usage.model_dump(mode="json") if message is not None else None
+        row.estimated_usd = Decimal("0")
         db.commit()
 
 
