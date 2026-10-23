@@ -1113,3 +1113,6 @@ Removed retired payment-only modules: backend/app/services/checkout.py, backend/
 
 Commit: refactor: remove Dodo provider integration
 Removed retired payment-only modules: backend/app/services/payment_provider.py. No payment or database records deleted. Ruff and staged diff checks passed.
+
+Commit: refactor: remove payment webhook processing
+Removed retired payment-only modules: backend/app/services/billing_webhooks.py, backend/app/api/payment_webhook.py. No payment or database records deleted. Ruff and staged diff checks passed.
