@@ -1107,3 +1107,6 @@ Remove paid-plan catalogue, checkout and portal routes. Replace them with an aut
 
 Commit: refactor: remove payment fulfillment
 Removed retired payment-only modules: backend/app/services/billing_fulfillment.py. No payment or database records deleted. Ruff and staged diff checks passed.
+
+Commit: refactor: remove checkout creation
+Removed retired payment-only modules: backend/app/services/checkout.py, backend/app/services/plans.py. No payment or database records deleted. Ruff and staged diff checks passed.
