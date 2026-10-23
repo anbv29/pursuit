@@ -7,7 +7,7 @@ from tests.test_report_validate import sample
 
 @pytest.fixture
 def ai_on(monkeypatch):
-    monkeypatch.setenv("ANTHROPIC_API_KEY", "test-key-not-real")
+    monkeypatch.setenv("OPENROUTER_API_KEY", "test-key-not-real")
     get_settings.cache_clear()
     yield
     get_settings.cache_clear()

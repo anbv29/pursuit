@@ -1152,3 +1152,6 @@ Retire tests exclusive to deleted paid functionality; replace purchase gating wi
 
 Commit: test: retire complimentary plan scenarios
 Retire tests exclusive to deleted paid functionality; replace purchase gating with free-access/security tests in the integration phase. Staged diff reviewed and whitespace checks passed.
+
+Commit: test: migrate core workflows to free access
+Remove synthetic paid grants from shared fixtures; enable mocked AI with the free key and patch the free client instead of the removed SDK. Update First Look and usage assertions for no purchased quotas; preserve sharing expiry/revocation and unknown-call auditing tests. Ruff passed; full-suite collection/runs follow.

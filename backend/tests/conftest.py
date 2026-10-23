@@ -4,20 +4,10 @@ import os
 
 os.environ["APP_ENV"] = "test"
 os.environ["FO_MODE"] = "demo"
-os.environ["ANTHROPIC_API_KEY"] = ""  # tests must never call the real model
-os.environ["OPENCODE_API_KEY"] = ""  # free provider calls must also be mocked
 os.environ["OPENROUTER_API_KEY"] = ""
 os.environ["FREE_PREVIEW_ENABLED"] = "false"
 os.environ["FREE_RESEARCH_MODEL"] = "google/gemma-4-31b-it:free"
-os.environ["DODO_PAYMENTS_ENVIRONMENT"] = "test_mode"
-os.environ["BILLING_CHECKOUT_ENABLED"] = "false"
 # Never inherit merchant credentials or product mappings from a private .env.
-os.environ["DODO_PAYMENTS_API_KEY"] = ""
-os.environ["DODO_PAYMENTS_WEBHOOK_KEY"] = ""
-os.environ["DODO_BUSINESS_ID"] = ""
-os.environ["DODO_SINGLE_PRODUCT"] = ""
-os.environ["DODO_FOUNDER_PRODUCT"] = ""
-os.environ["DODO_TEAM_PRODUCT"] = ""
 
 import pytest
 from fastapi.testclient import TestClient
@@ -81,40 +71,6 @@ class Api:
         r = self.post("/api/workspaces", {"name": name})
         assert r.status_code == 201, r.text
         workspace_id = r.json()["id"]
-        # Legacy feature regressions run with explicitly synthetic paid allowances.
-        # Billing tests use paid=False to exercise the real Free defaults and paywalls.
-        if paid:
-            from datetime import timedelta
-
-            from app.core.db import utcnow
-            from app.models import BillingAccount, CreditGrant
-
-            with dbmod.new_session() as db:
-                end = utcnow() + timedelta(days=30)
-                sub = f"fixture-{workspace_id}"
-                db.add(
-                    BillingAccount(
-                        workspace_id=workspace_id,
-                        environment="test_mode",
-                        plan="team",
-                        status="active",
-                        subscription_id=sub,
-                        period_end=end,
-                    )
-                )
-                db.add(
-                    CreditGrant(
-                        workspace_id=workspace_id,
-                        source_key=sub,
-                        subscription_id=sub,
-                        plan="team",
-                        environment="test_mode",
-                        reports=100,
-                        questions=1000,
-                        expires_at=end,
-                    )
-                )
-                db.commit()
         return workspace_id
 
 

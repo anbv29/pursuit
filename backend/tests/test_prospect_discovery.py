@@ -19,7 +19,7 @@ def test_discovery_requires_sources_checks_sites_and_deduplicates(api, ws, fake_
         ],
     )
     monkeypatch.setattr(discovery.report_research, "research", lambda *a, **kw: found)
-    monkeypatch.setattr(discovery.anthropic, "Anthropic", lambda **kw: object())
+    monkeypatch.setattr(discovery.free_provider, "Client", lambda **kw: object())
     candidates = discovery.Candidates(
         companies=[
             discovery.Candidate(

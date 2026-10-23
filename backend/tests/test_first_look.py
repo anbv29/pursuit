@@ -59,11 +59,11 @@ def test_free_first_look_is_real_persisted_once_and_does_not_unlock_paid_ai(api,
     assert data["preview"]["content"]["snapshot"]["offering"]["kind"] == "fact"
     assert api.get(path).json() == data
     assert run(api, path).status_code == 409 and len(fetched) == 1
-    billing = api.get(f"/api/workspaces/{ws}/billing").json()
-    assert billing["plan"] == "free" and billing["research_remaining"] == billing["questions_remaining"] == 0
+    billing = api.get(f"/api/workspaces/{ws}/allowance").json()
     assert (
-        api.post(f"/api/workspaces/{ws}/reports", {"company_url": "https://example.com"}).status_code == 402
+        billing["plan"] == "free" and billing["research_remaining"] is billing["questions_remaining"] is None
     )
+    assert billing["advanced_research"] is True
 
 
 def test_free_experiment_is_idempotent_and_has_provenance_and_real_criteria(api, fetched):
@@ -177,13 +177,13 @@ def test_provider_failure_preserves_free_allowance_and_never_uses_paid_ai(api, f
         raise free_research.PreviewError("provider-private-detail")
 
     monkeypatch.setattr(free_research, "generate", failed)
-    monkeypatch.setattr("anthropic.Anthropic", lambda **kwargs: pytest.fail("Paid AI called"))
+    monkeypatch.setattr("app.services.free_provider.Client", lambda **kwargs: pytest.fail("Paid AI called"))
     response = run(api, path).json()
     assert response["status"] == "FAILED" and not response["used"] and response["can_retry"]
     assert response["error"] == free_research.UNAVAILABLE
     assert "provider-private-detail" not in str(response)
-    billing = api.get(f"/api/workspaces/{ws}/billing").json()
-    assert billing["research_remaining"] == billing["questions_remaining"] == 0
+    billing = api.get(f"/api/workspaces/{ws}/allowance").json()
+    assert billing["research_remaining"] is billing["questions_remaining"] is None
 
 
 def test_earlier_rule_based_result_can_be_replaced_once(api, fetched):

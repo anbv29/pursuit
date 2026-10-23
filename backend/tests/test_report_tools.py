@@ -25,7 +25,7 @@ def test_questions_persist_and_drop_fake_citations(api, ws, fake_ai, monkeypatch
                 ),
             )
 
-    monkeypatch.setattr(report_chat.anthropic, "Anthropic", Client)
+    monkeypatch.setattr(report_chat.free_provider, "Client", Client)
     path = f"/api/workspaces/{ws}/reports/{rid}/questions"
     row = api.post(path, {"question": "What should I do first?"})
     assert row.status_code == 201
