@@ -1122,3 +1122,6 @@ Removed retired payment-only modules: backend/app/services/complimentary.py, bac
 
 Commit: refactor: remove paid budget settings API
 Removed retired payment-only modules: backend/app/api/usage.py. No payment or database records deleted. Ruff and staged diff checks passed.
+
+Commit: feat: retire the paid billing screen
+Remove checkout, subscription and portal controls. Old billing bookmarks redirect to their workspace instead of showing dead purchase buttons. Existing visual style is unchanged. Route reviewed against installed Next.js page conventions; diff checks passed. Frontend integration checks follow after navigation cleanup.
