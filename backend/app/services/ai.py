@@ -11,12 +11,11 @@ Security posture:
 import json
 import logging
 
-import anthropic
 from pydantic import BaseModel, Field
 
 from app.core.config import get_settings
 from app.models.enums import Decision
-from app.services import ai_usage
+from app.services import ai_usage, free_provider
 
 logger = logging.getLogger("pursuit.ai")
 
@@ -69,13 +68,13 @@ def synthesize(exp, metrics: dict, criteria: list[dict], evidence: list) -> AISy
     s = get_settings()
     if not s.ai_enabled:
         return None
-    client = anthropic.Anthropic(
-        api_key=s.anthropic_api_key.get_secret_value(), timeout=s.ai_timeout_seconds, max_retries=0
+    client = free_provider.Client(
+        api_key=None, timeout=s.ai_timeout_seconds, max_retries=0
     )
     try:
         response = ai_usage.parse(
             client,
-            model=ai_usage.model(s.anthropic_model),
+            model=ai_usage.model(s.research_model),
             max_tokens=16000,
             system=SYSTEM,
             messages=[
@@ -87,13 +86,13 @@ def synthesize(exp, metrics: dict, criteria: list[dict], evidence: list) -> AISy
             ],
             output_format=AISynthesis,
         )
-    except anthropic.APIConnectionError:
+    except free_provider.APIConnectionError:
         logger.warning("AI synthesis: connection error")
         return None
-    except anthropic.RateLimitError:
+    except free_provider.RateLimitError:
         logger.warning("AI synthesis: rate limited")
         return None
-    except anthropic.APIStatusError as exc:
+    except free_provider.APIStatusError as exc:
         logger.warning("AI synthesis failed with status %s", exc.status_code)
         return None
     except Exception:

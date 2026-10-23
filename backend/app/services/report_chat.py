@@ -1,13 +1,12 @@
 import json
 
-import anthropic
 from pydantic import BaseModel, Field
 from sqlalchemy import select
 
 from app.core.config import get_settings
 from app.core.errors import AppError
 from app.models.report_entry import ReportEntry
-from app.services import ai_usage
+from app.services import ai_usage, free_provider
 
 
 class Answer(BaseModel):
@@ -42,9 +41,7 @@ def answer(db, report, user, question: str):
         "question": question,
     }
     try:
-        client = anthropic.Anthropic(
-            api_key=settings.anthropic_api_key.get_secret_value(), timeout=90, max_retries=0
-        )
+        client = free_provider.Client(api_key=None, timeout=90, max_retries=0)
         result = ai_usage.parse(
             client,
             model=ai_usage.model(settings.research_model),
@@ -56,7 +53,7 @@ def answer(db, report, user, question: str):
             messages=[{"role": "user", "content": json.dumps(data)}],
             output_format=Answer,
         )
-    except anthropic.APIError as exc:
+    except free_provider.APIError as exc:
         raise AppError("The answer service is unavailable. Your report is unchanged.") from exc
     parsed = result.parsed_output
     if parsed is None or result.stop_reason in ("refusal", "max_tokens"):

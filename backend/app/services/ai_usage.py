@@ -37,7 +37,9 @@ def model(fallback):
 
 
 def preferred_model(db, workspace_id):
-    return "claude-haiku-5-5"  # included paid allowances are priced for Haiku
+    from app.core.config import get_settings
+
+    return get_settings().free_research_model
 
 
 def month_start():
@@ -45,6 +47,8 @@ def month_start():
 
 
 def estimate(model_id, usage):
+    if model_id.endswith(":free"):
+        return Decimal("0")
     base, output = MODELS[model_id]
     raw = int(usage.get("input_tokens", 0))
     read = int(usage.get("cache_read_input_tokens", 0) or 0)
@@ -63,6 +67,20 @@ def reserve(model_id, max_tokens, searches=0, operation="research", max_input=1_
     current = CONTEXT.get()
     if current is None:
         return None
+    if model_id.endswith(":free"):
+        if searches:
+            raise AppError("Paid search tools are unavailable in free research.")
+        with new_session() as db:
+            row = UsageCall(
+                workspace_id=current[0],
+                report_id=current[1],
+                model=model_id,
+                operation=operation,
+                reserved_usd=Decimal("0"),
+            )
+            db.add(row)
+            db.commit()
+            return row.id
     if model_id not in MODELS:
         raise AppError("This model has no configured pricing. Choose a supported model in Settings.")
     # Reserve at the long-context rate for a whole context window plus output and search.

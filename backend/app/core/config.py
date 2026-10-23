@@ -23,9 +23,6 @@ class Settings(BaseSettings):
     # Number of trusted reverse proxies that append to X-Forwarded-For (0 = use socket peer).
     trusted_proxy_hops: int = Field(default=0, ge=0, le=5)
 
-    anthropic_api_key: SecretStr | None = None
-    anthropic_model: str = "claude-haiku-5-5"
-    research_model: str = "claude-haiku-5-5"
     research_job_limit_usd: float = Field(default=1.0, ge=0.1, le=2.0)
     openrouter_api_key: SecretStr | None = None
     # Enable only after provider approval for third-party application use.
@@ -71,11 +68,14 @@ class Settings(BaseSettings):
         return [o.strip() for o in self.cors_origins.split(",") if o.strip()]
 
     @property
+    def research_model(self) -> str:
+        return self.free_research_model
+
+    @property
     def ai_enabled(self) -> bool:
-        return bool(self.anthropic_api_key and self.anthropic_api_key.get_secret_value())
+        return bool(self.openrouter_api_key and self.openrouter_api_key.get_secret_value())
 
     @field_validator(
-        "anthropic_api_key",
         "openrouter_api_key",
         "dodo_api_key",
         "dodo_webhook_key",

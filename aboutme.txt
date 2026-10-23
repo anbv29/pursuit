@@ -1089,3 +1089,6 @@ Browser verification: four free-preview checks passed (31.6s), including mobile/
 
 Commit: feat: establish shared free research transport
 Reuse and review the pre-existing untracked free-provider adapter and its tests for the owner-requested free-only conversion. Transport pins zero-priced routing, disables paid fallback and web plugins, validates structured responses, and now rejects supplied tools or non-free model IDs rather than silently implying tool execution. Two isolated provider tests passed before the additional guard; quick checks below accompany this checkpoint. Existing app routing is switched in the next checkpoint.
+
+Commit: refactor: route AI workflows through free provider
+Switch recommendation synthesis, report questions, company discovery and report clients to the reviewed free transport; derive all new report model selections from the free-provider setting. Zero-priced usage records reserve zero spend and reject paid search allocation. Anthropic credentials no longer enable AI. Ruff passed; import/config smoke checks validate this checkpoint. Source collection and entitlement removal follow.

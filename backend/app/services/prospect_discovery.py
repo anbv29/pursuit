@@ -4,7 +4,6 @@ import hashlib
 import json
 from urllib.parse import urlsplit
 
-import anthropic
 from pydantic import BaseModel, Field, HttpUrl
 from sqlalchemy import select
 
@@ -12,7 +11,7 @@ from app.core.config import get_settings
 from app.core.db import utcnow
 from app.core.errors import AppError
 from app.models.report_entry import ReportEntry
-from app.services import ai_usage, fetcher, report_research
+from app.services import ai_usage, fetcher, free_provider, report_research
 
 
 class Candidate(BaseModel):
@@ -51,8 +50,8 @@ def discover(db, report, user):
             "Exclude competitors and the company itself. Verify official company websites and cite URLs. "
             "Research public companies only; do not collect personal contact details.",
         )
-        client = anthropic.Anthropic(
-            api_key=s.anthropic_api_key.get_secret_value(), timeout=90, max_retries=0
+        client = free_provider.Client(
+            api_key=None, timeout=90, max_retries=0
         )
         result = ai_usage.parse(
             client,
@@ -66,7 +65,7 @@ def discover(db, report, user):
                 {"role": "user", "content": json.dumps({"notes": found.notes, "sources": found.sources})}
             ],
         )
-    except (anthropic.APIError, report_research.ResearchError) as exc:
+    except (free_provider.APIError, report_research.ResearchError) as exc:
         raise AppError("Company discovery is unavailable. Please try again later.") from exc
     if result.parsed_output is None:
         raise AppError("No verified company suggestions were returned.")

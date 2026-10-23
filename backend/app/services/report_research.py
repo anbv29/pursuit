@@ -13,12 +13,11 @@ from contextlib import contextmanager
 from contextvars import ContextVar, copy_context
 from dataclasses import dataclass, field
 
-import anthropic
 from pydantic import ValidationError
 
 from app.core.config import get_settings
 from app.schemas.report import PartMarket, PartPlan, PartProfile, ReportContent
-from app.services import ai_usage
+from app.services import ai_usage, free_provider
 
 logger = logging.getLogger("pursuit.reports")
 
@@ -124,11 +123,11 @@ class ResearchError(Exception):
     """Raised with a user-safe message."""
 
 
-def _client() -> anthropic.Anthropic:
+def _client() -> free_provider.Client:
     s = get_settings()
     if not s.ai_enabled:
         raise ResearchError("AI research is unavailable. Please contact the workspace operator.")
-    return anthropic.Anthropic(api_key=s.anthropic_api_key.get_secret_value(), timeout=90, max_retries=0)
+    return free_provider.Client(api_key=None, timeout=90, max_retries=0)
 
 
 def _collect_sources(blocks, seen: dict[str, dict]) -> None:

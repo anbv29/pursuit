@@ -6,7 +6,6 @@ import uuid
 from contextlib import suppress
 from datetime import timedelta
 
-import anthropic
 from sqlalchemy import func, select, update
 from sqlalchemy.orm import Session
 
@@ -15,7 +14,15 @@ from app.core.db import new_session, utcnow
 from app.core.errors import AppError, NotFound
 from app.models import Report, User, Workspace
 from app.schemas.report import ReportIn
-from app.services import ai_usage, audit, entitlements, fetcher, report_research, report_validate
+from app.services import (
+    ai_usage,
+    audit,
+    entitlements,
+    fetcher,
+    free_provider,
+    report_research,
+    report_validate,
+)
 from app.services.report_worker import LEASE, eligible, heartbeat
 
 logger = logging.getLogger("pursuit.reports")
@@ -60,7 +67,7 @@ def create(db: Session, ws: Workspace, user: User, body: ReportIn) -> Report:
         company_url=str(body.company_url),
         company_name=body.company_name.strip(),
         inputs={k: v for k, v in inputs.items() if v},
-        model="claude-haiku-5-5",
+        model=get_settings().free_research_model,
     )
     db.add(report)
     db.flush()
@@ -124,7 +131,9 @@ def run(report_id: uuid.UUID) -> None:
             report.billing_use_id = entitlements.reserve(db, report.workspace_id, "research")
             db.commit()
         billing_token = ai_usage.BILLING_USE.set(report.billing_use_id)
-        usage_token = ai_usage.CONTEXT.set((report.workspace_id, report.id, "claude-haiku-5-5"))
+        usage_token = ai_usage.CONTEXT.set(
+            (report.workspace_id, report.id, get_settings().free_research_model)
+        )
         if report.attempts > 3:
             _set(
                 db,
@@ -237,7 +246,7 @@ def run(report_id: uuid.UUID) -> None:
         db.commit()
     except JobStopped:
         db.rollback()
-    except (anthropic.APIConnectionError, anthropic.RateLimitError):
+    except (free_provider.APIConnectionError, free_provider.RateLimitError):
         db.rollback()
         if report.attempts < 3:
             _set(
