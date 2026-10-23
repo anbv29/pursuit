@@ -65,8 +65,9 @@ def settle(call_id, message):
         return
     with new_session() as db:
         row = db.get(UsageCall, call_id)
-        row.status = "COMPLETED" if message is not None else "UNKNOWN"
-        row.usage = message.usage.model_dump(mode="json") if message is not None else None
+        measured = message is not None and getattr(message, "usage", None) is not None
+        row.status = "COMPLETED" if measured else "UNKNOWN"
+        row.usage = message.usage.model_dump(mode="json") if measured else None
         row.estimated_usd = Decimal("0")
         db.commit()
 

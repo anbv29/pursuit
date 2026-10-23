@@ -225,8 +225,8 @@ def test_durable_daily_quota_and_no_research_credit_consumption(api):
             )
         db.commit()
     assert draft(api, path).status_code == 429
-    billing = api.get(f"/api/workspaces/{ws}/billing").json()
-    assert billing["research_remaining"] == 0 and billing["questions_remaining"] == 0
+    billing = api.get(f"/api/workspaces/{ws}/allowance").json()
+    assert billing["research_remaining"] is billing["questions_remaining"] is None
 
 
 def test_simultaneous_approvals_send_only_once(api, live, monkeypatch):

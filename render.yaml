@@ -30,10 +30,6 @@ services:
         sync: false # exact public frontend HTTPS origin for OAuth and checkout returns
       - key: CONNECTION_ENCRYPTION_KEY
         sync: false # stable Fernet key; provision privately, never regenerate on redeploy
-      - key: ANTHROPIC_MODEL
-        value: claude-haiku-5-5
-      - key: RESEARCH_MODEL
-        value: claude-haiku-5-5
       - key: REPORT_WORKER_ENABLED
         value: "true"
       - key: OPENROUTER_API_KEY
@@ -42,11 +38,3 @@ services:
         sync: false # set true only after provisioning and verifying the free provider
       - key: FREE_RESEARCH_MODEL
         value: google/gemma-4-31b-it:free
-      - key: DODO_PAYMENTS_ENVIRONMENT
-        value: test_mode
-      - key: BILLING_CHECKOUT_ENABLED
-        value: "false"
-      - key: DODO_PAYMENTS_API_KEY
-        value: ""
-      - key: DODO_PAYMENTS_WEBHOOK_KEY
-        value: "" # preview cannot create hosted checkout sessions

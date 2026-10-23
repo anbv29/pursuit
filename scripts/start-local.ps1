@@ -15,9 +15,9 @@ if (!(Test-Path $python) -or !(Test-Path (Join-Path $root 'frontend\node_modules
     throw 'Install the backend and frontend dependencies first; see README.md.'
 }
 $keys = @('APP_ENV', 'DATABASE_URL', 'TEST_DATABASE_URL', 'COOKIE_SECURE', 'PUBLIC_APP_URL', 'CORS_ORIGINS',
-    'FO_MODE', 'DODO_PAYMENTS_API_KEY', 'DODO_PAYMENTS_WEBHOOK_KEY', 'DODO_PAYMENTS_ENVIRONMENT',
-    'NEXT_DIST_DIR', 'NODE_OPTIONS', 'BACKEND_URL', 'ANTHROPIC_API_KEY', 'REPORT_WORKER_ENABLED',
-    'REGISTER_LIMIT_PER_HOUR', 'LOGIN_LIMIT_PER_10MIN', 'BILLING_CHECKOUT_ENABLED', 'FREE_PREVIEW_ENABLED')
+    'FO_MODE', 'OPENROUTER_API_KEY',
+    'NEXT_DIST_DIR', 'NODE_OPTIONS', 'BACKEND_URL', 'REPORT_WORKER_ENABLED',
+    'REGISTER_LIMIT_PER_HOUR', 'LOGIN_LIMIT_PER_10MIN', 'FREE_PREVIEW_ENABLED')
 $saved = @{}
 foreach ($key in $keys) { $saved[$key] = [Environment]::GetEnvironmentVariable($key, 'Process') }
 $started = @()
@@ -30,19 +30,12 @@ try {
     $env:PUBLIC_APP_URL = 'http://localhost:3000'
     $env:CORS_ORIGINS = 'http://localhost:3000'
     $env:FO_MODE = if ($LiveFo) { 'live' } else { 'demo' }
-    # Spaces override any private .env merchant keys; they are never printed or changed on disk.
-    if (!$ConfiguredServices) {
-        $env:DODO_PAYMENTS_API_KEY = ' '
-        $env:DODO_PAYMENTS_WEBHOOK_KEY = ' '
-        $env:DODO_PAYMENTS_ENVIRONMENT = 'test_mode'
-    }
-    $env:BILLING_CHECKOUT_ENABLED = 'false'
     $env:NEXT_DIST_DIR = '.next-build'
     $env:NODE_OPTIONS = '--max-old-space-size=1536'
     $env:BACKEND_URL = 'http://127.0.0.1:8000'
     if ($TestMode) {
         $env:FREE_PREVIEW_ENABLED = 'false'
-        $env:ANTHROPIC_API_KEY = ' '
+        $env:OPENROUTER_API_KEY = ' '
         $env:REPORT_WORKER_ENABLED = 'false'
         $env:REGISTER_LIMIT_PER_HOUR = '1000'
         $env:LOGIN_LIMIT_PER_10MIN = '1000'
@@ -78,7 +71,7 @@ try {
     }
     if (!$healthy) { throw 'Local services did not become healthy. See .local logs.' }
     $foLabel = if ($LiveFo) { 'live Fo; user connection and approval required' } else { 'simulated Fo' }
-    Write-Host "Pursuit is ready at http://localhost:3000 ($foLabel; payments disabled)."
+    Write-Host "Pursuit is ready at http://localhost:3000 ($foLabel; all features free)."
 } catch {
     foreach ($process in $started) { taskkill.exe /PID $process.Id /T /F *> $null }
     throw

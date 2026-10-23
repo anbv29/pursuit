@@ -51,7 +51,7 @@ def test_oauth_consent_shares_full_selected_report_then_reuses_context(api, oaut
     row = draft(api, path, "What are the biggest risks?").json()
     assert api.post(path + f"/{row['id']}/approve").status_code == 200
     assert "COMPLETE-REPORT" in calls[1][0] and calls[1][1] == "fo-private"
-    assert api.get(f"/api/workspaces/{ws}/billing").json()["questions_remaining"] == 0
+    assert api.get(f"/api/workspaces/{ws}/allowance").json()["questions_remaining"] is None
 
 
 def test_report_access_consent_and_size_are_validated_before_oauth(api, other, oauth):

@@ -1167,3 +1167,6 @@ Remove operator helpers exclusive to retired payment/premium functionality. No r
 
 Commit: chore: retire premium account provisioning
 Remove operator helpers exclusive to retired payment/premium functionality. No remote merchant settings, subscriptions or existing records changed. Diff reviewed and whitespace checks passed.
+
+Commit: fix: align local setup and Fo checks with free access
+Remove retired paid-provider variables from Render, local startup and CI; rewrite the operator smoke check for the zero-priced provider. Treat responses without usage metadata as unknown, never completed. Update unchanged Fo quota/context tests to inspect free availability rather than removed billing routes. Ruff and diff checks passed; the three full-suite failures identified were fixture/usage compatibility issues now corrected.
