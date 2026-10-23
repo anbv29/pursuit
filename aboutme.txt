@@ -1137,3 +1137,6 @@ Delete the old plan catalogue and replace paid-credit/upgrade prompts across rep
 
 Commit: test: retire checkout and payment fixtures
 Retire tests exclusive to deleted paid functionality; replace purchase gating with free-access/security tests in the integration phase. Staged diff reviewed and whitespace checks passed.
+
+Commit: test: retire payment purchase scenarios
+Retire tests exclusive to deleted paid functionality; replace purchase gating with free-access/security tests in the integration phase. Staged diff reviewed and whitespace checks passed.
