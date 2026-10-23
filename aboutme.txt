@@ -1116,3 +1116,6 @@ Removed retired payment-only modules: backend/app/services/payment_provider.py. 
 
 Commit: refactor: remove payment webhook processing
 Removed retired payment-only modules: backend/app/services/billing_webhooks.py, backend/app/api/payment_webhook.py. No payment or database records deleted. Ruff and staged diff checks passed.
+
+Commit: refactor: remove complimentary paid grants
+Removed retired payment-only modules: backend/app/services/complimentary.py, backend/app/services/access_grants.py. No payment or database records deleted. Ruff and staged diff checks passed.
