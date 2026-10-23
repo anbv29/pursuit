@@ -3,25 +3,13 @@ import uuid
 from sqlalchemy import func, select, update
 from sqlalchemy.orm import Session
 
-from app.core.errors import AppError, Conflict, NotFound, PaymentRequired
+from app.core.errors import AppError, Conflict, NotFound
 from app.models import BillingAccount, FirstLook, Membership, User, Workspace
 from app.models.enums import Role
 from app.services import audit, entitlements
 
 
 def create(db: Session, user: User, name: str, is_demo: bool = False) -> Workspace:
-    if not is_demo:
-        db.execute(select(User.id).where(User.id == user.id).with_for_update())
-        for existing, role in list_for_user(db, user):
-            if (
-                role == Role.OWNER
-                and not existing.is_demo
-                and entitlements.plan(db, existing.id) == "free"
-                and not entitlements.eligible_grants(db, existing.id)
-            ):
-                raise PaymentRequired(
-                    "Explore includes one free company workspace. Use it or upgrade it before adding another."
-                )
     ws = Workspace(name=name.strip(), is_demo=is_demo)
     db.add(ws)
     db.flush()
@@ -64,9 +52,7 @@ def add_member(db: Session, actor: User, workspace_id: uuid.UUID, email: str) ->
     db.execute(select(Workspace.id).where(Workspace.id == workspace_id).with_for_update())
     used = db.scalar(select(func.count(Membership.id)).where(Membership.workspace_id == workspace_id))
     if used >= entitlements.PLANS[entitlements.plan(db, workspace_id)]["seats"]:
-        raise PaymentRequired(
-            "This workspace has no available team seats. Team includes five members, including the owner."
-        )
+        raise AppError("The workspace member safety limit is 25 accounts.")
     db.add(Membership(workspace_id=workspace_id, user_id=user.id, role=Role.MEMBER))
     audit.record(db, "workspace.member_add", actor_id=actor.id, workspace_id=workspace_id, target_id=user.id)
     db.commit()
@@ -83,7 +69,7 @@ def delete(db: Session, actor: User, ws: Workspace) -> None:
     ):
         raise AppError(
             "Cancel the subscription and wait for it to end before deleting this workspace. "
-            "Open Plans & billing to manage it."
+            "Manage any historical subscription directly with its provider."
         )
     audit.record(db, "workspace.delete", actor_id=actor.id, detail={"workspace_id": str(ws.id)})
     # Keep only the account-level usage marker, not deleted project content.

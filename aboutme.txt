@@ -1128,3 +1128,6 @@ Remove checkout, subscription and portal controls. Old billing bookmarks redirec
 
 Commit: feat: present the complete toolkit as free
 Replace the multi-tier homepage with one free-access section and honest provider-capacity/source limitations. Remove credit counters, purchase links and billing navigation; retain established design tokens. Diff review passed; frontend build/ESLint are verified in the final integration phase.
+
+Commit: refactor: remove paid runtime configuration
+Remove Anthropic and Dodo settings/dependencies, retired spend configuration and sample credential variables; privately remove obsolete keys from local env files without staging them. Multiple workspaces and collaboration no longer require upgrades. Preserve the historical-subscription deletion safeguard so legacy recurring charges cannot be orphaned. Ruff/import checks passed; no external provider subscription was cancelled by this local change.

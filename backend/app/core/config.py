@@ -23,10 +23,9 @@ class Settings(BaseSettings):
     # Number of trusted reverse proxies that append to X-Forwarded-For (0 = use socket peer).
     trusted_proxy_hops: int = Field(default=0, ge=0, le=5)
 
-    research_job_limit_usd: float = Field(default=1.0, ge=0.1, le=2.0)
     openrouter_api_key: SecretStr | None = None
     # Enable only after provider approval for third-party application use.
-    free_preview_enabled: bool = False
+    free_preview_enabled: bool = True
     # Explicit free model IDs only: never fall back to a paid provider/model.
     free_research_model: Literal[
         "google/gemma-4-31b-it:free",
@@ -37,17 +36,6 @@ class Settings(BaseSettings):
     resend_api_key: SecretStr | None = None
     resend_workspace_id: str = ""
     ai_timeout_seconds: float = 45.0
-    dodo_api_key: SecretStr | None = Field(default=None, validation_alias="DODO_PAYMENTS_API_KEY")
-    dodo_webhook_key: SecretStr | None = Field(default=None, validation_alias="DODO_PAYMENTS_WEBHOOK_KEY")
-    dodo_environment: Literal["test_mode", "live_mode"] = Field(
-        default="test_mode", validation_alias="DODO_PAYMENTS_ENVIRONMENT"
-    )
-    dodo_business_id: str = ""
-    billing_checkout_enabled: bool = False
-    dodo_single_product: str = ""
-    dodo_founder_product: str = ""
-    dodo_team_product: str = ""
-
     fo_mode: Literal["demo", "live"] = "demo"
     # Emergency stop: when true, no external action can be approved or executed.
     actions_disabled: bool = False
@@ -77,8 +65,6 @@ class Settings(BaseSettings):
 
     @field_validator(
         "openrouter_api_key",
-        "dodo_api_key",
-        "dodo_webhook_key",
         "fo_access_token",
         mode="before",
     )
@@ -98,12 +84,6 @@ class Settings(BaseSettings):
     @model_validator(mode="after")
     def _production_guards(self) -> "Settings":
         if self.app_env == "production":
-            if (
-                self.dodo_api_key
-                and self.dodo_api_key.get_secret_value()
-                and self.dodo_environment != "live_mode"
-            ):
-                raise ValueError("Production billing requires DODO_PAYMENTS_ENVIRONMENT=live_mode")
             if not self.cookie_secure:
                 raise ValueError("COOKIE_SECURE must be true in production")
             if "*" in self.cors_origin_list:
