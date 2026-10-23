@@ -1134,3 +1134,6 @@ Remove Anthropic and Dodo settings/dependencies, retired spend configuration and
 
 Commit: fix: remove upgrade prompts and public paid catalogue
 Delete the old plan catalogue and replace paid-credit/upgrade prompts across report questions, refresh, discovery and First Look with free-access copy. Explain actual public-page/source-URL research coverage instead of claiming bundled web search. Old account history safeguards are retained. Diff checks passed; full frontend verification follows.
+
+Commit: test: retire checkout and payment fixtures
+Retire tests exclusive to deleted paid functionality; replace purchase gating with free-access/security tests in the integration phase. Staged diff reviewed and whitespace checks passed.
