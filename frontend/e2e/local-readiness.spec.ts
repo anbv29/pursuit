@@ -67,14 +67,14 @@ test("account password change signs out and account deletion persists", async ({
   expect(result.status()).toBe(401);
 });
 
-test("public pricing renders without waiting on the plans API", async ({ page }) => {
+test("free access renders without waiting on the retired plans API", async ({ page }) => {
   let attempts = 0;
   await page.route("**/api/plans", async (route) => {
     ++attempts;
     await route.abort();
   });
   await page.goto("/");
-  await expect(page.getByRole("heading", { name: "Team", exact: true })).toBeVisible();
+  await expect(page.getByRole("heading", { name: "The whole toolkit. Free.", exact: true })).toBeVisible();
   expect(attempts).toBe(0);
 });
 

@@ -1197,3 +1197,6 @@ Record 197 full-suite and 45 final targeted backend passes, ten browser passes, 
 
 Commit: feat: align free onboarding and eight-character passwords
 Clarify free access in signup and workspace status, keep existing styling, and lower new-password minimum to eight on both frontend and backend. Preserve sign-in compatibility and longer passwords. Add real registration/login/password-change boundary coverage and update browser selectors. Four account tests passed, TypeScript and frontend ESLint passed, Ruff and diff checks passed. Local only; no push.
+
+Commit: fix: preserve free access checks after remote merge
+Fetched and merged remote commit 948ba16 without rewriting history (merge f7901b0). Updated its obsolete Team pricing assertion to the free-access heading. Twenty-three deep-research/first-look tests, TypeScript and backend lint passed. No push; unrelated files preserved.
