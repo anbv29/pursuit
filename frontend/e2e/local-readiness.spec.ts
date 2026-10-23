@@ -10,7 +10,7 @@ test("desktop product navigation has concise labels and working section links", 
   await nav.getByRole("link", { name: "Process", exact: true }).click();
   await expect(page).toHaveURL(/#how-it-works$/);
   await expect(page.locator("#how-it-works")).toBeInViewport();
-  await nav.getByRole("link", { name: "Pricing", exact: true }).click();
+  await nav.getByRole("link", { name: "Free access", exact: true }).click();
   await expect(page).toHaveURL(/#pricing$/);
   await page.goto("/");
   await page.screenshot({ path: "test-results/landing-nav.png" });
@@ -23,10 +23,7 @@ test("public page shows the real catalog and six workflows on a phone", async ({
   const response = await page.goto("/");
   expect(response?.headers()["content-security-policy"]).toContain("object-src 'none'");
   await expect(page.getByRole("heading", { name: "A clearer picture. A smarter next move." })).toBeVisible();
-  for (const name of ["Explore", "Single Report", "Founder", "Team"]) {
-    await expect(page.locator("#pricing").getByRole("heading", { name, exact: true })).toBeVisible();
-  }
-  for (const price of ["$4.99", "$11.99", "$34.99"]) await expect(page.getByText(price, { exact: true })).toBeVisible();
+  await expect(page.getByRole("heading", { name: "The whole toolkit. Free.", exact: true })).toBeVisible();
   await expect(page.getByRole("heading", { name: "A company report is your starting point." })).toBeVisible();
   await expect(page.getByText("Find funnel drop-offs", { exact: true })).toBeVisible();
   await page.getByText("Does research prove that people will buy?", { exact: true }).click();
