@@ -31,7 +31,7 @@ class Settings(BaseSettings):
         "google/gemma-4-31b-it:free",
         "google/gemma-4-26b-a4b-it:free",
         "minimax/minimax-m3.1-flash:free",
-    ] = "minimax/minimax-m3.1-flash:free"
+    ] = "google/gemma-4-31b-it:free"
     report_worker_enabled: bool = True
     resend_api_key: SecretStr | None = None
     resend_workspace_id: str = ""

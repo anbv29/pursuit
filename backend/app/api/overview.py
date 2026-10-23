@@ -156,7 +156,7 @@ def integrations(
         },
         "ai": {
             "enabled": s.ai_enabled,
-            "model": s.anthropic_model if s.ai_enabled else None,
+            "model": s.free_research_model if s.ai_enabled else None,
             "detail": None
             if s.ai_enabled
             else "AI synthesis is unavailable; rule-based recommendations only.",

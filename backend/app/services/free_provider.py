@@ -72,7 +72,13 @@ class Client:
         try:
             text = _request(payload, settings)
             parsed = output_format.model_validate(decode_object(text)) if output_format else None
-        except (PreviewError, ValidationError, ValueError, TypeError):
+        except PreviewError as exc:
+            if str(exc) == "Provider HTTP 429":
+                raise RateLimitError(
+                    "The free research provider is busy. Retry later; no paid fallback was used."
+                ) from None
+            raise APIError("The free research provider is unavailable. Retry later.") from None
+        except (ValidationError, ValueError, TypeError):
             raise APIError("Research returned no complete result. Retry to resume saved progress.") from None
         return SimpleNamespace(
             stop_reason="end_turn",

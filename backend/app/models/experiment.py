@@ -110,6 +110,6 @@ class Recommendation(IdMixin, Base):
     next_action: Mapped[str] = mapped_column(Text)
     evidence_ids: Mapped[list] = mapped_column(JSON, default=list)
     metrics_snapshot: Mapped[dict] = mapped_column(JSON, default=dict)
-    generated_by: Mapped[str] = mapped_column(String(40))  # "rules" | "claude:<model>"
+    generated_by: Mapped[str] = mapped_column(String(40))  # "rules" | "free:<model>"
     includes_demo_data: Mapped[bool] = mapped_column(default=False)
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=utcnow)

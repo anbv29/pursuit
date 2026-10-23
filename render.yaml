@@ -41,7 +41,7 @@ services:
       - key: FREE_PREVIEW_ENABLED
         sync: false # set true only after provisioning and verifying the free provider
       - key: FREE_RESEARCH_MODEL
-        value: minimax/minimax-m3.1-flash:free
+        value: google/gemma-4-31b-it:free
       - key: DODO_PAYMENTS_ENVIRONMENT
         value: test_mode
       - key: BILLING_CHECKOUT_ENABLED

@@ -156,12 +156,7 @@ def _generate(page, audience: str, description: str = "", founder_reality: dict 
     payload = {
         "model": settings.free_research_model,
         "max_tokens": 2200,
-        "response_format": {"type": "json_object"}
-        if settings.free_research_model.startswith("minimax/")
-        else {
-            "type": "json_schema",
-            "json_schema": {"name": "free_preview", "strict": True, "schema": output_schema()},
-        },
+        "response_format": {"type": "json_object"},
         "plugins": [{"id": "web", "enabled": False}],
         "provider": {
             "allow_fallbacks": False,
@@ -215,30 +210,13 @@ def _generate(page, audience: str, description: str = "", founder_reality: dict 
     return validate(_request(payload, settings), site_text, downgrade=True)
 
 
-def output_schema():
-    schema = PreviewContent.model_json_schema()
-
-    def strict(node):
-        if isinstance(node, dict):
-            node.pop("default", None)
-            if node.get("type") == "object":
-                node["required"] = list(node.get("properties", {}))
-                node["additionalProperties"] = False
-            for value in node.values():
-                strict(value)
-        elif isinstance(node, list):
-            for value in node:
-                strict(value)
-
-    strict(schema)
-    return schema
-
-
 def _request(payload, settings):
     try:
         # No retries, tools, redirects, client URLs or provider switching.
         with (
-            httpx.Client(timeout=25, follow_redirects=False, trust_env=False) as client,
+            httpx.Client(
+                timeout=getattr(settings, "ai_timeout_seconds", 45), follow_redirects=False, trust_env=False
+            ) as client,
             client.stream(
                 "POST",
                 ENDPOINT,

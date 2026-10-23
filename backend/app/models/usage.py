@@ -15,7 +15,7 @@ class WorkspaceBudget(Base):
         ForeignKey("workspaces.id", ondelete="CASCADE"), primary_key=True
     )
     monthly_limit_usd: Mapped[Decimal] = mapped_column(Numeric(12, 4), default=25)
-    research_model: Mapped[str] = mapped_column(String(80), default="claude-haiku-5-5")
+    research_model: Mapped[str] = mapped_column(String(80), default="google/gemma-4-31b-it:free")
 
 
 class UsageCall(IdMixin, Base):

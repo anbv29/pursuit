@@ -57,8 +57,7 @@ def test_provider_is_bounded_free_only_without_tools_or_fallback(monkeypatch, mo
         assert payload["provider"]["max_price"] == {"prompt": 0, "completion": 0}
         assert payload["provider"]["data_collection"] == "deny"
         assert payload["provider"]["allow_fallbacks"] is False
-        assert payload["response_format"]["type"] == "json_schema"
-        assert payload["response_format"]["json_schema"]["strict"] is True
+        assert payload["response_format"] == {"type": "json_object"}
         assert {"id": "web", "enabled": False} in payload["plugins"]
         assert "tools" not in payload and len(payload["messages"]) == 2
         assert "untrusted" in payload["messages"][0]["content"]

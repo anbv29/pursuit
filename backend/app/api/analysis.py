@@ -70,7 +70,7 @@ def generate(
     if not body.use_ai or not get_settings().ai_enabled:
         return recommendations.generate(db, exp, user, use_ai=False)
     with (
-        ai_usage.scope(exp.workspace_id, selected_model="claude-haiku-5-5"),
+        ai_usage.scope(exp.workspace_id, selected_model=get_settings().free_research_model),
         entitlements.metered(db, exp.workspace_id, "question") as use_id,
     ):
         result = recommendations.generate(db, exp, user, use_ai=True)
