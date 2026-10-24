@@ -9,6 +9,22 @@ from app.services import free_provider, free_research
 pytestmark = pytest.mark.no_database
 
 
+def test_transient_transport_failure_reaches_checkpoint_recovery(monkeypatch):
+    from app.services.provider_failures import ProviderFailure
+
+    monkeypatch.setattr(
+        free_provider, "get_settings",
+        lambda: SimpleNamespace(ai_enabled=True, free_research_model="dots-studio/dots-3-note-preview:free"),
+    )
+
+    def interrupted(*_):
+        raise ProviderFailure(502, "upstream_connection", True)
+
+    monkeypatch.setattr(free_research, "_request", interrupted)
+    with pytest.raises(free_provider.APIConnectionError, match="Saved progress"):
+        free_provider.Client().parse(system="Test", messages=[], output_format=Answer)
+
+
 class Answer(BaseModel):
     answer: str
 

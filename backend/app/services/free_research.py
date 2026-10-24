@@ -3,6 +3,7 @@
 import json
 import logging
 import re
+import time
 from typing import Literal
 
 import httpx
@@ -219,6 +220,7 @@ def _request(payload, settings):
             if attempt or not exc.retryable:
                 raise
             logger.warning("Research retry category=%s attempt=2", exc.category)
+            time.sleep(0.5)
 
 
 def _request_once(payload, settings):
@@ -253,10 +255,18 @@ def _request_once(payload, settings):
                 if len(raw) > 96_000:
                     raise PreviewError("Provider response limit")
         data = json.loads(raw)
+        if isinstance(data, dict) and "error" in data:
+            error = data.get("error")
+            code = error.get("code") if isinstance(error, dict) else None
+            status = code if isinstance(code, int) and 400 <= code <= 599 else 502
+            raise classify(status, raw)
         choice = data["choices"][0]
         if choice.get("finish_reason") != "stop":
             raise PreviewError("Incomplete preview")
-        return choice["message"]["content"]
+        content = choice["message"]["content"]
+        if not isinstance(content, str) or not content.strip():
+            raise PreviewError("Provider returned no research content")
+        return content
     except PreviewError:
         raise
     except httpx.HTTPStatusError as exc:
@@ -264,7 +274,10 @@ def _request_once(payload, settings):
         raise PreviewError(f"Provider HTTP {exc.response.status_code}") from None
     except httpx.TimeoutException:
         logger.warning("Free preview provider timed out")
-        raise PreviewError("Free preview provider timeout") from None
+        raise ProviderFailure(408, "upstream_timeout", True) from None
+    except (httpx.NetworkError, httpx.RemoteProtocolError):
+        logger.warning("Research provider connection interrupted")
+        raise ProviderFailure(502, "upstream_connection", True) from None
     except Exception:
         # Provider bodies can contain prompts, identifiers or credentials: never log/return them.
         raise PreviewError("Free preview unavailable") from None

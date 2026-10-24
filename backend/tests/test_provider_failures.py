@@ -13,6 +13,11 @@ from app.services.provider_failures import ProviderFailure, classify
 pytestmark = pytest.mark.no_database
 
 
+@pytest.fixture(autouse=True)
+def no_retry_delay(monkeypatch):
+    monkeypatch.setattr(free_research.time, "sleep", lambda _: None)
+
+
 def transport(monkeypatch, responses):
     calls = []
     client = httpx.Client
@@ -94,3 +99,73 @@ def test_untrusted_error_details_are_not_in_exception_or_logs(monkeypatch, caplo
 def test_malformed_error_envelope_does_not_trigger_speculative_retry():
     assert not classify(400, b"not-json").retryable
     assert not classify(400, b'{"error":null}').retryable
+
+
+@pytest.mark.parametrize("failure", [httpx.ReadTimeout, httpx.ConnectError, httpx.RemoteProtocolError])
+@pytest.mark.parametrize("recover", [True, False])
+def test_network_failure_has_one_bounded_retry(monkeypatch, failure, recover, caplog):
+    client = httpx.Client
+    calls = []
+
+    def handler(request):
+        calls.append(json.loads(request.content))
+        if len(calls) == 1 or not recover:
+            raise failure("private-network-details", request=request)
+        return httpx.Response(200, json=GOOD)
+
+    monkeypatch.setattr(
+        free_research.httpx, "Client",
+        lambda **kwargs: client(transport=httpx.MockTransport(handler), **kwargs),
+    )
+    if recover:
+        assert free_research._request(PAYLOAD, settings()) == '{"answer":"READY"}'
+    else:
+        with pytest.raises(ProviderFailure):
+            free_research._request(PAYLOAD, settings())
+    assert calls == [PAYLOAD, PAYLOAD]
+    assert "private-network-details" not in caplog.text
+
+
+def test_error_inside_success_status_respects_quota(monkeypatch):
+    calls = transport(monkeypatch, [(200, {"error": {"code": 429, "message": "quota"}})])
+    with pytest.raises(ProviderFailure) as caught:
+        free_research._request(PAYLOAD, settings())
+    assert caught.value.category == "rate_limit"
+    assert len(calls) == 1
+
+
+def test_error_inside_success_status_recovers_server_failure(monkeypatch):
+    calls = transport(monkeypatch, [(200, {"error": {"code": 503}}), (200, GOOD)])
+    assert free_research._request(PAYLOAD, settings()) == '{"answer":"READY"}'
+    assert len(calls) == 2
+
+
+@pytest.mark.parametrize("content", [None, "", "   ", [], {}])
+def test_missing_content_is_never_accepted_as_a_result(monkeypatch, content):
+    from app.services.provider_failures import PreviewError
+
+    body = {"choices": [{"finish_reason": "stop", "message": {"content": content}}]}
+    calls = transport(monkeypatch, [(200, body)])
+    with pytest.raises(PreviewError):
+        free_research._request(PAYLOAD, settings())
+    assert len(calls) == 1
+
+
+@pytest.mark.parametrize("reason", ["length", "content_filter", "error", None])
+def test_partial_or_filtered_output_is_never_saved_as_complete(monkeypatch, reason):
+    from app.services.provider_failures import PreviewError
+
+    body = {"choices": [{"finish_reason": reason, "message": {"content": "partial"}}]}
+    calls = transport(monkeypatch, [(200, body)])
+    with pytest.raises(PreviewError, match="Incomplete"):
+        free_research._request(PAYLOAD, settings())
+    assert len(calls) == 1
+
+
+def test_oversized_response_is_rejected_without_retries(monkeypatch):
+    from app.services.provider_failures import PreviewError
+
+    calls = transport(monkeypatch, [(200, {"private": "x" * 100_000})])
+    with pytest.raises(PreviewError, match="response limit"):
+        free_research._request(PAYLOAD, settings())
+    assert len(calls) == 1

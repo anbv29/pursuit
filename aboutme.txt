@@ -1227,3 +1227,6 @@ Keep oversized JSON requests within a conservative 60000-byte budget while prese
 
 Commit: test: verify bounded report context and provenance
 Cover UTF-8 byte budgets, immutable evidence, source/schema/routing preservation and unavoidable-overflow rejection. Final suite: 66 passed in 63.24 seconds. Backend-only publish/deploy authorized by the user; mobile UI stays local. Source checkpoint e904509.
+
+Commit: fix: recover interrupted research transport safely
+Add one delayed retry for transient network/timeout failures, recognize errors inside successful HTTP envelopes, reject empty/partial/oversized output, and route exhausted transient failures into bounded checkpoint recovery. Forty focused tests and Ruff passed. Same provider key/model; frontend excluded.
