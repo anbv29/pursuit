@@ -6,7 +6,8 @@ import { useEffect, useState, type CSSProperties } from "react";
 import { DecisionChip, StageBar } from "@/components/bits";
 import { useWorkspace } from "@/components/shell";
 import { useSession } from "@/components/session";
-import { Badge, Button, buttonStyles, Card, CardHeader, DemoBadge, Empty, Glass, PageHeader, Skeleton, Tabs } from "@/components/ui";
+import { NumberTicker } from "@/components/number-ticker";
+import { Badge, Button, buttonStyles, Card, CardHeader, DemoBadge, Empty, Glass, PageHeader, Skeleton, Tabs, cx } from "@/components/ui";
 import { useApi } from "@/lib/hooks";
 import { ACTION_STATUS, timeAgo, USE_CASE_LABEL } from "@/lib/labels";
 import type { ActionStatus, Decision, ReportListItem, Stage, UseCase } from "@/lib/types";
@@ -97,28 +98,64 @@ export default function Dashboard() {
     { label: "Waiting on you", value: data.pending_actions.length, icon: Inbox },
     { label: "Company reports", value: reports.data?.length ?? 0, icon: FileText },
   ];
+  const workflows = (Object.keys(USE_CASE_LABEL) as UseCase[]).map((uc) => ({ id: uc, label: USE_CASE_LABEL[uc] }));
+  const verdictText: Record<Decision, string> = {
+    CONTINUE: "text-d-continue", ITERATE: "text-d-iterate", PIVOT: "text-d-pivot",
+    STOP: "text-d-stop", INCONCLUSIVE: "text-d-inconclusive",
+  };
 
   return (
     <div className="mx-auto max-w-6xl space-y-6">
       <PageHeader title={`Hi ${firstName}`}
         description={`${data.experiments.length} saved experiment${data.experiments.length === 1 ? "" : "s"}${data.pending_actions.length > 0 ? ` · ${data.pending_actions.length} waiting on you` : ""}`}
-        action={<>{analyzeBtn}{newBtn}</>} />
+        />
 
-      <ul className="grid grid-cols-3 gap-2 sm:gap-3">
+      <ul className="grid grid-cols-2 gap-2 sm:grid-cols-3 sm:gap-3">
         {stats.map((s, i) => (
-          <li key={s.label} className="enter-rise" style={stagger(i)}>
-            <Card as="div" className="flex h-full flex-col gap-1 p-3 sm:flex-row sm:items-center sm:gap-4 sm:p-4">
-              <span className="hidden size-11 shrink-0 place-items-center rounded-2xl bg-accent-soft text-trail-strong sm:grid"><s.icon className="size-5" aria-hidden /></span>
-              <span>
-                <span className="block font-display text-2xl font-bold tabular-nums text-ink">{s.value}</span>
-                <span className="block text-xs leading-snug text-ink-3 sm:text-[13px]">{s.label}</span>
+          <li key={s.label} className={cx("enter-rise", i === 2 && "col-span-2 sm:col-span-1")} style={stagger(i)}>
+            <Card as="div" className="flex h-full flex-col gap-2 p-4">
+              <span className="flex items-center gap-2">
+                <span className="grid size-8 shrink-0 place-items-center rounded-xl bg-accent-soft text-trail-strong"><s.icon className="size-4" aria-hidden /></span>
+                <span className="text-xs leading-snug text-ink-3">{s.label}</span>
               </span>
+              <NumberTicker value={s.value} className="font-mono text-3xl font-bold tabular-nums tracking-tight text-ink" />
             </Card>
           </li>
         ))}
       </ul>
 
-      {reportCard}
+      <div className="grid gap-6 lg:grid-cols-3">
+        <div className="min-w-0 lg:col-span-2">
+          {reportCard ?? (
+            <Card>
+              <CardHeader title="Company reports" />
+              <Empty icon={<FileText className="size-5" />} title="No reports yet"
+                body="Enter your website to get a full, sourced report in a few minutes." action={analyzeBtn} />
+            </Card>
+          )}
+        </div>
+        <Card>
+          <CardHeader title="Quick actions" />
+          <div className="flex flex-col gap-2 p-5 pt-0">
+            <Link href={`${base}/reports/new`} className={buttonStyles("primary") + " w-full"}><FileText className="size-4" aria-hidden />Analyze your company</Link>
+            <Link href={`${base}/experiments/new`} className={buttonStyles("secondary") + " w-full"}><Plus className="size-4" aria-hidden />New experiment</Link>
+          </div>
+        </Card>
+      </div>
+
+      <section aria-labelledby="wf-h" className="min-w-0 space-y-3">
+        <h2 id="wf-h" className="font-display text-lg font-bold">What do you want to find out?</h2>
+        <ul className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+          {workflows.map((w, i) => (
+            <li key={w.id} className="enter-rise" style={stagger(i)}>
+              <Link href={`${base}/experiments/new?type=${w.id}`}
+                className="surface press flex h-full min-h-16 items-center gap-3 rounded-[var(--radius-lg)] p-4 transition-[border-color,box-shadow] duration-200 hover:border-line-strong hover:shadow-[var(--shadow-pop)]">
+                <span className="min-w-0 flex-1 text-sm font-semibold text-ink">{w.label}</span>
+              </Link>
+            </li>
+          ))}
+        </ul>
+      </section>
 
       <div className="grid gap-6 lg:grid-cols-3">
         <section aria-labelledby="exp-h" className="min-w-0 space-y-4 lg:col-span-2">
@@ -140,11 +177,20 @@ export default function Dashboard() {
                       {e.latest_decision ? <DecisionChip decision={e.latest_decision} /> : <Badge tone="muted">No verdict</Badge>}
                     </div>
                     <p className="line-clamp-2 font-semibold text-ink group-hover:text-trail">{e.title}</p>
-                    <div className="mt-auto flex items-end justify-between gap-2">
+                    <div className="flex items-end justify-between gap-2">
                       <StageBar stage={e.stage} />
                       {e.is_demo && <DemoBadge label="Demo" />}
                     </div>
-                    <p className="text-xs text-ink-3">Updated {timeAgo(e.updated_at)}</p>
+                    {e.latest_decision ? (
+                      <div className="mt-auto flex h-[120px] flex-col items-center justify-center gap-1 rounded-xl bg-[var(--inset)]">
+                        <span className={cx("font-mono text-[22px] font-bold tracking-tight", e.latest_decision === "PIVOT" ? "text-ink" : verdictText[e.latest_decision])}>
+                          {e.latest_decision === "PIVOT" ? <span className="rounded-full bg-trail-soft px-3 py-1 text-base">PIVOT</span> : e.latest_decision}
+                        </span>
+                        <span className="font-mono text-[10px] uppercase tracking-widest text-ink-3">updated {timeAgo(e.updated_at)}</span>
+                      </div>
+                    ) : (
+                      <p className="mt-auto text-xs text-ink-3">Updated {timeAgo(e.updated_at)}</p>
+                    )}
                   </Link>
                 </li>
               ))}

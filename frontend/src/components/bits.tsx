@@ -12,7 +12,7 @@ export function DecisionChip({ decision, size = "sm" }: { decision: Decision; si
   const simple = { CONTINUE: "Keep going", ITERATE: "Improve and retry", PIVOT: "Change direction", STOP: "Stop this test", INCONCLUSIVE: "Need more evidence" };
   const s = DECISION_STYLE[decision];
   return (
-    <span className={cx("inline-flex items-center rounded-md font-semibold tracking-wide", s.className,
+    <span className={cx("inline-flex items-center rounded-md font-mono font-semibold tracking-wide", s.className,
       size === "lg" ? "px-3 py-1.5 text-sm" : "px-1.5 py-0.5 text-[11px]")}>{advanced ? s.label : simple[decision]}</span>
   );
 }
