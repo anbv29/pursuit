@@ -15,7 +15,7 @@ export function ReportProspects({ path }: { path: string }) {
     catch (e) { setError(errorMessage(e)); }
   });
   return <Section id="company-prospects" title="Find companies worth talking to">
-    <p className="mb-3 text-sm text-ink-2">Research up to five organizations matching your target customer groups. Public website reachability is checked; fit is an AI interpretation and buying intent is unverified. Free to use. Results depend on accessible source evidence.</p>
+    <p className="mb-3 text-sm text-ink-2">Research up to five organizations matching your target customer groups. Public website reachability is checked; fit is an AI interpretation and buying intent is unverified. Results depend on accessible source evidence.</p>
     <Button loading={discover.pending} onClick={() => discover.run()}>Find company prospects</Button>
     {(error || list.error) && <Notice tone="bad">{error ?? list.error?.message}</Notice>}
     {list.data?.length ? <ul className="mt-4 divide-y divide-line">{list.data.map((row) => <li key={row.id} className="space-y-2 py-3">

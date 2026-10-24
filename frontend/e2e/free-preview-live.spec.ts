@@ -17,7 +17,7 @@ test("live free preview persists four sections without paid allowances", async (
   const ws = await created.json();
   await page.goto(`/w/${ws.id}/first-look`);
   await page.getByLabel("Your website", { exact: true }).fill("https://pancake.ai");
-  await page.getByRole("button", { name: "Get my free first look" }).click();
+  await page.getByRole("button", { name: "Get my first look" }).click();
   for (const name of ["Executive summary", "Company snapshot", "Potential customer segments", "Customer personas"]) {
     await expect(page.getByRole("heading", { name, exact: true })).toBeVisible({ timeout: 60_000 });
   }

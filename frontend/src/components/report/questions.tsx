@@ -22,7 +22,7 @@ export function ReportQuestions({ path }: { path: string }) {
   });
   return (
     <Section id="questions" title="Ask about this report">
-      <p className="text-sm text-ink-2">Answers use your saved report. They do not run new research or change its findings. Questions are free; provider capacity and fair-use limits apply.</p>
+      <p className="text-sm text-ink-2">Answers use your saved report. They do not run new research or change its findings. Provider capacity and fair-use limits apply.</p>
       <div className="my-3 flex flex-wrap gap-2">
         {["Explain this report in plain English.", "What should I do first and why?", "Which claims have the weakest evidence?"].map((q) =>
           <Button key={q} size="sm" variant="secondary" onClick={() => setQuestion(q)}>{q}</Button>)}

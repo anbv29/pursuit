@@ -9,7 +9,7 @@ for (const width of [390, 1280]) {
     await page.goto("/");
     await expect(page.getByRole("heading", { name: "The whole toolkit. Free.", exact: true })).toBeVisible();
     expect(await page.locator("body").innerText()).not.toMatch(/Choose Founder|Choose Team|Single Report|\$4\.99|\$11\.99|\$34\.99/);
-    await expect(page.getByRole("link", { name: "Start researching free", exact: true })).toHaveAttribute("href", "/signup");
+    await expect(page.getByRole("link", { name: "Start researching", exact: true })).toHaveAttribute("href", "/signup");
     expect(await page.evaluate(() => document.documentElement.scrollWidth - innerWidth)).toBeLessThanOrEqual(1);
     await page.screenshot({ path: `../.local/free-access-${width}.png`, fullPage: true });
     expect(errors).toEqual([]);

@@ -14,7 +14,7 @@ test("website + description -> full sourced report -> tracked experiment", async
   await v("Name").fill("Report Tester");
   await v("Work email").fill(`report-${Date.now()}@example.com`);
   await v("Password").fill("report-tester-pass");
-  await page.getByRole("button", { name: "Create free account" }).click();
+  await page.getByRole("button", { name: "Create account" }).click();
   await page.getByRole("button", { name: "Continue", exact: true }).click();
   await page.getByText("Analyze my company").click();
   await page.getByRole("button", { name: "Create workspace" }).click();

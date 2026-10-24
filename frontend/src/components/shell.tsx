@@ -68,7 +68,7 @@ export function WorkspaceShell({ wsId, children }: { wsId: string; children: Rea
     { href: `${base}/reports`, label: "Company reports", icon: FileText },
     { href: `${base}/approvals`, label: "Approvals", icon: Inbox, count: approvals.data?.length },
     { href: `${base}/fo`, label: "Fo Assistant", icon: MessageCircle },
-    ...(ws.data?.role === "owner" ? [{ href: `${base}/first-look`, label: "Free first look", icon: FileText }] : []),
+    ...(ws.data?.role === "owner" ? [{ href: `${base}/first-look`, label: "Website first look", icon: FileText }] : []),
     { href: `${base}/settings`, label: "Settings", icon: Settings },
   ];
   const isActive = (n: NavItem) => (n.exact ? path === n.href : path.startsWith(n.href));

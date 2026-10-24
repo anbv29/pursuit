@@ -51,7 +51,7 @@ export function RecommendationPanel() {
   return (
     <Card>
       <CardHeader title="Recommendation" description="Based only on persisted evidence and outcomes." action={action} />
-      <label className="flex items-start gap-2 px-5 py-3 text-sm text-ink-2"><input type="checkbox" className="mt-1" checked={useAi} onChange={(e) => setUseAi(e.target.checked)} />Use AI assistance (one AI answer on success). Leave off for free rule-based analysis.</label>
+      <label className="flex items-start gap-2 px-5 py-3 text-sm text-ink-2"><input type="checkbox" className="mt-1" checked={useAi} onChange={(e) => setUseAi(e.target.checked)} />Use AI assistance. Leave off to use rule-based analysis.</label>
       {recs.loading && !recs.data ? <div className="p-5"><Skeleton className="h-28" /></div>
         : !latest ? (
           <Empty icon={<Compass className="size-4" />} title="No recommendation yet"

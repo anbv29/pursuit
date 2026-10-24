@@ -10,7 +10,7 @@ test("desktop product navigation has concise labels and working section links", 
   await nav.getByRole("link", { name: "Process", exact: true }).click();
   await expect(page).toHaveURL(/#how-it-works$/);
   await expect(page.locator("#how-it-works")).toBeInViewport();
-  await nav.getByRole("link", { name: "Free access", exact: true }).click();
+  await nav.getByRole("link", { name: "The toolkit", exact: true }).click();
   await expect(page).toHaveURL(/#pricing$/);
   await page.goto("/");
   await page.screenshot({ path: "test-results/landing-nav.png" });
@@ -43,7 +43,7 @@ test("account password change signs out and account deletion persists", async ({
   await page.getByLabel("Name", { exact: true }).fill("Security test");
   await page.getByLabel("Work email", { exact: true }).fill(email);
   await page.getByLabel("Password", { exact: true }).fill(oldPassword);
-  await page.getByRole("button", { name: "Create free account" }).click();
+  await page.getByRole("button", { name: "Create account" }).click();
   await expect(page).toHaveURL(/onboarding/);
   await page.goto("/account");
   await page.getByLabel("Current password", { exact: true }).fill(oldPassword);
@@ -90,7 +90,7 @@ test("blocked browser storage does not duplicate or prevent workspace creation",
   await page.getByLabel("Name", { exact: true }).fill("Storage test");
   await page.getByLabel("Work email", { exact: true }).fill(`storage-${Date.now()}@example.com`);
   await page.getByLabel("Password", { exact: true }).fill("storage-test-password");
-  await page.getByRole("button", { name: "Create free account" }).click();
+  await page.getByRole("button", { name: "Create account" }).click();
   await page.getByRole("button", { name: "Continue", exact: true }).click();
   await page.getByRole("button", { name: "Create workspace", exact: true }).click();
   await expect(page).toHaveURL(/reports\/new/);

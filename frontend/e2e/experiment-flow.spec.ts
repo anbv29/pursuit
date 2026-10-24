@@ -8,7 +8,7 @@ async function signUp(page: Page, email: string, name: string) {
   await page.getByLabel("Name", { exact: true }).filter({ visible: true }).fill(name);
   await page.getByLabel("Work email", { exact: true }).filter({ visible: true }).fill(email);
   await page.getByLabel("Password", { exact: true }).filter({ visible: true }).fill(PASSWORD);
-  await page.getByRole("button", { name: "Create free account" }).click();
+  await page.getByRole("button", { name: "Create account" }).click();
   await expect(page).toHaveURL(/\/onboarding/);
 }
 
@@ -106,7 +106,7 @@ test("sign-up validates input before calling the server", async ({ page }) => {
   await page.goto("/signup");
   await page.getByLabel("Work email", { exact: true }).filter({ visible: true }).fill("not-an-email");
   await page.getByLabel("Password", { exact: true }).filter({ visible: true }).fill("short");
-  await page.getByRole("button", { name: "Create free account" }).click();
+  await page.getByRole("button", { name: "Create account" }).click();
   await expect(page.getByText("Enter a valid email address.")).toBeVisible();
   await expect(page.getByText("Use at least 8 characters.")).toBeVisible();
   await expect(page.getByText("Tell us your name.")).toBeVisible();

@@ -31,8 +31,8 @@ export function Questions() {
     ["Do I need to know startup terminology?", "No. Start with a plain-language description of your business. Reading controls explain terms and let you switch between a guided view and more detail."],
     ["Does research prove that people will buy?", "No. Reports link available sources and highlight assumptions and limitations. Customer conversations, actual commitments and measured outcomes provide stronger evidence."],
     ["Will Pursuit contact people automatically?", "Every external action needs your approval. Real outreach also needs a connected Fo account and the required permissions. Simulated actions are labelled and never send anything."],
-    ["Can I explore before paying?", "Yes. Explore includes a labelled sample report and all six manual experiment workflows. Generating a new company report needs a research credit and an available research service."],
-    ["Is Pursuit free?", "Yes. Reports, questions, refresh, sharing and experiments are free. Fair-use and provider capacity limits apply; no paid fallback is used."],
+    ["Where should I start?", "Explore the sample report or enter your website to create a company report. You can also start with a focused customer experiment. Research depends on provider availability."],
+    ["What can I do with Pursuit?", "Create company reports, ask follow-up questions, refresh findings, share research and run experiments. Fair-use and provider capacity limits apply."],
   ];
   return <section aria-labelledby="questions-h" className="mx-auto max-w-3xl pb-24">
     <h2 id="questions-h" className="mb-6 font-display text-3xl font-bold tracking-tight">Before you start</h2>

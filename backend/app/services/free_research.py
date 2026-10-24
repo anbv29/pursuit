@@ -14,7 +14,7 @@ ENDPOINT = "https://openrouter.ai/api/v1/chat/completions"
 logger = logging.getLogger("pursuit.free_research")
 UNAVAILABLE = (
     "Your preview couldn't be completed right now. Please try again later. "
-    "Your free preview hasn't been used."
+    "Your preview hasn't been used."
 )
 
 

@@ -21,7 +21,7 @@ export default function ReportsPage() {
   return (
     <div className="mx-auto max-w-4xl space-y-6">
       <PageHeader title="Company reports" description="Sourced go-to-market analyses, generated from a website and your context." action={cta} />
-      {workspace.role === "owner" && <div className="rounded-2xl border border-line bg-surface p-5"><h2 className="font-semibold">Try your website first</h2><p className="mt-2 text-sm text-ink-2">Explore includes one Website First Look: the first four research sections, including your company snapshot and potential customers. No card needed.</p><Link href={`${base}/first-look`} className="mt-3 inline-flex min-h-11 items-center text-sm font-semibold text-trail underline underline-offset-4">Open my free first look →</Link></div>}
+      {workspace.role === "owner" && <div className="rounded-2xl border border-line bg-surface p-5"><h2 className="font-semibold">Try your website first</h2><p className="mt-2 text-sm text-ink-2">Website First Look provides the first four research sections, including your company snapshot and potential customers. Use it for a compact overview before creating a complete report.</p><Link href={`${base}/first-look`} className="mt-3 inline-flex min-h-11 items-center text-sm font-semibold text-trail underline underline-offset-4">Open my first look →</Link></div>}
       {error ? (
         <Glass className="p-2">
           <Empty icon={<AlertTriangle className="size-5" />} title="Couldn't load reports" body={error.message}

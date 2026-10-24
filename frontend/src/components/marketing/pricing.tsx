@@ -13,7 +13,7 @@ export function Pricing() {
     <ul className="my-8 grid gap-4 rounded-2xl border border-line bg-surface p-6 text-ink-2 sm:grid-cols-2">
       {["Complete company reports and evidence", "Report questions and section refresh", "All six experiment workflows", "Company discovery and report sharing", "Founder reality check and saved history", "Your connected Fo project assistant"].map(item => <li key={item}>{item}</li>)}
     </ul>
-    <Link href={user ? "/w" : "/signup"} className={buttonStyles("primary", "lg")}>Start researching free</Link>
+    <Link href={user ? "/w" : "/signup"} className={buttonStyles("primary", "lg")}>Start researching</Link>
     <p className="mt-4 max-w-2xl text-sm text-ink-3">Fair-use and provider capacity limits apply. Research uses accessible public pages and source URLs you supply; independent market evidence may be incomplete. Fo uses your own Wajo connection and its limits.</p>
   </section>;
 }

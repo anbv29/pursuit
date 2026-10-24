@@ -44,7 +44,7 @@ for (const width of [390, 1280]) {
     await page.getByLabel("What does your company do?", { exact: true }).fill("Inventory for shops");
     await page.getByText("Founder reality check", { exact: false }).click();
     await page.getByLabel("Who has actually used or paid for this?", { exact: true }).fill("Three owners tried it; none paid.");
-    await page.getByRole("button", { name: "Get my free first look" }).click();
+    await page.getByRole("button", { name: "Get my first look" }).click();
     for (const name of ["Executive summary", "Company snapshot", "Potential customer segments", "Customer personas"]) {
       await expect(page.getByRole("heading", { name, exact: true })).toBeVisible();
     }
@@ -62,7 +62,7 @@ for (const width of [390, 1280]) {
     await page.screenshot({ path: `test-results/free-preview-${width}.png`, fullPage: true });
     await page.reload();
     await expect(page.getByRole("heading", { name: "Executive summary", exact: true })).toBeVisible();
-    await expect(page.getByRole("button", { name: "Get my free first look" })).toHaveCount(0);
+    await expect(page.getByRole("button", { name: "Get my first look" })).toHaveCount(0);
     await page.getByText("Your founder context (1/5 answered)", { exact: true }).click();
     await expect(page.getByText("Three owners tried it; none paid.", { exact: true })).toBeVisible();
     expect(submissions).toBe(1);
@@ -82,7 +82,7 @@ test("free preview is honest and disabled until the provider is configured", asy
   await page.goto(`/w/${ws.id}/first-look`);
   await expect(page.getByText(/Free previews are temporarily unavailable/)).toBeVisible();
   await page.getByLabel("Your website", { exact: true }).fill("example.com");
-  await expect(page.getByRole("button", { name: "Get my free first look" })).toBeDisabled();
+  await expect(page.getByRole("button", { name: "Get my first look" })).toBeDisabled();
 });
 
 

@@ -16,7 +16,7 @@ logger = logging.getLogger("pursuit.first_look")
 ASSESSMENT_VERSION = 5
 PAGE_UNAVAILABLE = (
     "We couldn't read this page yet. Try another public page from the same website, "
-    "such as About or Product, or try again later. Your free First Look hasn't been used."
+    "such as About or Product, or try again later. Your First Look hasn't been used."
 )
 
 
@@ -83,14 +83,14 @@ def run(db, workspace, user, body):
         )
     if not free_research.available():
         raise AppError(
-            "Free previews are temporarily unavailable. Please try again later.", "preview_unavailable"
+            "Previews are temporarily unavailable. Please try again later.", "preview_unavailable"
         )
     db.execute(select(User.id).where(User.id == user.id).with_for_update())
     row = db.get(FirstLook, user.id)
     outdated = bool(row and row.result and row.result.get("assessment_version", 1) < ASSESSMENT_VERSION)
     if row and row.status == "SUCCEEDED" and not outdated:
         raise Conflict(
-            "Your account's free first look has already been used. Your saved result remains available."
+            "Your account's first look has already been used. Your saved result remains available."
         )
     if row and row.status == "RUNNING" and row.updated_at > utcnow() - timedelta(minutes=3):
         raise Conflict("Your first look is running. Refresh its status before trying again.")

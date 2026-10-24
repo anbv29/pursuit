@@ -65,11 +65,11 @@ export function AuthForm({ mode }: { mode: "login" | "signup" }) {
       <Glass className="enter-rise w-full max-w-sm p-7 sm:p-8">
         <h1 className="font-display text-2xl font-bold tracking-tight">{mode === "login" ? "Welcome back" : "Create your account"}</h1>
         <p className="mt-1.5 text-sm text-ink-2">
-          {mode === "login" ? "Sign in to pick up where you left off." : "Your free workspace for company research, customer experiments and clearer decisions."}
+          {mode === "login" ? "Sign in to pick up where you left off." : "Your workspace for company research, customer experiments and clearer decisions."}
         </p>
         {mode === "signup" && (
           <div className="mt-5 rounded-xl border border-line bg-surface p-4">
-            <p className="text-sm font-semibold text-ink">Everything you need to get started, free.</p>
+            <p className="text-sm font-semibold text-ink">Start with a question. Build a clearer plan.</p>
             <p className="mt-1 text-sm leading-relaxed text-ink-2">Full reports, follow-up questions and all six experiment workflows. No payment details needed.</p>
             <p className="mt-2 text-xs text-ink-3">Fair-use limits and research availability apply.</p>
           </div>
@@ -92,7 +92,7 @@ export function AuthForm({ mode }: { mode: "login" | "signup" }) {
             )}
           </Field>
           <Button type="submit" size="lg" className="w-full" loading={submit.pending}>
-            {mode === "login" ? "Sign in" : "Create free account"}
+            {mode === "login" ? "Sign in" : "Create account"}
           </Button>
         </form>
       </Glass>
