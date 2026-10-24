@@ -1,6 +1,5 @@
 "use client";
 
-import { ExternalLink } from "lucide-react";
 import { createContext, useContext, type ReactNode } from "react";
 import type { Claim, ReportSource } from "@/lib/types";
 import { Badge, cx } from "../ui";
@@ -19,23 +18,23 @@ const host = (url: string) => {
   }
 };
 
-/** Numbered citation chips; hover shows the page title, click opens the source. */
+/** Superscript citation dots; hover shows the page title, click opens the source. */
 export function Cites({ ids }: { ids: string[] }) {
   const map = useContext(SourcesCtx);
   const found = ids.map((id) => map.get(id)).filter(Boolean) as ReportSource[];
   if (!found.length) return null;
   return (
-    <span className="ml-1 inline-flex flex-wrap gap-1 align-middle">
-      {found.slice(0, 4).map((s) => (
-        <a key={s.id} href={s.url} target="_blank" rel="noopener noreferrer nofollow" title={s.title || s.url}
-          className="inline-flex items-center gap-0.5 rounded bg-sunken px-1.5 py-px text-[11px] text-ink-2 hover:bg-trail-soft hover:text-trail-strong">
-          {host(s.url)} <ExternalLink className="size-2.5" aria-hidden />
-        </a>
+    <span className="ml-0.5 inline-flex items-baseline gap-[3px] align-super" aria-label="Cited sources">
+      {found.slice(0, 4).map((src) => (
+        <a key={src.id} href={src.url} target="_blank" rel="noopener noreferrer nofollow"
+          title={`${src.title || src.url} · ${host(src.url)}`}
+          aria-label={`Source: ${src.title || src.url}`}
+          className="inline-block size-[6px] shrink-0 rounded-full bg-trail transition-colors hover:bg-trail-strong focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-trail-strong" />
       ))}
-      {found.length > 4 && <span className="text-[11px] text-ink-3">+{found.length - 4}</span>}
+      {found.length > 4 && <span className="font-mono text-[10px] font-medium leading-none text-trail-strong">+{found.length - 4}</span>}
     </span>
   );
-}
+};
 
 const KIND = {
   fact: { label: "Sourced fact", tone: "good" as const },
