@@ -13,7 +13,7 @@ export function HowItWorks() {
   const index = HOW_IT_WORKS.indexOf(active);
   return (
     <div className="space-y-5">
-      <Tabs label="How Pursuit works" value={tab} onChange={setTab} className="w-fit max-w-full" idPrefix={id} panelId={`${id}-panel`}
+      <Tabs label="How Pursuit works" value={tab} onChange={setTab} className="mobile-process-tabs w-fit max-w-full" idPrefix={id} panelId={`${id}-panel`}
         tabs={HOW_IT_WORKS.map((s, i) => ({ id: s.id, label: <><span className="mr-1.5 tabular-nums text-ink-3">{i + 1}</span>{s.tab}</> }))} />
       <Glass role="tabpanel" id={`${id}-panel`} aria-labelledby={`${id}-${active.id}`} tabIndex={0} className="process-panel p-6 sm:p-9">
         <div key={active.id} className="enter-rise grid gap-8 md:grid-cols-[1.2fr_1fr] md:items-start">

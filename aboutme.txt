@@ -1221,3 +1221,6 @@ Remove repetitive free labels from signup, navigation, previews and report tools
 
 Commit: fix: replace mobile overflow menu with accessible bottom sheet
 Replace the downward-opening bottom-bar menu with a native-dialog bottom sheet, four equal navigation targets, compact labels and safe-area-aware bottom dock. Preserve desktop navigation and existing visual tokens. TypeScript, focused ESLint and whitespace checks passed; phone-sized browser verification follows.
+
+Commit: fix: refine phone spacing controls and homepage tabs
+Add safe-area viewport, usable mobile form/header controls, compact reading controls, dock-aware toast/content spacing and narrow homepage tab grids. Correct an obsolete free-access assertion. Six workspace viewport checks plus dark-mode/input/Escape and two homepage checks passed with synthetic local data. TypeScript, focused ESLint and diff checks passed; real phone keyboard/insets remain unverified. Nothing pushed.

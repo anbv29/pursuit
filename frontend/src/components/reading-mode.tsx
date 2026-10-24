@@ -44,10 +44,10 @@ export function ReadingControls() {
     window.dispatchEvent(new Event(KEY));
   };
   return (
-    <div className="mx-auto mb-7 flex max-w-6xl flex-wrap items-center justify-between gap-x-4 gap-y-2 border-b border-line pb-4 print:hidden">
+    <div className="reading-controls mx-auto mb-5 flex max-w-6xl flex-wrap items-center justify-between gap-x-4 gap-y-2 border-b border-line pb-4 print:hidden">
       <div>
         <p className="text-sm font-semibold text-ink">{advanced ? "Advanced view" : "Guided view"}</p>
-        <p className="text-xs text-ink-3">{advanced ? "Industry labels with the full evidence and measurements." : "Plain-language labels and explanations. All evidence and measurements stay available."}</p>
+        <p className="hidden text-xs text-ink-3 sm:block">{advanced ? "Industry labels with the full evidence and measurements." : "Plain-language labels and explanations. All evidence and measurements stay available."}</p>
       </div>
       <div className="flex items-center gap-3">
         <label className="text-xs text-ink-2">Reading style

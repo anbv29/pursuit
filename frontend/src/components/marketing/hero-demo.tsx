@@ -35,7 +35,7 @@ export function HeroDemo() {
           <Globe2 className="mt-1 size-5 shrink-0 text-trail" aria-hidden />
         </div>
         <div className="px-5 pt-2 sm:px-7">
-          <Tabs label="Explore the example report" value={selected} onChange={setSelected} idPrefix={id} panelId={`${id}-panel`}
+          <Tabs className="mobile-preview-tabs" label="Explore the example report" value={selected} onChange={setSelected} idPrefix={id} panelId={`${id}-panel`}
             tabs={SECTIONS.map((s) => ({ id: s.id, label: s.label }))} />
         </div>
         <div className="grid px-5 pb-6 pt-5 sm:px-7">

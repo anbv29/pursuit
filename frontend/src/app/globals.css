@@ -612,3 +612,30 @@ body:has(.app-shell) .backdrop-orbs { opacity: calc(var(--orb-opacity) * 0.45); 
 .ui-drawer.mobile-navigation-sheet { height: auto; max-height: 75dvh; }
 .mobile-navigation-sheet > div:last-child { padding-bottom: max(24px, env(safe-area-inset-bottom)); }
 .mobile-navigation-sheet button[aria-label="Close"] { width: 44px; height: 44px; }
+@media (max-width: 767px) {
+  .workspace-header { padding-top: max(12px, env(safe-area-inset-top)); }
+  .workspace-header button, .workspace-header a[aria-label^="Approvals"] { min-width: 44px; min-height: 44px; }
+  .workspace-header select, .reading-controls select { font-size: 16px; min-height: 44px; }
+  .workspace-header > div:first-child { padding-inline: 8px; gap: 2px; }
+  .workspace-content { scroll-padding-bottom: calc(6rem + env(safe-area-inset-bottom)); }
+  .workspace-content :where(h1, h2, h3, h4, p, dd, li, a) { overflow-wrap: anywhere; }
+  :where(input:not([type="checkbox"]):not([type="radio"]), textarea, select) { font-size: 16px; }
+  :where(input:not([type="checkbox"]):not([type="radio"]), select), .press { min-height: 44px; }
+  .reading-controls { gap: 8px; padding-bottom: 12px; }
+  .reading-controls > div:first-child { min-width: 0; flex: 1; }
+  .reading-controls > div:nth-child(2) { flex-shrink: 0; }
+  .reading-controls label { font-size: 0; }
+  .reading-controls label select { margin-left: 0; }
+  .reading-controls summary { min-height: 32px; display: flex; align-items: center; }
+  .app-shell { scroll-padding-bottom: calc(6rem + env(safe-area-inset-bottom)); }
+  a, button { touch-action: manipulation; }
+}
+@media (max-width: 639px) {
+  .mobile-process-tabs, .mobile-preview-tabs { display: grid; width: 100%; overflow: visible; }
+  .mobile-process-tabs { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+  .mobile-preview-tabs { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+  .mobile-process-tabs [role="tab"], .mobile-preview-tabs [role="tab"] {
+    min-width: 0; padding-inline: 4px; white-space: normal; font-size: 12px;
+  }
+  .mobile-process-tabs [role="tab"] > span { display: block; margin-right: 0; font-size: 10px; }
+}

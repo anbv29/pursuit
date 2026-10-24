@@ -37,7 +37,7 @@ export function FeedbackProvider({ children }: { children: ReactNode }) {
   return (
     <Ctx.Provider value={{ toast, confirm }}>
       {children}
-      <div className="pointer-events-none fixed inset-x-3 bottom-24 z-[70] flex flex-col gap-2 sm:inset-x-auto sm:right-5 sm:w-96 md:bottom-5">
+      <div className="pointer-events-none fixed inset-x-3 bottom-[calc(5rem+env(safe-area-inset-bottom))] z-[70] flex flex-col gap-2 sm:inset-x-auto sm:right-5 sm:w-96 md:bottom-5">
       {(["success", "error"] as const).map((kind) => (
         <div key={kind} aria-live={kind === "error" ? "assertive" : "polite"} role={kind === "error" ? "alert" : "status"}
           className="flex flex-col gap-2">

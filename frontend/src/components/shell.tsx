@@ -106,7 +106,7 @@ export function WorkspaceShell({ wsId, children }: { wsId: string; children: Rea
 
   const switcher = ws.data ? (
     <select aria-label="Switch workspace" value={wsId} onChange={(e) => router.push(e.target.value === "new" ? "/onboarding" : `/w/${e.target.value}`)}
-      className="h-9 w-full min-w-0 truncate rounded-xl border border-line bg-surface/80 px-2.5 text-sm font-medium text-ink hover:border-line-strong focus:border-accent">
+      className="h-11 w-full min-w-0 truncate md:h-9 rounded-xl border border-line bg-surface/80 px-2.5 text-sm font-medium text-ink hover:border-line-strong focus:border-accent">
       {(all.data ?? [ws.data]).map((w) => <option key={w.id} value={w.id}>{w.name}</option>)}
       <option value="new">+ New workspace…</option>
     </select>
@@ -122,7 +122,7 @@ export function WorkspaceShell({ wsId, children }: { wsId: string; children: Rea
   const mobileMore = groups.flatMap((g) => g.items).filter((n) => !mobilePrimary.includes(n));
 
   return (
-    <div className="app-shell flex min-h-screen">
+    <div className="app-shell flex min-h-dvh">
       <RouteProgress />
       <CommandPalette commands={commands} open={paletteOpen} onOpenChange={setPaletteOpen} />
 
@@ -176,7 +176,7 @@ export function WorkspaceShell({ wsId, children }: { wsId: string; children: Rea
 
       <div className="flex min-w-0 flex-1 flex-col">
         {/* Top bar */}
-        <header className="sticky top-0 z-30 px-4 pt-4 print:hidden md:px-8">
+        <header className="workspace-header sticky top-0 z-30 px-3 pt-3 print:hidden md:px-8 md:pt-4">
           <Glass as="div" className="mx-auto flex h-14 max-w-6xl items-center gap-2 rounded-[16px] px-3 md:px-4">
             <div className="md:hidden"><Logo href={base} compact /></div>
             <div className="min-w-0 flex-1">
@@ -228,7 +228,7 @@ export function WorkspaceShell({ wsId, children }: { wsId: string; children: Rea
           <div className="mt-2 md:hidden">{switcher}</div>
         </header>
 
-        <main className="flex-1 px-4 pb-[calc(7rem+env(safe-area-inset-bottom))] pt-6 md:px-8 md:pb-10">
+        <main className="workspace-content min-w-0 flex-1 px-4 pb-[calc(6rem+env(safe-area-inset-bottom))] pt-5 md:px-8 md:pb-10">
           {ws.data ? (
             <WorkspaceCtx.Provider value={{ workspace: ws.data, base, refreshApprovals: approvals.reload }}>
               <div className={cx("mx-auto w-full min-w-0", contentWidth)}>

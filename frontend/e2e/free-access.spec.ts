@@ -27,7 +27,7 @@ for (const width of [390, 1280]) {
     });
     await page.goto("/w/free-project/reports/new");
     await expect(page.getByRole("heading", { name: "Analyze your company", exact: true })).toBeVisible();
-    await expect(page.getByText(/Research is free\. No credits or subscription required/)).toBeVisible();
+    await expect(page.getByText("Your research workspace", { exact: true })).toBeVisible();
     await expect(page.getByRole("button", { name: "Generate report", exact: true })).toBeEnabled();
     await expect(page.getByRole("link", { name: "Plans & billing", exact: true })).toHaveCount(0);
     expect(await page.evaluate(() => document.documentElement.scrollWidth - innerWidth)).toBeLessThanOrEqual(1);
