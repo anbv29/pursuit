@@ -1203,3 +1203,6 @@ Fetched and merged remote commit 948ba16 without rewriting history (merge f7901b
 
 Commit: feat: broaden bounded research evidence crawling
 Fetch up to twelve distinct public sources across company and supplied competitor roots, diversify linked page types, preserve six-thousand-character excerpts, deduplicate content, and cap requests/depth/time. SSRF fetcher remains mandatory; no paid search or Fo changes. Ruff and candidate diversity/navigation safety checks passed.
+
+Commit: feat: deepen decision analysis and preserve evidence context
+Add a shared seven-lens reasoning contract covering buying mechanics, alternatives, economics, distribution, causality, disconfirmation and decision value. Pass deterministic source coverage and larger excerpts through review/synthesis. Persist collected evidence in investigation checkpoints so resume avoids repeat crawls. Ten research regression tests and Ruff passed.

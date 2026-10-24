@@ -18,6 +18,7 @@ from pydantic import BaseModel, Field, ValidationError
 from app.core.config import get_settings
 from app.schemas.report import PartMarket, PartPlan, PartProfile, ReportContent
 from app.services import ai_usage, free_provider
+from app.services.research_rigor import DEPTH_RULES, coverage
 
 logger = logging.getLogger("pursuit.reports")
 
@@ -151,12 +152,16 @@ def research_pass(company_url, site_text, inputs, on_progress, task):
     if "free_sources" not in cache:
         on_progress("Reading accessible company pages and supplied source URLs…")
         cache["free_sources"] = collect(company_url, inputs)
+        if context:
+            context[1](dict(cache))
     sources = cache["free_sources"]
     result = ai_usage.parse(
         _client(),
         model=get_settings().free_research_model,
         max_tokens=6000,
-        system=RESEARCH_SYSTEM + "\nNo search tools are available. Use only these fetched sources. "
+        system=RESEARCH_SYSTEM
+        + DEPTH_RULES
+        + "\nNo search tools are available. Use only these fetched sources. "
         "Do not invent URLs, competitors or market measurements. When independent evidence is missing, "
         "say so and propose a test. Return a JSON object with a notes string.",
         messages=[
@@ -169,6 +174,7 @@ def research_pass(company_url, site_text, inputs, on_progress, task):
                         "founder_inputs": inputs,
                         "question": task,
                         "sources": sources,
+                        "source_coverage": coverage(sources),
                     }
                 ),
             }
@@ -190,7 +196,7 @@ def _synthesize_part_response(client, model: str, context: str, part_model, inst
         client,
         model=model,
         max_tokens=16000,
-        system=SYNTHESIS_SYSTEM,
+        system=SYNTHESIS_SYSTEM + DEPTH_RULES,
         messages=[{"role": "user", "content": context + NL + instruction}],
         output_format=part_model,
         output_config={"effort": "medium"},
@@ -214,7 +220,7 @@ def synthesize(
     source_list = (
         json.dumps(
             [
-                {"id": x["id"], "url": x["url"], "title": x["title"], "excerpt": x.get("excerpt", "")[:2500]}
+                {"id": x["id"], "url": x["url"], "title": x["title"], "excerpt": x.get("excerpt", "")[:6000]}
                 for x in found.sources
             ]
         )
