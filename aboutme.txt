@@ -1230,3 +1230,6 @@ Cover UTF-8 byte budgets, immutable evidence, source/schema/routing preservation
 
 Commit: fix: recover interrupted research transport safely
 Add one delayed retry for transient network/timeout failures, recognize errors inside successful HTTP envelopes, reject empty/partial/oversized output, and route exhausted transient failures into bounded checkpoint recovery. Forty focused tests and Ruff passed. Same provider key/model; frontend excluded.
+
+Commit: test: verify checkpoint recovery and backend suite
+Full backend suite: 247 passed in 245.11 seconds; recovery integration tests confirm checkpoint reuse and three-attempt limits. Backend lint and formatting checks pass. Same key/model; Fo and unpublished mobile UI unchanged.

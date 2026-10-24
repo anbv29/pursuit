@@ -68,9 +68,7 @@ def synthesize(exp, metrics: dict, criteria: list[dict], evidence: list) -> AISy
     s = get_settings()
     if not s.ai_enabled:
         return None
-    client = free_provider.Client(
-        api_key=None, timeout=s.ai_timeout_seconds, max_retries=0
-    )
+    client = free_provider.Client(api_key=None, timeout=s.ai_timeout_seconds, max_retries=0)
     try:
         response = ai_usage.parse(
             client,

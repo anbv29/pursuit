@@ -50,9 +50,7 @@ def discover(db, report, user):
             "Exclude competitors and the company itself. Verify official company websites and cite URLs. "
             "Research public companies only; do not collect personal contact details.",
         )
-        client = free_provider.Client(
-            api_key=None, timeout=90, max_retries=0
-        )
+        client = free_provider.Client(api_key=None, timeout=90, max_retries=0)
         result = ai_usage.parse(
             client,
             model=ai_usage.model(s.research_model),

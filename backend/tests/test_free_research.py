@@ -91,7 +91,7 @@ def test_provider_is_bounded_free_only_without_tools_or_fallback(monkeypatch, mo
         with pytest.raises(free_research.PreviewError) as error:
             free_research.generate(page, "")
         assert "private provider detail" not in str(error.value)
-    assert len(calls) == (2 if mode in ("success", "invalid_json") else 1)
+    assert len(calls) == (2 if mode in ("success", "invalid_json", "timeout") else 1)
 
 
 def test_missing_key_never_opens_network(monkeypatch):

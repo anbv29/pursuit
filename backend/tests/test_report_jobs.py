@@ -55,3 +55,42 @@ def test_manual_retry_renews_only_missing_research_pass_budget(api, ws, fake_ai)
         row = db.get(Report, rid)
         assert row.checkpoint["investigations"]["passes_allocated"] == 1
         assert row.checkpoint["investigations"]["customers"]["notes"] == "saved"
+
+
+def test_transient_interruption_resumes_without_refetching_site(api, ws, fake_ai, monkeypatch):
+    from app.services.free_provider import APIConnectionError
+
+    original = reports.report_research.research
+
+    def interrupted(*args, **kwargs):
+        raise APIConnectionError("Temporary transport interruption")
+
+    monkeypatch.setattr(reports.report_research, "research", interrupted)
+    rid = api.post(f"/api/workspaces/{ws}/reports", BODY).json()["id"]
+    assert api.get(f"/api/workspaces/{ws}/reports/{rid}").json()["status"] == "QUEUED"
+
+    def never_fetch(*_):
+        raise AssertionError("Completed site checkpoint must be reused")
+
+    monkeypatch.setattr(reports.fetcher, "fetch", never_fetch)
+    monkeypatch.setattr(reports.report_research, "research", original)
+    reports.run(rid)
+    result = api.get(f"/api/workspaces/{ws}/reports/{rid}").json()
+    assert result["status"] == "SUCCEEDED" and result["error"] is None
+
+
+def test_repeated_transient_failures_stop_without_false_success(api, ws, fake_ai, monkeypatch):
+    from app.services.free_provider import APIConnectionError
+
+    def interrupted(*args, **kwargs):
+        raise APIConnectionError("Temporary transport interruption")
+
+    monkeypatch.setattr(reports.report_research, "research", interrupted)
+    rid = api.post(f"/api/workspaces/{ws}/reports", BODY).json()["id"]
+    reports.run(rid)
+    reports.run(rid)
+    result = api.get(f"/api/workspaces/{ws}/reports/{rid}").json()
+    assert result["status"] == "FAILED" and result["content"] is None
+    with new_session() as db:
+        row = db.get(Report, rid)
+        assert row.attempts == 3 and row.checkpoint["site"]

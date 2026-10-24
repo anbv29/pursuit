@@ -27,4 +27,20 @@ Final targeted verification: 66 passed in 63.24 seconds. Includes UTF-8 byte bud
 all-source preservation, immutable original data, schema/routing preservation, hard
 retry bounds, error redaction, previews, deep research and report checkpoint/lifecycle.
 The exact previously failing stage also succeeded live with the normal patched adapter.
-These backend fixes are local until a backend-only publish/deploy is approved.
+The request-size fix was published through d7d080c and verified on Render.
+The previously failing Libra report completed with twelve sources and persisted after refresh.
+
+## Additional transport hardening
+
+Transient read timeouts, network interruptions and remote protocol failures receive
+one retry after a short delay. Exhausted transient failures reach the report worker's
+existing checkpoint recovery, capped at three job attempts. This does not change the
+model, credentials, zero-price routing or Fo integration. Quota/authentication failures
+do not receive transport retries. Error envelopes inside HTTP 200 responses are
+classified as errors; empty, partial and oversized output never becomes a success.
+
+Zero failures cannot be guaranteed: external availability, daily provider quotas,
+retired models, inaccessible websites and free hosting suspension remain dependencies.
+Completed checkpoints must be reused, stored evidence retained, and exhausted recovery
+reported honestly. Do not remove validation, enable paid fallbacks, or loop indefinitely
+to hide a provider failure. New recovery changes require deployment before affecting users.
