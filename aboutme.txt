@@ -1200,3 +1200,6 @@ Clarify free access in signup and workspace status, keep existing styling, and l
 
 Commit: fix: preserve free access checks after remote merge
 Fetched and merged remote commit 948ba16 without rewriting history (merge f7901b0). Updated its obsolete Team pricing assertion to the free-access heading. Twenty-three deep-research/first-look tests, TypeScript and backend lint passed. No push; unrelated files preserved.
+
+Commit: feat: broaden bounded research evidence crawling
+Fetch up to twelve distinct public sources across company and supplied competitor roots, diversify linked page types, preserve six-thousand-character excerpts, deduplicate content, and cap requests/depth/time. SSRF fetcher remains mandatory; no paid search or Fo changes. Ruff and candidate diversity/navigation safety checks passed.
