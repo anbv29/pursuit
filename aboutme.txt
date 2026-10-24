@@ -1230,3 +1230,6 @@ Distinguish authentication, quota, rate-limit and request rejections without log
 
 Commit: test: cover bounded upstream recovery and safe failures
 Add nine transport regressions covering transient wrapped 400/server recovery, identical zero-priced payloads, retry caps, permanent status non-retry, malformed envelopes and secret/prompt redaction. Thirty-nine provider/preview/report/job tests passed in 79.43 seconds; Ruff and diff checks passed. No push or deployment of resilience changes.
+
+Commit: fix: bound source-rich inference payloads
+Reproduce the exact saved public-only Libra stage: 67555-byte payload rejected twice by AtlasCloud; reducing public excerpts to 28545 bytes succeeded. Add conservative 60000-byte packing that retains every source identity, full stored evidence, founder inputs, schemas and routing settings. Convert synthesis context to structured JSON so it can be packed safely. Exact failing stage now succeeds with the normal adapter. Twenty-six regressions, UTF-8/source-preservation checks, Ruff and diff checks passed.
