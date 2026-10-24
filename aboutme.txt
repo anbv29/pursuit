@@ -1245,3 +1245,6 @@ Add one delayed retry for transient network/timeout failures, recognize errors i
 
 Commit: test: verify checkpoint recovery and full backend suite
 Verify transient research interruption reuses the saved site checkpoint and repeated failures stop at three attempts without false success. Update timeout expectations for the bounded retry contract, document operational dependencies, and normalize backend formatting. Full backend suite: 247 passed in 245.11 seconds. Ruff checks and format checks pass across all 169 Python files. No frontend changes published.
+
+Commit: reconcile research resilience deployment
+Backend-only recovery published as 061fc98 and 61dbb18. Full local backend suite: 247 passed; exact publication-branch transport checks: 62 passed. All backend Ruff and format checks pass. Preserve unpublished mobile UI and original local checkpoints.
