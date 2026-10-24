@@ -91,11 +91,20 @@ class Client:
             text = _request(payload, settings)
             parsed = output_format.model_validate(decode_object(text)) if output_format else None
         except PreviewError as exc:
-            if str(exc) == "Provider HTTP 429":
-                raise RateLimitError(
-                    "The free research provider is busy. Retry later; no paid fallback was used."
+            category = getattr(exc, "category", "")
+            if category == "authentication":
+                raise APIError("Research access needs attention from the workspace operator.") from None
+            if category == "account_limit":
+                raise APIError(
+                    "The research service has reached its account limit. Saved progress is retained."
                 ) from None
-            raise APIError("The free research provider is unavailable. Retry later.") from None
+            if category == "request_rejected":
+                raise APIError(
+                    "The research service rejected this step. Saved progress is retained for retry."
+                ) from None
+            if str(exc) == "Provider HTTP 429":
+                raise RateLimitError("The research provider is busy. Please try again later.") from None
+            raise APIError("The research provider is unavailable. Please try again later.") from None
         except (ValidationError, ValueError, TypeError):
             raise APIError("Research returned no complete result. Retry to resume saved progress.") from None
         return SimpleNamespace(

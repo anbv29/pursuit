@@ -1215,3 +1215,6 @@ Verify unavailable pages, linked cross-origin redirects and attempt caps; docume
 
 Commit: fix: restore free reports with verified structured model
 The existing key authenticated with its full free allowance; selected Gemma calls failed in the upstream shared pool. Verify the current zero-priced Dots model with unchanged data-collection denial and no paid fallback. Update defaults/local private model settings and request native JSON schemas for reports/previews to prevent schema echoes. Complete resumed public-site report succeeded in 167.2 seconds across eight calls, all sections validated, one usable source and no dropped references/downgraded facts. Final 30 regression tests, Ruff and diff checks passed (earlier broader 34 also passed). Nothing pushed or deployed; hosted model overrides remain a rollout step.
+
+Commit: fix: classify provider failures and bound transient retries
+Backend-only rollout: classify safe failure categories and allow one bounded retry for wrapped upstream/server errors. Preserve the configured model, existing key and zero-price/privacy controls. Recovery regression tests passed locally; source checkpoint 81f4cce.
