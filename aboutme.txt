@@ -1239,3 +1239,6 @@ Add UTF-8 request-budget, all-source preservation, immutable stored data, schema
 
 Commit: merge backend-only deployment history
 Published recovery checkpoints as 82ad731, 74c15f7, 4a62ffa and d7d080c after 66 checks passed on the isolated branch. Merge publication history into local main to preserve normal future pushes. Mobile UI remains local and was excluded from the remote update. Render verification follows.
+
+Commit: fix: recover interrupted research transport safely
+Add one delayed retry for transient network/timeout failures, recognize errors inside successful HTTP envelopes, reject empty/partial/oversized output, and route exhausted transient failures into bounded checkpoint recovery. Forty transport/context/provider tests passed; Ruff and whitespace checks passed. Full backend verification in progress. Same provider key/model, no frontend changes.

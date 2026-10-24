@@ -92,6 +92,10 @@ class Client:
             parsed = output_format.model_validate(decode_object(text)) if output_format else None
         except PreviewError as exc:
             category = getattr(exc, "category", "")
+            if getattr(exc, "retryable", False):
+                raise APIConnectionError(
+                    "Research was temporarily interrupted. Saved progress is retained for retry."
+                ) from None
             if category == "authentication":
                 raise APIError("Research access needs attention from the workspace operator.") from None
             if category == "account_limit":
