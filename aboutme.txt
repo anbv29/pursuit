@@ -1233,3 +1233,6 @@ Add nine transport regressions covering transient wrapped 400/server recovery, i
 
 Commit: fix: bound source-rich inference payloads
 Reproduce the exact saved public-only Libra stage: 67555-byte payload rejected twice by AtlasCloud; reducing public excerpts to 28545 bytes succeeded. Add conservative 60000-byte packing that retains every source identity, full stored evidence, founder inputs, schemas and routing settings. Convert synthesis context to structured JSON so it can be packed safely. Exact failing stage now succeeds with the normal adapter. Twenty-six regressions, UTF-8/source-preservation checks, Ruff and diff checks passed.
+
+Commit: test: verify bounded report context and provenance
+Add UTF-8 request-budget, all-source preservation, immutable stored data, schema/routing preservation and unavoidable-overflow tests. Document exact public-only Libra failure/recovery and approval reconsideration. Final targeted suite: 66 passed in 63.24 seconds; Ruff and whitespace checks passed. Backend-only publication remains pending; unrelated mobile UI stays local.
