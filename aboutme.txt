@@ -1236,3 +1236,6 @@ Reproduce the exact saved public-only Libra stage: 67555-byte payload rejected t
 
 Commit: test: verify bounded report context and provenance
 Add UTF-8 request-budget, all-source preservation, immutable stored data, schema/routing preservation and unavoidable-overflow tests. Document exact public-only Libra failure/recovery and approval reconsideration. Final targeted suite: 66 passed in 63.24 seconds; Ruff and whitespace checks passed. Backend-only publication remains pending; unrelated mobile UI stays local.
+
+Commit: merge backend-only deployment history
+Published recovery checkpoints as 82ad731, 74c15f7, 4a62ffa and d7d080c after 66 checks passed on the isolated branch. Merge publication history into local main to preserve normal future pushes. Mobile UI remains local and was excluded from the remote update. Render verification follows.
