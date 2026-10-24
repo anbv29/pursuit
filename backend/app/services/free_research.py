@@ -209,6 +209,9 @@ def _generate(page, audience: str, description: str = "", founder_reality: dict 
 
 
 def _request(payload, settings):
+    from app.services.research_context import fit_payload
+
+    payload = fit_payload(payload)
     for attempt in range(2):
         try:
             return _request_once(payload, settings)

@@ -1221,3 +1221,6 @@ Backend-only rollout: classify safe failure categories and allow one bounded ret
 
 Commit: test: cover bounded upstream recovery and safe failures
 Add nine failure/retry/redaction regressions. The broader 39-test suite passed locally; source checkpoint 273eedf. Backend-only publication.
+
+Commit: fix: bound source-rich inference payloads
+Keep oversized JSON requests within a conservative 60000-byte budget while preserving all source IDs, stored evidence, founder input, schemas and routing. The exact saved public-only Libra stage succeeds after packing. Twenty-six regression checks passed before the final 66-test suite; source checkpoint 2b7fa36.

@@ -197,7 +197,14 @@ def _synthesize_part_response(client, model: str, context: str, part_model, inst
         model=model,
         max_tokens=16000,
         system=SYNTHESIS_SYSTEM + DEPTH_RULES,
-        messages=[{"role": "user", "content": context + NL + instruction}],
+        messages=[
+            {
+                "role": "user",
+                "content": json.dumps(
+                    dict(json.loads(context), output_sections_instruction=instruction), ensure_ascii=False
+                ),
+            }
+        ],
         output_format=part_model,
         output_config={"effort": "medium"},
     ) as stream:
@@ -217,30 +224,32 @@ def synthesize(
 ) -> ReportContent:
     s = get_settings()
     client = _client()
-    source_list = (
-        json.dumps(
-            [
+    context = json.dumps(
+        {
+            "company_url": company_url,
+            "founder_inputs": inputs,
+            "company_site": site_text[:12000],
+            "research_notes": found.notes[:40000],
+            "reviewed_decision_brief": found.insights,
+            "sources": [
                 {"id": x["id"], "url": x["url"], "title": x["title"], "excerpt": x.get("excerpt", "")[:6000]}
                 for x in found.sources
-            ]
-        )
-        or "(none)"
-    )
-    context = NL.join(
-        [
-            f"Company website: {company_url}",
-            f"<founder_inputs>{json.dumps(inputs, ensure_ascii=False)}</founder_inputs>",
-            f"<company_site>{site_text[:12000]}</company_site>",
-            f"<research_notes>{found.notes[:40000]}</research_notes>",
-            f"<reviewed_decision_brief>{json.dumps(found.insights)}</reviewed_decision_brief>",
-            "Challenge generic advice. Explain buyer versus user, switching friction, purchasing "
-            "triggers, competing explanations and what would invalidate each recommendation. "
-            "Experiments must distinguish explanations and state what decision changes.",
-            f"<sources>{NL}{source_list}{NL}</sources>",
-            "Allowed use_case values: segment_validation, willingness_to_pay, messaging, "
-            "problem_discovery, competitive_research, funnel_diagnosis.",
-            f"Allowed metric names: {', '.join(ALLOWED_METRICS)}.",
-        ]
+            ],
+            "decision_rules": "Explain buyer versus user, switching friction, purchase triggers, "
+            "competing explanations and what would invalidate each recommendation. Experiments must "
+            "distinguish explanations and state what decision changes. Incomplete excerpts mean "
+            "incomplete coverage; never assume the missing text supports a claim.",
+            "allowed_use_cases": [
+                "segment_validation",
+                "willingness_to_pay",
+                "messaging",
+                "problem_discovery",
+                "competitive_research",
+                "funnel_diagnosis",
+            ],
+            "allowed_metrics": ALLOWED_METRICS,
+        },
+        ensure_ascii=False,
     )
     parts = [(m, i) for m, i in PARTS if not sections or set(m.model_fields) & set(sections)]
     checkpoint = CHECKPOINTS.get()
