@@ -1206,3 +1206,6 @@ Fetch up to twelve distinct public sources across company and supplied competito
 
 Commit: feat: deepen decision analysis and preserve evidence context
 Add a shared seven-lens reasoning contract covering buying mechanics, alternatives, economics, distribution, causality, disconfirmation and decision value. Pass deterministic source coverage and larger excerpts through review/synthesis. Persist collected evidence in investigation checkpoints so resume avoids repeat crawls. Ten research regression tests and Ruff passed.
+
+Commit: test: verify deep evidence boundaries and recovery
+Add five regression tests for source/root diversity, richer excerpts, content deduplication, prohibited navigation, wall-clock limits, honest coverage metadata and persisted source reuse. Update synthetic source hashes to represent distinct content correctly. Thirty-four research/access/report/job regressions and Ruff passed.

@@ -41,7 +41,7 @@ def test_source_collection_uses_only_fetched_pages(monkeypatch):
     def fetch(url, **kwargs):
         if "private" in url:
             raise fetcher.FetchError("Unreachable")
-        return fetcher.Fetched(url, "Public evidence", "Useful public company text." * 3, "hash")
+        return fetcher.Fetched(url, "Public evidence", "Useful public company text." * 3, url)
 
     monkeypatch.setattr(fetcher, "fetch", fetch)
     result = research_sources.collect(
