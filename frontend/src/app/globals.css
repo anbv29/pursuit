@@ -752,3 +752,10 @@ body:has(.app-shell) .backdrop-orbs { opacity: calc(var(--orb-opacity) * 0.45); 
 @media (prefers-reduced-motion: reduce) {
   .bento-tile, .bento-tile:hover { transition: none; }
 }
+
+
+/* App shell v3: raised center action on the mobile tab bar */
+.mobile-navigation .mobile-tab { min-height: 44px; }
+@media (prefers-reduced-motion: reduce) {
+  .mobile-navigation .press { transition: none; }
+}

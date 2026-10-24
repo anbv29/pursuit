@@ -1,7 +1,7 @@
 "use client";
 
 import {
-  Bell, ChevronRight, ChevronsLeft, ChevronsRight, FileText, Inbox, LayoutDashboard, LogOut,
+  Bell, ChevronRight, ChevronsLeft, ChevronsRight, CircleDollarSign, FileText, Inbox, LayoutDashboard, LogOut,
   MessageCircle, Moon, Search, Settings,
 } from "lucide-react";
 import Link from "next/link";
@@ -118,8 +118,11 @@ export function WorkspaceShell({ wsId, children }: { wsId: string; children: Rea
     { label: "Take action", items: nav.filter((n) => [ `${base}/approvals`, `${base}/fo` ].includes(n.href)) },
     { label: "Workspace", items: nav.filter((n) => [ `${base}/settings` ].includes(n.href)) },
   ];
-  const mobilePrimary = nav.filter((n) => n.exact || n.href === `${base}/reports` || n.href === `${base}/fo`);
-  const mobileMore = groups.flatMap((g) => g.items).filter((n) => !mobilePrimary.includes(n));
+  const mobileTabs = nav.filter((n) => n.exact || n.href === `${base}/reports` || n.href === `${base}/approvals`);
+  const mobileMenu = [
+    ...nav.filter((n) => !mobileTabs.includes(n)),
+    { href: `${base}/billing`, label: "Plans and billing", icon: CircleDollarSign },
+  ];
 
   return (
     <div className="app-shell flex min-h-dvh">
@@ -127,8 +130,8 @@ export function WorkspaceShell({ wsId, children }: { wsId: string; children: Rea
       <CommandPalette commands={commands} open={paletteOpen} onOpenChange={setPaletteOpen} />
 
       {/* Desktop sidebar */}
-      <aside className={cx("sticky top-0 hidden h-dvh shrink-0 p-4 print:hidden md:block transition-[width] duration-300 ease-[var(--ease-out)]", collapsed ? "w-[88px]" : "w-[224px] xl:w-[248px]")}>
-        <Glass as="nav" aria-label="Primary" className="flex h-full flex-col p-3">
+      <aside className={cx("sticky top-0 hidden h-dvh shrink-0 p-3 print:hidden md:block transition-[width] duration-300 ease-[var(--ease-out)]", collapsed ? "w-[88px]" : "w-[264px]")}>
+        <Glass as="nav" aria-label="Primary" className="flex h-full flex-col rounded-[20px] p-3">
           <div className={cx("flex h-11 items-center", collapsed ? "justify-center" : "px-1.5")}>
             <Logo href={base} compact={collapsed} />
           </div>
@@ -148,10 +151,10 @@ export function WorkspaceShell({ wsId, children }: { wsId: string; children: Rea
                     return (
                       <li key={n.href}>
                         <Link href={n.href} title={collapsed ? n.label : undefined} aria-label={collapsed ? n.label : undefined} aria-current={active ? "page" : undefined}
-                          className={cx("press relative flex min-h-11 items-center gap-3 rounded-xl px-3 py-2 text-sm transition-[background-color,color] duration-150",
-                            active ? "bg-surface font-semibold text-ink ring-1 ring-[var(--glass-border)]" : "text-ink-2 hover:bg-[var(--inset)] hover:text-ink",
+                          className={cx("press relative flex h-10 items-center gap-3 rounded-xl px-3 py-2 text-sm transition-[background-color,color] duration-150",
+                            active ? "bg-trail-soft font-semibold text-trail-strong" : "text-ink-2 hover:bg-[var(--inset)] hover:text-ink",
                             collapsed && "justify-center px-0")}>
-                          {active && <span className="absolute left-0 top-2 h-6 w-1 rounded-r-full bg-accent" aria-hidden />}
+                          {active && <span className="absolute inset-y-2 left-0 w-[2px] rounded-full bg-accent" aria-hidden />}
                           <n.icon className="size-[18px] shrink-0" aria-hidden />
                           {!collapsed && <span className="flex-1 truncate">{n.label}</span>}
                           {!!n.count && (
@@ -177,7 +180,7 @@ export function WorkspaceShell({ wsId, children }: { wsId: string; children: Rea
       <div className="flex min-w-0 flex-1 flex-col">
         {/* Top bar */}
         <header className="workspace-header sticky top-0 z-30 px-3 pt-3 print:hidden md:px-8 md:pt-4">
-          <Glass as="div" className="mx-auto flex h-14 max-w-6xl items-center gap-2 rounded-[16px] px-3 md:px-4">
+          <Glass as="div" className="mx-auto flex h-[60px] max-w-6xl items-center gap-2 rounded-[16px] px-3 md:h-[68px] md:px-4">
             <div className="md:hidden"><Logo href={base} compact /></div>
             <div className="min-w-0 flex-1">
               {crumbs ? (
@@ -194,7 +197,7 @@ export function WorkspaceShell({ wsId, children }: { wsId: string; children: Rea
                   </ol>
                 </nav>
               ) : (
-                <p className="truncate font-ui text-[14px] font-semibold text-ink">{current?.label ?? "Pursuit"}</p>
+                <p className="truncate font-display text-[17px] font-semibold tracking-tight text-ink md:text-[20px]">{current?.label ?? "Pursuit"}</p>
               )}
             </div>
             <div className="hidden items-center gap-2 xl:flex">
@@ -225,7 +228,6 @@ export function WorkspaceShell({ wsId, children }: { wsId: string; children: Rea
                 </button>
               )} />
           </Glass>
-          <div className="mt-2 md:hidden">{switcher}</div>
         </header>
 
         <main className="workspace-content min-w-0 flex-1 px-4 pb-[calc(6rem+env(safe-area-inset-bottom))] pt-5 md:px-8 md:pb-10">
@@ -245,7 +247,7 @@ export function WorkspaceShell({ wsId, children }: { wsId: string; children: Rea
         </main>
       </div>
 
-      <MobileNavigation primary={mobilePrimary} more={mobileMore} isActive={isActive} />
+      <MobileNavigation tabs={mobileTabs} menuItems={mobileMenu} newHref={`${base}/experiments/new`} isActive={isActive} switcher={ws.data ? switcher : null} />
     </div>
   );
 }

@@ -43,26 +43,41 @@ export function ReadingControls() {
     try { localStorage.setItem(KEY, value); } catch { /* Use the session preference if storage is blocked. */ }
     window.dispatchEvent(new Event(KEY));
   };
+  const select = (
+    <label className="text-xs text-ink-2">Reading style
+      <select aria-label="Reading style" value={advanced ? "advanced" : "guided"} onChange={(e) => set(e.target.value)}
+        className="ml-2 h-8 rounded-lg border border-line bg-surface px-2 text-sm text-ink">
+        <option value="guided">Guided</option><option value="advanced">Advanced</option>
+      </select>
+    </label>
+  );
+  const terms = (
+    <details className="text-sm">
+      <summary className={advanced ? "w-fit cursor-pointer rounded-full border border-line bg-surface px-3 py-1.5 text-xs font-semibold text-ink" : "w-fit cursor-pointer text-[13px] font-semibold text-trail"}>
+        Startup terms, explained
+      </summary>
+      <dl className={advanced ? "mt-3 grid gap-4 sm:grid-cols-2 lg:grid-cols-3" : "mt-3 grid gap-4 pb-1 sm:grid-cols-2 lg:grid-cols-3"}>
+        {TERMS.map(([term, meaning]) => <div key={term}><dt className="font-medium">{term}</dt><dd className="mt-1 text-xs leading-relaxed text-ink-2">{meaning}</dd></div>)}
+      </dl>
+    </details>
+  );
+  if (advanced) return (
+    <div className="reading-controls mb-5 flex flex-wrap items-center gap-2 print:hidden">
+      <span className="rounded-full border border-line bg-surface px-3 py-1.5 text-xs font-semibold text-ink">Advanced view</span>
+      {select}
+      {terms}
+    </div>
+  );
   return (
-    <div className="reading-controls mx-auto mb-5 flex max-w-6xl flex-wrap items-center justify-between gap-x-4 gap-y-2 border-b border-line pb-4 print:hidden">
-      <div>
-        <p className="text-sm font-semibold text-ink">{advanced ? "Advanced view" : "Guided view"}</p>
-        <p className="hidden text-xs text-ink-3 sm:block">{advanced ? "Industry labels with the full evidence and measurements." : "Plain-language labels and explanations. All evidence and measurements stay available."}</p>
+    <div className="reading-controls mb-5 rounded-[20px] border border-line bg-surface p-4 sm:p-5 print:hidden">
+      <div className="flex flex-wrap items-center justify-between gap-x-4 gap-y-2">
+        <div>
+          <p className="text-sm font-semibold text-ink">Guided view</p>
+          <p className="hidden text-xs text-ink-3 sm:block">Plain-language labels and explanations. All evidence and measurements stay available.</p>
+        </div>
+        {select}
       </div>
-      <div className="flex items-center gap-3">
-        <label className="text-xs text-ink-2">Reading style
-          <select aria-label="Reading style" value={advanced ? "advanced" : "guided"} onChange={(e) => set(e.target.value)}
-            className="ml-2 h-8 rounded-lg border border-line bg-surface px-2 text-sm text-ink">
-            <option value="guided">Guided</option><option value="advanced">Advanced</option>
-          </select>
-        </label>
-      </div>
-      <details className="basis-full text-sm">
-        <summary className="w-fit cursor-pointer text-[13px] font-semibold text-trail">Startup terms, explained</summary>
-        <dl className="mt-3 grid gap-4 pb-2 sm:grid-cols-2 lg:grid-cols-3">
-          {TERMS.map(([term, meaning]) => <div key={term}><dt className="font-medium">{term}</dt><dd className="mt-1 text-xs leading-relaxed text-ink-2">{meaning}</dd></div>)}
-        </dl>
-      </details>
+      <div className="mt-3 border-t border-line pt-3">{terms}</div>
     </div>
   );
 }
