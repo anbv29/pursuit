@@ -43,7 +43,7 @@ export function Dialog({ open, onClose, title, description, children, footer, si
 }
 
 /** Side sheet: slides from the right on desktop, up from the bottom on phones. */
-export function Drawer({ open, onClose, title, children }: { open: boolean; onClose: () => void; title: ReactNode; children: ReactNode }) {
+export function Drawer({ open, onClose, title, children, className }: { open: boolean; onClose: () => void; title: ReactNode; children: ReactNode; className?: string }) {
   const ref = useRef<HTMLDialogElement>(null);
   const id = useId();
   useEffect(() => {
@@ -54,7 +54,7 @@ export function Drawer({ open, onClose, title, children }: { open: boolean; onCl
   }, [open]);
   return (
     <dialog ref={ref} onCancel={(e) => { e.preventDefault(); onClose(); }} aria-labelledby={`${id}-t`}
-      className="ui-drawer glass [&[open]]:flex m-0 mt-auto flex-col h-[85dvh] max-h-none w-full max-w-none p-0 text-ink sm:mt-0 sm:ml-auto sm:h-dvh sm:w-[440px]">
+      className={cx("ui-drawer glass [&[open]]:flex m-0 mt-auto flex-col h-[85dvh] max-h-none w-full max-w-none p-0 text-ink sm:mt-0 sm:ml-auto sm:h-dvh sm:w-[440px]", className)}>
       <div className="flex items-center justify-between border-b border-[var(--glass-border)] px-5 py-4">
         <h2 id={`${id}-t`} className="font-ui text-lg font-semibold">{title}</h2>
         <button type="button" onClick={onClose} aria-label="Close" className="press grid size-8 shrink-0 place-items-center rounded-lg text-ink-3 hover:bg-[var(--inset)] hover:text-ink">

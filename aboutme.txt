@@ -1218,3 +1218,6 @@ The existing key authenticated with its full free allowance; selected Gemma call
 
 Commit: style: keep free messaging on homepage only
 Remove repetitive free labels from signup, navigation, previews and report tools; keep a single homepage toolkit statement. Neutralize customer-visible API error wording, fix outdated paid-credit FAQ text and update browser selectors. Access and fair-use controls unchanged. Nineteen preview/provider tests, TypeScript, Ruff and whitespace checks passed. No push.
+
+Commit: fix: replace mobile overflow menu with accessible bottom sheet
+Replace the downward-opening bottom-bar menu with a native-dialog bottom sheet, four equal navigation targets, compact labels and safe-area-aware bottom dock. Preserve desktop navigation and existing visual tokens. TypeScript, focused ESLint and whitespace checks passed; phone-sized browser verification follows.

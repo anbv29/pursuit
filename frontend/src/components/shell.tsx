@@ -2,7 +2,7 @@
 
 import {
   Bell, ChevronRight, ChevronsLeft, ChevronsRight, FileText, Inbox, LayoutDashboard, LogOut,
-  MessageCircle, MoreHorizontal, Moon, Search, Settings,
+  MessageCircle, Moon, Search, Settings,
 } from "lucide-react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
@@ -13,6 +13,7 @@ import type { Workspace } from "@/lib/types";
 import { Logo } from "./brand";
 import { useFeedback } from "./feedback";
 import { CommandPalette, type Command } from "./command-palette";
+import { MobileNavigation } from "./mobile-navigation";
 import { ReadingControls } from "./reading-mode";
 import { RouteProgress } from "./route-progress";
 import { useSession } from "./session";
@@ -244,33 +245,7 @@ export function WorkspaceShell({ wsId, children }: { wsId: string; children: Rea
         </main>
       </div>
 
-      {/* Mobile tab bar */}
-      <nav aria-label="Primary" className="fixed inset-x-3 bottom-3 z-30 print:hidden md:hidden" style={{ paddingBottom: "env(safe-area-inset-bottom)" }}>
-        <Glass className="flex items-stretch justify-around rounded-[22px] p-1.5">
-          {mobilePrimary.map((n) => {
-            const active = isActive(n);
-            return (
-              <Link key={n.href} href={n.href} aria-current={active ? "page" : undefined}
-                className={cx("press relative flex min-w-0 flex-1 flex-col items-center gap-0.5 rounded-2xl px-1 py-1.5 text-[11px]",
-                  active ? "bg-surface font-semibold text-ink" : "text-ink-3")}>
-                <n.icon className="size-5" aria-hidden />
-                <span className="w-full truncate text-center">{n.label.replace("Company reports", "Reports").replace("New experiment", "New")}</span>
-                {!!n.count && <span className="absolute right-3 top-1 size-2 rounded-full bg-warning" aria-hidden />}
-              </Link>
-            );
-          })}
-          {mobileMore.length > 0 && (
-            <Menu label="More pages" align="end" items={mobileMore.map((n) => ({ label: n.label, onSelect: () => router.push(n.href), icon: <n.icon className="size-4" /> }))}
-              trigger={({ open, toggle: t, id }) => (
-                <button type="button" onClick={t} aria-haspopup="menu" aria-expanded={open} aria-controls={id}
-                  className={cx("press flex flex-col items-center gap-0.5 rounded-2xl px-3 py-1.5 text-[11px]",
-                    mobileMore.some(isActive) ? "bg-surface font-semibold text-ink" : "text-ink-3")}>
-                  <MoreHorizontal className="size-5" aria-hidden /> More
-                </button>
-              )} />
-          )}
-        </Glass>
-      </nav>
+      <MobileNavigation primary={mobilePrimary} more={mobileMore} isActive={isActive} />
     </div>
   );
 }
