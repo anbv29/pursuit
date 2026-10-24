@@ -69,7 +69,7 @@ four synthetic experiments. Demo workspaces are always simulated, even when the 
 ### AI synthesis
 
 Set `OPENROUTER_API_KEY` in `backend/.env`. All research uses
-`FREE_RESEARCH_MODEL=google/gemma-4-31b-it:free`, with a server-enforced zero-price ceiling,
+`FREE_RESEARCH_MODEL=dots-studio/dots-3-note-preview:free`, with a server-enforced zero-price ceiling,
 no paid fallback, and no hosted search plugin. Without the key, deterministic calculations
 and labelled rule-based recommendations remain available.
 

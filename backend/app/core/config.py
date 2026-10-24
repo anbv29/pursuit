@@ -28,10 +28,11 @@ class Settings(BaseSettings):
     free_preview_enabled: bool = True
     # Explicit free model IDs only: never fall back to a paid provider/model.
     free_research_model: Literal[
+        "dots-studio/dots-3-note-preview:free",
         "google/gemma-4-31b-it:free",
         "google/gemma-4-26b-a4b-it:free",
         "minimax/minimax-m3.1-flash:free",
-    ] = "google/gemma-4-31b-it:free"
+    ] = "dots-studio/dots-3-note-preview:free"
     report_worker_enabled: bool = True
     resend_api_key: SecretStr | None = None
     resend_workspace_id: str = ""

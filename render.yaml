@@ -37,4 +37,4 @@ services:
       - key: FREE_PREVIEW_ENABLED
         sync: false # set true only after provisioning and verifying the free provider
       - key: FREE_RESEARCH_MODEL
-        value: google/gemma-4-31b-it:free
+        value: dots-studio/dots-3-note-preview:free

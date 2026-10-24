@@ -1212,3 +1212,6 @@ Add five regression tests for source/root diversity, richer excerpts, content de
 
 Commit: test: harden deep crawl failure boundaries
 Verify unavailable pages, linked cross-origin redirects and attempt caps; document expanded evidence coverage and seven-lens analysis. Final relevant suite: 37 passed in 29.83 seconds; changed-file Ruff and diff checks passed. One bounded live free-provider request returned HTTP 429, so complete live model quality remains unverified. No paid fallback, Fo changes, push or deployment.
+
+Commit: fix: restore free reports with verified structured model
+The existing key authenticated with its full free allowance; selected Gemma calls failed in the upstream shared pool. Verify the current zero-priced Dots model with unchanged data-collection denial and no paid fallback. Update defaults/local private model settings and request native JSON schemas for reports/previews to prevent schema echoes. Complete resumed public-site report succeeded in 167.2 seconds across eight calls, all sections validated, one usable source and no dropped references/downgraded facts. Final 30 regression tests, Ruff and diff checks passed (earlier broader 34 also passed). Nothing pushed or deployed; hosted model overrides remain a rollout step.

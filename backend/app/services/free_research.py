@@ -117,6 +117,8 @@ def generate(page, audience: str, description: str = "", founder_reality: dict |
 
 
 def _generate(page, audience: str, description: str = "", founder_reality: dict | None = None) -> dict:
+    from app.services.free_provider import response_format
+
     settings = get_settings()
     if not available():
         raise PreviewError("Free provider not configured")
@@ -156,7 +158,7 @@ def _generate(page, audience: str, description: str = "", founder_reality: dict 
     payload = {
         "model": settings.free_research_model,
         "max_tokens": 2200,
-        "response_format": {"type": "json_object"},
+        "response_format": response_format(PreviewContent, settings.free_research_model),
         "plugins": [{"id": "web", "enabled": False}],
         "provider": {
             "allow_fallbacks": False,

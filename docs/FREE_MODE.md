@@ -7,15 +7,26 @@ paid tier, payment webhook or purchased-credit enforcement remains in the applic
 ## Configuration
 
 Set `OPENROUTER_API_KEY` privately on the backend. The current default is
-`FREE_RESEARCH_MODEL=google/gemma-4-31b-it:free`. All model calls require zero-priced
+`FREE_RESEARCH_MODEL=dots-studio/dots-3-note-preview:free`. All model calls require zero-priced
 routing and disable paid provider fallback and web-search plugins. The existing key
 is reused; no research key is placed in client code or Git. No Anthropic SDK/key is needed.
 
-The previously used MiniMax free launch endpoint was retired on October 22, 2026.
-Live checks on October 24 found the two remaining privacy-compatible Gemma endpoints
-rate-limited. Do not claim live research is available merely because configuration exists.
-Use `python -m scripts.verify_ai` from backend to perform one bounded provider check.
-No privacy restrictions are weakened to obtain a different free endpoint.
+The previous MiniMax endpoint was retired and the Gemma shared pool returned HTTP 429
+while this account still had its free allowance. The replacement above answered using
+the same existing key and privacy policy. Native JSON-schema output prevents the model
+from returning the schema itself instead of a populated report. Local Pydantic and
+source-quote validation remain mandatory.
+
+A complete public-site report passed on October 24: eight successful model calls,
+167.2 seconds, all report sections present, and no invalid source references or facts
+requiring downgrading. This was a resumed checkpoint run after diagnosing the previous
+JSON-mode failure, not a claim that every initial attempt succeeded. Source coverage
+for that run was one usable public page; unsupported competitors were not invented.
+
+Run `python -m scripts.verify_ai` from backend for one bounded availability check.
+Free-provider availability and account-wide quotas still apply; no paid fallback is
+permitted. The same private key is retained. Hosted environment overrides must select
+the replacement model when deploying; local configuration does not update Render.
 
 ## What research actually uses
 
