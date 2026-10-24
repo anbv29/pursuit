@@ -1224,3 +1224,6 @@ Replace the downward-opening bottom-bar menu with a native-dialog bottom sheet, 
 
 Commit: fix: refine phone spacing controls and homepage tabs
 Add safe-area viewport, usable mobile form/header controls, compact reading controls, dock-aware toast/content spacing and narrow homepage tab grids. Correct an obsolete free-access assertion. Six workspace viewport checks plus dark-mode/input/Escape and two homepage checks passed with synthetic local data. TypeScript, focused ESLint and diff checks passed; real phone keyboard/insets remain unverified. Nothing pushed.
+
+Commit: fix: classify provider failures and bound transient retries
+Distinguish authentication, quota, rate-limit and request rejections without logging raw provider bodies. Retry one time only for wrapped upstream rejections or transient server statuses; preserve zero-price routing and privacy. Add bounded error-body reading and actionable safe messages. Ruff, classification safety and diff checks passed. Live Libra reproduction completed successfully before retry handling, confirming intermittency; hosted report recovery is underway.

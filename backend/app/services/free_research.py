@@ -9,17 +9,13 @@ import httpx
 from pydantic import BaseModel, ConfigDict, Field, ValidationError
 
 from app.core.config import get_settings
+from app.services.provider_failures import PreviewError, ProviderFailure, classify
 
 ENDPOINT = "https://openrouter.ai/api/v1/chat/completions"
 logger = logging.getLogger("pursuit.free_research")
 UNAVAILABLE = (
-    "Your preview couldn't be completed right now. Please try again later. "
-    "Your preview hasn't been used."
+    "Your preview couldn't be completed right now. Please try again later. Your preview hasn't been used."
 )
-
-
-class PreviewError(Exception):
-    """Do not expose provider responses or exceptions to customers."""
 
 
 class StrictModel(BaseModel):
@@ -213,8 +209,18 @@ def _generate(page, audience: str, description: str = "", founder_reality: dict 
 
 
 def _request(payload, settings):
+    for attempt in range(2):
+        try:
+            return _request_once(payload, settings)
+        except ProviderFailure as exc:
+            if attempt or not exc.retryable:
+                raise
+            logger.warning("Research retry category=%s attempt=2", exc.category)
+
+
+def _request_once(payload, settings):
     try:
-        # No retries, tools, redirects, client URLs or provider switching.
+        # No tools, redirects, client URLs or provider switching.
         with (
             httpx.Client(
                 timeout=getattr(settings, "ai_timeout_seconds", 45), follow_redirects=False, trust_env=False
@@ -228,6 +234,15 @@ def _request(payload, settings):
                 json=payload,
             ) as response,
         ):
+            if response.is_error:
+                error_body = bytearray()
+                for chunk in response.iter_bytes():
+                    error_body.extend(chunk[: max(0, 8192 - len(error_body))])
+                    if len(error_body) >= 8192:
+                        break
+                failure = classify(response.status_code, error_body)
+                logger.warning("Research provider status=%s category=%s", failure.status, failure.category)
+                raise failure
             response.raise_for_status()
             raw = bytearray()
             for chunk in response.iter_bytes():
