@@ -13,7 +13,8 @@ def test_transient_transport_failure_reaches_checkpoint_recovery(monkeypatch):
     from app.services.provider_failures import ProviderFailure
 
     monkeypatch.setattr(
-        free_provider, "get_settings",
+        free_provider,
+        "get_settings",
         lambda: SimpleNamespace(ai_enabled=True, free_research_model="dots-studio/dots-3-note-preview:free"),
     )
 

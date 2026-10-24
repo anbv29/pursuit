@@ -82,9 +82,7 @@ def run(db, workspace, user, body):
             "Use a real workspace for your personal first look. Sample reports remain available here."
         )
     if not free_research.available():
-        raise AppError(
-            "Previews are temporarily unavailable. Please try again later.", "preview_unavailable"
-        )
+        raise AppError("Previews are temporarily unavailable. Please try again later.", "preview_unavailable")
     db.execute(select(User.id).where(User.id == user.id).with_for_update())
     row = db.get(FirstLook, user.id)
     outdated = bool(row and row.result and row.result.get("assessment_version", 1) < ASSESSMENT_VERSION)

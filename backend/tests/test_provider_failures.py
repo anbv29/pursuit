@@ -114,7 +114,8 @@ def test_network_failure_has_one_bounded_retry(monkeypatch, failure, recover, ca
         return httpx.Response(200, json=GOOD)
 
     monkeypatch.setattr(
-        free_research.httpx, "Client",
+        free_research.httpx,
+        "Client",
         lambda **kwargs: client(transport=httpx.MockTransport(handler), **kwargs),
     )
     if recover:

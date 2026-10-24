@@ -3,6 +3,7 @@
 Legacy payment records stay in the database for history, never as access gates.
 """
 
+
 def summary(db, workspace_id):
     return {
         "plan": "free",
