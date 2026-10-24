@@ -32,6 +32,34 @@ const TOC = [
   ["messaging", "Messaging"], ["prospecting", "Prospecting"], ["funnel", "Funnel"], ["experiments", "Experiments"],
   ["risks", "Risks"], ["sources", "Sources"],
 ];
+function useActiveSection(ids: string[], readyKey: string) {
+  const [active, setActive] = useState<string | null>(null);
+  useEffect(() => {
+    const obs = new IntersectionObserver(
+      (entries) => {
+        for (const e of entries) if (e.isIntersecting) setActive(e.target.id);
+      },
+      { rootMargin: "-20% 0px -70% 0px" },
+    );
+    for (const id of ids) {
+      const el = document.getElementById(id);
+      if (el) obs.observe(el);
+    }
+    return () => obs.disconnect();
+  }, [ids, readyKey]);
+  return active;
+}
+
+function domain(url: string) {
+  try {
+    return new URL(url).hostname.replace(/^www\./, "");
+  } catch {
+    return "";
+  }
+}
+
+const TOC_IDS = TOC.map(([k]) => k);
+
 const STEPS: FeedStep[] = [
   { label: "Reading the company website", done: "Read the company website" },
   { label: "Analysing verified pages and source evidence", done: "Analysed verified pages and source evidence" },
@@ -128,6 +156,8 @@ export default function ReportPage() {
     }
   }, [running, r?.status, toast]);
 
+  const activeId = useActiveSection(TOC_IDS, `${id}:${r?.status ?? "loading"}`);
+
   if (error) {
     return (
       <Glass className="mx-auto mt-6 max-w-lg p-2">
@@ -161,8 +191,7 @@ export default function ReportPage() {
       </Glass>
     );
   }
-  const c = plainCopy(r.content);
-  const v = c.validation;
+  const c = plainCopy(r.content);  const v = c.validation;
   return (
     <SourcesProvider sources={r.sources}>
       <div className="mx-auto flex max-w-6xl items-start gap-6">
@@ -170,11 +199,35 @@ export default function ReportPage() {
           <Glass dense className="p-3">
             <p className="mb-2 px-2 text-xs font-semibold text-ink-3">On this page</p>
             <ul className="space-y-0.5 text-sm">
-              {TOC.map(([k, label]) => <li key={k}><a href={`#${k}`} className="block rounded-lg px-2 py-1.5 text-ink-2 transition-colors hover:bg-[var(--inset)] hover:text-ink">{!advanced && SECTION_HELP[k]?.[0] ? SECTION_HELP[k][0] : label}</a></li>)}
+              {TOC.map(([k, label]) => {
+                const name = !advanced && SECTION_HELP[k]?.[0] ? SECTION_HELP[k][0] : label;
+                const active = activeId === k;
+                return (
+                  <li key={k}>
+                    <a href={`#${k}`} aria-current={active ? "true" : undefined}
+                      className={cx("block rounded-lg px-2 py-1.5 transition-colors", active ? "bg-accent-soft font-semibold text-trail-strong" : "text-ink-2 hover:bg-[var(--inset)] hover:text-ink")}>
+                      {name}
+                    </a>
+                  </li>
+                );
+              })}
             </ul>
           </Glass>
         </nav>
-        <div className="min-w-0 flex-1 space-y-6">
+        {/* Android: the same TOC as a sticky horizontal chip scroller under the header */}
+        <nav aria-label="Report sections" className="sticky top-[60px] z-30 -mx-4 hidden min-[430px]:flex gap-1.5 overflow-x-auto bg-paper/90 px-4 py-2 backdrop-blur [scrollbar-width:none] md:top-[68px] xl:hidden print:hidden [&::-webkit-scrollbar]:hidden">
+          {TOC.map(([k, label]) => {
+            const name = !advanced && SECTION_HELP[k]?.[0] ? SECTION_HELP[k][0] : label;
+            const active = activeId === k;
+            return (
+              <a key={k} href={`#${k}`} aria-current={active ? "true" : undefined}
+                className={cx("shrink-0 whitespace-nowrap rounded-full border px-3 py-1.5 text-[13px] transition-colors", active ? "border-trail-strong bg-accent-soft font-semibold text-trail-strong" : "border-line bg-surface text-ink-2")}>
+                {name}
+              </a>
+            );
+          })}
+        </nav>
+        <div className="mx-auto w-full min-w-0 max-w-[720px] flex-1 space-y-6">
           <PageHeader eyebrow={advanced ? "GTM report" : "Your customer and growth report"} title={r.company_name || r.company_url}
             description={<>
               <a href={r.company_url} target="_blank" rel="noopener noreferrer" className="break-all hover:text-trail">{r.company_url}</a>
@@ -214,7 +267,10 @@ export default function ReportPage() {
               {r.sources.map((s) => (
                 <li key={s.id} className="flex min-w-0 gap-2">
                   <span className="w-8 shrink-0 text-ink-3">{s.id}</span>
-                  <a href={s.url} target="_blank" rel="noopener noreferrer nofollow" className="truncate text-ink-2 hover:text-trail" title={s.url}>{s.title || s.url}</a>
+                  <a href={s.url} target="_blank" rel="noopener noreferrer nofollow" className="min-w-0 truncate text-ink-2 hover:text-trail" title={s.url}>
+                    {s.title || s.url}
+                    {s.title && domain(s.url) && <span className="ml-1.5 font-mono text-[11px] text-ink-3">{domain(s.url)}</span>}
+                  </a>
                 </li>
               ))}
             </ol>

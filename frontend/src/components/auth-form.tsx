@@ -57,7 +57,7 @@ export function AuthForm({ mode }: { mode: "login" | "signup" }) {
     setValues((v) => ({ ...v, [k]: e.target.value }));
 
   return (
-    <main className="flex min-h-screen flex-col items-center justify-center px-4 py-12">
+    <main className="dot-field flex min-h-screen flex-col items-center justify-center px-4 py-12">
       <div className="mb-8 flex w-full max-w-sm items-center justify-between">
         <Logo />
         <ThemeToggle />
@@ -91,7 +91,7 @@ export function AuthForm({ mode }: { mode: "login" | "signup" }) {
                 autoComplete={mode === "login" ? "current-password" : "new-password"} value={values.password} onChange={set("password")} />
             )}
           </Field>
-          <Button type="submit" size="lg" className="w-full" loading={submit.pending}>
+          <Button type="submit" size="lg" className="shimmer-btn w-full" loading={submit.pending}>
             {mode === "login" ? "Sign in" : "Create account"}
           </Button>
         </form>

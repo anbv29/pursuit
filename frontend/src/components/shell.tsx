@@ -121,7 +121,7 @@ export function WorkspaceShell({ wsId, children }: { wsId: string; children: Rea
   const mobileTabs = nav.filter((n) => n.exact || n.href === `${base}/reports` || n.href === `${base}/approvals`);
   const mobileMenu = [
     ...nav.filter((n) => !mobileTabs.includes(n)),
-    { href: `${base}/billing`, label: "Plans and billing", icon: CircleDollarSign },
+    { href: "/#pricing", label: "Plans and billing", icon: CircleDollarSign },
   ];
 
   return (
