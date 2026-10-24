@@ -1,6 +1,6 @@
 import type { ReactNode } from "react";
 import type { Metadata, Viewport } from "next";
-import { Plus_Jakarta_Sans, Manrope, Source_Sans_3 } from "next/font/google";
+import { Fraunces, Inter, JetBrains_Mono, Source_Sans_3 } from "next/font/google";
 import { BackdropOrbs } from "@/components/backdrop";
 import { FeedbackProvider } from "@/components/feedback";
 import { LensLoader } from "@/components/lens-loader";
@@ -9,8 +9,9 @@ import { ReadingProvider } from "@/components/reading-mode";
 import { SessionProvider } from "@/components/session";
 import "./globals.css";
 
-const display = Plus_Jakarta_Sans({ variable: "--font-editorial", subsets: ["latin"], display: "swap" });
-const ui = Manrope({ variable: "--font-interface", subsets: ["latin"], display: "swap" });
+const display = Fraunces({ variable: "--font-editorial", subsets: ["latin"], display: "swap" });
+const ui = Inter({ variable: "--font-interface", subsets: ["latin"], display: "swap" });
+const code = JetBrains_Mono({ variable: "--font-code", subsets: ["latin"], display: "swap" });
 const body = Source_Sans_3({ variable: "--font-reading", subsets: ["latin"], display: "swap" });
 
 export const metadata: Metadata = {
@@ -20,8 +21,8 @@ export const metadata: Metadata = {
 
 export const viewport: Viewport = {
   themeColor: [
-    { media: "(prefers-color-scheme: light)", color: "#f7f6f2" },
-    { media: "(prefers-color-scheme: dark)", color: "#1b1c19" },
+    { media: "(prefers-color-scheme: light)", color: "#faf7f2" },
+    { media: "(prefers-color-scheme: dark)", color: "#101214" },
   ],
 };
 
@@ -30,7 +31,7 @@ const themeScript = `try{var t=localStorage.getItem("pursuit.theme");if(t==="lig
 
 export default function RootLayout({ children }: { children: ReactNode }) {
   return (
-    <html lang="en" suppressHydrationWarning className={`${display.variable} ${ui.variable} ${body.variable} h-full antialiased`}>
+    <html lang="en" suppressHydrationWarning className={`${display.variable} ${ui.variable} ${body.variable} ${code.variable} h-full antialiased`}>
       <head>
         <script dangerouslySetInnerHTML={{ __html: themeScript }} />
       </head>
