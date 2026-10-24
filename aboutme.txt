@@ -1209,3 +1209,6 @@ Add a shared seven-lens reasoning contract covering buying mechanics, alternativ
 
 Commit: test: verify deep evidence boundaries and recovery
 Add five regression tests for source/root diversity, richer excerpts, content deduplication, prohibited navigation, wall-clock limits, honest coverage metadata and persisted source reuse. Update synthetic source hashes to represent distinct content correctly. Thirty-four research/access/report/job regressions and Ruff passed.
+
+Commit: test: harden deep crawl failure boundaries
+Verify unavailable pages, linked cross-origin redirects and attempt caps; document expanded evidence coverage and seven-lens analysis. Final relevant suite: 37 passed in 29.83 seconds; changed-file Ruff and diff checks passed. One bounded live free-provider request returned HTTP 429, so complete live model quality remains unverified. No paid fallback, Fo changes, push or deployment.

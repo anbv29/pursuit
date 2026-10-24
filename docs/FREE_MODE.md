@@ -19,8 +19,12 @@ No privacy restrictions are weakened to obtain a different free endpoint.
 
 ## What research actually uses
 
-The server fetches the company homepage, up to four relevant same-origin pages, and
-up to three competitor URLs explicitly supplied in the report form. Existing URL,
+Full research gathers up to twelve distinct pages from the company homepage, relevant
+same-origin links, and up to three competitor roots explicitly supplied in the report
+form. It diversifies pricing, customer stories, comparisons, security, integrations and
+product/documentation pages within eighteen fetch attempts and two link levels. A
+45-second scheduling budget stops further fetches; an in-flight fetch retains its own
+bounded timeout. The quick First Look keeps its smaller separate collection budget. Existing URL,
 SSRF, redirect, response-size and timeout protections remain in force. The same fetched
 evidence supports three focused investigations, a skeptical review and report synthesis.
 There is no general web search service included. Competitors, prospects and benchmarks

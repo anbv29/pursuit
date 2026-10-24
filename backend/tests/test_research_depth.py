@@ -95,3 +95,48 @@ def test_pass_persists_sources_and_reuses_them_on_resume(monkeypatch):
     assert len(fetches) == 1 and len(requests) == 2
     assert "source_coverage" in requests[0]["messages"][0]["content"]
     assert "Disconfirmation" in requests[0]["system"]
+
+
+def test_unavailable_pages_do_not_become_sources(monkeypatch):
+    def fetch(*args, **kwargs):
+        raise fetcher.FetchError("Unavailable")
+
+    monkeypatch.setattr(fetcher, "fetch", fetch)
+    assert research_sources.collect("https://company.example", {}) == []
+
+
+def test_linked_cross_origin_redirect_is_not_accepted(monkeypatch):
+    def fetch(url, **kwargs):
+        if url.endswith("/pricing"):
+            return fetcher.Fetched("https://unrequested.example", "Other", "Other evidence" * 20, "other")
+        return fetcher.Fetched(url, "Home", "Company evidence" * 20, "home", ["/pricing"])
+
+    monkeypatch.setattr(fetcher, "fetch", fetch)
+    sources = research_sources.collect("https://company.example", {})
+    assert [s["url"] for s in sources] == ["https://company.example"]
+
+
+def test_fetch_attempt_cap_survives_failures(monkeypatch):
+    calls = []
+    monkeypatch.setattr(research_sources, "MAX_ATTEMPTS", 3)
+
+    def fetch(url, **kwargs):
+        calls.append(url)
+        if len(calls) > 1:
+            raise fetcher.FetchError("Unavailable")
+        return fetcher.Fetched(
+            url,
+            "Home",
+            "Company evidence" * 20,
+            "home",
+            [
+                "/pricing",
+                "/docs/start",
+                "/product/detail",
+                "/customers/story",
+            ],
+        )
+
+    monkeypatch.setattr(fetcher, "fetch", fetch)
+    assert len(research_sources.collect("https://company.example", {})) == 1
+    assert len(calls) == 3
