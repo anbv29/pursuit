@@ -1218,3 +1218,6 @@ The existing key authenticated with its full free allowance; selected Gemma call
 
 Commit: fix: classify provider failures and bound transient retries
 Backend-only rollout: classify safe failure categories and allow one bounded retry for wrapped upstream/server errors. Preserve the configured model, existing key and zero-price/privacy controls. Recovery regression tests passed locally; source checkpoint 81f4cce.
+
+Commit: test: cover bounded upstream recovery and safe failures
+Add nine failure/retry/redaction regressions. The broader 39-test suite passed locally; source checkpoint 273eedf. Backend-only publication.
