@@ -15,11 +15,11 @@ export function HowItWorks() {
     <div className="space-y-5">
       <Tabs label="How Pursuit works" value={tab} onChange={setTab} className="mobile-process-tabs w-fit max-w-full" idPrefix={id} panelId={`${id}-panel`}
         tabs={HOW_IT_WORKS.map((s, i) => ({ id: s.id, label: <><span className="mr-1.5 tabular-nums text-ink-3">{i + 1}</span>{s.tab}</> }))} />
-      <Glass role="tabpanel" id={`${id}-panel`} aria-labelledby={`${id}-${active.id}`} tabIndex={0} className="process-panel p-6 sm:p-9">
+      <Glass role="tabpanel" id={`${id}-panel`} aria-labelledby={`${id}-${active.id}`} tabIndex={0} className="process-panel p-6 sm:p-10">
         <div key={active.id} className="enter-rise grid gap-8 md:grid-cols-[1.2fr_1fr] md:items-start">
           <div>
-            <p className="font-ui text-xs font-semibold tracking-wide text-trail">0{index + 1} / THE PROCESS</p>
-            <h3 className="mt-1 font-display text-2xl font-bold tracking-tight sm:text-[28px]">{active.title}</h3>
+            <p className="hiw-step-chip"><span aria-hidden className="size-1.5 rounded-full bg-accent" />STEP 0{index + 1} / 0{HOW_IT_WORKS.length}</p>
+            <h3 className="mt-4 font-display text-2xl font-bold tracking-tight sm:text-[30px]">{active.title}</h3>
             <p className="mt-3 text-[15px] leading-relaxed text-ink-2">{active.body}</p>
           </div>
           <ul className="divide-y divide-line border-y border-line">

@@ -89,7 +89,7 @@ export function LensLoader() {
     const frame = (t: number) => {
       pos.x += (target.x - pos.x) * 0.14;
       pos.y += (target.y - pos.y) * 0.14;
-      progress = Math.min(100, progress + (pressed ? 0.9 : 0.22));
+      progress = Math.min(100, progress + (pressed ? 2.4 : 0.9));
       const r = 95 + Math.pow(progress / 100, 3) * Math.hypot(w, h);
 
       sharp.style.clipPath = `circle(${r.toFixed(1)}px at ${pos.x.toFixed(1)}px ${pos.y.toFixed(1)}px)`;

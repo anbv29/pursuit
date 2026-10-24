@@ -1,10 +1,13 @@
-const WORKFLOWS = [
-  ["Find your first customers", "Compare customer groups, keep sourced prospect research and test which audience has the strongest need."],
-  ["Test willingness to pay", "Track budgets, current spending and pricing feedback. Keep verbal interest separate from actual commitments."],
-  ["Compare your message", "Create outreach variants and record replies. Compare rates with sample sizes and uncertainty."],
-  ["Understand the problem", "Record interviews, workarounds, recurring pain and contradictory answers before deciding what to build."],
-  ["Map the competition", "Compare competitors, pricing and positioning with source links. See where information is missing."],
-  ["Find funnel drop-offs", "Import a CSV or enter stage counts. See conversion rates and design tests for competing explanations."],
+import { CircleDollarSign, Filter, MessageCircleQuestion, MessageSquare, Scale, Users } from "lucide-react";
+import type { ComponentType } from "react";
+
+const WORKFLOWS: [string, string, ComponentType<{ className?: string }>][] = [
+  ["Find your first customers", "Compare customer groups, keep sourced prospect research and test which audience has the strongest need.", Users],
+  ["Test willingness to pay", "Track budgets, current spending and pricing feedback. Keep verbal interest separate from actual commitments.", CircleDollarSign],
+  ["Compare your message", "Create outreach variants and record replies. Compare rates with sample sizes and uncertainty.", MessageSquare],
+  ["Understand the problem", "Record interviews, workarounds, recurring pain and contradictory answers before deciding what to build.", MessageCircleQuestion],
+  ["Map the competition", "Compare competitors, pricing and positioning with source links. See where information is missing.", Scale],
+  ["Find funnel drop-offs", "Import a CSV or enter stage counts. See conversion rates and design tests for competing explanations.", Filter],
 ];
 
 export function Capabilities() {
@@ -16,12 +19,13 @@ export function Capabilities() {
         <p className="mt-4 leading-relaxed text-ink-2">Enter your website, describe your offer and tell Pursuit who you hope to serve. A research report brings together your market, potential customers, competitors, pricing, positioning and a first-week plan.</p>
         <p className="mt-4 text-sm leading-relaxed text-ink-3">Research suggests what to try. Real interviews, commitments and measured results tell you whether it works. Use the six workflows to keep that evidence together.</p>
       </div>
-      <dl className="grid gap-x-8 gap-y-7 sm:grid-cols-2">
-        {WORKFLOWS.map(([title, body]) => <div key={title} className="border-t border-line pt-4">
-          <dt className="font-ui text-base font-semibold">{title}</dt>
-          <dd className="mt-2 text-sm leading-relaxed text-ink-2">{body}</dd>
-        </div>)}
-      </dl>
+      <ul className="bento-grid">
+        {WORKFLOWS.map(([title, body, Icon], i) => <li key={title} className={i === 0 ? "bento-tile bento-tile-wide" : "bento-tile"}>
+          <span className="bento-ico"><Icon className="size-[18px]" aria-hidden /></span>
+          <h3 className="font-ui text-base font-semibold">{title}</h3>
+          <p className="mt-2 text-sm leading-relaxed text-ink-2">{body}</p>
+        </li>)}
+      </ul>
     </div>
   </section>;
 }

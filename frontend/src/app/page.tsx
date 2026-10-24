@@ -2,7 +2,7 @@ import { Eye, FileCheck2, Lock, ShieldCheck } from "lucide-react";
 import { Footer } from "@/components/marketing/footer";
 import { HeroDemo } from "@/components/marketing/hero-demo";
 import { HowItWorks } from "@/components/marketing/how-it-works";
-import { HeroCta, LandingNav } from "@/components/marketing/landing-nav";
+import { HeroCta, LandingNav, MobileCtaDock } from "@/components/marketing/landing-nav";
 import { Pricing } from "@/components/marketing/pricing";
 import { Capabilities, Questions } from "@/components/marketing/capabilities";
 import { TRUST_POINTS } from "@/lib/ui-demo/demo-data";
@@ -16,13 +16,15 @@ export default function Home() {
 
       <main className="mx-auto max-w-6xl px-4 sm:px-6">
         {/* Hero */}
-        <section className="pursuit-hero grid items-start gap-12 pb-16 pt-12 sm:pt-20 lg:grid-cols-[1fr_1.05fr] lg:gap-16">
+        <section className="pursuit-hero relative grid items-start gap-12 overflow-hidden pb-16 pt-12 sm:pt-20 lg:grid-cols-[1fr_1.05fr] lg:gap-16">
+          <div aria-hidden className="dot-field pointer-events-none absolute inset-x-0 -top-24 -bottom-4 -z-10" />
+          <div aria-hidden className="glow-field -z-10" />
           <div className="enter-rise min-w-0 lg:pt-8">
             <p className="mb-7 flex items-center gap-3 font-ui text-xs font-semibold tracking-[0.08em] text-ink-3">
               <span className="h-px w-7 bg-accent" aria-hidden /> YOUR NEXT MOVE, RESEARCHED
             </p>
-            <h1 className="font-display text-[43px] font-medium leading-[1.06] tracking-[-0.055em] text-ink sm:text-[60px] lg:text-[62px]">
-              A clearer picture.<br /><span className="text-trail">A smarter next move.</span>
+            <h1 className="font-display text-[32px] font-medium leading-[38px] tracking-[-0.01em] text-ink sm:text-[44px] sm:leading-[52px]">
+              A clearer picture.<br />A <span className="hero-grad">smarter</span> next move.
             </h1>
             <p className="mt-6 max-w-lg text-[17px] leading-7 text-ink-2">
               Your business has questions. Start with your website and an idea. Get a source-linked view of your customers, competition and pricing, and a practical plan for what to test next.
@@ -31,7 +33,9 @@ export default function Home() {
             <p className="mt-5 text-sm text-ink-3">Explore a sample first. No card needed.</p>
           </div>
           <div className="enter-rise min-w-0" style={{ "--i": 2 } as React.CSSProperties}>
-            <HeroDemo />
+            <div className="hero-frame">
+              <HeroDemo />
+            </div>
           </div>
         </section>
 
@@ -66,9 +70,11 @@ export default function Home() {
         <Capabilities />
         <Pricing />
         <Questions />
+        <div aria-hidden className="h-24 lg:hidden" />
       </main>
 
       <Footer />
+      <MobileCtaDock />
     </div>
   );
 }

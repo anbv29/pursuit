@@ -41,8 +41,20 @@ export function HeroCta() {
   const { user } = useSession();
   return (
     <div className="flex flex-wrap gap-3">
-      <Link href={user ? "/w" : "/signup"} className={buttonStyles("primary", "lg")}>{user ? "Go to your workspace" : "Get started"}</Link>
+      <Link href={user ? "/w" : "/signup"} className={`shimmer-btn ${buttonStyles("primary", "lg")}`}>{user ? "Go to your workspace" : "Get started"}</Link>
       <a href="#how-it-works" className={buttonStyles("secondary", "lg")}>See how it works</a>
+    </div>
+  );
+}
+
+/** Android-style sticky CTA bar for small screens. */
+export function MobileCtaDock() {
+  const { user } = useSession();
+  return (
+    <div className="cta-dock">
+      <Link href={user ? "/w" : "/signup"} className={`${buttonStyles("primary", "lg")} w-full`}>
+        Analyze a company
+      </Link>
     </div>
   );
 }
