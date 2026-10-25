@@ -3,7 +3,6 @@ import type { Metadata, Viewport } from "next";
 import { Fraunces, Inter, JetBrains_Mono, Source_Sans_3 } from "next/font/google";
 import { BackdropOrbs } from "@/components/backdrop";
 import { FeedbackProvider } from "@/components/feedback";
-import { LensLoader } from "@/components/lens-loader";
 import { OfflineNotice } from "@/components/offline-notice";
 import { ReadingProvider } from "@/components/reading-mode";
 import { SessionProvider } from "@/components/session";
@@ -42,7 +41,6 @@ export default function RootLayout({ children }: { children: ReactNode }) {
           <ReadingProvider><FeedbackProvider>{children}</FeedbackProvider></ReadingProvider>
         </SessionProvider>
         <OfflineNotice />
-        <LensLoader />
       </body>
     </html>
   );

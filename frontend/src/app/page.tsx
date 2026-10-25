@@ -1,4 +1,5 @@
 import { Eye, FileCheck2, Lock, ShieldCheck } from "lucide-react";
+import { LensLoader } from "@/components/lens-loader";
 import { Footer } from "@/components/marketing/footer";
 import { HeroDemo } from "@/components/marketing/hero-demo";
 import { HowItWorks } from "@/components/marketing/how-it-works";
@@ -12,6 +13,7 @@ const TRUST_ICONS = [FileCheck2, ShieldCheck, Eye, Lock];
 export default function Home() {
   return (
     <div className="marketing-page min-h-screen">
+      <LensLoader />
       <LandingNav />
 
       <main className="mx-auto max-w-6xl px-4 sm:px-6">
