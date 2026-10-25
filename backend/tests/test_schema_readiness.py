@@ -8,8 +8,8 @@ from app import main
 pytestmark = pytest.mark.no_database
 
 
-@pytest.mark.parametrize("fail_at", [None, 1, 2, 3])
-def test_health_requires_connection_chat_columns_and_preview_columns(monkeypatch, fail_at):
+@pytest.mark.parametrize("fail_at", [None, 1, 2, 3, 4, 5, 6])
+def test_health_requires_connection_and_all_customer_workflow_tables(monkeypatch, fail_at):
     calls = []
 
     class Connection:
@@ -32,6 +32,9 @@ def test_health_requires_connection_chat_columns_and_preview_columns(monkeypatch
     assert body["database"] is (fail_at != 1)
     assert "private database diagnostic" not in response.text
     if fail_at is None:
-        assert len(calls) == 3
+        assert len(calls) == 6
         assert "fo_chat_turns" in calls[1] and "first_looks" in calls[2]
         assert "LIMIT" in calls[1] and "LIMIT" in calls[2]
+        assert "interview_captures" in calls[3]
+        assert "interview_highlights" in calls[4]
+        assert "experiment_reminders" in calls[5]

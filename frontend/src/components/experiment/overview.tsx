@@ -7,6 +7,7 @@ import { KNOWN_METRICS, isRate } from "../criteria-editor";
 import { Badge, Card, CardHeader, DemoBadge, Empty, Notice, Skeleton } from "../ui";
 import { useExperiment } from "./context";
 import { RecommendationPanel } from "./recommendation";
+import { RemindersPanel } from "../founder-focus";
 
 const STATUS: Record<CriterionResult["status"], { label: string; tone: "good" | "bad" | "flag" | "muted" }> = {
   met: { label: "Met", tone: "good" },
@@ -91,6 +92,10 @@ function describe(e: TimelineItem): string {
     "prospect.add": `Added prospect ${d.name ?? ""}`,
     "prospect.update": "Updated a prospect",
     "interview.save": `Saved interview (${d.status})`,
+    "interview.capture": "Saved interview notes for review",
+    "interview.highlight": "Added a reviewed interview finding to evidence",
+    "reminder.create": "Set an experiment reminder",
+    "reminder.update": d.completed === "true" || String(d.completed) === "true" ? "Completed a reminder" : "Updated a reminder",
     "variant.add": `Added message variant ${d.label}`,
     "outcome.record": `Recorded ${String(d.kind).replace(/_/g, " ")}${d.origin === "demo" ? " (demo)" : ""}`,
     "action.request": `Requested ${String(d.kind).replace("_", " ")} (${d.mode})`,
@@ -106,7 +111,7 @@ function describe(e: TimelineItem): string {
 }
 
 export function Overview() {
-  const { exp } = useExperiment();
+  const { exp, version, touch } = useExperiment();
   return (
     <div className="grid gap-6 xl:grid-cols-3">
       <div className="space-y-6 xl:col-span-2">
@@ -126,7 +131,7 @@ export function Overview() {
         <RecommendationPanel />
         <CriteriaResults />
       </div>
-      <Timeline />
+      <div className="space-y-6"><RemindersPanel experimentId={exp.id} refreshKey={version} onChange={touch} /><Timeline /></div>
     </div>
   );
 }

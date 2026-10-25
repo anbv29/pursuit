@@ -19,6 +19,7 @@ from app.api import (
     first_look,
     fo_chat,
     fo_oauth,
+    founder_workflow,
     overview,
     report_sharing,
     report_tools,
@@ -29,7 +30,7 @@ from app.core.config import get_settings
 from app.core.db import get_engine
 from app.core.errors import install_handlers
 from app.core.log_redaction import AccessRedaction, safe_path
-from app.models import FirstLook, FoChatTurn
+from app.models import ExperimentReminder, FirstLook, FoChatTurn, InterviewCapture, InterviewHighlight
 
 logger = logging.getLogger("pursuit")
 
@@ -111,6 +112,8 @@ def create_app() -> FastAPI:
     app.include_router(first_look.router)
     app.include_router(report_tools.router)
     app.include_router(report_sharing.router)
+    app.include_router(founder_workflow.router)
+    app.include_router(founder_workflow.capture_router)
 
     @app.get("/api/health", tags=["ops"])
     def health():
@@ -122,6 +125,9 @@ def create_app() -> FastAPI:
                 # Verify deployed columns and runtime access without reading any customer data.
                 conn.execute(select(FoChatTurn).limit(0))
                 conn.execute(select(FirstLook).limit(0))
+                conn.execute(select(InterviewCapture).limit(0))
+                conn.execute(select(InterviewHighlight).limit(0))
+                conn.execute(select(ExperimentReminder).limit(0))
                 schema_ok = True
         except Exception:
             logger.warning("Readiness probe failed; database schema or runtime access requires review")

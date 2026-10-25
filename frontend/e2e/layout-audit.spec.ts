@@ -15,7 +15,7 @@ for (const width of [390, 820, 1440]) {
     await expect(page).toHaveURL(/\/w\/[a-f0-9-]+$/);
     await expect(page.getByLabel("Reading style")).toBeVisible();
     const base = new URL(page.url()).pathname;
-    for (const route of ["", "/reports", "/reports/new", "/first-look", "/fo", "/settings", "/approvals", "/experiments/new"]) {
+    for (const route of ["", "/focus", "/reports", "/reports/new", "/first-look", "/fo", "/settings", "/approvals", "/experiments/new"]) {
       await page.goto(base + route);
       await expect(page.getByRole("heading", { level: 1 }).first()).toBeVisible();
       await page.evaluate(() => document.fonts.ready);
