@@ -57,7 +57,7 @@ export function CommandPalette({ commands, open, onOpenChange }: {
 
   return (
     <dialog ref={ref} onCancel={(e) => { e.preventDefault(); close(); }} aria-label="Command palette"
-      className="ui-dialog glass mx-auto mt-[12vh] w-[calc(100vw-2rem)] max-w-lg p-0 text-ink"
+      className="ui-dialog glass m-0 [&[open]]:flex [&:not([open])]:hidden h-dvh max-h-none w-screen max-w-none flex-col rounded-none p-0 text-ink sm:mx-auto sm:mt-[12vh] sm:h-auto sm:w-[560px] sm:rounded-[20px]"
       onClick={(e) => { if (e.target === ref.current) close(); }}>
       <div className="flex items-center gap-2 border-b border-[var(--glass-border)] px-4">
         <Search className="size-4 shrink-0 text-ink-3" aria-hidden />
@@ -72,7 +72,7 @@ export function CommandPalette({ commands, open, onOpenChange }: {
           className="h-14 flex-1 bg-transparent text-[15px] outline-none placeholder:text-ink-3" />
         <kbd className="rounded-md border border-line px-1.5 py-0.5 text-[11px] text-ink-3">Esc</kbd>
       </div>
-      <ul id={listId} role="listbox" aria-label="Commands" className="max-h-80 overflow-y-auto p-2">
+      <ul id={listId} role="listbox" aria-label="Commands" className="min-h-0 flex-1 overflow-y-auto p-2 sm:max-h-80 sm:flex-none">
         {results.length === 0 && <li className="px-3 py-6 text-center text-sm text-ink-3">No matches.</li>}
         {results.map((c, i) => (
           <li key={c.id} id={`${listId}-${c.id}`} role="option" aria-selected={i === active}

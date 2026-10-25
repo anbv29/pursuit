@@ -32,10 +32,19 @@ test("founder runs a full experiment loop and an outsider is locked out", async 
 
   // Experiment with hypothesis + default criteria
   await page.getByRole("button", { name: /Problem validation/ }).click();
+  // The creation flow is now a 5-step wizard: Config, Hypothesis, Success criterion, Plan, Review.
   await page.getByLabel("Name", { exact: true }).filter({ visible: true }).fill("Claims reconciliation pain");
-  await page.getByLabel("Hypothesis", { exact: true }).filter({ visible: true }).fill("Clinic managers reconcile insurance claims by hand every week.");
   await page.getByLabel("Target audience", { exact: true }).filter({ visible: true }).fill("Independent clinics, 5-30 staff");
-  await expect(page.getByRole("complementary", { name: "Preview" })).toContainText("Claims reconciliation pain");
+  await page.getByRole("button", { name: "Continue", exact: true }).click();
+  await page.getByRole("heading", { name: "Hypothesis", exact: true }).waitFor();
+  await page.getByLabel("Hypothesis", { exact: true }).filter({ visible: true }).fill("Clinic managers reconcile insurance claims by hand every week.");
+  await page.getByRole("button", { name: "Continue", exact: true }).click();
+  await page.getByRole("heading", { name: "Success criterion", exact: true }).waitFor();
+  await page.getByRole("button", { name: "Continue", exact: true }).click();
+  await page.getByRole("heading", { name: "Plan", exact: true }).waitFor();
+  await page.getByRole("button", { name: "Continue", exact: true }).click();
+  await page.getByRole("heading", { name: "Review", exact: true }).waitFor();
+  await expect(page.getByText("Claims reconciliation pain", { exact: true })).toBeVisible();
   await page.getByRole("button", { name: "Create experiment" }).click();
   await expect(page.getByRole("heading", { name: "Claims reconciliation pain" })).toBeVisible();
   const expUrl = page.url().split("?")[0];

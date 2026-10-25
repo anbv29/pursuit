@@ -2,7 +2,7 @@
 
 import { Monitor, Moon, Sun } from "lucide-react";
 import { useSyncExternalStore } from "react";
-import { cx } from "./ui";
+import { cx, Tooltip } from "./ui";
 
 export type ThemeChoice = "system" | "light" | "dark";
 const KEY = "pursuit.theme";

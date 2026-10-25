@@ -80,7 +80,7 @@ test("free preview is honest and disabled until the provider is configured", asy
     await route.fulfill({ json: data });
   });
   await page.goto(`/w/${ws.id}/first-look`);
-  await expect(page.getByText(/Free previews are temporarily unavailable/)).toBeVisible();
+  await expect(page.getByText(/Previews are temporarily unavailable/)).toBeVisible();
   await page.getByLabel("Your website", { exact: true }).fill("example.com");
   await expect(page.getByRole("button", { name: "Get my first look" })).toBeDisabled();
 });

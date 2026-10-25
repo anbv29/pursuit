@@ -2,7 +2,7 @@
 
 import {
   Bell, ChevronRight, ChevronsLeft, ChevronsRight, CircleDollarSign, FileText, Inbox, LayoutDashboard, LogOut,
-  MessageCircle, Moon, Search, Settings,
+  MessageCircle, Moon, Search, Settings, UserCog,
 } from "lucide-react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
@@ -247,7 +247,12 @@ export function WorkspaceShell({ wsId, children }: { wsId: string; children: Rea
         </main>
       </div>
 
-      <MobileNavigation tabs={mobileTabs} menuItems={mobileMenu} newHref={`${base}/experiments/new`} isActive={isActive} switcher={ws.data ? switcher : null} />
+      <MobileNavigation tabs={mobileTabs} menuItems={mobileMenu} newHref={`${base}/experiments/new`} isActive={isActive} switcher={ws.data ? switcher : null}
+        accountName={user?.name}
+        accountItems={[
+          { label: "Account security", icon: UserCog, onSelect: () => router.push("/account") },
+          { label: "Sign out", icon: LogOut, onSelect: () => void signOut(), danger: true },
+        ]} />
     </div>
   );
 }

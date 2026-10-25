@@ -7,9 +7,11 @@ import { Drawer, cx } from "./ui";
 
 type Item = { href: string; label: string; icon: LucideIcon; count?: number };
 
-export function MobileNavigation({ tabs, menuItems, newHref, isActive, switcher }: {
+export function MobileNavigation({ tabs, menuItems, accountItems, accountName, newHref, isActive, switcher }: {
   tabs: Item[];
   menuItems: Item[];
+  accountItems?: { label: string; icon: LucideIcon; onSelect: () => void; danger?: boolean }[];
+  accountName?: string;
   newHref: string;
   isActive: (item: Item) => boolean;
   switcher?: ReactNode;
@@ -63,6 +65,24 @@ export function MobileNavigation({ tabs, menuItems, newHref, isActive, switcher 
           {!!item.count && <span className="rounded-full bg-trail-soft px-2 py-0.5 text-xs font-semibold">{item.count} waiting</span>}
         </Link>)}
       </nav>
+      {accountItems && accountItems.length > 0 && (
+        <div className="mt-4 border-t border-line pt-4">
+          <p className="mb-2 px-1 font-ui text-[10px] font-semibold uppercase tracking-[0.14em] text-ink-3">Account</p>
+          {accountName && (
+            <p className="mb-2 truncate px-1 text-sm font-medium text-ink">{accountName}</p>
+          )}
+          <div className="space-y-2">
+            {accountItems.map((item) => (
+              <button key={item.label} type="button" onClick={() => { setOpen(false); item.onSelect(); }}
+                className={cx("flex min-h-14 w-full items-center gap-3 rounded-xl border border-line bg-surface px-4 py-3 text-left text-sm",
+                  item.danger ? "text-danger" : "text-ink")}>
+                <item.icon size={20} aria-hidden="true" />
+                <span className="min-w-0 flex-1">{item.label}</span>
+              </button>
+            ))}
+          </div>
+        </div>
+      )}
     </Drawer>
   </>;
 }
