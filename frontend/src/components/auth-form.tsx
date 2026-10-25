@@ -57,7 +57,8 @@ export function AuthForm({ mode }: { mode: "login" | "signup" }) {
     setValues((v) => ({ ...v, [k]: e.target.value }));
 
   return (
-    <main className="dot-field flex min-h-screen flex-col items-center justify-center px-4 py-12">
+    <main className="relative isolate flex min-h-screen flex-col items-center justify-center px-4 py-12">
+      <div aria-hidden="true" className="dot-field pointer-events-none absolute inset-0 -z-10" />
       <div className="mb-8 flex w-full max-w-sm items-center justify-between">
         <Logo />
         <ThemeToggle />

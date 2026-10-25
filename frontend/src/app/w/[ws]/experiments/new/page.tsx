@@ -98,7 +98,7 @@ function NewExperiment() {
         <ArrowLeft className="size-4" />
         Change type
       </button>
-      <div className="grid gap-6 lg:grid-cols-[220px,1fr]">
+      <div className="grid gap-6 lg:grid-cols-[220px_minmax(0,1fr)]">
         {/* Steps rail: desktop */}
         <nav aria-label="Wizard steps" className="hidden lg:block">
           <Card className="sticky top-20 p-3">

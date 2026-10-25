@@ -19,7 +19,7 @@ const report: Report = {
   },
 };
 
-for (const width of [1280, 390]) {
+for (const width of [1280, 820, 430, 390]) {
   test(`reading modes preserve evidence, persist and fit at ${width}px`, async ({ page }) => {
     await page.setViewportSize({ width, height: 900 });
     const errors: string[] = [];
@@ -56,6 +56,15 @@ for (const width of [1280, 390]) {
     });
     await page.goto("/w/workspace/reports/report");
     await expect(page.getByRole("heading", { name: "Your report at a glance" })).toBeVisible();
+    const toc = page.getByRole("navigation", { name: "Report sections", exact: true }).filter({ visible: true });
+    await expect(toc).toBeVisible();
+    if (width < 1280) {
+      const tocBounds = await toc.boundingBox();
+      const titleBounds = await page.getByRole("heading", { level: 1 }).boundingBox();
+      expect(tocBounds!.y + tocBounds!.height).toBeLessThanOrEqual(titleBounds!.y);
+      const readingBounds = await page.locator("#summary").boundingBox();
+      expect(readingBounds!.width).toBeGreaterThan(width < 768 ? width - 100 : 300);
+    }
     await page.getByRole("button", { name: "Create my first-week plan" }).click();
     const task = page.getByRole("checkbox", { name: "Day 1: Choose your customer" });
     await task.click();

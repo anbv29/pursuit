@@ -72,10 +72,10 @@ export default function Home() {
         <Capabilities />
         <Pricing />
         <Questions />
-        <div aria-hidden className="h-24 lg:hidden" />
       </main>
 
       <Footer />
+      <div aria-hidden className="h-24 lg:hidden" />
       <MobileCtaDock />
     </div>
   );

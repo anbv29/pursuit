@@ -194,7 +194,7 @@ export default function ReportPage() {
   const c = plainCopy(r.content);  const v = c.validation;
   return (
     <SourcesProvider sources={r.sources}>
-      <div className="mx-auto flex max-w-6xl items-start gap-6">
+      <div className="mx-auto flex max-w-6xl flex-col items-start gap-6 xl:flex-row">
         <nav aria-label="Report sections" className="sticky top-24 hidden max-h-[calc(100dvh-7rem)] w-44 shrink-0 overflow-y-auto xl:block print:hidden">
           <Glass dense className="p-3">
             <p className="mb-2 px-2 text-xs font-semibold text-ink-3">On this page</p>
@@ -215,7 +215,7 @@ export default function ReportPage() {
           </Glass>
         </nav>
         {/* Android: the same TOC as a sticky horizontal chip scroller under the header */}
-        <nav aria-label="Report sections" className="sticky top-[60px] z-30 -mx-4 hidden min-[430px]:flex gap-1.5 overflow-x-auto bg-paper/90 px-4 py-2 backdrop-blur [scrollbar-width:none] md:top-[68px] xl:hidden print:hidden [&::-webkit-scrollbar]:hidden">
+        <nav aria-label="Report sections" className="sticky top-[84px] z-20 mx-auto flex w-full min-w-0 max-w-[720px] gap-1.5 overflow-x-auto bg-paper/90 px-1 py-2 backdrop-blur [scrollbar-width:none] md:top-[96px] xl:hidden print:hidden [&::-webkit-scrollbar]:hidden">
           {TOC.map(([k, label]) => {
             const name = !advanced && SECTION_HELP[k]?.[0] ? SECTION_HELP[k][0] : label;
             const active = activeId === k;

@@ -23,11 +23,7 @@ test("founder runs a full experiment loop and an outsider is locked out", async 
   // Onboarding now opens the company report form; manual experiments are one click away.
   await expect(page).toHaveURL(/reports\/new/);
   await page.getByLabel("Reading style").selectOption("advanced");
-  // The sidebar regroup dropped the "New experiment" shortcut, and a fresh
-  // workspace shows no such link on the dashboard either (no report yet).
-  // Drive the experiments/new route directly; the loop itself is the subject.
-  const wsBase = new URL(page.url()).pathname.split("/").slice(0, 3).join("/");
-  await page.goto(`${wsBase}/experiments/new`);
+  await page.getByRole("navigation", { name: "Primary", exact: true }).getByRole("link", { name: "New experiment", exact: true }).click();
   await expect(page).toHaveURL(/experiments\/new/);
 
   // Experiment with hypothesis + default criteria

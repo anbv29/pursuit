@@ -37,7 +37,7 @@ for (const width of [390, 820, 1440]) {
 
  test("sign-in and signup stay centred on phone, tablet and desktop", async ({ page }) => {
    await page.addInitScript(() => sessionStorage.setItem("pursuit.loaderDone", "1"));
-   for (const width of [390, 820, 1440]) {
+   for (const width of [320, 390, 820, 1440]) {
      await page.setViewportSize({ width, height: 900 });
      for (const route of ["/login", "/signup"]) {
        await page.goto(route);
@@ -45,6 +45,26 @@ for (const width of [390, 820, 1440]) {
        const card = await page.locator("main .glass").boundingBox();
        expect(Math.abs(card!.x + card!.width / 2 - width / 2)).toBeLessThanOrEqual(1);
        expect(await page.evaluate(() => document.documentElement.scrollWidth - innerWidth)).toBeLessThanOrEqual(1);
+       // Visibility checks alone miss CSS masks that fade a form's descendants.
+       for (const theme of ["light", "dark"]) {
+         await page.evaluate((value) => { document.documentElement.dataset.theme = value; }, theme);
+         const maskedContent = await page.locator("main").evaluate((main) =>
+           [main, ...main.querySelectorAll("form, input, button, a, p")]
+             .filter((el) => {
+               for (let node: Element | null = el; node; node = node.parentElement) {
+                 if (getComputedStyle(node).maskImage !== "none") return true;
+               }
+               return false;
+             }).map((el) => el.tagName),
+         );
+         expect(maskedContent, `${route} has faded controls in ${theme} mode`).toEqual([]);
+         await page.getByRole("button", { name: route === "/login" ? "Sign in" : "Create account", exact: true }).click();
+         await expect(page.getByText("Enter a valid email address.", { exact: true })).toBeVisible();
+         await expect(page.getByRole("link", { name: route === "/login" ? "Create an account" : "Sign in", exact: true })).toBeVisible();
+         if (width === 390 || width === 1440) {
+           await page.screenshot({ path: `test-results/auth-${route.slice(1)}-${width}-${theme}.png`, fullPage: true });
+         }
+       }
      }
    }
  });

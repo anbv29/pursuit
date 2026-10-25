@@ -2,7 +2,7 @@
 
 import {
   Bell, ChevronRight, ChevronsLeft, ChevronsRight, CircleDollarSign, FileText, Inbox, LayoutDashboard, LogOut,
-  MessageCircle, Moon, Search, Settings, UserCog,
+  MessageCircle, Moon, Plus, Search, Settings, UserCog,
 } from "lucide-react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
@@ -67,6 +67,7 @@ export function WorkspaceShell({ wsId, children }: { wsId: string; children: Rea
   const nav: NavItem[] = [
     { href: base, label: "Dashboard", icon: LayoutDashboard, exact: true },
     { href: `${base}/reports`, label: "Company reports", icon: FileText },
+    { href: `${base}/experiments/new`, label: "New experiment", icon: Plus },
     { href: `${base}/approvals`, label: "Approvals", icon: Inbox, count: approvals.data?.length },
     { href: `${base}/fo`, label: "Fo Assistant", icon: MessageCircle },
     ...(ws.data?.role === "owner" ? [{ href: `${base}/first-look`, label: "Website first look", icon: FileText }] : []),
@@ -115,7 +116,7 @@ export function WorkspaceShell({ wsId, children }: { wsId: string; children: Rea
   const groups = [
     { label: "Overview", items: nav.filter((n) => n.exact) },
     { label: "Research", items: nav.filter((n) => [ `${base}/reports`, `${base}/first-look` ].includes(n.href)) },
-    { label: "Take action", items: nav.filter((n) => [ `${base}/approvals`, `${base}/fo` ].includes(n.href)) },
+    { label: "Take action", items: nav.filter((n) => [ `${base}/experiments/new`, `${base}/approvals`, `${base}/fo` ].includes(n.href)) },
     { label: "Workspace", items: nav.filter((n) => [ `${base}/settings` ].includes(n.href)) },
   ];
   const mobileTabs = nav.filter((n) => n.exact || n.href === `${base}/reports` || n.href === `${base}/approvals`);

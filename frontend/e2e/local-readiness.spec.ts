@@ -32,6 +32,10 @@ test("public page shows the real catalog and six workflows on a phone", async ({
   await page.getByRole("button", { name: "Theme: system. Change theme" }).click();
   await page.getByRole("button", { name: "Theme: light. Change theme" }).click();
   await expect(page.locator("html")).toHaveAttribute("data-theme", "dark");
+  await page.evaluate(() => window.scrollTo(0, document.documentElement.scrollHeight));
+  const footer = await page.locator("footer").boundingBox();
+  const dock = await page.locator(".cta-dock").boundingBox();
+  expect(footer!.y + footer!.height).toBeLessThanOrEqual(dock!.y);
   expect(errors).toEqual([]);
 });
 
