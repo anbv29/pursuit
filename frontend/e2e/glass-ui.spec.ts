@@ -43,6 +43,10 @@ const FIXTURES: Record<string, unknown> = {
     { id: "r1", company_url: "https://northwind.example", company_name: "Northwind Health", status: "SUCCEEDED", progress: "Done", created_at: ago(90) },
     { id: "r2", company_url: "https://claimsdesk.example", company_name: "", status: "RUNNING", progress: "Researching the market, competitors and pricing", created_at: ago(2) },
   ],
+  [`/workspaces/${WS}/focus`]: {
+    priorities: [{ id: "review", title: "Review actions waiting on you", reason: "One saved action needs your review.", href: `/w/${WS}/approvals`, is_demo: false, urgency: "needs_review" }],
+    reminders: [], overdue_count: 0, generated_at: now,
+  },
   [`/workspaces/${WS}/reports/r2`]: {
     id: "r2", company_url: "https://claimsdesk.example", company_name: "Claimsdesk", inputs: {}, status: "RUNNING",
     progress: "Writing the report from 37 sources", content: null, sources: [], model: null, error: null,

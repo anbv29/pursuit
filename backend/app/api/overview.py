@@ -20,8 +20,11 @@ from app.models import (
     DeliveryTracking,
     Evidence,
     Experiment,
+    ExperimentReminder,
     FunnelSnapshot,
     Interview,
+    InterviewCapture,
+    InterviewHighlight,
     Membership,
     MessageVariant,
     OutcomeEvent,
@@ -205,6 +208,14 @@ def export(m: Membership = Depends(workspace_owner), db: Session = Depends(get_d
         "evidence": rows(Evidence),
         "prospects": rows(Prospect),
         "interviews": rows(Interview),
+        "interview_captures": rows(InterviewCapture),
+        "interview_highlights": scoped(
+            InterviewHighlight,
+            InterviewHighlight.capture_id.in_(
+                select(InterviewCapture.id).where(InterviewCapture.experiment_id.in_(ids))
+            ),
+        ),
+        "experiment_reminders": rows(ExperimentReminder),
         "actions": rows(ActionRequest),
         "action_updates": scoped(ActionUpdate, ActionUpdate.action_id.in_(action_ids)),
         "outcomes": rows(OutcomeEvent),

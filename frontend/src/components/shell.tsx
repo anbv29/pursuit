@@ -2,7 +2,7 @@
 
 import {
   Bell, ChevronRight, ChevronsLeft, ChevronsRight, CircleDollarSign, FileText, Inbox, LayoutDashboard, LogOut,
-  MessageCircle, Moon, Plus, Search, Settings, UserCog,
+  ListTodo, MessageCircle, Moon, Plus, Search, Settings, UserCog,
 } from "lucide-react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
@@ -66,6 +66,7 @@ export function WorkspaceShell({ wsId, children }: { wsId: string; children: Rea
 
   const nav: NavItem[] = [
     { href: base, label: "Dashboard", icon: LayoutDashboard, exact: true },
+    { href: `${base}/focus`, label: "Your priorities", icon: ListTodo },
     { href: `${base}/reports`, label: "Company reports", icon: FileText },
     { href: `${base}/experiments/new`, label: "New experiment", icon: Plus },
     { href: `${base}/approvals`, label: "Approvals", icon: Inbox, count: approvals.data?.length },
@@ -73,10 +74,10 @@ export function WorkspaceShell({ wsId, children }: { wsId: string; children: Rea
     ...(ws.data?.role === "owner" ? [{ href: `${base}/first-look`, label: "Website first look", icon: FileText }] : []),
     { href: `${base}/settings`, label: "Settings", icon: Settings },
   ];
-  const isActive = (n: NavItem) => (n.exact ? path === n.href : path.startsWith(n.href));
+  const isActive = (n: NavItem) => path === n.href || (!n.exact && path.startsWith(`${n.href}/`));
   const current = nav.find(isActive);
   const contentWidth = path.endsWith("/reports/new") ? "max-w-2xl"
-    : /\/(settings|fo|first-look)$/.test(path) ? "max-w-3xl"
+    : /\/(settings|fo|first-look|focus)$/.test(path) ? "max-w-3xl"
     : /\/(reports|approvals)$/.test(path) ? "max-w-4xl"
     : /\/(experiments\/new)$/.test(path) ? "max-w-5xl" : "max-w-6xl";
 
@@ -114,7 +115,7 @@ export function WorkspaceShell({ wsId, children }: { wsId: string; children: Rea
   ) : <Skeleton className="h-9 w-full" />;
 
   const groups = [
-    { label: "Overview", items: nav.filter((n) => n.exact) },
+    { label: "Overview", items: nav.filter((n) => n.exact || n.href === `${base}/focus`) },
     { label: "Research", items: nav.filter((n) => [ `${base}/reports`, `${base}/first-look` ].includes(n.href)) },
     { label: "Take action", items: nav.filter((n) => [ `${base}/experiments/new`, `${base}/approvals`, `${base}/fo` ].includes(n.href)) },
     { label: "Workspace", items: nav.filter((n) => [ `${base}/settings` ].includes(n.href)) },
@@ -233,7 +234,7 @@ export function WorkspaceShell({ wsId, children }: { wsId: string; children: Rea
 
         <main className="workspace-content min-w-0 flex-1 px-4 pb-[calc(6rem+env(safe-area-inset-bottom))] pt-5 md:px-8 md:pb-10">
           {ws.data ? (
-            <WorkspaceCtx.Provider value={{ workspace: ws.data, base, refreshApprovals: approvals.reload }}>
+            <WorkspaceCtx.Provider key={wsId} value={{ workspace: ws.data, base, refreshApprovals: approvals.reload }}>
               <div className={cx("mx-auto w-full min-w-0", contentWidth)}>
                 <ReadingControls />
                 {children}

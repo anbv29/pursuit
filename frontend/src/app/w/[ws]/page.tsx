@@ -7,6 +7,7 @@ import { DecisionChip, StageBar } from "@/components/bits";
 import { useWorkspace } from "@/components/shell";
 import { useSession } from "@/components/session";
 import { NumberTicker } from "@/components/number-ticker";
+import { FounderFocusCard } from "@/components/founder-focus";
 import { Badge, Button, buttonStyles, Card, CardHeader, DemoBadge, Empty, Glass, PageHeader, Skeleton, Tabs, cx } from "@/components/ui";
 import { useApi } from "@/lib/hooks";
 import { ACTION_STATUS, timeAgo, USE_CASE_LABEL } from "@/lib/labels";
@@ -82,6 +83,7 @@ export default function Dashboard() {
     return (
       <div className="mx-auto mt-2 max-w-xl space-y-6">
         <PageHeader title={`Hi ${firstName}`} description="Your research and experiments will live here." />
+        <FounderFocusCard compact />
         {reportCard}
         <Glass className="p-2">
           <Empty icon={<FlaskConical className="size-5" />} title={reports.data?.length ? "No experiments yet" : "Start with a company report"}
@@ -110,6 +112,7 @@ export default function Dashboard() {
         description={`${data.experiments.length} saved experiment${data.experiments.length === 1 ? "" : "s"}${data.pending_actions.length > 0 ? ` · ${data.pending_actions.length} waiting on you` : ""}`}
         />
 
+      <FounderFocusCard compact />
       <ul className="grid grid-cols-2 gap-2 sm:grid-cols-3 sm:gap-3">
         {stats.map((s, i) => (
           <li key={s.label} className={cx("enter-rise", i === 2 && "col-span-2 sm:col-span-1")} style={stagger(i)}>

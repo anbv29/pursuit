@@ -27,6 +27,11 @@ from app.models.experiment import (  # noqa: F401
 )
 from app.models.first_look import FirstLook  # noqa: F401
 from app.models.fo_chat import FoChatTurn  # noqa: F401
+from app.models.founder_workflow import (  # noqa: F401
+    ExperimentReminder,
+    InterviewCapture,
+    InterviewHighlight,
+)
 from app.models.identity import (  # noqa: F401
     AuditEvent,
     AuthSession,

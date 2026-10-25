@@ -148,3 +148,22 @@ export interface Report {
   created_at: string; started_at: string | null; finished_at: string | null;
 }
 export type ReportListItem = Pick<Report, "id" | "company_url" | "company_name" | "status" | "progress" | "created_at">;
+// Founder workflows: interview provenance, in-app reminders, explainable priorities.
+export type HighlightCategory = "pain" | "objection" | "current_solution" | "buying_signal" | "other";
+export interface InterviewHighlight {
+  id: string; category: HighlightCategory; quote: string; start_offset: number; end_offset: number;
+  evidence_id: string | null;
+}
+export interface InterviewCaptureSummary { id: string; title: string; created_at: string }
+export interface InterviewCapture extends InterviewCaptureSummary { transcript: string; highlights: InterviewHighlight[] }
+export interface ExperimentReminder {
+  id: string; experiment_id: string; experiment_title: string; is_demo: boolean; title: string;
+  due_at: string; completed_at: string | null; overdue: boolean;
+}
+export interface FounderPriority {
+  id: string; title: string; reason: string; href: string; is_demo: boolean;
+  urgency: "overdue" | "needs_review" | "next_step";
+}
+export interface FounderFocus {
+  priorities: FounderPriority[]; reminders: ExperimentReminder[]; overdue_count: number; generated_at: string;
+}

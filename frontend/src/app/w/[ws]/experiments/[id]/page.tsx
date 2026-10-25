@@ -8,6 +8,7 @@ import { CompetitivePanel } from "@/components/experiment/competitive";
 import { ExperimentContext } from "@/components/experiment/context";
 import { DiscoveryPanel } from "@/components/experiment/discovery";
 import { EvidencePanel } from "@/components/experiment/evidence";
+import { InterviewCapturePanel } from "@/components/experiment/interview-capture";
 import { FunnelPanel } from "@/components/experiment/funnel";
 import { MessagingPanel } from "@/components/experiment/messaging";
 import { OutcomesPanel } from "@/components/experiment/outcomes";
@@ -24,6 +25,7 @@ import type { ExperimentDetail, UseCase } from "@/lib/types";
 type Tab = { id: string; label: string; render: () => ReactNode };
 
 function tabsFor(uc: UseCase): Tab[] {
+  const notes = { id: "interview-notes", label: "Interview notes", render: () => <InterviewCapturePanel /> };
   const overview = { id: "overview", label: "Overview", render: () => <Overview /> };
   const evidence = { id: "evidence", label: "Research & evidence", render: () => <EvidencePanel /> };
   const discovery = { id: "discovery", label: "Prospects & interviews", render: () => <DiscoveryPanel /> };
@@ -31,13 +33,13 @@ function tabsFor(uc: UseCase): Tab[] {
   const outcomes = { id: "outcomes", label: "Outcomes", render: () => <OutcomesPanel /> };
   switch (uc) {
     case "messaging":
-      return [overview, { id: "messaging", label: "Variants", render: () => <MessagingPanel /> }, discovery, actions, outcomes, evidence];
+      return [overview, { id: "messaging", label: "Variants", render: () => <MessagingPanel /> }, discovery, actions, outcomes, evidence, notes];
     case "competitive_research":
-      return [overview, { id: "competitive", label: "Competitors", render: () => <CompetitivePanel /> }, actions];
+      return [overview, { id: "competitive", label: "Competitors", render: () => <CompetitivePanel /> }, evidence, notes, actions];
     case "funnel_diagnosis":
-      return [overview, { id: "funnel", label: "Funnel", render: () => <FunnelPanel /> }, evidence, actions];
+      return [overview, { id: "funnel", label: "Funnel", render: () => <FunnelPanel /> }, evidence, notes, actions];
     default:
-      return [overview, evidence, discovery, actions, outcomes];
+      return [overview, evidence, notes, discovery, actions, outcomes];
   }
 }
 
@@ -76,7 +78,7 @@ function ExperimentPage() {
   };
 
   return (
-    <ExperimentContext.Provider value={{ exp, path, reload, version, touch }}>
+    <ExperimentContext.Provider key={exp.id} value={{ exp, path, reload, version, touch }}>
       <div className="mx-auto max-w-7xl space-y-5">
         <div className="flex flex-wrap items-start justify-between gap-3">
           <div>
