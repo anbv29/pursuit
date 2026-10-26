@@ -52,32 +52,20 @@ export function ReadingControls() {
     </label>
   );
   const terms = (
-    <details className="text-sm">
-      <summary className={advanced ? "w-fit cursor-pointer rounded-full border border-line bg-surface px-3 py-1.5 text-xs font-semibold text-ink" : "w-fit cursor-pointer text-[13px] font-semibold text-trail"}>
+    <details className="group text-sm sm:ml-auto">
+      <summary className="w-fit cursor-pointer rounded-full px-3 py-2 text-xs font-medium text-ink-2 hover:bg-[var(--inset)] hover:text-ink">
         Startup terms, explained
       </summary>
-      <dl className={advanced ? "mt-3 grid gap-4 sm:grid-cols-2 lg:grid-cols-3" : "mt-3 grid gap-4 pb-1 sm:grid-cols-2 lg:grid-cols-3"}>
+      <dl className="mt-3 grid gap-4 rounded-xl border border-line bg-surface p-4 sm:grid-cols-2 lg:grid-cols-3">
         {TERMS.map(([term, meaning]) => <div key={term}><dt className="font-medium">{term}</dt><dd className="mt-1 text-xs leading-relaxed text-ink-2">{meaning}</dd></div>)}
       </dl>
     </details>
   );
-  if (advanced) return (
-    <div className="reading-controls mb-5 flex flex-wrap items-center gap-2 print:hidden">
-      <span className="rounded-full border border-line bg-surface px-3 py-1.5 text-xs font-semibold text-ink">Advanced view</span>
+  return (
+    <div className="reading-controls mb-5 flex flex-wrap items-start gap-x-3 gap-y-2 border-b border-line pb-3 print:hidden">
+      <span className="sr-only">{advanced ? "Advanced view" : "Guided view"}</span>
       {select}
       {terms}
-    </div>
-  );
-  return (
-    <div className="reading-controls mb-5 rounded-[20px] border border-line bg-surface p-4 sm:p-5 print:hidden">
-      <div className="flex flex-wrap items-center justify-between gap-x-4 gap-y-2">
-        <div>
-          <p className="text-sm font-semibold text-ink">Guided view</p>
-          <p className="hidden text-xs text-ink-3 sm:block">Plain-language labels and explanations. All evidence and measurements stay available.</p>
-        </div>
-        {select}
-      </div>
-      <div className="mt-3 border-t border-line pt-3">{terms}</div>
     </div>
   );
 }

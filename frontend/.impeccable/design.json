@@ -1,0 +1,424 @@
+{
+  "schemaVersion": 2,
+  "generatedAt": "2026-10-26T04:45:45.938Z",
+  "title": "Design System: Pursuit Frontend",
+  "extensions": {
+    "colorMeta": {
+      "bg": {
+        "role": "neutral",
+        "displayName": "bg"
+      },
+      "surface-solid": {
+        "role": "neutral",
+        "displayName": "surface solid"
+      },
+      "surface-sunken": {
+        "role": "neutral",
+        "displayName": "surface sunken"
+      },
+      "ink": {
+        "role": "neutral",
+        "displayName": "ink"
+      },
+      "ink-soft": {
+        "role": "neutral",
+        "displayName": "ink soft"
+      },
+      "muted": {
+        "role": "neutral",
+        "displayName": "muted"
+      },
+      "hairline": {
+        "role": "neutral",
+        "displayName": "hairline"
+      },
+      "hairline-strong": {
+        "role": "neutral",
+        "displayName": "hairline strong"
+      },
+      "accent": {
+        "role": "primary",
+        "displayName": "accent"
+      },
+      "accent-strong": {
+        "role": "primary",
+        "displayName": "accent strong"
+      },
+      "accent-soft": {
+        "role": "primary",
+        "displayName": "accent soft"
+      },
+      "accent-ink": {
+        "role": "primary",
+        "displayName": "accent ink"
+      },
+      "primary-ink": {
+        "role": "primary",
+        "displayName": "primary ink"
+      },
+      "inset": {
+        "role": "neutral",
+        "displayName": "inset"
+      },
+      "success": {
+        "role": "semantic",
+        "displayName": "success"
+      },
+      "success-soft": {
+        "role": "semantic",
+        "displayName": "success soft"
+      },
+      "warning": {
+        "role": "semantic",
+        "displayName": "warning"
+      },
+      "warning-soft": {
+        "role": "semantic",
+        "displayName": "warning soft"
+      },
+      "danger": {
+        "role": "semantic",
+        "displayName": "danger"
+      },
+      "danger-soft": {
+        "role": "semantic",
+        "displayName": "danger soft"
+      },
+      "demo": {
+        "role": "semantic",
+        "displayName": "demo"
+      },
+      "demo-soft": {
+        "role": "semantic",
+        "displayName": "demo soft"
+      },
+      "d-continue": {
+        "role": "semantic",
+        "displayName": "d continue"
+      },
+      "d-iterate": {
+        "role": "semantic",
+        "displayName": "d iterate"
+      },
+      "d-pivot": {
+        "role": "semantic",
+        "displayName": "d pivot"
+      },
+      "d-stop": {
+        "role": "semantic",
+        "displayName": "d stop"
+      },
+      "d-inconclusive": {
+        "role": "semantic",
+        "displayName": "d inconclusive"
+      },
+      "dark-bg": {
+        "role": "neutral",
+        "displayName": "dark bg"
+      },
+      "dark-surface-solid": {
+        "role": "neutral",
+        "displayName": "dark surface solid"
+      },
+      "dark-surface-sunken": {
+        "role": "neutral",
+        "displayName": "dark surface sunken"
+      },
+      "dark-ink": {
+        "role": "neutral",
+        "displayName": "dark ink"
+      },
+      "dark-ink-soft": {
+        "role": "neutral",
+        "displayName": "dark ink soft"
+      },
+      "dark-muted": {
+        "role": "neutral",
+        "displayName": "dark muted"
+      },
+      "dark-hairline": {
+        "role": "neutral",
+        "displayName": "dark hairline"
+      },
+      "dark-hairline-strong": {
+        "role": "neutral",
+        "displayName": "dark hairline strong"
+      },
+      "dark-accent": {
+        "role": "primary",
+        "displayName": "dark accent"
+      },
+      "dark-accent-strong": {
+        "role": "primary",
+        "displayName": "dark accent strong"
+      },
+      "dark-accent-soft": {
+        "role": "primary",
+        "displayName": "dark accent soft"
+      },
+      "dark-accent-ink": {
+        "role": "primary",
+        "displayName": "dark accent ink"
+      },
+      "dark-inset": {
+        "role": "neutral",
+        "displayName": "dark inset"
+      },
+      "dark-success": {
+        "role": "semantic",
+        "displayName": "dark success"
+      },
+      "dark-success-soft": {
+        "role": "semantic",
+        "displayName": "dark success soft"
+      },
+      "dark-warning": {
+        "role": "semantic",
+        "displayName": "dark warning"
+      },
+      "dark-warning-soft": {
+        "role": "semantic",
+        "displayName": "dark warning soft"
+      },
+      "dark-danger": {
+        "role": "semantic",
+        "displayName": "dark danger"
+      },
+      "dark-danger-soft": {
+        "role": "semantic",
+        "displayName": "dark danger soft"
+      },
+      "dark-demo": {
+        "role": "semantic",
+        "displayName": "dark demo"
+      },
+      "dark-demo-soft": {
+        "role": "semantic",
+        "displayName": "dark demo soft"
+      }
+    },
+    "typographyMeta": {
+      "headline": {
+        "displayName": "headline",
+        "purpose": "Fluid workspace page headings."
+      },
+      "title": {
+        "displayName": "title",
+        "purpose": "Shared card titles."
+      },
+      "body": {
+        "displayName": "body",
+        "purpose": "Root reading text."
+      },
+      "compact": {
+        "displayName": "compact",
+        "purpose": "Dense dashboard copy."
+      },
+      "label": {
+        "displayName": "label",
+        "purpose": "Metadata and supporting labels."
+      },
+      "button": {
+        "displayName": "button",
+        "purpose": "Shared medium button text."
+      },
+      "text-xs": {
+        "displayName": "text xs",
+        "purpose": "Declared CSS size token; Tailwind utilities have an independent size scale."
+      },
+      "text-sm": {
+        "displayName": "text sm",
+        "purpose": "Declared CSS size token; Tailwind utilities have an independent size scale."
+      },
+      "text-base": {
+        "displayName": "text base",
+        "purpose": "Declared CSS size token; Tailwind utilities have an independent size scale."
+      },
+      "text-lg": {
+        "displayName": "text lg",
+        "purpose": "Declared CSS size token; Tailwind utilities have an independent size scale."
+      },
+      "text-xl": {
+        "displayName": "text xl",
+        "purpose": "Declared CSS size token; Tailwind utilities have an independent size scale."
+      },
+      "text-2xl": {
+        "displayName": "text 2xl",
+        "purpose": "Declared CSS size token; Tailwind utilities have an independent size scale."
+      }
+    },
+    "shadows": [
+      {
+        "name": "workspace-panel",
+        "value": "none",
+        "purpose": "Opaque bordered workspace surfaces."
+      },
+      {
+        "name": "card",
+        "value": "0 1px 2px rgb(0 0 0 / 3%)",
+        "purpose": "Declared utility; standard workspace panels use none."
+      },
+      {
+        "name": "pop",
+        "value": "0 18px 50px -12px var(--shadow), 0 4px 12px -6px var(--shadow)",
+        "purpose": "Declared overlay depth utility."
+      },
+      {
+        "name": "mobile-navigation",
+        "value": "0 -8px 24px rgb(0 0 0 / 5%)",
+        "purpose": "Separate bottom navigation from scrolling content."
+      }
+    ],
+    "motion": [
+      {
+        "name": "ease-out",
+        "value": "cubic-bezier(0.23, 1, 0.32, 1)",
+        "purpose": "Press, entry, and state transitions."
+      },
+      {
+        "name": "ease-in-out",
+        "value": "cubic-bezier(0.77, 0, 0.175, 1)",
+        "purpose": "Skeleton shimmer easing."
+      },
+      {
+        "name": "ease-drawer",
+        "value": "cubic-bezier(0.32, 0.72, 0, 1)",
+        "purpose": "Declared token; overlay CSS currently uses ease-out."
+      },
+      {
+        "name": "dur-press",
+        "value": "120ms",
+        "purpose": "Press helper."
+      },
+      {
+        "name": "dur-fast",
+        "value": "160ms",
+        "purpose": "Popover entry."
+      },
+      {
+        "name": "dur-base",
+        "value": "220ms",
+        "purpose": "Overlay transitions."
+      },
+      {
+        "name": "dur-slow",
+        "value": "320ms",
+        "purpose": "Theme and entry transitions."
+      },
+      {
+        "name": "button-transition",
+        "value": "150ms",
+        "purpose": "Local shared button duration."
+      },
+      {
+        "name": "reduced-motion",
+        "value": "0.01ms",
+        "purpose": "Global reduced-motion duration override; one iteration."
+      }
+    ],
+    "breakpoints": [
+      {
+        "name": "sm",
+        "value": "640px"
+      },
+      {
+        "name": "md",
+        "value": "768px"
+      },
+      {
+        "name": "lg",
+        "value": "1024px"
+      },
+      {
+        "name": "xl",
+        "value": "1280px"
+      }
+    ]
+  },
+  "components": [
+    {
+      "name": "Primary Button",
+      "kind": "button",
+      "refersTo": "button-primary",
+      "description": "Shared medium primary action; variables follow the active theme.",
+      "html": "<button class=\"ds-primary\" type=\"button\">Analyze your company</button>",
+      "css": ".ds-primary{font-family:var(--font-interface,Inter),system-ui,sans-serif;display:inline-flex;align-items:center;justify-content:center;gap:6px;white-space:nowrap;height:40px;padding:0 16px;border:1px solid transparent;border-radius:9999px;background:var(--accent-strong,#b74700);color:var(--accent-ink,#fff);font-size:14px;line-height:20px;font-weight:500;transition:background-color 150ms,filter 150ms,transform 150ms;transition-timing-function:var(--ease-out,cubic-bezier(.23,1,.32,1))}.ds-primary:hover{filter:brightness(.95)}.ds-primary:focus-visible{outline:2px solid var(--focus-ring,#b74700);outline-offset:2px;}.ds-primary:active:not(:disabled){transform:scale(.97)}.ds-primary:disabled{cursor:not-allowed;opacity:.5;box-shadow:none}@media(max-width:767px){.ds-primary{min-height:44px}}@media(prefers-reduced-motion:reduce){.ds-primary{transition-duration:.01ms}}"
+    },
+    {
+      "name": "Secondary Button",
+      "kind": "button",
+      "refersTo": "button-secondary",
+      "description": "Bordered shared secondary action.",
+      "html": "<button class=\"ds-secondary\" type=\"button\">New experiment</button>",
+      "css": ".ds-secondary{font-family:var(--font-interface,Inter),system-ui,sans-serif;height:40px;padding:0 16px;border:1px solid var(--hairline,#e8e9ec);border-radius:9999px;background:var(--surface-solid,#fff);color:var(--ink,#18191b);font-size:14px;line-height:20px;font-weight:500;transition:border-color 150ms,transform 150ms;transition-timing-function:var(--ease-out,cubic-bezier(.23,1,.32,1))}.ds-secondary:hover{border-color:var(--hairline-strong,#858991)}.ds-secondary:focus-visible{outline:2px solid var(--focus-ring,#b74700);outline-offset:2px;}.ds-secondary:active:not(:disabled){transform:scale(.97)}.ds-secondary:disabled{cursor:not-allowed;opacity:.5}@media(max-width:767px){.ds-secondary{min-height:44px}}@media(prefers-reduced-motion:reduce){.ds-secondary{transition-duration:.01ms}}"
+    },
+    {
+      "name": "Input Field",
+      "kind": "input",
+      "refersTo": "input",
+      "description": "Shared field with focus, invalid, and disabled states.",
+      "html": "<label class=\"ds-label\" for=\"ds-company\">Company website</label><input class=\"ds-input\" id=\"ds-company\" placeholder=\"https://example.com\" type=\"url\">",
+      "css": ".ds-label{font-family:var(--font-interface,Inter),system-ui,sans-serif;display:block;margin-bottom:6px;font-size:13px;font-weight:500;color:var(--ink-soft,#50535a)}.ds-input{font-family:var(--font-interface,Inter),system-ui,sans-serif;width:100%;height:40px;padding:0 12px;border:1px solid var(--hairline-strong,#858991);border-radius:12px;background:var(--surface-solid,#fff);color:var(--ink,#18191b);font-size:14px;transition:border-color 150ms,box-shadow 150ms}.ds-input::placeholder{color:var(--muted,#666970)}.ds-input:hover{border-color:var(--hairline-strong,#858991)}.ds-input:focus,.ds-input:focus-visible{outline:none;border-color:var(--accent-strong,#b74700);box-shadow:0 0 0 2px color-mix(in srgb,var(--accent,#ff6b00) 22%,transparent)}.ds-input[aria-invalid=true]{border-color:var(--danger,#be123c)}.ds-input:disabled{opacity:.6;cursor:not-allowed}@media(max-width:767px){.ds-input{font-size:16px;min-height:44px}}@media(prefers-reduced-motion:reduce){.ds-input{transition-duration:.01ms}}"
+    },
+    {
+      "name": "Workspace Card",
+      "kind": "card",
+      "refersTo": "card",
+      "description": "Flat Card with CardHeader; internal padding belongs to its children.",
+      "html": "<section class=\"ds-card\"><div class=\"ds-card-header\"><h2>Company reports</h2></div><div class=\"ds-card-body\">Your research and experiments will live here.</div></section>",
+      "css": ".ds-card{font-family:var(--font-interface,Inter),system-ui,sans-serif;border:1px solid var(--hairline,#e8e9ec);border-radius:var(--radius-lg,16px);background:var(--surface-solid,#fff);color:var(--ink,#18191b);box-shadow:none}.ds-card-header{display:flex;flex-wrap:wrap;align-items:flex-start;justify-content:space-between;gap:16px;padding:16px 20px;border-bottom:1px solid var(--hairline,#e8e9ec)}.ds-card-header h2{margin:0;font-size:15px;font-weight:600;letter-spacing:-.025em}.ds-card-body{padding:14px 20px;font-size:13px;line-height:1.55;color:var(--muted,#666970)}"
+    },
+    {
+      "name": "Active Navigation",
+      "kind": "nav",
+      "refersTo": "navigation-active",
+      "description": "Desktop current-page row with an inline SVG icon.",
+      "html": "<nav aria-label=\"Workspace\"><a class=\"ds-nav\" href=\"#dashboard\" aria-current=\"page\"><svg width=\"18\" height=\"18\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.6\" aria-hidden=\"true\"><rect x=\"3\" y=\"3\" width=\"7\" height=\"9\" rx=\"1\"/><rect x=\"14\" y=\"3\" width=\"7\" height=\"5\" rx=\"1\"/><rect x=\"14\" y=\"12\" width=\"7\" height=\"9\" rx=\"1\"/><rect x=\"3\" y=\"16\" width=\"7\" height=\"5\" rx=\"1\"/></svg>Dashboard</a></nav>",
+      "css": ".ds-nav{font-family:var(--font-interface,Inter),system-ui,sans-serif;display:flex;height:40px;align-items:center;gap:12px;padding:8px 12px;border-radius:12px;background:var(--inset,rgba(12,42,43,.07));color:var(--ink,#18191b);font-size:14px;line-height:20px;font-weight:600;text-decoration:none;transition:background-color 150ms,color 150ms,transform 120ms var(--ease-out,cubic-bezier(.23,1,.32,1))}.ds-nav:hover{background:var(--inset,rgba(12,42,43,.07));color:var(--ink,#18191b)}.ds-nav:focus-visible{outline:2px solid var(--focus-ring,#b74700);outline-offset:2px;}.ds-nav:active{transform:scale(.97)}@media(prefers-reduced-motion:reduce){.ds-nav{transition-duration:.01ms}}"
+    }
+  ],
+  "narrative": {
+    "northStar": "The Pursuit Workspace",
+    "overview": "Pursuit's finished frontend uses a neutral gray canvas, white panels, compact sans typography, quiet borders, and orange actions. The interface supports scanning research, experiments, evidence, and decisions. Dark mode retains the same hierarchy through charcoal surfaces and lighter orange accents.",
+    "keyCharacteristics": [
+      "Flat opaque panels on a neutral canvas.",
+      "Inter across headings, navigation, and body copy.",
+      "Orange actions with separate readable foreground and fill roles.",
+      "Grouped navigation and reusable shared UI across light, dark, and mobile surfaces."
+    ],
+    "rules": [
+      {
+        "name": "The Orange Roles Rule",
+        "body": "Use the existing distinction between accent highlights, strong action fills, soft backgrounds, and their paired foregrounds.",
+        "section": "colors"
+      },
+      {
+        "name": "The One Sans Rule",
+        "body": "Keep workspace headings, reading copy, and controls on the shipped Inter family; retain mono only for existing technical uses.",
+        "section": "typography"
+      },
+      {
+        "name": "The Flat Panels Rule",
+        "body": "Workspace content panels separate through opaque surface tones and one-pixel borders, with no panel shadows or glass blur.",
+        "section": "elevation"
+      },
+      {
+        "name": "The Shared Registry Rule",
+        "body": "Derive workspace navigation surfaces from the shell registry and reuse the shared UI exports; preserve route permissions, authentication, guided reading, and API behavior when extending the visual system.",
+        "section": "components"
+      }
+    ],
+    "dos": [
+      "**Do** use the existing semantic CSS variables and their theme mappings.",
+      "**Do** reuse shared UI primitives and the canonical shell navigation registry.",
+      "**Do** retain Pursuit identity, real content, explicit demo labels, keyboard behavior, and guided reading.",
+      "**Do** preserve mobile safe areas, local table scrolling, and both light and dark modes."
+    ],
+    "donts": [
+      "**Don't** apply the root marketing document's cream-and-serif identity to this redesigned workspace.",
+      "**Don't** infer an exact reference typeface from the raster; Inter is the shipped choice.",
+      "**Don't** restore decorative glass, orb, or glow treatments to flat workspace content panels.",
+      "**Don't** change backend contracts or authentication to implement a visual extension."
+    ]
+  }
+}

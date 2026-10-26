@@ -32,7 +32,7 @@ export function MobileNavigation({ tabs, menuItems, accountItems, accountName, n
         })}
         <Link href={newHref} aria-label="New experiment"
           className="flex flex-col items-center gap-1 pb-0.5 text-[11px] font-semibold text-ink">
-          <span className="press grid size-12 -translate-y-3 place-items-center rounded-full bg-accent text-bg shadow-[0_10px_24px_-8px_rgba(15,118,110,0.55)]">
+          <span className="press grid size-12 -translate-y-3 place-items-center rounded-full bg-accent text-[var(--primary-ink)]">
             <Plus size={22} aria-hidden="true" />
           </span>
         </Link>
