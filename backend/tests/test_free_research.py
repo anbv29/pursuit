@@ -119,6 +119,20 @@ def test_final_unsupported_quotes_are_downgraded_never_repaired_or_presented_as_
     assert result["snapshot"]["offering"]["quote"] == ""
 
 
+def test_preview_rejects_numbers_not_supported_by_a_genuine_quote():
+    content = sample_content()
+    quote = "The plan costs $49 per month."
+    content["snapshot"]["offering"] = {
+        "text": "The plan costs $4900 per month.",
+        "kind": "fact",
+        "quote": quote,
+    }
+    with pytest.raises(free_research.PreviewError):
+        free_research.validate(json.dumps(content), quote)
+    result = free_research.validate(json.dumps(content), quote, downgrade=True)
+    assert result["snapshot"]["offering"]["kind"] == "assumption"
+
+
 def test_minimax_uses_bounded_required_reasoning_without_paid_fallback(monkeypatch):
     settings = get_settings()
     monkeypatch.setattr(settings, "openrouter_api_key", SecretStr("test-only-free-key"))

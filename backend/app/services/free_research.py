@@ -10,6 +10,7 @@ import httpx
 from pydantic import BaseModel, ConfigDict, Field, ValidationError
 
 from app.core.config import get_settings
+from app.services.evidence_checks import numeric_support
 from app.services.provider_failures import PreviewError, ProviderFailure, classify
 
 ENDPOINT = "https://openrouter.ai/api/v1/chat/completions"
@@ -87,14 +88,18 @@ def validate(content: str, site_text: str, *, downgrade: bool = False) -> dict:
     claims += [s.rationale for s in report.segments] + [p.needs for p in report.personas]
     for claim in claims:
         quote = re.sub(r"\s+", " ", claim.quote).strip().casefold()
-        if (claim.kind == "fact" and len(quote) < 12) or (quote and quote not in source):
+        if (claim.kind == "fact" and (len(quote) < 12 or not numeric_support(claim.text, claim.quote))) or (
+            quote and quote not in source
+        ):
             if not downgrade:
                 raise PreviewError("Unverifiable source quote")
             # Do not repair or invent source text. Preserve the idea only as a hypothesis.
             claim.kind, claim.quote = "assumption", ""
     verified = []
     for insight in report.snapshot.investigation:
-        if re.sub(r"\s+", " ", insight.quote).strip().casefold() not in source:
+        if re.sub(r"\s+", " ", insight.quote).strip().casefold() not in source or not numeric_support(
+            insight.finding, insight.quote
+        ):
             if not downgrade:
                 raise PreviewError("Unverifiable insight quote")
             continue

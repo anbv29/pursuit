@@ -1,5 +1,6 @@
 "use client";
 
+import { StrategyView, ResearchData, SourceReceipt } from "@/components/report/gtm";
 import { plainCopy } from "@/lib/plain-copy";
 import { Suspense } from "react";
 import { useParams } from "next/navigation";
@@ -22,11 +23,11 @@ function SharedReport() {
     <p className="text-sm text-ink-3">Read-only snapshot · link expires {new Date(r.expires_at).toLocaleString()}</p>
     <ReadingControls />
     <SourcesProvider sources={r.sources}>
-      <Summary c={c} /><Snapshot c={c} /><Segments c={c} /><Personas c={c} /><Problems c={c} />
+      <Summary c={c} />{r.content.gtm_strategy && <Section id="gtm-strategy" title="Your GTM strategy"><StrategyView strategy={r.content.gtm_strategy} /></Section>}<ResearchData measurements={r.content.measurements} sources={r.sources} /><Snapshot c={c} /><Segments c={c} /><Personas c={c} /><Problems c={c} />
       <Competitors c={c} /><PositioningPricing c={c} /><Messaging c={c} /><Prospecting c={c} /><FunnelRisks c={c} />
       <Section id="experiments" title="Recommended tests"><ol className="list-decimal space-y-3 pl-5">{c.experiments.map((e, i) => <li key={i}><b>{e.title}</b><p className="text-sm">{e.hypothesis}</p></li>)}</ol></Section>
       <Risks c={c} />
-      <Section id="sources" title="Sources"><ul className="space-y-2 break-words">{r.sources.map((s) => <li key={s.id}><a className="text-trail underline" href={s.url} target="_blank" rel="noopener noreferrer nofollow">{s.title || s.url}</a></li>)}</ul></Section>
+      <Section id="sources" title="Sources"><ul className="space-y-2 break-words">{r.sources.map((s) => <li key={s.id}><SourceReceipt source={s} /></li>)}</ul></Section>
     </SourcesProvider>
   </main>;
 }

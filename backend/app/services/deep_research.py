@@ -13,6 +13,7 @@ from app.core.config import get_settings
 from app.core.db import utcnow
 from app.schemas.research import DecisionBrief, ResearchPlan
 from app.services import ai_usage, fetcher
+from app.services.evidence_checks import numeric_support
 from app.services.research_rigor import DEPTH_RULES, coverage
 
 
@@ -72,21 +73,16 @@ def verify_brief(brief, sources):
             e
             for e in insight.evidence
             if e.source_id in sources
+            and sources[e.source_id].get("retrieval_status") != "unavailable"
             and len(normalize(e.quote)) >= 12
             and normalize(e.quote) in normalize(sources[e.source_id].get("excerpt", ""))
+            and numeric_support(insight.finding, e.quote)
         ]
-        domains = {
-            ".".join(urlsplit(sources[e.source_id]["url"]).hostname.split(".")[-2:]) for e in insight.evidence
-        }
         if not insight.evidence:
             insight.status, insight.confidence = "hypothesis", "low"
             insight.limitations = ["No supporting quotation could be verified.", *insight.limitations][:5]
         else:
-            # Several pages from one publisher are not independent corroboration.
-            if insight.status == "hypothesis":
-                insight.confidence = "low"
-            elif len(domains) < 2 or insight.confidence == "high":
-                insight.confidence = "medium" if len(domains) >= 2 else "low"
+            insight.confidence = "low"
             insight.limitations = [
                 "Quoted public statements are not proof of customer demand or causation.",
                 *insight.limitations,
@@ -164,34 +160,63 @@ def investigate(company_url, site_text, inputs, on_progress, task=None):
             save(key, {"notes": result.notes, "sources": result.sources})
     if "evidence" not in state:
         progress("Checking source excerpts and removing duplicate evidence…")
-        sources = {}
-        if site_text and canonical_url(company_url):
-            sources[canonical_url(company_url)] = {
-                "id": "S0",
-                "url": company_url,
-                "title": "Company website",
-                "via": "pursuit_fetch",
-                "excerpt": site_text[:6000],
-                "retrieved_at": utcnow().isoformat(),
-            }
-        # Interleave tracks so the first pass cannot crowd out contradictory sources.
-        for group in zip_longest(*(state[key]["sources"] for key, _, _ in tracks)):
-            for source in group:
-                if source is None:
-                    continue
-                url = canonical_url(source["url"])
-                if url and url not in sources and len(sources) < 12:
-                    sources[url] = dict(source, url=url, id=f"S{len(sources) + 1}")
-        for source in sources.values():
-            if source["id"] == "S0":
+        sources, seen_urls, seen_hashes = [], set(), set()
+        # Prefer the snapshots used by the passes over the earlier company preview.
+        snapshots = [
+            source
+            for group in zip_longest(*(state[key]["sources"] for key, _, _ in tracks))
+            for source in group
+            if source is not None
+        ]
+        for original in sorted(snapshots, key=lambda source: "excerpt" not in source):
+            if len(sources) >= 24:
                 continue
-            progress("Checking source excerpts and removing duplicate evidence…")
-            try:
-                page = fetcher.fetch(source["url"])
-                source.update(excerpt=page.text[:6000], retrieved_at=utcnow().isoformat(), sha256=page.sha256)
-            except fetcher.FetchError:
-                source.update(excerpt="", retrieval_status="unavailable")
-        save("evidence", list(sources.values()))
+            url = canonical_url(original["url"])
+            if not url or url in seen_urls:
+                continue
+            source = dict(original, url=url)
+            seen_urls.add(url)
+            if "excerpt" not in source:
+                progress("Retrieving legacy source excerpts...")
+                try:
+                    page = fetcher.fetch(url)
+                    source.update(
+                        url=page.url,
+                        title=page.title,
+                        excerpt=page.text[:6000],
+                        retrieved_at=utcnow().isoformat(),
+                        sha256=page.sha256,
+                        retrieval_status="available" if page.text.strip() else "unavailable",
+                    )
+                except fetcher.FetchError:
+                    source.update(excerpt="", retrieval_status="unavailable")
+            final_url = canonical_url(source["url"])
+            if final_url != url and final_url in seen_urls:
+                continue
+            if final_url:
+                seen_urls.add(final_url)
+            digest = source.get("sha256")
+            if source.get("excerpt", "").strip() and digest:
+                if digest in seen_hashes:
+                    continue
+                seen_hashes.add(digest)
+            source["id"] = f"S{len(sources) + 1}"
+            sources.append(source)
+        if site_text and canonical_url(company_url) not in seen_urls and len(sources) < 24:
+            sources.insert(
+                0,
+                {
+                    "id": "S0",
+                    "url": company_url,
+                    "title": "Company website",
+                    "via": "pursuit_fetch",
+                    "source_role": "company",
+                    "excerpt": site_text[:6000],
+                    "retrieved_at": utcnow().isoformat(),
+                    "retrieval_status": "available",
+                },
+            )
+        save("evidence", sources)
     # Keep every track, especially the challenge pass, inside synthesis context limits.
     notes = "\n\n".join(f"{key.upper()}: {state[key]['notes'][:6000]}" for key, _, _ in tracks)
     notes += "\nSOURCE COVERAGE (not validation): " + json.dumps(coverage(state["evidence"]))

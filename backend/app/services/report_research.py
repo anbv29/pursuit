@@ -16,7 +16,7 @@ from dataclasses import dataclass, field
 from pydantic import BaseModel, Field, ValidationError
 
 from app.core.config import get_settings
-from app.schemas.report import PartMarket, PartPlan, PartProfile, ReportContent
+from app.schemas.report import PartGTM, PartMarket, PartPlan, PartProfile, ReportContent
 from app.services import ai_usage, free_provider
 from app.services.research_rigor import DEPTH_RULES, coverage
 
@@ -66,6 +66,8 @@ ids in source_ids); "interpretation" for your reasoning; "assumption" for untest
 - Facts also need supporting_quote: an exact 12-500 character quotation from a supplied source \
 excerpt. No matching excerpt means interpretation or assumption, even if a URL looks relevant.
 - Only use source ids from the provided source list. Do not invent ids, URLs, prices or numbers.
+- For a numeric fact, copy the relevant sentence or clause verbatim from its supporting quote.
+  Paraphrases of numeric statements are interpretations. Do not swap amounts, subjects, units or signs.
 - Be specific to this company. Prefer fewer, sharper items over generic advice.
 - Write for both first-time and experienced founders: use plain English, explain an acronym \
 on first use (for example, ideal customer profile / ICP), and give concrete next steps. Avoid \
@@ -103,7 +105,16 @@ PARTS = [
         "Write: competitors (only organizations directly supported by fetched sources; empty if none), "
         "positioning (gaps, a recommended "
         "positioning statement, differentiators), pricing (market benchmarks, pricing hypotheses, "
-        "willingness-to-pay questions).",
+        "willingness-to-pay questions). Competitor pricing must have pricing_evidence as a Claim with "
+        "an exact quote; absent quotes mean unknown pricing. Also write measurements: up to twelve "
+        "concrete numbers actually quoted in supplied sources, including price, usage limits, dated "
+        "market statistics or reported customer outcomes where available. Each needs the literal value, "
+        "unit, precise scope, stated period or 'Not stated', source_id, exact quote and caveat. "
+        "Copy scope and period literally from the quote. Unit words must occur in the quote; standard "
+        "currency codes may replace symbols. Do not convert units, extrapolate periods or add subjects. "
+        "Use a narrow quote containing only this measurement and its stated period, not other amounts. "
+        "A vendor case study is a vendor-reported outcome, not independent proof. Never fill a quota "
+        "with guesses; an empty list is correct if no numbers can be verified.",
     ),
     (
         PartPlan,
@@ -206,6 +217,7 @@ def _synthesize_part_response(client, model: str, context: str, part_model, inst
             }
         ],
         output_format=part_model,
+        validation_context={"synthesis": True},
         output_config={"effort": "medium"},
     ) as stream:
         msg = stream.get_final_message()
@@ -217,6 +229,31 @@ def _synthesize_part_response(client, model: str, context: str, part_model, inst
     if parsed is None:
         raise ResearchError("The model returned a report section we couldn't read. Please try again.")
     return parsed
+
+
+def _strategy_report(report):
+    fields = (
+        "snapshot",
+        "segments",
+        "positioning",
+        "pricing",
+        "prospecting",
+        "experiments",
+        "risks_and_unknowns",
+    )
+
+    def compact(value, limit):
+        if isinstance(value, dict):
+            return {key: compact(item, limit) for key, item in value.items()}
+        if isinstance(value, list):
+            return [compact(item, limit) for item in value[:3]]
+        return value[:limit] if isinstance(value, str) else value
+
+    for limit in (500, 250, 100, 40):
+        selected = compact({key: report.get(key) for key in fields}, limit)
+        if len(json.dumps(selected, ensure_ascii=False).encode()) <= 16000:
+            return selected
+    return {"snapshot": compact(report["snapshot"], 40), "context_truncated": True}
 
 
 def synthesize(
@@ -287,4 +324,45 @@ def synthesize(
         merged.update({k: v for k, v in generated.items() if not sections or k in sections})
     if found.insights:
         merged["decision_brief"] = found.insights
+    if not sections or "gtm_strategy" in sections:
+        from app.services.report_validate import validate
+
+        checked, _ = validate(
+            ReportContent.model_validate(merged),
+            found.sources,
+            gtm_constraints=inputs.get("gtm_constraints"),
+        )
+        strategy_context = json.dumps(
+            dict(json.loads(context), validated_report=_strategy_report(checked)),
+            ensure_ascii=False,
+            sort_keys=True,
+        )
+        key = hashlib.sha256(("gtm-v2" + strategy_context).encode()).hexdigest()
+        strategy_cache = state.get("gtm", {})
+        if strategy_cache.get("fingerprint") != key:
+            result = _synthesize_part(
+                client,
+                ai_usage.model(s.research_model),
+                strategy_context,
+                PartGTM,
+                "Build a personalized go-to-market strategy from this validated report and founder "
+                "context. Choose a narrow first buyer, product-specific positioning, buying process, "
+                "1-4 ranked channels and a sequenced launch plan within gtm_constraints.horizon_days. "
+                "Tie each channel to the actual product, region, stage, available assets and channel "
+                "constraints. Total monthly channel budgets must not exceed monthly_budget in the "
+                "supplied currency; total weekly hours are team-wide capacity, not per-person capacity. "
+                "Zero means zero. Null means unknown; state the assumption instead of inventing resources. "
+                "Use start_day and end_day within the horizon. Include a concrete first action, proposed "
+                "success signal and stop rule for each channel. Explain what not to do yet. Treat ALL "
+                "allocations, targets, buyer choices and expected results as proposed hypotheses, never "
+                "observed results or market benchmarks. Any factual rationale needs the exact supporting "
+                "quote. Quote presence does not prove causality or demand. Identify missing information "
+                "in assumptions and keep resourcing_note explicit. Do not promise revenue or ROI.",
+            )
+            strategy_cache = {"fingerprint": key, "content": result.model_dump()}
+            state["gtm"] = strategy_cache
+            persist(dict(state))
+        strategy = PartGTM.model_validate(strategy_cache["content"]).gtm_strategy
+        if strategy is not None:
+            merged["gtm_strategy"] = strategy.model_dump()
     return ReportContent.model_validate(merged)

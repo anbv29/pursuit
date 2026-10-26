@@ -1,5 +1,6 @@
 "use client";
 
+import { GTMSection, ResearchData, SourceReceipt } from "@/components/report/gtm";
 import { FounderRealitySummary } from "@/components/founder-reality";
 import { plainCopy } from "@/lib/plain-copy";
 
@@ -27,7 +28,7 @@ import { USE_CASE_LABEL } from "@/lib/labels";
 import type { Experiment, Report, ReportContent } from "@/lib/types";
 
 const TOC = [
-  ["summary", "Summary"], ["snapshot", "Company"], ["segments", "Segments"], ["personas", "Personas"],
+  ["summary", "Summary"], ["gtm-strategy", "GTM strategy"], ["research-data", "Research data"], ["snapshot", "Company"], ["segments", "Segments"], ["personas", "Personas"],
   ["problems", "Problems"], ["competitors", "Competitors"], ["positioning", "Positioning"], ["pricing", "Pricing"],
   ["messaging", "Messaging"], ["prospecting", "Prospecting"], ["funnel", "Funnel"], ["experiments", "Experiments"],
   ["risks", "Risks"], ["sources", "Sources"],
@@ -48,14 +49,6 @@ function useActiveSection(ids: string[], readyKey: string) {
     return () => obs.disconnect();
   }, [ids, readyKey]);
   return active;
-}
-
-function domain(url: string) {
-  try {
-    return new URL(url).hostname.replace(/^www\./, "");
-  } catch {
-    return "";
-  }
 }
 
 const TOC_IDS = TOC.map(([k]) => k);
@@ -235,11 +228,13 @@ export default function ReportPage() {
             </>}
             action={<Button variant="secondary" onClick={() => window.print()} className="print:hidden"><Printer className="size-4" aria-hidden /> Print or save PDF</Button>} />
           <Notice tone="trail">
-            AI research from public web sources. Claims are labelled as <b>sourced facts</b>, interpretations or assumptions. Click a source to verify it.
+            AI research from accessible public pages and supplied URLs. No general web search is available. Public statements are not independently verified. Claims are labelled as <b>sourced facts</b>, interpretations or assumptions. Click a source to verify it.
             {v && v.downgraded_facts + v.dropped_source_refs > 0 && ` Pursuit removed ${v.dropped_source_refs} unverifiable citation(s) and downgraded ${v.downgraded_facts} unsourced "fact(s)".`}
           </Notice>
           <FounderRealitySummary value={r.inputs.founder_reality ?? {}} />
           <Summary c={c} />
+          <GTMSection report={r} editor={workspace.role === "owner" ? { path: reportPath, refresh: reload } : undefined} />
+          <ResearchData measurements={r.content.measurements} sources={r.sources} />
           {workspace.role === "owner" && <ReportSharing path={reportPath} />}
           <ReportPlan path={reportPath} />
           <details className="surface group print:hidden rounded-[var(--radius-lg)] p-4 sm:p-5">
@@ -265,13 +260,7 @@ export default function ReportPage() {
           <Section id="sources" title={`Sources (${r.sources.length})`} kicker="Everything retrieved during research">
             <ol className="grid gap-1.5 text-[13px] md:grid-cols-2">
               {r.sources.map((s) => (
-                <li key={s.id} className="flex min-w-0 gap-2">
-                  <span className="w-8 shrink-0 text-ink-3">{s.id}</span>
-                  <a href={s.url} target="_blank" rel="noopener noreferrer nofollow" className="min-w-0 truncate text-ink-2 hover:text-trail" title={s.url}>
-                    {s.title || s.url}
-                    {s.title && domain(s.url) && <span className="ml-1.5 font-mono text-[11px] text-ink-3">{domain(s.url)}</span>}
-                  </a>
-                </li>
+                <li key={s.id} className="min-w-0 rounded-lg border border-line p-3"><SourceReceipt source={s} /></li>
               ))}
             </ol>
           </Section>

@@ -9,10 +9,11 @@ import uuid
 from datetime import datetime
 from typing import Literal
 
-from pydantic import BaseModel, Field, HttpUrl, field_validator
+from pydantic import BaseModel, Field, HttpUrl, ValidationError, ValidationInfo, field_validator
 
 from app.models.enums import UseCase
 from app.schemas.founder import FounderReality
+from app.schemas.gtm import GTMConstraints, Measurement
 from app.schemas.research import StrategicInsight
 
 Kind = Literal["fact", "interpretation", "assumption"]
@@ -31,6 +32,8 @@ class ReportIn(BaseModel):
     geography: str = Field(default="", max_length=200)
     goal: str = Field(default="", max_length=1000)
     founder_reality: FounderReality = Field(default_factory=FounderReality)
+    gtm_constraints: GTMConstraints = Field(default_factory=GTMConstraints)
+    research_urls: list[HttpUrl] = Field(default_factory=list, max_length=6)
 
     @field_validator("company_url")
     @classmethod
@@ -47,6 +50,37 @@ class Claim(BaseModel):
     confidence: Confidence
     source_ids: list[str]
     supporting_quote: str = ""
+
+
+class GTMChannel(BaseModel):
+    name: str = Field(max_length=160)
+    audience: str = Field(max_length=600)
+    rationale: Claim
+    first_action: str = Field(max_length=1000)
+    weekly_hours: float = Field(ge=0, le=168, allow_inf_nan=False)
+    monthly_budget: float = Field(ge=0, le=1_000_000_000, allow_inf_nan=False)
+    success_signal: str = Field(max_length=500)
+    stop_rule: str = Field(max_length=500)
+
+
+class GTMPhase(BaseModel):
+    start_day: int = Field(ge=1, le=90)
+    end_day: int = Field(ge=1, le=90)
+    action: str = Field(max_length=1000)
+    deliverable: str = Field(max_length=600)
+    decision_gate: str = Field(max_length=600)
+
+
+class GTMStrategy(BaseModel):
+    objective: str = Field(max_length=1000)
+    first_buyer: Claim
+    positioning: Claim
+    buying_process: list[str] = Field(max_length=6)
+    channels: list[GTMChannel] = Field(min_length=1, max_length=4)
+    launch_plan: list[GTMPhase] = Field(min_length=1, max_length=6)
+    not_now: list[str] = Field(max_length=6)
+    assumptions: list[str] = Field(max_length=8)
+    resourcing_note: str = Field(max_length=1500)
 
 
 class Snapshot(BaseModel):
@@ -93,6 +127,7 @@ class Competitor(BaseModel):
     strengths: list[str]
     weaknesses: list[str]
     source_ids: list[str]
+    pricing_evidence: Claim | None = None
 
 
 class Positioning(BaseModel):
@@ -141,6 +176,8 @@ class ExperimentIdea(BaseModel):
 
 
 class ReportContent(BaseModel):
+    gtm_strategy: GTMStrategy | None = None
+    measurements: list[Measurement] = Field(default_factory=list, max_length=12)
     decision_brief: list[StrategicInsight] = Field(default_factory=list)
     executive_summary: list[str]
     snapshot: Snapshot
@@ -164,6 +201,10 @@ class SourceOut(BaseModel):
     title: str
     via: str
     retrieved_at: str | None = None
+    source_role: str | None = None
+    retrieval_status: str | None = None
+    excerpt: str = ""
+    sha256: str | None = None
 
 
 class ReportOut(BaseModel):
@@ -204,6 +245,36 @@ class PartMarket(BaseModel):
     competitors: list[Competitor]
     positioning: Positioning
     pricing: Pricing
+    measurements: list[Measurement] = Field(default_factory=list, max_length=12)
+
+    @field_validator("measurements", mode="before")
+    @classmethod
+    def valid_measurements(cls, value, info: ValidationInfo):
+        if not (info.context or {}).get("synthesis") or not isinstance(value, list):
+            return value
+        valid = []
+        for item in value:
+            try:
+                valid.append(Measurement.model_validate(item))
+            except ValidationError:
+                continue
+            if len(valid) == 12:
+                break
+        return valid
+
+
+class PartGTM(BaseModel):
+    gtm_strategy: GTMStrategy | None = None
+
+    @field_validator("gtm_strategy", mode="before")
+    @classmethod
+    def valid_strategy(cls, value, info: ValidationInfo):
+        if not (info.context or {}).get("synthesis") or value is None:
+            return value
+        try:
+            return GTMStrategy.model_validate(value)
+        except ValidationError:
+            return None
 
 
 class PartPlan(BaseModel):

@@ -116,8 +116,22 @@ export interface TimelineItem { id: string; action: string; actor_name: string |
 // ---- company reports ----------------------------------------------------------
 export type ClaimKind = "fact" | "interpretation" | "assumption";
 export interface Claim { text: string; kind: ClaimKind; confidence: "high" | "medium" | "low"; source_ids: string[]; unsourced?: boolean; supporting_quote?: string }
-export interface ReportSource { id: string; url: string; title: string; via: string; retrieved_at?: string | null }
+export interface ReportSource { id: string; url: string; title: string; via: string; retrieved_at?: string | null; source_role?: string | null; retrieval_status?: string | null; excerpt?: string; sha256?: string | null }
+export interface GTMConstraints {
+ monthly_budget: number | null; currency: string; weekly_hours: number | null; team_size: number | null;
+ horizon_days: 30 | 60 | 90; available_assets: string; channel_constraints: string;
+}
+export interface GTMStrategy {
+ objective: string; first_buyer: Claim; positioning: Claim; buying_process: string[];
+ channels: { name: string; audience: string; rationale: Claim; first_action: string; weekly_hours: number; monthly_budget: number; success_signal: string; stop_rule: string }[];
+ launch_plan: { start_day: number; end_day: number; action: string; deliverable: string; decision_gate: string }[];
+ not_now: string[]; assumptions: string[]; resourcing_note: string;
+ budget_currency?: string; resource_adjustments?: string[]; constraints?: GTMConstraints;
+}
+export interface Measurement { label: string; value: string; unit: string; scope: string; period: string; source_id: string; quote: string; caveat: string }
 export interface ReportContent {
+ gtm_strategy?: GTMStrategy | null;
+ measurements?: Measurement[];
   decision_brief?: StrategicInsight[];
   executive_summary: string[];
   snapshot: { name: string; one_liner: string; offering: string; business_model: string; stage_assessment: string; observed_pricing: Claim[]; key_facts: Claim[] };
@@ -142,7 +156,7 @@ export interface StrategicInsight {
   confidence: "low" | "medium" | "high"; status: "interpretation" | "hypothesis"; limitations: string[];
 }
 export interface Report {
-  id: string; company_url: string; company_name: string; inputs: { founder_reality?: Partial<Record<"customers" | "buying_decision" | "pricing" | "objections" | "recent_result", string>>; [key: string]: unknown };
+  id: string; company_url: string; company_name: string; inputs: { gtm_constraints?: GTMConstraints; research_urls?: string[]; founder_reality?: Partial<Record<"customers" | "buying_decision" | "pricing" | "objections" | "recent_result", string>>; [key: string]: unknown };
   status: "QUEUED" | "RUNNING" | "SUCCEEDED" | "FAILED" | "CANCELLED"; progress: string; content: ReportContent | null;
   sources: ReportSource[]; model: string | null; error: string | null;
   created_at: string; started_at: string | null; finished_at: string | null;

@@ -68,6 +68,7 @@ export function WorkspaceShell({ wsId, children }: { wsId: string; children: Rea
     { href: base, label: "Dashboard", icon: LayoutDashboard, exact: true },
     { href: `${base}/focus`, label: "Your priorities", icon: ListTodo },
     { href: `${base}/reports`, label: "Company reports", icon: FileText },
+    { href: `${base}/gtm`, label: "GTM strategy", icon: FileText },
     { href: `${base}/experiments/new`, label: "New experiment", icon: Plus },
     { href: `${base}/approvals`, label: "Approvals", icon: Inbox, count: approvals.data?.length },
     { href: `${base}/fo`, label: "Fo Assistant", icon: MessageCircle },
@@ -116,7 +117,7 @@ export function WorkspaceShell({ wsId, children }: { wsId: string; children: Rea
 
   const groups = [
     { label: "Overview", items: nav.filter((n) => n.exact || n.href === `${base}/focus`) },
-    { label: "Research", items: nav.filter((n) => [ `${base}/reports`, `${base}/first-look` ].includes(n.href)) },
+    { label: "Research", items: nav.filter((n) => [ `${base}/reports`, `${base}/gtm`, `${base}/first-look` ].includes(n.href)) },
     { label: "Take action", items: nav.filter((n) => [ `${base}/experiments/new`, `${base}/approvals`, `${base}/fo` ].includes(n.href)) },
     { label: "Workspace", items: nav.filter((n) => [ `${base}/settings` ].includes(n.href)) },
   ];

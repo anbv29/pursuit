@@ -22,6 +22,7 @@ from app.services import (
     report_research,
     report_validate,
 )
+from app.services.evidence_checks import numeric_support, quote_matches
 from app.services.report_worker import LEASE, eligible, heartbeat
 
 logger = logging.getLogger("pursuit.reports")
@@ -175,7 +176,11 @@ def run(report_id: uuid.UUID) -> None:
                     inputs,
                     on_progress=lambda p: _set(db, report_id, owner, progress=p),
                 )
-            if site.get("source") and not any(s["id"] == "S0" for s in found.sources):
+            from app.services.deep_research import canonical_url
+
+            if site.get("source") and not any(
+                canonical_url(s["url"]) == canonical_url(site["source"]["url"]) for s in found.sources
+            ):
                 found.sources.insert(0, site["source"])
             found.sources.extend(checkpoint.get("base_sources", []))
             checkpoint["research"] = {
@@ -198,7 +203,9 @@ def run(report_id: uuid.UUID) -> None:
                 )
             else:
                 content = report_research.synthesize(report.company_url, site_text, inputs, found)
-        data, stats = report_validate.validate(content, found.sources)
+        data, stats = report_validate.validate(
+            content, found.sources, gtm_constraints=inputs.get("gtm_constraints")
+        )
         # A cancelled or reclaimed job must never overwrite its replacement.
         db.refresh(report)
         if report.status != "RUNNING" or report.lease_owner != owner:
@@ -422,7 +429,8 @@ def to_experiment(db: Session, ws: Workspace, user: User, report: Report, index:
             if added >= 15 or not cl.get("source_ids"):
                 continue
             src_meta = by_id.get(cl["source_ids"][0])
-            if not src_meta:
+            quote = cl.get("supporting_quote", "")
+            if not src_meta or not quote_matches(quote, src_meta) or not numeric_support(cl["text"], quote):
                 continue
             src = Source(
                 workspace_id=ws.id,
@@ -430,7 +438,8 @@ def to_experiment(db: Session, ws: Workspace, user: User, report: Report, index:
                 url=src_meta["url"][:2048],
                 title=src_meta.get("title", "")[:300],
                 origin=DataOrigin.AI,
-                excerpt=f"Cited in Pursuit report for {report.company_name or report.company_url}",
+                excerpt=quote,
+                content_sha256=src_meta.get("sha256"),
             )
             db.add(src)
             db.flush()

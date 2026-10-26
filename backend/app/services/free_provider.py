@@ -56,7 +56,17 @@ class Client:
     def __init__(self, **_):
         self.messages = self
 
-    def parse(self, *, system, messages, output_format=None, max_tokens=6000, tools=None, **_):
+    def parse(
+        self,
+        *,
+        system,
+        messages,
+        output_format=None,
+        max_tokens=6000,
+        tools=None,
+        validation_context=None,
+        **_,
+    ):
         from app.services.free_research import PreviewError, _request
 
         settings = get_settings()
@@ -89,7 +99,11 @@ class Client:
         payload["response_format"] = response_format(output_format, settings.free_research_model)
         try:
             text = _request(payload, settings)
-            parsed = output_format.model_validate(decode_object(text)) if output_format else None
+            parsed = (
+                output_format.model_validate(decode_object(text), context=validation_context)
+                if output_format
+                else None
+            )
         except PreviewError as exc:
             category = getattr(exc, "category", "")
             if getattr(exc, "retryable", False):
