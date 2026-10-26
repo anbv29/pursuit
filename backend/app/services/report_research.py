@@ -217,6 +217,7 @@ def _synthesize_part_response(client, model: str, context: str, part_model, inst
             }
         ],
         output_format=part_model,
+        validation_context={"synthesis": True},
         output_config={"effort": "medium"},
     ) as stream:
         msg = stream.get_final_message()
@@ -361,5 +362,7 @@ def synthesize(
             strategy_cache = {"fingerprint": key, "content": result.model_dump()}
             state["gtm"] = strategy_cache
             persist(dict(state))
-        merged["gtm_strategy"] = PartGTM.model_validate(strategy_cache["content"]).gtm_strategy.model_dump()
+        strategy = PartGTM.model_validate(strategy_cache["content"]).gtm_strategy
+        if strategy is not None:
+            merged["gtm_strategy"] = strategy.model_dump()
     return ReportContent.model_validate(merged)

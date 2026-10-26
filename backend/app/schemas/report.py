@@ -9,7 +9,7 @@ import uuid
 from datetime import datetime
 from typing import Literal
 
-from pydantic import BaseModel, Field, HttpUrl, field_validator
+from pydantic import BaseModel, Field, HttpUrl, ValidationError, ValidationInfo, field_validator
 
 from app.models.enums import UseCase
 from app.schemas.founder import FounderReality
@@ -247,9 +247,34 @@ class PartMarket(BaseModel):
     pricing: Pricing
     measurements: list[Measurement] = Field(default_factory=list, max_length=12)
 
+    @field_validator("measurements", mode="before")
+    @classmethod
+    def valid_measurements(cls, value, info: ValidationInfo):
+        if not (info.context or {}).get("synthesis") or not isinstance(value, list):
+            return value
+        valid = []
+        for item in value:
+            try:
+                valid.append(Measurement.model_validate(item))
+            except ValidationError:
+                continue
+            if len(valid) == 12:
+                break
+        return valid
+
 
 class PartGTM(BaseModel):
-    gtm_strategy: GTMStrategy
+    gtm_strategy: GTMStrategy | None = None
+
+    @field_validator("gtm_strategy", mode="before")
+    @classmethod
+    def valid_strategy(cls, value, info: ValidationInfo):
+        if not (info.context or {}).get("synthesis") or value is None:
+            return value
+        try:
+            return GTMStrategy.model_validate(value)
+        except ValidationError:
+            return None
 
 
 class PartPlan(BaseModel):
