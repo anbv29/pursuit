@@ -2,7 +2,6 @@
 
 import { AlertTriangle, CheckCircle2, Info, Sparkles } from "lucide-react";
 import type { HTMLAttributes, ReactNode } from "react";
-import { useEffect, useRef } from "react";
 import { cx } from "./styles";
 
 /** Calm, readable surface for content. No backdrop blur (cheap, legible over anything). */
@@ -22,45 +21,10 @@ export function CardHeader({ title, description, action }: { title: ReactNode; d
   );
 }
 
-/**
- * Liquid-glass panel for chrome and focal surfaces (nav, hero, dialogs, empty states).
- * The specular highlight follows the pointer via a transform on one small layer,
- * throttled with requestAnimationFrame and ignored for touch.
- */
 export function Glass({ className, children, dense, as: As = "div", ...rest }: HTMLAttributes<HTMLElement> & {
   dense?: boolean; as?: "div" | "section" | "aside" | "header" | "nav" | "article";
 }) {
-  const ref = useRef<HTMLElement>(null);
-  const sheen = useRef<HTMLSpanElement>(null);
-  useEffect(() => {
-    const el = ref.current;
-    const dot = sheen.current;
-    if (!el || !dot) return;
-    let raf = 0;
-    let x = 0;
-    let y = 0;
-    const onMove = (e: PointerEvent) => {
-      if (e.pointerType === "touch") return;
-      const r = el.getBoundingClientRect();
-      x = e.clientX - r.left;
-      y = e.clientY - r.top;
-      if (!raf) raf = requestAnimationFrame(() => {
-        raf = 0;
-        dot.style.transform = `translate3d(${x}px, ${y}px, 0)`;
-      });
-    };
-    el.addEventListener("pointermove", onMove);
-    return () => {
-      el.removeEventListener("pointermove", onMove);
-      cancelAnimationFrame(raf);
-    };
-  }, []);
-  return (
-    <As ref={ref as never} className={cx("glass", dense && "glass-dense", className)} {...rest}>
-      <span className="glass-sheen" aria-hidden><span ref={sheen} /></span>
-      {children}
-    </As>
-  );
+  return <As className={cx("glass", dense && "glass-dense", className)} {...rest}>{children}</As>;
 }
 
 export function Empty({ icon, title, body, action }: { icon?: ReactNode; title: string; body: string; action?: ReactNode }) {
@@ -102,7 +66,7 @@ export function PageHeader({ title, description, action, eyebrow }: {
     <div className="flex flex-wrap items-start justify-between gap-4">
       <div className="min-w-0 flex-1 basis-48">
         {eyebrow && <p className="mb-1 text-[13px] font-medium text-trail">{eyebrow}</p>}
-        <h1 className="font-display text-[28px] font-bold leading-tight tracking-tight text-ink sm:text-[32px]">{title}</h1>
+        <h1 className="font-display text-[24px] font-semibold leading-tight tracking-tight text-ink sm:text-[28px]">{title}</h1>
         {description && <p className="mt-1.5 max-w-2xl text-[14.5px] text-ink-3">{description}</p>}
       </div>
       {action && <div className="flex max-w-full flex-wrap items-center gap-2">{action}</div>}

@@ -105,6 +105,16 @@ for (const vp of [{ name: "desktop", width: 1280, height: 860 }, { name: "tablet
 
     await page.goto(`/w/${WS}`);
     await expect(page.getByRole("heading", { name: "Hi Dana" })).toBeVisible();
+    if (vp.name === "phone") {
+      const experiments = page.getByRole("list", { name: "Saved experiments", exact: true });
+      await expect(experiments.getByText("Improve and retry", { exact: true })).toBeVisible();
+      await expect(experiments.getByText("Keep going", { exact: true })).toBeVisible();
+    } else {
+      await page.getByRole("button", { name: "Collapse sidebar", exact: true }).click();
+      const sidebar = page.getByRole("navigation", { name: "Primary", exact: true });
+      await expect(sidebar.getByRole("link", { name: "GTM strategy", exact: true })).toBeVisible();
+      await page.getByRole("button", { name: "Expand sidebar", exact: true }).click();
+    }
     await check(page, `${vp.name}-dashboard`, errors);
 
     await page.goto(`/w/${WS}/reports`);

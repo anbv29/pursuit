@@ -29,15 +29,15 @@ export function Tabs({ tabs, value, onChange, label, className, idPrefix, panelI
   };
   return (
     <div role="tablist" aria-label={label}
-      className={cx("flex min-w-0 max-w-full gap-1 overflow-x-auto rounded-2xl bg-[var(--inset)] p-1 [scrollbar-width:none]", className)}>
+      className={cx("flex min-w-0 max-w-full gap-1 overflow-x-auto rounded-full border border-line bg-sunken p-1 [scrollbar-width:none]", className)}>
       {tabs.map((t, i) => {
         const active = t.id === value;
         return (
           <button key={t.id} ref={(el) => { refs.current[i] = el; }} role="tab" id={`${base}-${t.id}`} type="button"
             aria-selected={active} aria-controls={panelId} tabIndex={active ? 0 : -1}
             onClick={() => onChange(t.id)} onKeyDown={(e) => onKey(e, i)}
-            className={cx("press whitespace-nowrap rounded-xl px-3.5 py-2 text-sm transition-[background-color,color,box-shadow] duration-200",
-              active ? "bg-surface font-semibold text-ink shadow-[0_2px_10px_-4px_var(--shadow)]" : "text-ink-3 hover:text-ink")}>
+            className={cx("press whitespace-nowrap rounded-full px-3.5 py-2 text-sm transition-[background-color,color,box-shadow] duration-200",
+              active ? "bg-surface font-semibold text-ink ring-1 ring-line" : "text-ink-3 hover:text-ink")}>
             {t.label}
           </button>
         );
@@ -60,7 +60,7 @@ export const Table = ({ children, className }: { children: ReactNode; className?
   <table className={cx("w-full border-collapse text-sm", className)}>{children}</table>
 );
 export const Th = ({ className, ...p }: ThHTMLAttributes<HTMLTableCellElement>) => (
-  <th scope="col" {...p} className={cx("sticky top-0 z-10 border-b border-line bg-surface px-4 py-2.5 text-left text-xs font-semibold text-ink-3", className)} />
+  <th scope="col" {...p} className={cx("sticky top-0 z-10 border-b border-line bg-sunken px-4 py-3 text-left text-xs font-medium text-ink-3", className)} />
 );
 export const Td = ({ className, ...p }: TdHTMLAttributes<HTMLTableCellElement>) => (
   <td {...p} className={cx("border-b border-line px-4 py-3 align-top text-ink-2", className)} />

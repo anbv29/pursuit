@@ -2,15 +2,15 @@
 
 import { AlertTriangle, FileText, FlaskConical, Inbox, Plus, RotateCw } from "lucide-react";
 import Link from "next/link";
-import { useEffect, useState, type CSSProperties } from "react";
-import { DecisionChip, StageBar } from "@/components/bits";
+import { useEffect, useState } from "react";
+import { DecisionChip } from "@/components/bits";
 import { useWorkspace } from "@/components/shell";
 import { useSession } from "@/components/session";
 import { NumberTicker } from "@/components/number-ticker";
 import { FounderFocusCard } from "@/components/founder-focus";
-import { Badge, Button, buttonStyles, Card, CardHeader, DemoBadge, Empty, Glass, PageHeader, Skeleton, Tabs, cx } from "@/components/ui";
+import { Badge, Button, buttonStyles, Card, CardHeader, DemoBadge, Empty, Glass, PageHeader, Skeleton, Tabs } from "@/components/ui";
 import { useApi } from "@/lib/hooks";
-import { ACTION_STATUS, timeAgo, USE_CASE_LABEL } from "@/lib/labels";
+import { ACTION_STATUS, STAGE_LABEL, timeAgo, USE_CASE_LABEL } from "@/lib/labels";
 import type { ActionStatus, Decision, ReportListItem, Stage, UseCase } from "@/lib/types";
 
 type Dash = {
@@ -21,7 +21,6 @@ type Dash = {
 };
 
 type Filter = "all" | "open" | "decided";
-const stagger = (i: number) => ({ "--i": Math.min(i, 8) }) as CSSProperties;
 
 export default function Dashboard() {
   const { workspace, base } = useWorkspace();
@@ -43,7 +42,7 @@ export default function Dashboard() {
   }
   if (loading || !data) {
     return (
-      <div className="mx-auto max-w-6xl space-y-6" aria-busy aria-label="Loading dashboard">
+      <div className="mx-auto max-w-7xl space-y-5 text-[13px]" aria-busy aria-label="Loading dashboard">
         <Skeleton className="h-10 w-72 max-w-full" />
         <div className="grid gap-3 sm:grid-cols-3">{[0, 1, 2].map((i) => <Skeleton key={i} className="h-[76px]" />)}</div>
         <div className="grid gap-3 md:grid-cols-2">{[0, 1, 2, 3].map((i) => <Skeleton key={i} className="h-36" />)}</div>
@@ -52,13 +51,13 @@ export default function Dashboard() {
   }
 
   const newBtn = (
-    <Link href={`${base}/experiments/new`} className={buttonStyles("secondary")}><Plus className="size-4" aria-hidden /> New experiment</Link>
+    <Link href={`${base}/experiments/new`} className={buttonStyles("secondary") + " rounded-full"}><Plus className="size-4" aria-hidden /> New experiment</Link>
   );
   const analyzeBtn = (
-    <Link href={`${base}/reports/new`} className={buttonStyles("primary")}><FileText className="size-4" aria-hidden /> Analyze your company</Link>
+    <Link href={`${base}/reports/new`} className={buttonStyles("primary") + " rounded-full"}><FileText className="size-4" aria-hidden /> Analyze your company</Link>
   );
   const reportCard = reports.data && reports.data.length > 0 && (
-    <Card>
+    <Card className="border border-line bg-surface shadow-none">
       <CardHeader title="Company reports" action={<Link href={`${base}/reports`} className="text-[13px] font-semibold text-trail hover:underline">See all</Link>} />
       <ul className="divide-y divide-line">
         {reports.data.slice(0, 3).map((r) => (
@@ -100,109 +99,93 @@ export default function Dashboard() {
     { label: "Waiting on you", value: data.pending_actions.length, icon: Inbox },
     { label: "Company reports", value: reports.data?.length ?? 0, icon: FileText },
   ];
-  const workflows = (Object.keys(USE_CASE_LABEL) as UseCase[]).map((uc) => ({ id: uc, label: USE_CASE_LABEL[uc] }));
-  const verdictText: Record<Decision, string> = {
-    CONTINUE: "text-d-continue", ITERATE: "text-d-iterate", PIVOT: "text-d-pivot",
-    STOP: "text-d-stop", INCONCLUSIVE: "text-d-inconclusive",
-  };
+  const workflows = Object.entries(USE_CASE_LABEL).map(([id, label]) => ({ id, label }));
 
   return (
-    <div className="mx-auto max-w-6xl space-y-6">
+    <div className="mx-auto max-w-7xl space-y-5 text-[13px]">
       <PageHeader title={`Hi ${firstName}`}
         description={`${data.experiments.length} saved experiment${data.experiments.length === 1 ? "" : "s"}${data.pending_actions.length > 0 ? ` · ${data.pending_actions.length} waiting on you` : ""}`}
-        />
+        action={<div className="flex flex-wrap gap-2">{newBtn}{analyzeBtn}</div>} />
 
-      <FounderFocusCard compact />
-      <ul className="grid grid-cols-2 gap-2 sm:grid-cols-3 sm:gap-3">
-        {stats.map((s, i) => (
-          <li key={s.label} className={cx("enter-rise", i === 2 && "col-span-2 sm:col-span-1")} style={stagger(i)}>
-            <Card as="div" className="flex h-full flex-col gap-2 p-4">
-              <span className="flex items-center gap-2">
-                <span className="grid size-8 shrink-0 place-items-center rounded-xl bg-accent-soft text-trail-strong"><s.icon className="size-4" aria-hidden /></span>
-                <span className="text-xs leading-snug text-ink-3">{s.label}</span>
-              </span>
-              <NumberTicker value={s.value} className="font-mono text-3xl font-bold tabular-nums tracking-tight text-ink" />
-            </Card>
+      <ul aria-label="Workspace summary" className="grid grid-cols-3 divide-x divide-line rounded-2xl border border-line bg-surface py-4">
+        {stats.map((s) => (
+          <li key={s.label} className="flex min-w-0 flex-col gap-1 px-4 sm:px-5">
+            <span className="flex items-center gap-2 text-xs text-ink-3"><s.icon className="hidden size-3.5 shrink-0 sm:block" aria-hidden />{s.label}</span>
+            <NumberTicker value={s.value} className="text-2xl font-semibold tabular-nums tracking-tight text-ink" />
           </li>
         ))}
       </ul>
 
-      <div className="grid gap-6 lg:grid-cols-3">
-        <div className="min-w-0 lg:col-span-2">
-          {reportCard ?? (
-            <Card>
-              <CardHeader title="Company reports" />
-              <Empty icon={<FileText className="size-5" />} title="No reports yet"
-                body="Enter your website to get a full, sourced report in a few minutes." action={analyzeBtn} />
-            </Card>
-          )}
-        </div>
-        <Card>
-          <CardHeader title="Quick actions" />
-          <div className="flex flex-col gap-2 p-5 pt-0">
-            <Link href={`${base}/reports/new`} className={buttonStyles("primary") + " w-full"}><FileText className="size-4" aria-hidden />Analyze your company</Link>
-            <Link href={`${base}/experiments/new`} className={buttonStyles("secondary") + " w-full"}><Plus className="size-4" aria-hidden />New experiment</Link>
+      <div className="grid items-start gap-5 xl:grid-cols-[minmax(0,1fr)_320px]">
+        <div className="min-w-0 space-y-5">
+        <section aria-labelledby="exp-h" className="min-w-0 overflow-hidden rounded-2xl border border-line bg-surface">
+          <div className="flex flex-wrap items-center justify-between gap-3 border-b border-line px-5 py-4">
+            <h2 id="exp-h" className="text-base font-semibold">Experiments</h2>
+            <Tabs label="Filter experiments" value={filter} onChange={(v) => { if (v === "all" || v === "open" || v === "decided") setFilter(v); }}
+              tabs={[{ id: "all", label: "All" }, { id: "open", label: "No verdict yet" }, { id: "decided", label: "Has a verdict" }]} />
           </div>
-        </Card>
-      </div>
+          {shown.length === 0 ? (
+            <Card className="border border-line bg-surface shadow-none"><Empty title="Nothing in this view" body="Try another filter." /></Card>
+          ) : (
+            <>
+            <ul className="divide-y divide-line sm:hidden" aria-label="Saved experiments">
+              {shown.map((e) => <li key={e.id} className="p-4">
+                <Link href={`${base}/experiments/${e.id}`} className="block rounded-sm text-sm font-semibold text-ink hover:text-trail hover:underline">{e.title}</Link>
+                <p className="mt-1 text-xs text-ink-3">{USE_CASE_LABEL[e.use_case]}</p>
+                <div className="mt-3 flex flex-wrap items-center gap-2">
+                  <Badge tone="neutral">{STAGE_LABEL[e.stage]}</Badge>
+                  {e.latest_decision ? <DecisionChip decision={e.latest_decision} /> : <Badge tone="muted">No verdict</Badge>}
+                  {e.is_demo && <DemoBadge label="Demo" />}
+                </div>
+                <p className="mt-2 text-xs text-ink-3">Updated <time dateTime={e.updated_at}>{timeAgo(e.updated_at)}</time></p>
+              </li>)}
+            </ul>
+            <div className="hidden overflow-x-auto sm:block" tabIndex={0} role="region" aria-label="Experiment table, scroll horizontally if needed">
+              <table className="w-full min-w-[600px] text-left text-[13px]">
+                <caption className="sr-only">Saved experiments with current stage, verdict, and last update</caption>
+                <thead className="border-b border-line bg-sunken text-xs text-ink-3"><tr>
+                  <th scope="col" className="px-5 py-3 font-medium">Experiment</th>
+                  <th scope="col" className="px-3 py-3 font-medium">Stage</th>
+                  <th scope="col" className="px-3 py-3 font-medium">Verdict</th>
+                  <th scope="col" className="px-5 py-3 text-right font-medium">Updated</th>
+                </tr></thead>
+                <tbody className="divide-y divide-line">
+                  {shown.map((e) => (<tr key={e.id} className="transition-colors hover:bg-sunken">
+                    <td className="max-w-[320px] px-5 py-3.5">
+                      <Link href={base + '/experiments/' + e.id} className="block rounded-sm font-semibold text-ink hover:text-trail hover:underline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-accent">{e.title}</Link>
+                      <div className="mt-1 flex flex-wrap items-center gap-2 text-xs text-ink-3">{USE_CASE_LABEL[e.use_case]}{e.is_demo && <DemoBadge label="Demo" />}</div>
+                    </td>
+                    <td className="whitespace-nowrap px-3 py-3.5"><span className="inline-flex items-center gap-2 rounded-full border border-line px-2.5 py-1 text-xs text-ink-2"><span className="size-1.5 rounded-full bg-orange-500" aria-hidden />{STAGE_LABEL[e.stage]}</span></td>
+                    <td className="whitespace-nowrap px-3 py-3.5">{e.latest_decision ? <DecisionChip decision={e.latest_decision} /> : <Badge tone="muted">No verdict</Badge>}</td>
+                    <td className="whitespace-nowrap px-5 py-3.5 text-right text-xs text-ink-3"><time dateTime={e.updated_at} title={new Date(e.updated_at).toLocaleString()}>{timeAgo(e.updated_at)}</time></td>
+                  </tr>))}
+                </tbody>
+              </table>
+              <p className="border-t border-line px-5 py-3 text-xs text-ink-3">{shown.length} of {data.experiments.length} experiments</p>
+            </div>
+            </>
+          )}
+        </section>
 
-      <section aria-labelledby="wf-h" className="min-w-0 space-y-3">
-        <h2 id="wf-h" className="font-display text-lg font-bold">What do you want to find out?</h2>
-        <ul className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
-          {workflows.map((w, i) => (
-            <li key={w.id} className="enter-rise" style={stagger(i)}>
+      <section aria-labelledby="wf-h" className="rounded-2xl border border-line bg-surface p-5">
+        <h2 id="wf-h" className="mb-3 text-sm font-semibold">What do you want to find out?</h2>
+        <ul className="flex flex-wrap gap-2">
+          {workflows.map((w) => (
+            <li key={w.id}>
               <Link href={`${base}/experiments/new?type=${w.id}`}
-                className="surface press flex h-full min-h-16 items-center gap-3 rounded-[var(--radius-lg)] p-4 transition-[border-color,box-shadow] duration-200 hover:border-line-strong hover:shadow-[var(--shadow-pop)]">
-                <span className="min-w-0 flex-1 text-sm font-semibold text-ink">{w.label}</span>
+                className="inline-flex min-h-9 items-center rounded-full border border-line px-3 py-1.5 transition-colors hover:bg-accent-soft">
+                <span className="min-w-0 flex-1 text-xs font-medium text-ink">{w.label}</span>
               </Link>
             </li>
           ))}
         </ul>
       </section>
 
-      <div className="grid gap-6 lg:grid-cols-3">
-        <section aria-labelledby="exp-h" className="min-w-0 space-y-4 lg:col-span-2">
-          <div className="flex flex-wrap items-center justify-between gap-3">
-            <h2 id="exp-h" className="font-display text-lg font-bold">Experiments</h2>
-            <Tabs label="Filter experiments" value={filter} onChange={(v) => setFilter(v as Filter)}
-              tabs={[{ id: "all", label: "All" }, { id: "open", label: "No verdict yet" }, { id: "decided", label: "Has a verdict" }]} />
-          </div>
-          {shown.length === 0 ? (
-            <Card><Empty title="Nothing in this view" body="Try another filter." /></Card>
-          ) : (
-            <ul className="grid gap-3 md:grid-cols-2">
-              {shown.map((e, i) => (
-                <li key={e.id} className="enter-rise" style={stagger(i)}>
-                  <Link href={`${base}/experiments/${e.id}`}
-                    className="surface press group flex h-full flex-col gap-3 rounded-[var(--radius-lg)] p-4 transition-[border-color,box-shadow] duration-200 hover:border-line-strong hover:shadow-[var(--shadow-pop)]">
-                    <div className="flex items-start justify-between gap-3">
-                      <span className="text-xs font-medium text-ink-3">{USE_CASE_LABEL[e.use_case]}</span>
-                      {e.latest_decision ? <DecisionChip decision={e.latest_decision} /> : <Badge tone="muted">No verdict</Badge>}
-                    </div>
-                    <p className="line-clamp-2 font-semibold text-ink group-hover:text-trail">{e.title}</p>
-                    <div className="flex items-end justify-between gap-2">
-                      <StageBar stage={e.stage} />
-                      {e.is_demo && <DemoBadge label="Demo" />}
-                    </div>
-                    {e.latest_decision ? (
-                      <div className="mt-auto flex h-[120px] flex-col items-center justify-center gap-1 rounded-xl bg-[var(--inset)]">
-                        <span className={cx("font-mono text-[22px] font-bold tracking-tight", e.latest_decision === "PIVOT" ? "text-ink" : verdictText[e.latest_decision])}>
-                          {e.latest_decision === "PIVOT" ? <span className="rounded-full bg-trail-soft px-3 py-1 text-base">PIVOT</span> : e.latest_decision}
-                        </span>
-                        <span className="font-mono text-[10px] uppercase tracking-widest text-ink-3">updated {timeAgo(e.updated_at)}</span>
-                      </div>
-                    ) : (
-                      <p className="mt-auto text-xs text-ink-3">Updated {timeAgo(e.updated_at)}</p>
-                    )}
-                  </Link>
-                </li>
-              ))}
-            </ul>
-          )}
-        </section>
-
-        <div className="min-w-0 space-y-6">
-          <Card>
+      {reportCard ?? (<Card className="border border-line bg-surface shadow-none"><CardHeader title="Company reports" /><Empty title="No reports yet" body="Enter your website to get a sourced company report." action={analyzeBtn} /></Card>)}
+        </div>
+        <div className="min-w-0 space-y-4">
+          <FounderFocusCard compact />
+          <Card className="border border-line bg-surface shadow-none">
             <CardHeader title="Needs your attention" action={<Link href={`${base}/approvals`} className="text-[13px] font-semibold text-trail hover:underline">See all</Link>} />
             {data.pending_actions.length === 0 ? (
               <Empty icon={<Inbox className="size-5" />} title="All clear" body="No actions are waiting for approval or confirmation." />
@@ -224,7 +207,7 @@ export default function Dashboard() {
             )}
           </Card>
 
-          <Card>
+          <Card className="border border-line bg-surface shadow-none">
             <CardHeader title="Latest recommendations" />
             {data.recommendations.length === 0 ? (
               <Empty title="No recommendations yet" body="Generate one from an experiment once you have evidence and outcomes." />
@@ -250,7 +233,7 @@ export default function Dashboard() {
       </div>
 
       {data.recent_outcomes.length > 0 && (
-        <Card>
+        <Card className="border border-line bg-surface shadow-none">
           <CardHeader title="Recently recorded outcomes" description="Only events actually recorded in Pursuit. Demo events are labelled." />
           <ul className="grid sm:grid-cols-2 lg:grid-cols-4">
             {data.recent_outcomes.map((o) => (

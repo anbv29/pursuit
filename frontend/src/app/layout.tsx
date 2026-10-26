@@ -1,17 +1,14 @@
 import type { ReactNode } from "react";
 import type { Metadata, Viewport } from "next";
-import { Fraunces, Inter, JetBrains_Mono, Source_Sans_3 } from "next/font/google";
-import { BackdropOrbs } from "@/components/backdrop";
+import { Inter, JetBrains_Mono } from "next/font/google";
 import { FeedbackProvider } from "@/components/feedback";
 import { OfflineNotice } from "@/components/offline-notice";
 import { ReadingProvider } from "@/components/reading-mode";
 import { SessionProvider } from "@/components/session";
 import "./globals.css";
 
-const display = Fraunces({ variable: "--font-editorial", subsets: ["latin"], display: "swap" });
 const ui = Inter({ variable: "--font-interface", subsets: ["latin"], display: "swap" });
 const code = JetBrains_Mono({ variable: "--font-code", subsets: ["latin"], display: "swap" });
-const body = Source_Sans_3({ variable: "--font-reading", subsets: ["latin"], display: "swap" });
 
 export const metadata: Metadata = {
   title: { default: "Pursuit", template: "%s · Pursuit" },
@@ -21,7 +18,7 @@ export const metadata: Metadata = {
 export const viewport: Viewport = {
   viewportFit: "cover",
   themeColor: [
-    { media: "(prefers-color-scheme: light)", color: "#faf7f2" },
+    { media: "(prefers-color-scheme: light)", color: "#f6f7f8" },
     { media: "(prefers-color-scheme: dark)", color: "#101214" },
   ],
 };
@@ -31,12 +28,11 @@ const themeScript = `try{var t=localStorage.getItem("pursuit.theme");if(t==="lig
 
 export default function RootLayout({ children }: { children: ReactNode }) {
   return (
-    <html lang="en" suppressHydrationWarning className={`${display.variable} ${ui.variable} ${body.variable} ${code.variable} h-full antialiased`}>
+    <html lang="en" suppressHydrationWarning className={`${ui.variable} ${code.variable} h-full antialiased`}>
       <head>
         <script dangerouslySetInnerHTML={{ __html: themeScript }} />
       </head>
       <body className="min-h-full font-sans text-[15px]">
-        <BackdropOrbs />
         <SessionProvider>
           <ReadingProvider><FeedbackProvider>{children}</FeedbackProvider></ReadingProvider>
         </SessionProvider>

@@ -21,9 +21,9 @@ export function Field({ label, hint, error, children }: {
 }
 
 const FIELD = cx(
-  "w-full rounded-xl border border-line bg-surface px-3 text-sm text-ink placeholder:text-ink-3",
-  "shadow-[inset_0_1px_2px_var(--inset)] transition-[border-color,box-shadow] duration-150",
-  "hover:border-line-strong focus:border-accent focus:outline-none focus:ring-4 focus:ring-[color-mix(in_srgb,var(--accent)_22%,transparent)]",
+  "w-full rounded-xl border border-line-strong bg-surface px-3 text-sm text-ink placeholder:text-ink-3",
+  "transition-[border-color,box-shadow] duration-150",
+  "hover:border-line-strong focus:border-accent-strong focus:outline-none focus:ring-2 focus:ring-[color-mix(in_srgb,var(--accent)_22%,transparent)]",
   "aria-[invalid=true]:border-danger disabled:cursor-not-allowed disabled:opacity-60",
 );
 
@@ -34,7 +34,7 @@ export const Textarea = ({ className, ...p }: TextareaHTMLAttributes<HTMLTextAre
   <textarea {...p} className={cx(FIELD, "min-h-20 py-2.5 leading-relaxed", className)} />
 );
 export const Select = ({ className, ...p }: SelectHTMLAttributes<HTMLSelectElement>) => (
-  <select {...p} className={cx(FIELD, "h-10 pr-8", className)} />
+  <select {...p} className={cx(FIELD, "h-10 rounded-full pr-8", className)} />
 );
 
 /** Password input with a visible show/hide toggle. Behaves exactly like Input otherwise. */

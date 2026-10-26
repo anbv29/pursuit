@@ -40,7 +40,8 @@ export function useWorkspace() {
   return c;
 }
 
-type NavItem = { href: string; label: string; icon: typeof LayoutDashboard; exact?: boolean; count?: number };
+type NavGroup = "Overview" | "Research & strategy" | "Execution" | "Workspace";
+type NavItem = { href: string; label: string; icon: typeof LayoutDashboard; group: NavGroup; exact?: boolean; count?: number };
 
 export function WorkspaceShell({ wsId, children }: { wsId: string; children: ReactNode }) {
   const ws = useApi<Workspace>(`/workspaces/${wsId}`);
@@ -65,17 +66,17 @@ export function WorkspaceShell({ wsId, children }: { wsId: string; children: Rea
   };
 
   const nav: NavItem[] = [
-    { href: base, label: "Dashboard", icon: LayoutDashboard, exact: true },
-    { href: `${base}/focus`, label: "Your priorities", icon: ListTodo },
-    { href: `${base}/reports`, label: "Company reports", icon: FileText },
-    { href: `${base}/gtm`, label: "GTM strategy", icon: FileText },
-    { href: `${base}/experiments/new`, label: "New experiment", icon: Plus },
-    { href: `${base}/approvals`, label: "Approvals", icon: Inbox, count: approvals.data?.length },
-    { href: `${base}/fo`, label: "Fo Assistant", icon: MessageCircle },
-    ...(ws.data?.role === "owner" ? [{ href: `${base}/first-look`, label: "Website first look", icon: FileText }] : []),
-    { href: `${base}/settings`, label: "Settings", icon: Settings },
+    { href: base, label: "Dashboard", icon: LayoutDashboard, group: "Overview", exact: true },
+    { href: `${base}/focus`, label: "Your priorities", icon: ListTodo, group: "Overview" },
+    { href: `${base}/reports`, label: "Company reports", icon: FileText, group: "Research & strategy" },
+    { href: `${base}/gtm`, label: "GTM strategy", icon: FileText, group: "Research & strategy" },
+    { href: `${base}/experiments/new`, label: "New experiment", icon: Plus, group: "Execution" },
+    { href: `${base}/approvals`, label: "Approvals", icon: Inbox, group: "Execution", count: approvals.data?.length },
+    { href: `${base}/fo`, label: "Fo Assistant", icon: MessageCircle, group: "Execution" },
+    { href: `${base}/settings`, label: "Settings", icon: Settings, group: "Workspace" },
   ];
-  const isActive = (n: NavItem) => path === n.href || (!n.exact && path.startsWith(`${n.href}/`));
+  if (ws.data?.role === "owner") nav.push({ href: `${base}/first-look`, label: "Website first look", icon: FileText, group: "Research & strategy" });
+  const isActive = (n: Pick<NavItem, "href" | "exact">) => path === n.href || (!n.exact && path.startsWith(`${n.href}/`));
   const current = nav.find(isActive);
   const contentWidth = path.endsWith("/reports/new") ? "max-w-2xl"
     : /\/(settings|fo|first-look|focus)$/.test(path) ? "max-w-3xl"
@@ -115,12 +116,8 @@ export function WorkspaceShell({ wsId, children }: { wsId: string; children: Rea
     </select>
   ) : <Skeleton className="h-9 w-full" />;
 
-  const groups = [
-    { label: "Overview", items: nav.filter((n) => n.exact || n.href === `${base}/focus`) },
-    { label: "Research", items: nav.filter((n) => [ `${base}/reports`, `${base}/gtm`, `${base}/first-look` ].includes(n.href)) },
-    { label: "Take action", items: nav.filter((n) => [ `${base}/experiments/new`, `${base}/approvals`, `${base}/fo` ].includes(n.href)) },
-    { label: "Workspace", items: nav.filter((n) => [ `${base}/settings` ].includes(n.href)) },
-  ];
+  const groupOrder: NavGroup[] = ["Overview", "Research & strategy", "Execution", "Workspace"];
+  const groups = groupOrder.map((label) => ({ label, items: nav.filter((n) => n.group === label) }));
   const mobileTabs = nav.filter((n) => n.exact || n.href === `${base}/reports` || n.href === `${base}/approvals`);
   const mobileMenu = [
     ...nav.filter((n) => !mobileTabs.includes(n)),
@@ -133,8 +130,8 @@ export function WorkspaceShell({ wsId, children }: { wsId: string; children: Rea
       <CommandPalette commands={commands} open={paletteOpen} onOpenChange={setPaletteOpen} />
 
       {/* Desktop sidebar */}
-      <aside className={cx("sticky top-0 hidden h-dvh shrink-0 p-3 print:hidden md:block transition-[width] duration-300 ease-[var(--ease-out)]", collapsed ? "w-[88px]" : "w-[264px]")}>
-        <Glass as="nav" aria-label="Primary" className="flex h-full flex-col rounded-[20px] p-3">
+      <aside className={cx("sticky top-0 hidden h-dvh shrink-0 border-r border-line bg-surface print:hidden md:block transition-[width] duration-200 ease-[var(--ease-out)]", collapsed ? "w-[80px]" : "w-[248px]")}>
+        <Glass as="nav" aria-label="Primary" className="flex h-full flex-col rounded-none border-0 p-4 shadow-none">
           <div className={cx("flex h-11 items-center", collapsed ? "justify-center" : "px-1.5")}>
             <Logo href={base} compact={collapsed} />
           </div>
@@ -145,8 +142,8 @@ export function WorkspaceShell({ wsId, children }: { wsId: string; children: Rea
                 group.label === "Workspace" ? "mt-auto border-t border-line pt-4" : "mb-3",
                 collapsed && group.label !== "Overview" && "border-t border-line pt-3",
               )}>
-                {group.label !== "Overview" && !collapsed && (
-                  <p className="mb-2 px-3 font-ui text-[10px] font-semibold uppercase tracking-[0.14em] text-ink-3">{group.label}</p>
+                {!collapsed && (
+                  <p className="mb-2 px-3 font-ui text-xs font-medium text-ink-3">{group.label}</p>
                 )}
                 <ul aria-label={group.label} className="space-y-1">
                   {group.items.map((n) => {
@@ -155,10 +152,9 @@ export function WorkspaceShell({ wsId, children }: { wsId: string; children: Rea
                       <li key={n.href}>
                         <Link href={n.href} title={collapsed ? n.label : undefined} aria-label={collapsed ? n.label : undefined} aria-current={active ? "page" : undefined}
                           className={cx("press relative flex h-10 items-center gap-3 rounded-xl px-3 py-2 text-sm transition-[background-color,color] duration-150",
-                            active ? "bg-trail-soft font-semibold text-trail-strong" : "text-ink-2 hover:bg-[var(--inset)] hover:text-ink",
+                            active ? "bg-[var(--inset)] font-semibold text-ink" : "text-ink-2 hover:bg-[var(--inset)] hover:text-ink",
                             collapsed && "justify-center px-0")}>
-                          {active && <span className="absolute inset-y-2 left-0 w-[2px] rounded-full bg-accent" aria-hidden />}
-                          <n.icon className="size-[18px] shrink-0" aria-hidden />
+                          <n.icon className="size-[18px] shrink-0" strokeWidth={1.6} aria-hidden />
                           {!collapsed && <span className="flex-1 truncate">{n.label}</span>}
                           {!!n.count && (
                             <span className={cx("rounded-full bg-warning px-1.5 text-[11px] font-bold leading-5 text-bg", collapsed && "absolute right-1.5 top-1")}>
@@ -182,8 +178,8 @@ export function WorkspaceShell({ wsId, children }: { wsId: string; children: Rea
 
       <div className="flex min-w-0 flex-1 flex-col">
         {/* Top bar */}
-        <header className="workspace-header sticky top-0 z-30 px-3 pt-3 print:hidden md:px-8 md:pt-4">
-          <Glass as="div" className="mx-auto flex h-[60px] max-w-6xl items-center gap-2 rounded-[16px] px-3 md:h-[68px] md:px-4">
+        <header className="workspace-header sticky top-0 z-30 border-b border-line bg-surface px-3 print:hidden md:px-8">
+          <Glass as="div" className="mx-auto flex h-[64px] max-w-6xl items-center gap-2 rounded-none border-0 px-1 shadow-none md:h-[76px]">
             <div className="md:hidden"><Logo href={base} compact /></div>
             <div className="min-w-0 flex-1">
               {crumbs ? (
@@ -227,7 +223,7 @@ export function WorkspaceShell({ wsId, children }: { wsId: string; children: Rea
                 <button type="button" onClick={t} aria-haspopup="menu" aria-expanded={open} aria-controls={id} aria-label="Account menu"
                   className="press flex items-center gap-2 rounded-xl p-1 pr-1.5 hover:bg-[var(--inset)] sm:pr-2.5">
                   <Avatar name={user?.name ?? "?"} />
-                  <span className="hidden max-w-[9rem] truncate text-sm font-medium text-ink xl:inline">{user?.name}</span>
+                  <span className="hidden min-w-0 text-left xl:block"><span className="block max-w-[10rem] truncate text-sm font-medium text-ink">{user?.name}</span><span className="block max-w-[12rem] truncate text-xs text-ink-3">{user?.email}</span></span>
                 </button>
               )} />
           </Glass>
