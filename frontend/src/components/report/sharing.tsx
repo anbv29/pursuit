@@ -14,7 +14,7 @@ export function ReportSharing({ path }: { path: string }) {
   const [url, setUrl] = useState("");
   const [error, setError] = useState<string | null>(null);
   const create = useAction(async () => {
-    if (!await confirm({ title: "Create a read-only report link?", body: "Anyone with the link can read this report and its cited sources until it expires or you revoke it. It is a snapshot; later report changes are not included. Review the report for private company information first.", confirm: "Create share link" })) return;
+    if (!await confirm({ title: "Create a read-only report link?", body: "Anyone with the link can read this report, its GTM strategy, budget and resource assumptions, and cited sources until it expires or you revoke it. It is a snapshot; later report changes are not included. Review the report for private company information first.", confirm: "Create share link" })) return;
     try { const share = await api<{ url: string }>(`${path}/shares`, { json: { expires_days: days } }); setUrl(share.url); setError(null); await shares.reload(); }
     catch (e) { setError(errorMessage(e)); }
   });

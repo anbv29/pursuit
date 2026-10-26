@@ -22,12 +22,23 @@ def fake_ai(monkeypatch, ai_on):
         calls["research"] = {"url": url, "site": site_text, "inputs": inputs}
         return report_research.Research(
             notes="notes",
-            sources=[{"id": "S1", "url": "https://acme.example/pricing", "title": "P", "via": "web_fetch"}],
+            sources=[
+                {
+                    "id": "S1",
+                    "url": "https://acme.example/pricing",
+                    "title": "P",
+                    "via": "web_fetch",
+                    "excerpt": "Pro costs $49 per month.",
+                }
+            ],
         )
 
     def synthesize(url, site_text, inputs, found):
         calls["sources"] = [s["id"] for s in found.sources]
-        return sample()
+        content = sample()
+        content.snapshot.observed_pricing[0].text = "Pro costs $49 per month."
+        content.snapshot.observed_pricing[0].supporting_quote = "Pro costs $49 per month."
+        return content
 
     monkeypatch.setattr(report_research, "research", research)
     monkeypatch.setattr(report_research, "synthesize", synthesize)
@@ -63,7 +74,7 @@ def test_report_generates_end_to_end(api, ws, fake_ai):
     assert [s["id"] for s in rep["sources"]] == ["S0", "S1"]  # site + research
     assert fake_ai["sources"] == ["S0", "S1"]
     assert fake_ai["research"]["inputs"]["description"] == "Claims automation for clinics"
-    assert rep["content"]["validation"]["downgraded_facts"] == 3
+    assert rep["content"]["validation"]["downgraded_facts"] == 2
     assert api.get(f"/api/workspaces/{ws}/reports").json()[0]["status"] == "SUCCEEDED"
 
 
@@ -75,6 +86,7 @@ def test_report_to_experiment_carries_sourced_evidence(api, ws, fake_ai):
     assert e["use_case"] == "messaging" and e["criteria"][0]["target"] == 0.12
     ev = api.get(f"/api/workspaces/{ws}/experiments/{e['id']}/evidence").json()
     assert len(ev) == 1 and ev[0]["source"]["url"] == "https://acme.example/pricing"
+    assert ev[0]["source"]["excerpt"] == "Pro costs $49 per month."
     assert api.post(f"/api/workspaces/{ws}/reports/{rid}/experiments/99").status_code == 404
 
 

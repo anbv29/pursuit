@@ -83,8 +83,11 @@ SOURCES = [{"id": "S1", "url": "https://acme.example/pricing", "title": "Pricing
 
 
 def test_sourced_fact_kept():
-    data, _ = validate(sample(), SOURCES)
-    assert data["snapshot"]["observed_pricing"][0] == claim("Pro is $49/mo") | {}
+    content = sample()
+    content.snapshot.observed_pricing[0].text = "Pro costs $49 per month."
+    content.snapshot.observed_pricing[0].supporting_quote = "Pro costs $49 per month."
+    data, _ = validate(content, [dict(SOURCES[0], excerpt="Pro costs $49 per month.")])
+    assert data["snapshot"]["observed_pricing"][0]["kind"] == "fact"
 
 
 def test_invented_or_missing_sources_downgrade_facts():
@@ -92,7 +95,7 @@ def test_invented_or_missing_sources_downgrade_facts():
     founded, customers = data["snapshot"]["key_facts"]
     assert founded["kind"] == "interpretation" and founded["unsourced"] and founded["source_ids"] == []
     assert customers["kind"] == "interpretation" and customers["confidence"] == "low"
-    assert stats["downgraded_facts"] == 2 and stats["dropped_source_refs"] >= 2
+    assert stats["downgraded_facts"] == 3 and stats["dropped_source_refs"] >= 2
 
 
 def test_competitor_sources_filtered():

@@ -2,6 +2,7 @@
 
 import re
 import time
+from collections import deque
 from urllib.parse import urljoin, urlsplit, urlunsplit
 
 import httpx
@@ -9,8 +10,8 @@ import httpx
 from app.core.db import utcnow
 from app.services import fetcher
 
-MAX_SOURCES = 12
-MAX_ATTEMPTS = 18
+MAX_SOURCES = 24
+MAX_ATTEMPTS = 32
 MAX_SECONDS = 45
 EXCERPT_CHARS = 6000
 PAGE_TYPES = (
@@ -60,45 +61,66 @@ def collect(company_url, inputs):
     started = time.monotonic()
     attempts, seen, hashes, result = 0, set(), set(), []
     supplied = re.findall(r"https?://[^\s,<>\"']+", inputs.get("known_competitors", ""))[:3]
-    roots = [(company_url, "company"), *((url.rstrip(".)"), "supplied_competitor") for url in supplied)]
-    queue = [(url, role, 0) for url, role in roots]
+    references = inputs.get("research_urls", [])[:6]
+    roots = [
+        (company_url, "company"),
+        *((url.rstrip(".)"), "supplied_competitor") for url in supplied),
+        *((str(url), "supplied_reference") for url in references),
+    ]
+    queues = deque(deque([(url, role, 0)]) for url, role in roots)
     with httpx.Client(timeout=4, follow_redirects=False, trust_env=False) as client:
-        while queue and attempts < MAX_ATTEMPTS and len(result) < MAX_SOURCES:
+        while queues and attempts < MAX_ATTEMPTS and len(result) < MAX_SOURCES:
             if time.monotonic() - started >= MAX_SECONDS:
                 break
-            url, role, depth = queue.pop(0)
+            queue = queues.popleft()
+            url, role, depth = queue.popleft()
+            if queue:
+                queues.append(queue)
             if url in seen:
                 continue
             seen.add(url)
             attempts += 1
+            source = {
+                "id": f"S{len(result) + 1}",
+                "url": url,
+                "title": "",
+                "excerpt": "",
+                "retrieved_at": utcnow().isoformat(),
+                "via": "pursuit_fetch",
+                "source_role": role,
+                "retrieval_status": "unavailable",
+            }
             try:
                 page = fetcher.fetch(url, client=client)
             except fetcher.FetchError:
+                result.append(source)
                 continue
             if depth and (urlsplit(page.url).scheme, urlsplit(page.url).netloc) != (
                 urlsplit(url).scheme,
                 urlsplit(url).netloc,
             ):
+                result.append(source)
                 continue
+            if page.url != url and page.url in seen:
+                continue
+            seen.add(page.url)
             text = page.text.strip()
-            if len(text) < 40 or page.sha256 in hashes:
+            if page.sha256 and page.sha256 in hashes:
                 continue
-            hashes.add(page.sha256)
-            result.append(
-                {
-                    "id": f"S{len(result) + 1}",
-                    "url": page.url,
-                    "title": page.title,
-                    "excerpt": text[:EXCERPT_CHARS],
-                    "retrieved_at": utcnow().isoformat(),
-                    "sha256": page.sha256,
-                    "via": "pursuit_fetch",
-                    "source_role": role,
-                }
+            if page.sha256:
+                hashes.add(page.sha256)
+            source.update(
+                url=page.url,
+                title=page.title,
+                sha256=page.sha256,
+                excerpt=text[:EXCERPT_CHARS] if len(text) >= 40 else "",
+                retrieval_status="available" if len(text) >= 40 else "unavailable",
             )
+            result.append(source)
             if depth < 2:
                 links = candidates(page)
-                # Reserve room for every root before traversing deeper company menus.
-                limit = 8 if role == "company" else 2
-                queue.extend((link, role, depth + 1) for link in links[:limit])
+                # Each root gets one fetch per round, including supplied references.
+                if not queue and links:
+                    queues.append(queue)
+                queue.extend((link, role, depth + 1) for link in links)
     return result

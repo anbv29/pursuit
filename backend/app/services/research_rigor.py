@@ -26,14 +26,31 @@ def coverage(sources):
     """Deterministic inventory for the model; counts describe coverage, never truth."""
     from urllib.parse import urlsplit
 
-    available = [s for s in sources if s.get("excerpt", "").strip()]
+    available = [
+        s for s in sources if s.get("excerpt", "").strip() and s.get("retrieval_status") != "unavailable"
+    ]
+    by_role, by_status = {}, {}
+    for source in sources:
+        role = source.get("source_role", "unspecified")
+        status = source.get(
+            "retrieval_status", "available" if source.get("excerpt", "").strip() else "unavailable"
+        )
+        counts = by_role.setdefault(role, {"total": 0, "usable": 0, "unavailable": 0})
+        counts["total"] += 1
+        counts["usable"] += source in available
+        counts["unavailable"] += source not in available
+        by_status[status] = by_status.get(status, 0) + 1
     return {
         "usable_pages": len(available),
+        "by_role": by_role,
+        "by_status": by_status,
         "hosts": sorted({urlsplit(s["url"]).hostname for s in available}),
         "source_roles": sorted({s.get("source_role", "unspecified") for s in available}),
-        "missing_pages": [s["url"] for s in sources if not s.get("excerpt", "").strip()],
+        "missing_pages": [s["url"] for s in sources if s not in available],
         "limitations": [
             "No general web search was performed.",
+            "Bounded collection covers supplied roots and relevant same-origin links, not the whole market.",
+            "Unavailable receipts provide no evidence; supplied references need not be independent.",
             "Page and host counts do not establish independent corroboration.",
             "Company and competitor statements are claims, not verified customer outcomes.",
         ],

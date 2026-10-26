@@ -28,7 +28,7 @@ def test_crawl_prioritizes_supplied_roots_and_diverse_pages(monkeypatch):
     assert calls[:2] == ["https://company.example", "https://rival.example"]
     assert "https://company.example/pricing" in calls
     assert "https://company.example/customers/story" in calls
-    assert len(sources) <= 12 and len(calls) <= 18
+    assert len(sources) <= 24 and len(calls) <= 32
     assert all(len(s["excerpt"]) == 6000 for s in sources)
     assert {s["source_role"] for s in sources} == {"company", "supplied_competitor"}
 
@@ -97,12 +97,15 @@ def test_pass_persists_sources_and_reuses_them_on_resume(monkeypatch):
     assert "Disconfirmation" in requests[0]["system"]
 
 
-def test_unavailable_pages_do_not_become_sources(monkeypatch):
+def test_unavailable_pages_retain_receipts(monkeypatch):
     def fetch(*args, **kwargs):
         raise fetcher.FetchError("Unavailable")
 
     monkeypatch.setattr(fetcher, "fetch", fetch)
-    assert research_sources.collect("https://company.example", {}) == []
+    sources = research_sources.collect("https://company.example", {})
+    assert len(sources) == 1
+    assert sources[0]["excerpt"] == ""
+    assert sources[0]["retrieval_status"] == "unavailable"
 
 
 def test_linked_cross_origin_redirect_is_not_accepted(monkeypatch):
@@ -113,7 +116,8 @@ def test_linked_cross_origin_redirect_is_not_accepted(monkeypatch):
 
     monkeypatch.setattr(fetcher, "fetch", fetch)
     sources = research_sources.collect("https://company.example", {})
-    assert [s["url"] for s in sources] == ["https://company.example"]
+    assert [s["url"] for s in sources] == ["https://company.example", "https://company.example/pricing"]
+    assert sources[1]["retrieval_status"] == "unavailable"
 
 
 def test_fetch_attempt_cap_survives_failures(monkeypatch):
@@ -138,5 +142,62 @@ def test_fetch_attempt_cap_survives_failures(monkeypatch):
         )
 
     monkeypatch.setattr(fetcher, "fetch", fetch)
-    assert len(research_sources.collect("https://company.example", {})) == 1
+    assert len(research_sources.collect("https://company.example", {})) == 3
     assert len(calls) == 3
+
+
+def test_reference_roots_are_capped_and_fair(monkeypatch):
+    calls = []
+
+    def fetch(url, **kwargs):
+        calls.append(url)
+        return fetcher.Fetched(url, "Page", "Evidence " * 100, url, [f"/docs/{i}" for i in range(20)])
+
+    monkeypatch.setattr(fetcher, "fetch", fetch)
+    refs = [f"https://ref{i}.example" for i in range(7)]
+    sources = research_sources.collect(
+        "https://company.example",
+        {
+            "known_competitors": "https://rival.example",
+            "research_urls": refs,
+        },
+    )
+    assert calls[:8] == ["https://company.example", "https://rival.example", *refs[:6]]
+    assert refs[6] not in calls
+    assert len(sources) == len(calls) == 24
+    assert coverage(sources)["by_role"]["supplied_reference"]["usable"] == 18
+
+
+def test_attempt_budget_stops_duplicate_child_fetches_at_32(monkeypatch):
+    calls = []
+
+    def fetch(url, **kwargs):
+        calls.append(url)
+        digest = url if "/docs/" not in url else "shared-child"
+        return fetcher.Fetched(url, "Page", "Evidence " * 100, digest, [f"/docs/{i}" for i in range(8)])
+
+    monkeypatch.setattr(fetcher, "fetch", fetch)
+    sources = research_sources.collect(
+        "https://company.example",
+        {
+            "research_urls": [f"https://ref{i}.example" for i in range(6)],
+        },
+    )
+    assert len(calls) == 32
+    assert len(sources) == 8
+
+
+def test_coverage_counts_failures_and_useful_pages_per_role():
+    result = coverage(
+        [
+            {"url": "https://example.com", "source_role": "supplied_reference", "excerpt": "Evidence"},
+            {
+                "url": "https://example.com/missing",
+                "source_role": "supplied_reference",
+                "excerpt": "",
+                "retrieval_status": "unavailable",
+            },
+        ]
+    )
+    assert result["by_role"]["supplied_reference"] == {"total": 2, "usable": 1, "unavailable": 1}
+    assert result["by_status"] == {"available": 1, "unavailable": 1}

@@ -50,7 +50,12 @@ def test_source_collection_uses_only_fetched_pages(monkeypatch):
             "known_competitors": "Unverified Name https://competitor.example https://private.example",
         },
     )
-    assert {s["url"] for s in result} == {"https://company.example", "https://competitor.example"}
+    assert {s["url"] for s in result if s["excerpt"]} == {
+        "https://company.example",
+        "https://competitor.example",
+    }
+    missing = next(s for s in result if s["url"] == "https://private.example")
+    assert missing["retrieval_status"] == "unavailable" and missing["excerpt"] == ""
     assert all(s["via"] == "pursuit_fetch" and s["retrieved_at"] for s in result)
 
 

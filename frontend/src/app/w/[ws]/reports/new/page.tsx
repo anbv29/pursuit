@@ -1,5 +1,6 @@
 "use client";
 
+import { GTMConstraintsForm, defaultConstraints, constraintsSchema, researchUrlsSchema, splitResearchUrls } from "@/components/gtm-constraints";
 import { ChevronDown, Globe, Sparkles } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useState, type FormEvent } from "react";
@@ -29,6 +30,8 @@ export default function NewReportPage() {
   const router = useRouter();
   const [f, setF] = useState(EMPTY);
   const [reality, setReality] = useState<FounderReality>({});
+  const [constraints, setConstraints] = useState(defaultConstraints);
+  const [researchUrls, setResearchUrls] = useState("");
   const [more, setMore] = useState(false);
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [formError, setFormError] = useState<string | null>(null);
@@ -38,10 +41,13 @@ export default function NewReportPage() {
   const submit = useAction(async () => {
     const url = urlSchema.safeParse(f.company_url);
     if (!url.success) return setErrors({ company_url: url.error.issues[0].message });
+    const parsed = constraintsSchema.safeParse(constraints), links = researchUrlsSchema.safeParse(splitResearchUrls(researchUrls));
+    if (!parsed.success) return setFormError(parsed.error.issues[0].message);
+    if (!links.success) return setFormError(links.error.issues[0].message);
     setErrors({});
     setFormError(null);
     try {
-      const report = await api<Report>(`/workspaces/${workspace.id}/reports`, { json: { ...f, founder_reality: reality, company_url: url.data } });
+      const report = await api<Report>(`/workspaces/${workspace.id}/reports`, { json: { ...f, gtm_constraints: parsed.data, research_urls: links.data, founder_reality: reality, company_url: url.data } });
       router.push(`${base}/reports/${report.id}`);
     } catch (e) {
       if (e instanceof ApiError && e.fields) setErrors(e.fields);
@@ -104,6 +110,7 @@ export default function NewReportPage() {
             </div>
           )}
         </Glass>
+        <GTMConstraintsForm value={constraints} onChange={setConstraints} urls={researchUrls} onUrlsChange={setResearchUrls} disabled={submit.pending} />
         <FounderRealityCheck value={reality} onChange={setReality} disabled={submit.pending} />
         {formError && <Notice tone="bad">{formError}</Notice>}
         <ResearchAllowance />

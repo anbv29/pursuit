@@ -1,13 +1,14 @@
 import uuid
 
 from fastapi import APIRouter, Depends
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field, HttpUrl
 from sqlalchemy.orm import Session
 
 from app.api.deps import current_user, workspace_member
 from app.core.db import get_db
 from app.core.ratelimit import limiter
 from app.models import Membership, User
+from app.schemas.gtm import GTMConstraints
 from app.services import (
     ai_usage,
     prospect_discovery,
@@ -51,6 +52,8 @@ def discover(report=Depends(owned_report), user: User = Depends(current_user), d
 class Refresh(BaseModel):
     correction: str = Field(default="", max_length=3000)
     sections: list[str] = Field(min_length=1, max_length=16)
+    gtm_constraints: GTMConstraints | None = None
+    research_urls: list[HttpUrl] | None = Field(default=None, max_length=6)
 
 
 @router.get("/versions")
@@ -71,7 +74,15 @@ def refresh(
     db: Session = Depends(get_db),
 ):
     limiter.check(f"report-refresh:{user.id}", limit=5, window_seconds=3600)
-    row = report_versions.refresh(db, report, user, body.correction, body.sections)
+    row = report_versions.refresh(
+        db,
+        report,
+        user,
+        body.correction,
+        body.sections,
+        gtm_constraints=body.gtm_constraints.model_dump() if body.gtm_constraints else None,
+        research_urls=[str(url) for url in body.research_urls] if body.research_urls is not None else None,
+    )
     return {"id": str(row.id), "status": row.status}
 
 

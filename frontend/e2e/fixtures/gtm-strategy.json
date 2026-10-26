@@ -1,0 +1,86 @@
+{
+  "constraints": {
+    "monthly_budget": 0,
+    "currency": "USD",
+    "weekly_hours": 5,
+    "team_size": 1,
+    "horizon_days": 30,
+    "available_assets": "Customer network",
+    "channel_constraints": "No paid ads"
+  },
+  "strategy": {
+    "objective": "Validate five buyer conversations",
+    "first_buyer": {
+      "text": "Independent clinic owners",
+      "kind": "assumption",
+      "confidence": "low",
+      "source_ids": []
+    },
+    "positioning": {
+      "text": "Faster payment reconciliation",
+      "kind": "assumption",
+      "confidence": "low",
+      "source_ids": []
+    },
+    "buying_process": [
+      "Owner reviews workflow",
+      "Trial with one clinic"
+    ],
+    "channels": [
+      {
+        "name": "Founder outreach",
+        "audience": "Clinic owners",
+        "rationale": {
+          "text": "Access through existing relationships",
+          "kind": "assumption",
+          "confidence": "low",
+          "source_ids": []
+        },
+        "first_action": "Ask three clinic owners for interviews",
+        "weekly_hours": 5,
+        "monthly_budget": 0,
+        "success_signal": "Five qualified conversations",
+        "stop_rule": "Stop after 20 unanswered messages"
+      }
+    ],
+    "launch_plan": [
+      {
+        "start_day": 1,
+        "end_day": 14,
+        "action": "Run buyer interviews",
+        "deliverable": "Five interview notes",
+        "decision_gate": "Confirm recurring pain"
+      }
+    ],
+    "not_now": [
+      "Paid acquisition"
+    ],
+    "assumptions": [
+      "Owners control purchasing"
+    ],
+    "resourcing_note": "Fits one founder working five hours a week.",
+    "budget_currency": "USD",
+    "resource_adjustments": [
+      "Paid ads removed to respect zero budget"
+    ],
+    "constraints": {
+      "monthly_budget": 0,
+      "currency": "USD",
+      "weekly_hours": 5,
+      "team_size": 1,
+      "horizon_days": 30,
+      "available_assets": "Customer network",
+      "channel_constraints": "No paid ads"
+    }
+  },
+  "measurement": {
+    "label": "Published trial length",
+    "value": "14",
+    "unit": "days",
+    "scope": "Acme trial",
+    "period": "October 2026",
+    "source_id": "S1",
+    "quote": "Try Acme for 14 days — no card required.",
+    "caveat": "Vendor statement, not independently verified."
+  }
+}
