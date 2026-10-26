@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { useState, type FormEvent } from "react";
+import { useEffect, useState, type FormEvent } from "react";
 import { z } from "zod";
 import { ApiError, errorMessage } from "@/lib/api";
 import { useAction } from "@/lib/hooks";
@@ -25,11 +25,14 @@ const schemas = {
 };
 
 export function AuthForm({ mode }: { mode: "login" | "signup" }) {
-  const { login, register } = useSession();
+  const { user, ready, sessionError, retrySession, login, register } = useSession();
   const router = useRouter();
   const [values, setValues] = useState({ name: "", email: "", password: "" });
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [formError, setFormError] = useState<string | null>(null);
+  useEffect(() => {
+    if (mode === "login" && ready && user) router.replace("/w");
+  }, [mode, ready, user, router]);
 
   const submit = useAction(async () => {
     const parsed = schemas[mode].safeParse(values);
@@ -39,6 +42,7 @@ export function AuthForm({ mode }: { mode: "login" | "signup" }) {
     }
     setErrors({});
     setFormError(null);
+    if (!ready) return;
     try {
       if (mode === "login") await login(values.email, values.password);
       else await register(values.email, values.name, values.password);
@@ -76,6 +80,8 @@ export function AuthForm({ mode }: { mode: "login" | "signup" }) {
           </div>
         )}
         <form onSubmit={onSubmit} noValidate className="mt-6 space-y-4">
+          {sessionError ? <Notice tone="flag">{sessionError} <button type="button" onClick={retrySession} className="font-semibold underline">Try connecting again</button></Notice>
+            : (!ready || submit.pending) && <p role="status" className="text-sm text-ink-2">Connecting to Pursuit…</p>}
           {formError && <Notice tone="bad">{formError}</Notice>}
           {mode === "signup" && (
             <Field label="Name" error={errors.name}>
@@ -92,7 +98,7 @@ export function AuthForm({ mode }: { mode: "login" | "signup" }) {
                 autoComplete={mode === "login" ? "current-password" : "new-password"} value={values.password} onChange={set("password")} />
             )}
           </Field>
-          <Button type="submit" size="lg" className="shimmer-btn w-full" loading={submit.pending}>
+          <Button type="submit" size="lg" className="shimmer-btn w-full" loading={submit.pending} disabled={!ready}>
             {mode === "login" ? "Sign in" : "Create account"}
           </Button>
         </form>
