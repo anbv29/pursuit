@@ -134,8 +134,9 @@ def test_interrupted_pass_resumes_completed_work_and_never_exceeds_pass_allocati
     exhausted = copy.deepcopy(saved[-1])
     exhausted.pop("challenge")
     exhausted["passes_allocated"] = 6
-    with report_research.checkpoints(exhausted, lambda s: None), pytest.raises(
-        report_research.ResearchError, match="pass limit"
+    with (
+        report_research.checkpoints(exhausted, lambda s: None),
+        pytest.raises(report_research.ResearchError, match="pass limit"),
     ):
         report_research.research("https://company.example", "Company page", {}, lambda _: None)
 

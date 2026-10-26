@@ -15,8 +15,7 @@ LEASE = timedelta(seconds=90)
 
 def eligible():
     return or_(
-        (Report.status == "QUEUED")
-        & or_(Report.lease_until.is_(None), Report.lease_until <= utcnow()),
+        (Report.status == "QUEUED") & or_(Report.lease_until.is_(None), Report.lease_until <= utcnow()),
         (Report.status == "RUNNING")
         & or_(
             Report.lease_until < utcnow(),
