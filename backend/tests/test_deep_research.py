@@ -139,6 +139,7 @@ def test_interrupted_pass_resumes_completed_work_and_never_exceeds_pass_allocati
         pytest.raises(report_research.ResearchError, match="pass limit"),
     ):
         report_research.research("https://company.example", "Company page", {}, lambda _: None)
+    assert calls.count("search") == 3
 
 
 def test_cancellation_stops_before_provider_work(monkeypatch):

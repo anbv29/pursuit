@@ -11,23 +11,35 @@ const report = {
 };
 
 test("research remains visible after leaving the report and survives a slow, failed update", async ({ page }) => {
-  let details = 0;
+  let updates = 0;
+  let interruptUpdates = false;
   let cancelled = 0;
+  let failList = false;
+  let listFailures = 0;
+  let releaseUpdate!: () => void;
+  const heldUpdate = new Promise<void>((resolve) => { releaseUpdate = resolve; });
   await page.route("**/api/**", async (route) => {
     const path = new URL(route.request().url()).pathname;
     if (path.endsWith(`/${rid}/cancel`)) cancelled++;
     if (path.endsWith(`/reports/${rid}`)) {
-      details++;
-      if (details === 2) {
+      if (interruptUpdates) updates++;
+      if (interruptUpdates && updates === 1) {
         await new Promise((resolve) => setTimeout(resolve, 4000));
         return route.fulfill({ status: 503, body: "Temporary outage" });
       }
+      if (interruptUpdates && updates === 2) await heldUpdate;
       return route.fulfill({ json: report });
     }
     if (path.endsWith("/auth/me")) return route.fulfill({ json: {
       user: { id: "u1", name: "Dana", email: "dana@example.com" }, csrf_token: "test",
     } });
-    if (path.endsWith(`/workspaces/${ws}/reports`)) return route.fulfill({ json: [report] });
+    if (path.endsWith(`/workspaces/${ws}/reports`)) {
+      if (failList) {
+        listFailures++;
+        return route.fulfill({ status: 503, body: "Temporary outage" });
+      }
+      return route.fulfill({ json: [report] });
+    }
     if (path.endsWith("/workspaces")) return route.fulfill({ json: [{ id: ws, name: "Example workspace", role: "owner", is_demo: false }] });
     if (path.endsWith("/approvals")) return route.fulfill({ json: [] });
     return route.fulfill({ json: { id: ws, name: "Example workspace", role: "owner", is_demo: false } });
@@ -35,13 +47,18 @@ test("research remains visible after leaving the report and survives a slow, fai
 
   await page.goto(`${base}/reports/${rid}`);
   await expect(page.getByRole("heading", { name: "Analyzing Example" })).toBeVisible();
-  await expect.poll(() => details, { timeout: 12000 }).toBeGreaterThanOrEqual(2);
+  interruptUpdates = true;
+  await expect.poll(() => updates, { timeout: 15000 }).toBeGreaterThanOrEqual(2);
   await expect(page.getByRole("heading", { name: "Analyzing Example" })).toBeVisible();
   await expect(page.getByText("Report not found")).toHaveCount(0);
-  await expect.poll(() => details, { timeout: 15000 }).toBeGreaterThanOrEqual(3);
+  releaseUpdate();
 
   await page.goto(`${base}/reports`);
   await expect(page.getByRole("link", { name: /Research in progress/ })).toBeVisible();
+  failList = true;
+  await expect.poll(() => listFailures, { timeout: 20000 }).toBeGreaterThanOrEqual(3);
+  await expect(page.getByRole("link", { name: /^Example https/ })).toBeVisible();
+  failList = false;
   expect(cancelled).toBe(0);
   await page.getByRole("link", { name: /Research in progress/ }).click();
   await expect(page.getByRole("heading", { name: "Analyzing Example" })).toBeVisible();

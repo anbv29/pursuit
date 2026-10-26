@@ -42,7 +42,7 @@ export default function ReportsPage() {
           <span className="hidden md:inline">{cta}</span>
         </div>
       </div>
-      {error ? (
+      {error && !data ? (
         <Glass className="p-2">
           <Empty icon={<AlertTriangle className="size-5" />} title="Couldn't load reports" body={error.message}
             action={<Button variant="secondary" onClick={() => void reload()}><RotateCw className="size-4" /> Try again</Button>} />

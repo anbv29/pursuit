@@ -73,7 +73,7 @@ function Progress({ r, onCancel, pending }: { r: Report; onCancel: () => void; p
       </div>
       <div className="mt-6 flex flex-wrap items-center gap-3 border-t border-[var(--glass-border)] pt-5">
         <Button variant="secondary" loading={pending} onClick={onCancel}>Cancel report</Button>
-        <p className="text-xs text-ink-3">Only cancelling stops this report. Saved research can be resumed.</p>
+        <p className="text-xs text-ink-3">Leaving this page does not cancel research. If repeated interruptions stop it, you can resume saved progress.</p>
       </div>
     </Glass>
   );
