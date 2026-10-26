@@ -102,7 +102,7 @@ def investigate(company_url, site_text, inputs, on_progress, task=None):
 
     def progress(message):
         if time.monotonic() - started > 300:
-            raise provider.ResearchError("Research reached its time limit. Completed passes are saved.")
+            raise provider.ResearchPaused("Research is resuming from its saved progress.")
         on_progress(message)
 
     def save(key, value):
@@ -139,7 +139,7 @@ def investigate(company_url, site_text, inputs, on_progress, task=None):
         progress(stage_progress)
         if key not in state:
             allocated = state.get("passes_allocated", 0)
-            if allocated + 1 > 3:
+            if allocated + 1 > 6:
                 raise provider.ResearchError(
                     "Research reached its investigation pass limit. Completed passes are saved."
                 )

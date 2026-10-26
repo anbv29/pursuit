@@ -126,12 +126,20 @@ def test_interrupted_pass_resumes_completed_work_and_never_exceeds_pass_allocati
         report_research.research("https://company.example", "Company page", {}, lambda _: None)
     assert "customers" in saved[-1] and "market" not in saved[-1]
     monkeypatch.setattr(report_research, "research_pass", original)
+    with report_research.checkpoints(saved[-1], lambda s: saved.append(copy.deepcopy(s))):
+        report_research.research("https://company.example", "Company page", {}, lambda _: None)
+    assert saved[-1]["passes_allocated"] == 4
+    assert calls.count("search") == 3
+
+    exhausted = copy.deepcopy(saved[-1])
+    exhausted.pop("challenge")
+    exhausted["passes_allocated"] = 6
     with (
-        report_research.checkpoints(saved[-1], lambda s: saved.append(copy.deepcopy(s))),
+        report_research.checkpoints(exhausted, lambda s: None),
         pytest.raises(report_research.ResearchError, match="pass limit"),
     ):
         report_research.research("https://company.example", "Company page", {}, lambda _: None)
-    assert saved[-1]["passes_allocated"] == 3
+    assert calls.count("search") == 3
 
 
 def test_cancellation_stops_before_provider_work(monkeypatch):

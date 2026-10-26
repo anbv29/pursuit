@@ -16,6 +16,7 @@ import { CommandPalette, type Command } from "./command-palette";
 import { MobileNavigation } from "./mobile-navigation";
 import { ReadingControls } from "./reading-mode";
 import { RouteProgress } from "./route-progress";
+import { ResearchActivity } from "./research-activity";
 import { useSession } from "./session";
 import { setTheme, ThemeToggle, useTheme } from "./theme";
 import { Avatar, Badge, cx, DemoBadge, Empty, Glass, Menu, Skeleton } from "./ui";
@@ -233,6 +234,7 @@ export function WorkspaceShell({ wsId, children }: { wsId: string; children: Rea
             <WorkspaceCtx.Provider key={wsId} value={{ workspace: ws.data, base, refreshApprovals: approvals.reload }}>
               <div className={cx("mx-auto w-full min-w-0", contentWidth)}>
                 <ReadingControls />
+                <ResearchActivity workspaceId={wsId} base={base} />
                 {children}
               </div>
             </WorkspaceCtx.Provider>

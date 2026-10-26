@@ -140,6 +140,10 @@ class ResearchError(Exception):
     """Raised with a user-safe message."""
 
 
+class ResearchPaused(ResearchError):
+    pass
+
+
 def _client() -> free_provider.Client:
     s = get_settings()
     if not s.ai_enabled:
@@ -169,12 +173,13 @@ def research_pass(company_url, site_text, inputs, on_progress, task):
     result = ai_usage.parse(
         _client(),
         model=get_settings().free_research_model,
-        max_tokens=6000,
+        max_tokens=3500,
         system=RESEARCH_SYSTEM
         + DEPTH_RULES
         + "\nNo search tools are available. Use only these fetched sources. "
         "Do not invent URLs, competitors or market measurements. When independent evidence is missing, "
-        "say so and propose a test. Return a JSON object with a notes string.",
+        "say so and propose a test. Keep notes concise but include concrete findings and source URLs. "
+        "Return a JSON object with a notes string.",
         messages=[
             {
                 "role": "user",

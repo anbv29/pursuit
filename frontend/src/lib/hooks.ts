@@ -40,7 +40,11 @@ export function useApi<T>(path: string | null, refreshKey: unknown = 0) {
         setResult({ path, data: d, error: null, loading: false });
       }
     } catch (e) {
-      if (mine === seq.current) setResult({ path, data: null, error: toApiError(e), loading: false });
+      if (mine === seq.current) setResult((old) => {
+        const error = toApiError(e);
+        return { path, data: (error.status === 0 || error.status >= 500) && old?.path === path
+          ? old.data : null, error, loading: false };
+      });
     }
   }, [path]);
 

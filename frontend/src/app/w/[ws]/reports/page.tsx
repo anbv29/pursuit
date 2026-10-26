@@ -2,6 +2,7 @@
 
 import { AlertTriangle, FileText, Plus, RotateCw } from "lucide-react";
 import Link from "next/link";
+import { useEffect } from "react";
 import { useWorkspace } from "@/components/shell";
 import { Badge, Button, buttonStyles, Card, Empty, Glass, PageHeader, Skeleton } from "@/components/ui";
 import { useApi } from "@/lib/hooks";
@@ -15,6 +16,18 @@ const LABEL = (s: ReportListItem["status"]) =>
 export default function ReportsPage() {
   const { workspace, base } = useWorkspace();
   const { data, error, reload } = useApi<ReportListItem[]>(`/workspaces/${workspace.id}/reports`);
+  const generating = data?.some((report) => report.status === "QUEUED" || report.status === "RUNNING");
+  useEffect(() => {
+    if (!generating) return;
+    let stopped = false;
+    let timer: ReturnType<typeof setTimeout>;
+    const poll = async () => {
+      await reload();
+      if (!stopped) timer = setTimeout(poll, 5000);
+    };
+    timer = setTimeout(poll, 5000);
+    return () => { stopped = true; clearTimeout(timer); };
+  }, [generating, reload]);
   const cta = (
     <Link href={`${base}/reports/new`} className={`${buttonStyles("primary")} shimmer-btn`}><Plus className="size-4" aria-hidden /> Analyze a company</Link>
   );
@@ -29,7 +42,7 @@ export default function ReportsPage() {
           <span className="hidden md:inline">{cta}</span>
         </div>
       </div>
-      {error ? (
+      {error && !data ? (
         <Glass className="p-2">
           <Empty icon={<AlertTriangle className="size-5" />} title="Couldn't load reports" body={error.message}
             action={<Button variant="secondary" onClick={() => void reload()}><RotateCw className="size-4" /> Try again</Button>} />
