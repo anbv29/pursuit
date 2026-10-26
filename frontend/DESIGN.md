@@ -192,7 +192,7 @@ The direction contract requires control/icon contrast of at least 3:1 and normal
 
 The desktop shell has a sticky full-height sidebar: expanded width 248px, collapsed width 80px, with the preference stored as `pursuit.sidebar`. At Tailwind `md` (768px), the sidebar appears and replaces mobile navigation. The sticky header is 64px tall on mobile and 76px from `md`. Main content has 16px horizontal gutters on mobile and 32px from `md`, with 20px top spacing.
 
-The shell owns route-specific centered width limits: report creation 42rem; settings, assistant, first look, and priorities 48rem; reports and approvals 56rem; experiment creation 64rem; other workspace pages 72rem. The dashboard's own wider wrapper remains bounded by that shell. At `xl` (1280px), the dashboard adds a 320px right rail beside an independent flexible left stack: experiment table, workflow choices, and company reports. These supporting panels follow the table immediately without waiting for the taller right rail. Below that the stacks follow document order. Summary metrics stay three columns. Phone experiments use a responsive list exposing stage, verdict, and updated time together; the desktop table remains a separate wider presentation with local overflow handling.
+The shell owns route-specific centered width limits: report creation 42rem; settings, assistant, and priorities 48rem; reports and approvals 56rem; experiment creation 64rem; other workspace pages 72rem. The dashboard's own wider wrapper remains bounded by that shell. At `xl` (1280px), the dashboard adds a 320px right rail beside an independent flexible left stack: experiment table, workflow choices, and company reports. These supporting panels follow the table immediately without waiting for the taller right rail. Below that the stacks follow document order. Summary metrics stay three columns. Phone experiments use a responsive list exposing stage, verdict, and updated time together; the desktop table remains a separate wider presentation with local overflow handling.
 
 Spacing follows the declared four-pixel family, with recurring 20px panel gutters and section gaps. Card headers use 20px horizontal and 16px vertical padding; rows commonly use 20px horizontal and 14px vertical padding. Cards own their padding rather than imposing one universal value.
 
@@ -239,7 +239,7 @@ The `nav` array in `src/components/shell.tsx` is the canonical workspace registr
 | Group | Shipped entries |
 | --- | --- |
 | Overview | Dashboard; Your priorities |
-| Research & strategy | Company reports; GTM strategy; Website first look (owner only) |
+| Research & strategy | Company reports; GTM strategy |
 | Execution | New experiment; Approvals; Fo Assistant |
 | Workspace | Settings |
 
