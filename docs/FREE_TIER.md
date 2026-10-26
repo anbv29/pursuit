@@ -1,3 +1,5 @@
+> Historical documentation. Website First Look was retired on October 26, 2026. Its page redirects to Company reports and its API routes have been removed. Existing preview data remains exportable. See [FREE_MODE.md](FREE_MODE.md) for the current product.
+
 # Explore: four-section research preview
 
 Explore includes one successful AI research preview per account. It contains only:

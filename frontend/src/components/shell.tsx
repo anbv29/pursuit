@@ -75,11 +75,10 @@ export function WorkspaceShell({ wsId, children }: { wsId: string; children: Rea
     { href: `${base}/fo`, label: "Fo Assistant", icon: MessageCircle, group: "Execution" },
     { href: `${base}/settings`, label: "Settings", icon: Settings, group: "Workspace" },
   ];
-  if (ws.data?.role === "owner") nav.push({ href: `${base}/first-look`, label: "Website first look", icon: FileText, group: "Research & strategy" });
   const isActive = (n: Pick<NavItem, "href" | "exact">) => path === n.href || (!n.exact && path.startsWith(`${n.href}/`));
   const current = nav.find(isActive);
   const contentWidth = path.endsWith("/reports/new") ? "max-w-2xl"
-    : /\/(settings|fo|first-look|focus)$/.test(path) ? "max-w-3xl"
+    : /\/(settings|fo|focus)$/.test(path) ? "max-w-3xl"
     : /\/(reports|approvals)$/.test(path) ? "max-w-4xl"
     : /\/(experiments\/new)$/.test(path) ? "max-w-5xl" : "max-w-6xl";
 

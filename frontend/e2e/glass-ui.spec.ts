@@ -119,7 +119,13 @@ for (const vp of [{ name: "desktop", width: 1280, height: 860 }, { name: "tablet
 
     await page.goto(`/w/${WS}/reports`);
     await expect(page.getByRole("heading", { name: "Company reports" })).toBeVisible();
+    await expect(page.getByRole("link", { name: "Website first look", exact: true })).toHaveCount(0);
+    await expect(page.getByRole("link", { name: "Open my first look", exact: false })).toHaveCount(0);
     await check(page, `${vp.name}-reports`, errors);
+
+    await page.goto(`/w/${WS}/first-look`);
+    await expect(page).toHaveURL(new RegExp(`/w/${WS}/reports$`));
+    await expect(page.getByRole("heading", { name: "Company reports", exact: true })).toBeVisible();
 
     await page.goto(`/w/${WS}/reports/r2`);
     await expect(page.getByRole("heading", { name: /Analyzing Claimsdesk/ })).toBeVisible();

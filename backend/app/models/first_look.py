@@ -1,4 +1,4 @@
-"""One successful website first look per account; workspace deletion cannot reset it."""
+"""Historical preview data remains available to export and account deletion."""
 
 import uuid
 

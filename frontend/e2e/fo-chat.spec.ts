@@ -84,7 +84,7 @@ test("Wajo connection discloses the selected report and waits for sharing consen
     if (path.endsWith("/fo-chat/connect")) {
       connects++;
       expect(route.request().postDataJSON()).toMatchObject({ report_id: "selected-report", share_report: true });
-      await route.fulfill({ json: { url: `http://localhost:3000/w/${ws.id}/fo?oauth=started` } });
+      await route.fulfill({ json: { url: `${new URL(page.url()).origin}/w/${ws.id}/fo?oauth=started` } });
       return;
     }
     const data = path.endsWith("/auth/me") ? { user: { id: "user", name: "Founder", email: "founder@example.com" }, csrf_token: "synthetic" }

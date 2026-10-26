@@ -1,5 +1,6 @@
-import { FirstLookPanel } from "@/components/first-look";
+import { redirect } from "next/navigation";
 
-export default function FirstLookPage() {
-  return <FirstLookPanel />;
+export default async function FormerFirstLookPage({ params }: { params: Promise<{ ws: string }> }) {
+  const { ws } = await params;
+  redirect(`/w/${ws}/reports`);
 }

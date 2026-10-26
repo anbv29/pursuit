@@ -35,16 +35,16 @@ same-origin links, and up to three competitor roots explicitly supplied in the r
 form. It diversifies pricing, customer stories, comparisons, security, integrations and
 product/documentation pages within eighteen fetch attempts and two link levels. A
 45-second scheduling budget stops further fetches; an in-flight fetch retains its own
-bounded timeout. The quick First Look keeps its smaller separate collection budget. Existing URL,
+bounded timeout. Existing URL,
 SSRF, redirect, response-size and timeout protections remain in force. The same fetched
 evidence supports three focused investigations, a skeptical review and report synthesis.
 There is no general web search service included. Competitors, prospects and benchmarks
 may remain missing when no accessible evidence supports them. Citations are source-linked;
 a company's own marketing is not independently verified customer behaviour.
 
-The quick four-section First Look remains available alongside the full free report.
-Its one-success-per-account limit prevents repeatedly claiming an onboarding preview;
-it does not restrict access to full reports. Failed preview requests do not consume it.
+Website First Look has been retired. Use Company reports for website research and
+personalized GTM strategies. Old page bookmarks redirect to Company reports; retired
+preview API routes return 404. Previously saved previews remain in scoped exports.
 
 ## Safety and fair use
 
