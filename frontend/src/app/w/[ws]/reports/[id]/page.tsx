@@ -67,13 +67,13 @@ function Progress({ r, onCancel, pending }: { r: Report; onCancel: () => void; p
     <Glass className="enter-rise mx-auto mt-4 max-w-xl p-6 sm:p-8">
       <p className="text-[13px] font-medium text-trail">{r.status === "QUEUED" ? "Queued" : "Working"} · <Elapsed since={r.started_at ?? r.created_at} /></p>
       <h1 className="mt-1 font-display text-2xl font-bold tracking-tight">Analyzing {r.company_name || r.company_url}</h1>
-      <p className="mt-1.5 text-sm text-ink-2">Usually 2-4 minutes. You can leave this page; the report keeps generating.</p>
+      <p className="mt-1.5 text-sm text-ink-2">Research continues in the background when you leave this page. Provider delays can take longer; completed steps are saved.</p>
       <div className="mt-6" aria-live="polite">
         <ProcessingFeed steps={STEPS} current={step} detail={r.progress} count={sources} countLabel="sources gathered" />
       </div>
       <div className="mt-6 flex flex-wrap items-center gap-3 border-t border-[var(--glass-border)] pt-5">
         <Button variant="secondary" loading={pending} onClick={onCancel}>Cancel report</Button>
-        <p className="text-xs text-ink-3">Saved research can be resumed. An AI request already in progress may still incur charges.</p>
+        <p className="text-xs text-ink-3">Only cancelling stops this report. Saved research can be resumed.</p>
       </div>
     </Glass>
   );
@@ -126,9 +126,8 @@ export default function ReportPage() {
   const { id } = useParams<{ id: string }>();
   const { workspace, base } = useWorkspace();
   const { toast } = useFeedback();
-  const [tick, setTick] = useState(0);
   const reportPath = `/workspaces/${workspace.id}/reports/${id}`;
-  const { data: r, error, reload } = useApi<Report>(reportPath, tick);
+  const { data: r, error, reload } = useApi<Report>(reportPath);
   const jobControl = useAction(async (command: "cancel" | "retry") => {
     try { await api(`${reportPath}/${command}`, { method: "POST" }); await reload(); }
     catch (e) { toast("error", errorMessage(e)); }
@@ -136,9 +135,15 @@ export default function ReportPage() {
   const running = r?.status === "QUEUED" || r?.status === "RUNNING";
   useEffect(() => {
     if (!running) return;
-    const t = setInterval(() => setTick((n) => n + 1), 3000);
-    return () => clearInterval(t);
-  }, [running]);
+    let stopped = false;
+    let timer: ReturnType<typeof setTimeout>;
+    const poll = async () => {
+      await reload();
+      if (!stopped) timer = setTimeout(poll, 3000);
+    };
+    timer = setTimeout(poll, 3000);
+    return () => { stopped = true; clearTimeout(timer); };
+  }, [running, reload]);
   // Success toast when a report you were watching finishes.
   const wasRunning = useRef(false);
   useEffect(() => {
@@ -151,11 +156,12 @@ export default function ReportPage() {
 
   const activeId = useActiveSection(TOC_IDS, `${id}:${r?.status ?? "loading"}`);
 
-  if (error) {
+  if (error && !r) {
     return (
       <Glass className="mx-auto mt-6 max-w-lg p-2">
-        <Empty icon={<AlertTriangle className="size-5" />} title="Report not found" body="It may belong to a workspace you can't access."
-          action={<Link href={`${base}/reports`} className={buttonStyles("secondary")}>Back to reports</Link>} />
+        <Empty icon={<AlertTriangle className="size-5" />} title={error.status === 404 ? "Report not found" : "Unable to load report"}
+          body={error.status === 404 ? "It may belong to a workspace you can't access." : "A connection problem interrupted the update. Your research is saved on the server."}
+          action={<Button variant="secondary" onClick={() => void reload()}>Retry connection</Button>} />
       </Glass>
     );
   }

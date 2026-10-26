@@ -29,6 +29,7 @@ logger = logging.getLogger("pursuit.reports")
 ACTIVE = ("QUEUED", "RUNNING")
 DAILY_LIMIT = 20
 STALE_AFTER = timedelta(minutes=30)
+MAX_ATTEMPTS = 6
 
 
 def get(db: Session, workspace_id: uuid.UUID, report_id: uuid.UUID) -> Report:
@@ -126,7 +127,7 @@ def run(report_id: uuid.UUID) -> None:
         usage_token = ai_usage.CONTEXT.set(
             (report.workspace_id, report.id, get_settings().free_research_model)
         )
-        if report.attempts > 3:
+        if report.attempts > MAX_ATTEMPTS:
             _set(
                 db,
                 report_id,
@@ -243,25 +244,35 @@ def run(report_id: uuid.UUID) -> None:
         db.commit()
     except JobStopped:
         db.rollback()
-    except (free_provider.APIConnectionError, free_provider.RateLimitError):
+    except (free_provider.APIConnectionError, free_provider.RateLimitError, report_research.ResearchPaused):
         db.rollback()
-        if report.attempts < 3:
-            _set(
-                db,
-                report_id,
-                owner,
-                status="QUEUED",
-                progress="Temporary provider problem. Retrying…",
-                lease_until=None,
-            )
-        else:
-            _set(
-                db,
-                report_id,
-                owner,
-                status="FAILED",
-                error="The AI service is unavailable. Please retry later.",
-            )
+        with suppress(JobStopped):
+            if report.attempts < MAX_ATTEMPTS:
+                delay = min(30 * 2 ** (report.attempts - 1), 300)
+                _set(
+                    db,
+                    report_id,
+                    owner,
+                    status="QUEUED",
+                    progress=f"Research saved. Automatically resuming in {delay} seconds…",
+                    lease_owner=None,
+                    lease_until=utcnow() + timedelta(seconds=delay),
+                )
+            else:
+                _set(
+                    db,
+                    report_id,
+                    owner,
+                    status="FAILED",
+                    progress="Paused after repeated interruptions",
+                    error=(
+                        "Research could not finish after repeated interruptions. "
+                        "Resume saved progress to try again."
+                    ),
+                    lease_owner=None,
+                    lease_until=None,
+                    finished_at=utcnow(),
+                )
     except report_research.ResearchError as exc:
         db.rollback()
         with suppress(JobStopped):
