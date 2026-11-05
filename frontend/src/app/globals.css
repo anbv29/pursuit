@@ -68,11 +68,11 @@
   --font-editorial: var(--font-interface);
 
   /* shape, space, type, motion */
-  --radius-xs: 6px;
-  --radius-sm: 10px;
-  --radius-md: 14px;
-  --radius-lg: 18px;
-  --radius-xl: 22px;
+  --panel-radius-xs: 6px;
+  --panel-radius-sm: 10px;
+  --panel-radius-md: 14px;
+  --panel-radius-lg: 18px;
+  --panel-radius-xl: 22px;
   --space-1: 4px;
   --space-2: 8px;
   --space-3: 12px;
@@ -306,8 +306,8 @@ h2, h3, h4 { letter-spacing: -0.025em; }
   border: 1px solid var(--hairline);
   box-shadow: 0 2px 4px -3px var(--shadow), 0 12px 28px -22px var(--shadow);
 }
-.glass { position: relative; border-radius: var(--radius-xl); }
-.glass-dense { border-radius: var(--radius-md); }
+.glass { position: relative; border-radius: var(--panel-radius-xl); }
+.glass-dense { border-radius: var(--panel-radius-md); }
 .glass-chrome { border-radius: 0; }
 .glass-sheen, .backdrop-orbs { display: none; }
 .workspace-sidebar, .workspace-sidebar > .glass { background: var(--sidebar-surface); }
@@ -337,7 +337,7 @@ h2, h3, h4 { letter-spacing: -0.025em; }
   position: relative;
   overflow: hidden;
   background: var(--surface-sunken);
-  border-radius: var(--radius-sm);
+  border-radius: var(--panel-radius-sm);
 }
 .skeleton::after {
   content: "";
@@ -477,9 +477,9 @@ h2, h3, h4 { letter-spacing: -0.025em; }
 .ui-dialog { opacity: 0; transform: scale(0.96); filter: blur(4px); }
 @starting-style { .ui-dialog[open] { opacity: 0; transform: scale(0.96); filter: blur(4px); } }
 .ui-drawer[open] { opacity: 1; transform: none; }
-.ui-drawer { opacity: 0; transform: translateY(24px); border-radius: var(--radius-xl) var(--radius-xl) 0 0; inset: auto 0 0 0; }
+.ui-drawer { opacity: 0; transform: translateY(24px); border-radius: var(--panel-radius-xl) var(--panel-radius-xl) 0 0; inset: auto 0 0 0; }
 @media (min-width: 640px) {
-  .ui-drawer { transform: translateX(32px); border-radius: var(--radius-xl) 0 0 var(--radius-xl); inset: 0 0 0 auto; }
+  .ui-drawer { transform: translateX(32px); border-radius: var(--panel-radius-xl) 0 0 var(--panel-radius-xl); inset: 0 0 0 auto; }
 }
 @starting-style { .ui-drawer[open] { opacity: 0; transform: translateY(24px); } }
 .ui-dialog::backdrop, .ui-drawer::backdrop {

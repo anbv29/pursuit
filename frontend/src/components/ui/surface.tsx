@@ -6,7 +6,7 @@ import { cx } from "./styles";
 
 /** Calm, readable surface for content. No backdrop blur (cheap, legible over anything). */
 export function Card({ className, children, as: As = "section" }: { className?: string; children: ReactNode; as?: "section" | "div" | "article" }) {
-  return <As className={cx("surface rounded-[var(--radius-lg)]", className)}>{children}</As>;
+  return <As className={cx("surface rounded-[var(--panel-radius-lg)]", className)}>{children}</As>;
 }
 
 export function CardHeader({ title, description, action }: { title: ReactNode; description?: ReactNode; action?: ReactNode }) {

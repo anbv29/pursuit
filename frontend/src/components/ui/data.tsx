@@ -50,7 +50,7 @@ export function Tabs({ tabs, value, onChange, label, className, idPrefix, panelI
 export function TableWrap({ children, label, maxHeight }: { children: ReactNode; label: string; maxHeight?: string }) {
   return (
     <div role="region" aria-label={label} tabIndex={0}
-      className="overflow-auto rounded-[var(--radius-md)] border border-line bg-surface focus-visible:outline-2"
+      className="overflow-auto rounded-[var(--panel-radius-md)] border border-line bg-surface focus-visible:outline-2"
       style={maxHeight ? { maxHeight } : undefined}>
       {children}
     </div>

@@ -214,7 +214,7 @@ Interaction motion is restrained: press scales to 0.97, entry rises 6px, and ove
 
 ## Shapes
 
-Cards use the large radius, legacy Glass uses extra-large and dense Glass medium. Text fields, selects, sidebar links, and shared tabs use rounded rectangles. Button radii are 10px, 12px, and 14px by size. Status chips retain pill geometry. Table wrappers use the medium radius. The logo retains its rounded-square SVG silhouette.
+Cards use the large radius, legacy Glass uses extra-large and dense Glass medium. Panel values use the `--panel-radius-*` namespace so they do not override Tailwind's control radius tokens. Text fields, selects, sidebar links, and shared tabs use rounded rectangles. Button radii are 10px, 12px, and 14px by size. Status chips retain pill geometry. Table wrappers use the medium radius. The logo retains its rounded-square SVG silhouette.
 
 ## Components
 
