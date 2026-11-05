@@ -2,7 +2,7 @@ import { api, ApiError } from "./api";
 import type { Session } from "./types";
 
 const STARTUP_TIMEOUT_MS = 90_000;
-const REQUEST_TIMEOUT_MS = 12_000;
+const REQUEST_TIMEOUT_MS = 60_000;
 
 function pause(signal: AbortSignal) {
   return new Promise<void>((resolve, reject) => {
