@@ -243,7 +243,7 @@ export default function ReportPage() {
           <ResearchData measurements={r.content.measurements} sources={r.sources} />
           {workspace.role === "owner" && <ReportSharing path={reportPath} />}
           <ReportPlan path={reportPath} />
-          <details className="surface group print:hidden rounded-[var(--radius-lg)] p-4 sm:p-5">
+          <details className="surface group print:hidden rounded-[var(--panel-radius-lg)] p-4 sm:p-5">
             <summary className="cursor-pointer list-none font-semibold text-trail marker:hidden">Ask about the report or explain a term</summary>
             <div className="mt-4"><ReportQuestions path={reportPath} /></div>
           </details>
@@ -259,7 +259,7 @@ export default function ReportPage() {
           <FunnelRisks c={c} />
           <Experiments c={c} reportId={r.id} />
           <Risks c={c} />
-          <details className="surface group print:hidden rounded-[var(--radius-lg)] p-4 sm:p-5">
+          <details className="surface group print:hidden rounded-[var(--panel-radius-lg)] p-4 sm:p-5">
             <summary className="cursor-pointer list-none font-semibold text-trail marker:hidden">Correct facts, refresh sections, or compare versions</summary>
             <div className="mt-4"><ReportVersions path={reportPath} refresh={reload} /></div>
           </details>

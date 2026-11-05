@@ -29,14 +29,14 @@ export function Tabs({ tabs, value, onChange, label, className, idPrefix, panelI
   };
   return (
     <div role="tablist" aria-label={label}
-      className={cx("flex min-w-0 max-w-full gap-1 overflow-x-auto rounded-full border border-line bg-sunken p-1 [scrollbar-width:none]", className)}>
+      className={cx("flex min-w-0 max-w-full gap-1 overflow-x-auto rounded-2xl border border-line bg-sunken p-1 [scrollbar-width:none]", className)}>
       {tabs.map((t, i) => {
         const active = t.id === value;
         return (
           <button key={t.id} ref={(el) => { refs.current[i] = el; }} role="tab" id={`${base}-${t.id}`} type="button"
             aria-selected={active} aria-controls={panelId} tabIndex={active ? 0 : -1}
             onClick={() => onChange(t.id)} onKeyDown={(e) => onKey(e, i)}
-            className={cx("press whitespace-nowrap rounded-full px-3.5 py-2 text-sm transition-[background-color,color,box-shadow] duration-200",
+            className={cx("press whitespace-nowrap rounded-xl px-3.5 py-2 text-sm transition-[background-color,color,box-shadow] duration-200",
               active ? "bg-surface font-semibold text-ink ring-1 ring-line" : "text-ink-3 hover:text-ink")}>
             {t.label}
           </button>
@@ -50,7 +50,7 @@ export function Tabs({ tabs, value, onChange, label, className, idPrefix, panelI
 export function TableWrap({ children, label, maxHeight }: { children: ReactNode; label: string; maxHeight?: string }) {
   return (
     <div role="region" aria-label={label} tabIndex={0}
-      className="overflow-auto rounded-[var(--radius-md)] border border-line bg-surface focus-visible:outline-2"
+      className="overflow-auto rounded-[var(--panel-radius-md)] border border-line bg-surface focus-visible:outline-2"
       style={maxHeight ? { maxHeight } : undefined}>
       {children}
     </div>

@@ -10,7 +10,7 @@ export const BTN: Record<Variant, string> = {
   ghost: "text-ink-2 hover:bg-[var(--inset)] hover:text-ink",
   danger: "surface text-danger hover:bg-danger-soft hover:border-danger/40",
 };
-export const SIZE = { sm: "h-8 px-3 text-[13px] rounded-full", md: "h-10 px-4 text-sm rounded-full", lg: "h-12 px-6 text-base rounded-full" };
+export const SIZE = { sm: "h-8 px-3 text-[13px] rounded-[10px]", md: "h-10 px-4 text-sm rounded-xl", lg: "h-12 px-6 text-base rounded-[14px]" };
 
 /** Same look as <Button>, for links and other elements that act as buttons. */
 export const buttonStyles = (variant: Variant = "primary", size: "sm" | "md" | "lg" = "md", className?: string) =>

@@ -51,10 +51,10 @@ export default function Dashboard() {
   }
 
   const newBtn = (
-    <Link href={`${base}/experiments/new`} className={buttonStyles("secondary") + " rounded-full"}><Plus className="size-4" aria-hidden /> New experiment</Link>
+    <Link href={`${base}/experiments/new`} className={buttonStyles("secondary")}><Plus className="size-4" aria-hidden /> New experiment</Link>
   );
   const analyzeBtn = (
-    <Link href={`${base}/reports/new`} className={buttonStyles("primary") + " rounded-full"}><FileText className="size-4" aria-hidden /> Analyze your company</Link>
+    <Link href={`${base}/reports/new`} className={buttonStyles("primary")}><FileText className="size-4" aria-hidden /> Analyze your company</Link>
   );
   const reportCard = reports.data && reports.data.length > 0 && (
     <Card className="border border-line bg-surface shadow-none">
@@ -155,7 +155,7 @@ export default function Dashboard() {
                       <Link href={base + '/experiments/' + e.id} className="block rounded-sm font-semibold text-ink hover:text-trail hover:underline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-accent">{e.title}</Link>
                       <div className="mt-1 flex flex-wrap items-center gap-2 text-xs text-ink-3">{USE_CASE_LABEL[e.use_case]}{e.is_demo && <DemoBadge label="Demo" />}</div>
                     </td>
-                    <td className="whitespace-nowrap px-3 py-3.5"><span className="inline-flex items-center gap-2 rounded-full border border-line px-2.5 py-1 text-xs text-ink-2"><span className="size-1.5 rounded-full bg-orange-500" aria-hidden />{STAGE_LABEL[e.stage]}</span></td>
+                    <td className="whitespace-nowrap px-3 py-3.5"><span className="inline-flex items-center gap-2 rounded-full border border-line px-2.5 py-1 text-xs text-ink-2"><span className="size-1.5 rounded-full bg-accent" aria-hidden />{STAGE_LABEL[e.stage]}</span></td>
                     <td className="whitespace-nowrap px-3 py-3.5">{e.latest_decision ? <DecisionChip decision={e.latest_decision} /> : <Badge tone="muted">No verdict</Badge>}</td>
                     <td className="whitespace-nowrap px-5 py-3.5 text-right text-xs text-ink-3"><time dateTime={e.updated_at} title={new Date(e.updated_at).toLocaleString()}>{timeAgo(e.updated_at)}</time></td>
                   </tr>))}
