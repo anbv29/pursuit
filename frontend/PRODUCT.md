@@ -8,6 +8,6 @@ The October 2026 redesign is frontend-only. Existing requests, permissions, auth
 
 ## Visual direction
 
-The user explicitly selected [Azmir Sheikh's AI dashboard](https://dribbble.com/shots/27836982-AI-Powered-LinkedIn-Automation-Dashboard). Use opaque white panels, a pale neutral gray canvas, compact sans typography, orange actions, thin boundaries, pill controls, and a clearly grouped sidebar. Adapt its composition to Pursuit's actual work rather than copying its outreach data. The reference does not identify the typeface; self-hosted Inter matches the visible style. Maintain an accessible dark counterpart.
+The November 2026 update softens the earlier dashboard direction with warm off-white panels, a pale stone canvas, muted sage actions, soft charcoal text, rounded rectangular controls, and a clearly grouped sidebar. Keep the compact Inter typography and existing workspace composition. Dark mode uses green-gray surfaces and desaturated accents. Apply the shared visual language to marketing, authentication, onboarding, reports, experiments, and supporting pages.
 
 The quality bar is a useful, compact workspace with real information visible at desktop and phone sizes, readable control boundaries, keyboard focus, and no horizontal page overflow. Phone experiment rows expose stage and verdict together. Desktop supporting content follows the table without waiting for the taller secondary column.

@@ -130,7 +130,7 @@ export function WorkspaceShell({ wsId, children }: { wsId: string; children: Rea
       <CommandPalette commands={commands} open={paletteOpen} onOpenChange={setPaletteOpen} />
 
       {/* Desktop sidebar */}
-      <aside className={cx("sticky top-0 hidden h-dvh shrink-0 border-r border-line bg-surface print:hidden md:block transition-[width] duration-200 ease-[var(--ease-out)]", collapsed ? "w-[80px]" : "w-[248px]")}>
+      <aside className={cx("workspace-sidebar sticky top-0 hidden h-dvh shrink-0 border-r border-line bg-surface print:hidden md:block transition-[width] duration-200 ease-[var(--ease-out)]", collapsed ? "w-[80px]" : "w-[248px]")}>
         <Glass as="nav" aria-label="Primary" className="flex h-full flex-col rounded-none border-0 p-4 shadow-none">
           <div className={cx("flex h-11 items-center", collapsed ? "justify-center" : "px-1.5")}>
             <Logo href={base} compact={collapsed} />
@@ -143,7 +143,7 @@ export function WorkspaceShell({ wsId, children }: { wsId: string; children: Rea
                 collapsed && group.label !== "Overview" && "border-t border-line pt-3",
               )}>
                 {!collapsed && (
-                  <p className="mb-2 px-3 font-ui text-xs font-medium text-ink-3">{group.label}</p>
+                  <p className="mb-2 px-3 font-ui text-[11px] font-medium uppercase tracking-[0.07em] text-ink-3">{group.label}</p>
                 )}
                 <ul aria-label={group.label} className="space-y-1">
                   {group.items.map((n) => {
@@ -152,7 +152,7 @@ export function WorkspaceShell({ wsId, children }: { wsId: string; children: Rea
                       <li key={n.href}>
                         <Link href={n.href} title={collapsed ? n.label : undefined} aria-label={collapsed ? n.label : undefined} aria-current={active ? "page" : undefined}
                           className={cx("press relative flex h-10 items-center gap-3 rounded-xl px-3 py-2 text-sm transition-[background-color,color] duration-150",
-                            active ? "bg-[var(--inset)] font-semibold text-ink" : "text-ink-2 hover:bg-[var(--inset)] hover:text-ink",
+                            active ? "bg-accent-soft font-semibold text-trail-strong ring-1 ring-accent/15" : "text-ink-2 hover:bg-[var(--inset)] hover:text-ink",
                             collapsed && "justify-center px-0")}>
                           <n.icon className="size-[18px] shrink-0" strokeWidth={1.6} aria-hidden />
                           {!collapsed && <span className="flex-1 truncate">{n.label}</span>}
