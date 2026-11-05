@@ -7,6 +7,7 @@ import { z } from "zod";
 import { ApiError, errorMessage } from "@/lib/api";
 import { useAction } from "@/lib/hooks";
 import { Logo } from "./brand";
+import { ConnectionStatus } from "./connection-status";
 import { useSession } from "./session";
 import { ThemeToggle } from "./theme";
 import { Button, Field, Glass, Input, Notice, PasswordInput } from "./ui";
@@ -81,7 +82,9 @@ export function AuthForm({ mode }: { mode: "login" | "signup" }) {
         )}
         <form onSubmit={onSubmit} noValidate className="mt-6 space-y-4">
           {sessionError ? <Notice tone="flag">{sessionError} <button type="button" onClick={retrySession} className="font-semibold underline">Try connecting again</button></Notice>
-            : (!ready || submit.pending) && <p role="status" className="text-sm text-ink-2">Connecting to Pursuit…</p>}
+            : (!ready || submit.pending) && <ConnectionStatus message={submit.pending
+              ? mode === "login" ? "Signing you in…" : "Creating your account…"
+              : "Connecting to Pursuit…"} />}
           {formError && <Notice tone="bad">{formError}</Notice>}
           {mode === "signup" && (
             <Field label="Name" error={errors.name}>

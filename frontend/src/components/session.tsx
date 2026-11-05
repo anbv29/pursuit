@@ -6,6 +6,7 @@ import { api, ApiError, errorMessage, setCsrf } from "@/lib/api";
 import { restoreSession, waitForBackend } from "@/lib/session-recovery";
 import type { Session, User } from "@/lib/types";
 import { Button, Skeleton } from "./ui";
+import { ConnectionStatus } from "./connection-status";
 
 type Ctx = {
   user: User | null;
@@ -54,7 +55,29 @@ export function SessionProvider({ children }: { children: ReactNode }) {
     return () => controller.abort();
   }, [attempt]);
 
-  const retrySession = () => { setSessionError(null); setReady(false); setAttempt((value) => value + 1); };
+  const retrySession = useCallback(() => {
+    setSessionError(null);
+    setReady(false);
+    setAttempt((value) => value + 1);
+  }, []);
+
+  useEffect(() => {
+    if (!sessionError || ready) return;
+    let retrying = false;
+    const reconnect = () => {
+      if (retrying || document.visibilityState !== "visible") return;
+      retrying = true;
+      retrySession();
+    };
+    window.addEventListener("online", reconnect);
+    window.addEventListener("focus", reconnect);
+    document.addEventListener("visibilitychange", reconnect);
+    return () => {
+      window.removeEventListener("online", reconnect);
+      window.removeEventListener("focus", reconnect);
+      document.removeEventListener("visibilitychange", reconnect);
+    };
+  }, [sessionError, ready, retrySession]);
 
   const login = useCallback(async (email: string, password: string) => {
     await waitForBackend();
@@ -95,7 +118,7 @@ export function RequireAuth({ children }: { children: ReactNode }) {
   if (!ready || !user) {
     return (
       <div className="mx-auto mt-24 w-full max-w-md space-y-3 px-6" aria-label="Loading">
-        <p role="status" className="text-sm text-ink-2">Connecting to Pursuit…</p>
+        <ConnectionStatus />
         <Skeleton className="h-6 w-40" />
         <Skeleton className="h-24 w-full" />
       </div>
