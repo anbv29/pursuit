@@ -9,7 +9,7 @@ colors:
   chrome: "#f8faf5"
   ink: "#25332b"
   ink-soft: "#4d5f53"
-  muted: "#637168"
+  muted: "#59675d"
   hairline: "#dfe5dc"
   hairline-strong: "#7b8a80"
   accent: "#547763"
