@@ -119,7 +119,7 @@ export function WorkspaceShell({ wsId, children }: { wsId: string; children: Rea
   ) : <Skeleton className="h-9 w-full" />;
 
   const groupOrder: NavGroup[] = ["Overview", "Research & strategy", "Execution", "Workspace"];
-  const groups = groupOrder.map((label) => ({ label, items: nav.filter((n) => n.group === label) }));
+  const groups = groupOrder.map((label) => ({ label, items: nav.filter((n) => n.group === label) })).filter(group => group.items.length);
   const mobileTabs = nav.filter((n) => n.exact || n.href === `${base}/reports` || n.href === `${base}/approvals`);
   const mobileMenu = [
     ...nav.filter((n) => !mobileTabs.includes(n)),

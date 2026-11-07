@@ -49,7 +49,7 @@ export function MobileNavigation({ tabs, menuItems, accountItems, accountName, n
           </Link>;
         })}
         <button type="button" onClick={() => setOpen(true)} aria-haspopup="dialog" aria-expanded={open}
-          aria-label="Menu" className={cx("mobile-tab", menuActive && "mobile-tab-active")}>
+          aria-label="Menu" className={cx("mobile-tab col-start-5", menuActive && "mobile-tab-active")}>
           <span className="mobile-tab-icon"><MenuIcon size={20} aria-hidden="true" /></span>
           <span>Menu</span>
         </button>

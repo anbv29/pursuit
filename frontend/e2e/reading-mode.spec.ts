@@ -4,13 +4,15 @@ import type { Report } from "../src/lib/types";
 // Synthetic report: no backend, credentials, company fetch, or paid AI calls.
 const report: Report = {
   id: "report", company_url: "https://example.com", company_name: "Reading test company", inputs: {},
-  status: "SUCCEEDED", progress: "Done", sources: [{ id: "S0", url: "https://example.com", title: "Example source", via: "fixture" }],
+  status: "SUCCEEDED", progress: "Done", sources: [{ id: "S0", url: "https://example.com", title: "Example source", via: "fixture" },
+    { id: "S1", url: "https://example.com/unavailable", title: "Unavailable source", via: "fixture", retrieval_status: "unavailable" }],
   model: "test-fixture", error: null, created_at: "2026-10-18T00:00:00Z", started_at: null, finished_at: null,
   content: {
     executive_summary: ["Start by talking to five potential customers."], focus_first: "Ask about their last purchase.",
     snapshot: { name: "Reading test company", one_liner: "Helps founders find customers", offering: "Research", business_model: "Subscription", stage_assessment: "Early stage", observed_pricing: [],
       key_facts: [{ text: "This claim keeps its original source.", kind: "fact", confidence: "high", source_ids: ["S0"] },
-        { text: "Legacy claim without a receipt.", kind: "fact", confidence: "high", source_ids: ["missing"] }] },
+        { text: "Legacy claim without a receipt.", kind: "fact", confidence: "high", source_ids: ["missing"] },
+        { text: "Claim from an unavailable page.", kind: "fact", confidence: "high", source_ids: ["S1"] }] },
     segments: [], personas: [], problems: [], competitors: [],
     positioning: { gaps: [], recommended_statement: "Customer research for first-time founders", differentiators: [] },
     pricing: { market_benchmarks: [], hypotheses: [], wtp_questions: [] }, messaging: [],
@@ -58,6 +60,7 @@ for (const width of [1280, 820, 430, 390]) {
     await page.goto("/w/workspace/reports/report");
     await expect(page.getByRole("heading", { name: "Your report at a glance" })).toBeVisible();
     await expect(page.getByRole("listitem").filter({ hasText: "Legacy claim without a receipt." })).toContainText("Unverified");
+    await expect(page.getByRole("listitem").filter({ hasText: "Claim from an unavailable page." })).toContainText("Unverified");
     const toc = page.getByRole("navigation", { name: "Report sections", exact: true }).filter({ visible: true });
     await expect(toc).toBeVisible();
     if (width < 1280) {
