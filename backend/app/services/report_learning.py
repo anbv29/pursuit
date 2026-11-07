@@ -28,7 +28,7 @@ def collect(db, report):
         target.append(
             {
                 "id": str(row.id),
-                "recorded_at": row.created_at.isoformat(),
+                "recorded_at": row.payload.get("updated_at") if task else row.created_at.isoformat(),
                 "origin": "founder_testimony",
                 "text": text[:1000],
                 "shortened": len(text) > 1000,

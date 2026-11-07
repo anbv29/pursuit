@@ -12,11 +12,12 @@ type Answer = { id: string; payload: { question: string; answer: string; source_
 export function ReportQuestions({ path }: { path: string }) {
   const history = useApi<Answer[]>(`${path}/questions`);
   const [question, setQuestion] = useState("");
+  const [includeLearning, setIncludeLearning] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const ask = useAction(async () => {
     if (question.trim().length < 3) return setError("Ask a question in a few words.");
     try {
-      await api(`${path}/questions`, { json: { question: question.trim() } });
+      await api(`${path}/questions`, { json: { question: question.trim(), include_saved_learning: includeLearning } });
       setQuestion(""); setError(null); await history.reload();
     } catch (e) { setError(errorMessage(e)); }
   });
@@ -29,6 +30,7 @@ export function ReportQuestions({ path }: { path: string }) {
       </div>
       <form onSubmit={(e: FormEvent) => { e.preventDefault(); void ask.run(); }} className="space-y-3">
         <Field label="Your question">{(id) => <Textarea id={id} value={question} maxLength={2000} onChange={(e) => setQuestion(e.target.value)} placeholder="For example: What does ideal customer profile mean for my business?" />}</Field>
+        <label className="flex items-start gap-2 text-sm"><input type="checkbox" checked={includeLearning} onChange={e => setIncludeLearning(e.target.checked)} /><span>Include saved learning. Notes and recorded results will be sent to the answer provider with this question.</span></label>
         <Button type="submit" loading={ask.pending}>Ask report</Button>
         {error && <Notice tone="bad">{error}</Notice>}
       </form>

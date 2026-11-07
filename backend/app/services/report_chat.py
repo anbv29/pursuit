@@ -24,7 +24,7 @@ def history(db, report):
     ).all()
 
 
-def answer(db, report, user, question: str):
+def answer(db, report, user, question: str, *, include_saved_learning=False):
     settings = get_settings()
     if report.status != "SUCCEEDED" or not report.content:
         raise AppError("Wait for the report to finish first.")
@@ -38,9 +38,10 @@ def answer(db, report, user, question: str):
         "report": report.content,
         "sources": report.sources,
         "previous_questions": recent,
-        "saved_learning": report_learning.collect(db, report),
         "question": question,
     }
+    if include_saved_learning:
+        data["saved_learning"] = report_learning.collect(db, report)
     try:
         client = free_provider.Client(api_key=None, timeout=90, max_retries=0)
         result = ai_usage.parse(

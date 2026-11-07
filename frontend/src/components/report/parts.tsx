@@ -46,7 +46,7 @@ export function ClaimLine({ c, compact }: { c: Claim; compact?: boolean }) {
   const sources = useContext(SourcesCtx);
   const unverified = c.unsourced || (c.kind === "fact" && !c.source_ids.some(id => {
     const source = sources.get(id);
-    return source && /^https?:\/\//i.test(source.url) && source.retrieval_status !== "failed";
+    return source && /^https?:\/\//i.test(source.url) && !["failed", "unavailable"].includes(source.retrieval_status ?? "");
   }));
   const k = KIND[c.kind];
   return (

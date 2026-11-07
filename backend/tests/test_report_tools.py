@@ -1,4 +1,5 @@
 # ruff: noqa: F811
+import json
 from types import SimpleNamespace
 
 from app.services import report_chat
@@ -16,6 +17,11 @@ def test_questions_persist_and_drop_fake_citations(api, ws, fake_ai, monkeypatch
 
         def parse(self, **kwargs):
             assert "saved report" in kwargs["system"]
+            data = json.loads(kwargs["messages"][0]["content"])
+            if data["question"] == "Use my saved learning":
+                assert data["saved_learning"]["observations"][0]["text"] == "No paid commitments yet"
+            else:
+                assert "saved_learning" not in data
             return SimpleNamespace(
                 stop_reason="end_turn",
                 parsed_output=report_chat.Answer(
@@ -33,6 +39,17 @@ def test_questions_persist_and_drop_fake_citations(api, ws, fake_ai, monkeypatch
     assert api.get(path).json()[0]["payload"]["answer"].startswith("Ask clinics")
     assert other.get(path).status_code == 404
     assert api.post(path, {"question": ""}).status_code == 422
+    api.post(path.replace("/questions", "/learning"), {"text": "No paid commitments yet"})
+    assert (
+        api.post(
+            path,
+            {
+                "question": "Use my saved learning",
+                "include_saved_learning": True,
+            },
+        ).status_code
+        == 201
+    )
 
 
 def test_first_week_plan_is_idempotent_and_tasks_persist(api, ws, fake_ai, other):

@@ -34,7 +34,7 @@ test("saved reports download actual files and public exports obey revocation", a
   expect(shareResponse.status()).toBe(201);
   const share = await shareResponse.json();
   const token = share.url.split("/").at(-1);
-  const anonymous = await browser.newContext();
+  const anonymous = await browser.newContext({ baseURL: new URL(page.url()).origin });
   try {
     const visitor = await anonymous.newPage();
     await visitor.goto(`/shared/${token}`);

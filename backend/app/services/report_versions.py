@@ -31,7 +31,7 @@ def refresh(
     *,
     gtm_constraints=None,
     research_urls=None,
-    include_saved_learning=True,
+    include_saved_learning=False,
 ):
     db.execute(select(Workspace.id).where(Workspace.id == report.workspace_id).with_for_update())
     db.refresh(report)

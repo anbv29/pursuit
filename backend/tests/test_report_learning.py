@@ -15,13 +15,29 @@ def test_learning_survives_refresh_and_stays_private(api, ws, fake_ai, other):
     )
     assert api.post(path + "/learning", {"text": "   "}).status_code == 422
     tasks = api.post(path + "/plan").json()
-    api.patch(path + f"/plan/{tasks[0]['id']}", {"done": False, "notes": "Buyer needs procurement approval"})
+    updated = api.patch(
+        path + f"/plan/{tasks[0]['id']}",
+        {
+            "done": False,
+            "notes": "Buyer needs procurement approval",
+        },
+    ).json()
     preview = api.get(path + "/learning").json()
     assert preview["observations"][0]["origin"] == "founder_testimony"
     assert preview["tasks"][0]["done"] is False
+    assert preview["tasks"][0]["recorded_at"] == updated["payload"]["updated_at"]
     assert other.get(path + "/learning").status_code == 404
     assert other.post(path + "/learning", {"text": "Foreign note"}).status_code == 404
-    assert api.post(path + "/refresh", {"sections": ["pricing"]}).status_code == 202
+    assert (
+        api.post(
+            path + "/refresh",
+            {
+                "sections": ["pricing"],
+                "include_saved_learning": True,
+            },
+        ).status_code
+        == 202
+    )
     with new_session() as db:
         frozen = db.get(Report, rid).inputs["saved_learning"]
         assert frozen["tasks"][0]["text"] == "Buyer needs procurement approval"
@@ -48,7 +64,6 @@ def test_learning_context_is_bounded_and_refresh_can_exclude_it(api, ws, fake_ai
             path + "/refresh",
             {
                 "sections": ["pricing"],
-                "include_saved_learning": False,
             },
         ).status_code
         == 202
