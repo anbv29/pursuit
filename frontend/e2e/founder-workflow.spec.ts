@@ -118,7 +118,7 @@ for (const width of [390, 1280]) {
       await page.getByLabel("Reminder title", { exact: true }).fill("Private unfinished reminder draft");
       await page.getByLabel("Switch workspace", { exact: true }).filter({ visible: true }).selectOption(otherWorkspace);
       await expect(page).toHaveURL(new RegExp(`/w/${otherWorkspace}`));
-      await page.getByRole("navigation", { name: "Primary", exact: true }).getByRole("link", { name: "Your priorities", exact: true }).click();
+      await page.goto(`/w/${otherWorkspace}/focus`);
       await expect(page.getByLabel("Reminder title", { exact: true })).toHaveValue("");
       await expect(page.getByLabel("Experiment for reminder", { exact: true })).toHaveValue("");
     }
