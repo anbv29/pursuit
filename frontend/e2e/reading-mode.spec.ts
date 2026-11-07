@@ -9,7 +9,8 @@ const report: Report = {
   content: {
     executive_summary: ["Start by talking to five potential customers."], focus_first: "Ask about their last purchase.",
     snapshot: { name: "Reading test company", one_liner: "Helps founders find customers", offering: "Research", business_model: "Subscription", stage_assessment: "Early stage", observed_pricing: [],
-      key_facts: [{ text: "This claim keeps its original source.", kind: "fact", confidence: "high", source_ids: ["S0"] }] },
+      key_facts: [{ text: "This claim keeps its original source.", kind: "fact", confidence: "high", source_ids: ["S0"] },
+        { text: "Legacy claim without a receipt.", kind: "fact", confidence: "high", source_ids: ["missing"] }] },
     segments: [], personas: [], problems: [], competitors: [],
     positioning: { gaps: [], recommended_statement: "Customer research for first-time founders", differentiators: [] },
     pricing: { market_benchmarks: [], hypotheses: [], wtp_questions: [] }, messaging: [],
@@ -56,6 +57,7 @@ for (const width of [1280, 820, 430, 390]) {
     });
     await page.goto("/w/workspace/reports/report");
     await expect(page.getByRole("heading", { name: "Your report at a glance" })).toBeVisible();
+    await expect(page.getByRole("listitem").filter({ hasText: "Legacy claim without a receipt." })).toContainText("Unverified");
     const toc = page.getByRole("navigation", { name: "Report sections", exact: true }).filter({ visible: true });
     await expect(toc).toBeVisible();
     if (width < 1280) {

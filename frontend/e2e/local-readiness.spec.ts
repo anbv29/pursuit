@@ -22,7 +22,7 @@ test("public page shows the real catalog and six workflows on a phone", async ({
   page.on("pageerror", (error) => errors.push(error.message));
   const response = await page.goto("/");
   expect(response?.headers()["content-security-policy"]).toContain("object-src 'none'");
-  await expect(page.getByRole("heading", { name: "Every claim has a receipt." })).toBeVisible();
+  await expect(page.getByRole("heading", { level: 1, name: "Every claim has a receipt." })).toBeVisible();
   await expect(page.getByRole("heading", { name: "The whole toolkit. Free.", exact: true })).toBeVisible();
   await expect(page.getByRole("heading", { name: "A company report is your starting point." })).toBeVisible();
   await expect(page.getByText("Find funnel drop-offs", { exact: true })).toBeVisible();

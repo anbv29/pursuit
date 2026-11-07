@@ -13,15 +13,28 @@ def document():
     return {
         "company_name": "Café Δοκιμή",
         "content": {
-            "key_facts": [{"text": "Costs ₹49", "kind": "interpretation", "confidence": "low",
-                           "source_ids": ["S1", "S2", "S3", "S4", "S5"], "unsourced": True,
-                           "validation_note": "The numeric assertion could not be verified.",
-                           "supporting_quote": "Original — quotation"}],
+            "key_facts": [
+                {
+                    "text": "Costs ₹49",
+                    "kind": "interpretation",
+                    "confidence": "low",
+                    "source_ids": ["S1", "S2", "S3", "S4", "S5"],
+                    "unsourced": True,
+                    "validation_note": "The numeric assertion could not be verified.",
+                    "supporting_quote": "Original — quotation",
+                }
+            ],
             "future_extra": {"nested": [False, 0, None, [], {}, {"unknown": "Still uncertain"}]},
         },
-        "sources": [{"id": "S5", "url": "https://example.com/a_(b)?a=1&b=2",
-                     "retrieved_at": "2026-11-07T00:00:00Z", "excerpt": "Exact receipt",
-                     "future_extra": {"quality_note": "source extra marker"}}],
+        "sources": [
+            {
+                "id": "S5",
+                "url": "https://example.com/a_(b)?a=1&b=2",
+                "retrieved_at": "2026-11-07T00:00:00Z",
+                "excerpt": "Exact receipt",
+                "future_extra": {"quality_note": "source extra marker"},
+            }
+        ],
     }
 
 
@@ -29,8 +42,20 @@ def test_markdown_keeps_unicode_provenance_and_nested_extras():
     saved = document()
     before = deepcopy(saved)
     text = report_export.markdown(saved).decode("utf-8")
-    for expected in ["Café Δοκιμή", "₹49", "Original — quotation", "interpretation", "low", "S5",
-                     "numeric assertion", "Still uncertain", "false", "null", "2026", "Exact receipt"]:
+    for expected in [
+        "Café Δοκιμή",
+        "₹49",
+        "Original — quotation",
+        "interpretation",
+        "low",
+        "S5",
+        "numeric assertion",
+        "Still uncertain",
+        "false",
+        "null",
+        "2026",
+        "Exact receipt",
+    ]:
         assert expected in text
     assert "https://example.com/a_%28b%29?a=1&b=2" in text
     assert "future extra" in text and "nested" in text
@@ -57,8 +82,19 @@ def test_pdf_is_readable_with_embedded_unicode_and_all_provenance():
     assert data.startswith(b"%PDF-")
     reader = PdfReader(BytesIO(data))
     text = "\n".join(page.extract_text() for page in reader.pages)
-    for expected in ["Café Δοκιμή", "₹49", "Original — quotation", "interpretation", "low", "S5",
-                     "numeric assertion", "Still uncertain", "false", "null", "Exact receipt"]:
+    for expected in [
+        "Café Δοκιμή",
+        "₹49",
+        "Original — quotation",
+        "interpretation",
+        "low",
+        "S5",
+        "numeric assertion",
+        "Still uncertain",
+        "false",
+        "null",
+        "Exact receipt",
+    ]:
         assert expected in text
     assert "https://example.com/a_(b)?a=1&b=2" in text
     assert "Source reference index" in text and "S5: https://example.com/" in text

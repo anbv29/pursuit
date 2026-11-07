@@ -66,9 +66,11 @@ def _url(value: str) -> str | None:
         parsed = urlsplit(value)
     except ValueError:
         return None
-    return value if parsed.scheme in {"https", "http"} and parsed.netloc and not any(
-        char.isspace() for char in value
-    ) else None
+    return (
+        value
+        if parsed.scheme in {"https", "http"} and parsed.netloc and not any(char.isspace() for char in value)
+        else None
+    )
 
 
 def markdown(document: dict) -> bytes:
@@ -79,7 +81,7 @@ def markdown(document: dict) -> bytes:
         else:
             text = _markdown_text(block.text)
             if _url(block.text):
-                text = f"[{text}]({quote(block.text, safe=':/?#@!$&\'*,;=+%~.-_')})"
+                text = f"[{text}]({quote(block.text, safe=":/?#@!$&'*,;=+%~.-_")})"
             lines.extend([f"**{_markdown_text(block.label)}**: {text}", ""])
     return ("\n".join(lines).rstrip() + "\n").encode("utf-8")
 
@@ -91,7 +93,8 @@ def filename(document: dict, extension: str) -> str:
 
 def _pdf_text(value: str) -> str:
     value = "".join(
-        char if char == "\n" or ord(char) in FONT.face.charToGlyph
+        char
+        if char == "\n" or ord(char) in FONT.face.charToGlyph
         else char.encode("unicode_escape").decode("ascii")
         for char in value
     )
@@ -102,20 +105,32 @@ def pdf(document: dict) -> bytes:
     output = BytesIO()
     body = ParagraphStyle("body", fontName=FONT.fontName, fontSize=9, leading=13, spaceAfter=5)
     heading = ParagraphStyle(
-        "heading", parent=body, fontSize=13, leading=17, spaceBefore=10, keepWithNext=True,
+        "heading",
+        parent=body,
+        fontSize=13,
+        leading=17,
+        spaceBefore=10,
+        keepWithNext=True,
         textColor=HexColor("#174c39"),
     )
     title = ParagraphStyle("title", parent=heading, fontSize=22, leading=28, spaceAfter=12)
-    story = [Paragraph("Company research report", title), Paragraph(NOTICE, body),
-             Paragraph("Characters outside the embedded font are preserved as Unicode escapes. "
-                       "The Markdown download retains all original Unicode text.", body), Spacer(1, 12)]
+    story = [
+        Paragraph("Company research report", title),
+        Paragraph(NOTICE, body),
+        Paragraph(
+            "Characters outside the embedded font are preserved as Unicode escapes. "
+            "The Markdown download retains all original Unicode text.",
+            body,
+        ),
+        Spacer(1, 12),
+    ]
     for block in _blocks(document):
         if isinstance(block, Heading):
             story.append(Paragraph(_pdf_text(block.text), heading))
         else:
             text = _pdf_text(block.text)
             if _url(block.text):
-                text = f'<link href={quoteattr(quote(block.text, safe=":/?#@!$&()*+,;=~%._-"))}>{text}</link>'
+                text = f"<link href={quoteattr(quote(block.text, safe=':/?#@!$&()*+,;=~%._-'))}>{text}</link>"
             story.append(Paragraph(f"{_pdf_text(block.label)}: {text}", body))
 
     def footer(canvas, doc):
@@ -123,7 +138,13 @@ def pdf(document: dict) -> bytes:
         canvas.drawRightString(A4[0] - 42, 25, f"Pursuit | {doc.page}")
 
     SimpleDocTemplate(
-        output, pagesize=A4, rightMargin=42, leftMargin=42, topMargin=40, bottomMargin=42,
-        title="Company research report", author="Pursuit",
+        output,
+        pagesize=A4,
+        rightMargin=42,
+        leftMargin=42,
+        topMargin=40,
+        bottomMargin=42,
+        title="Company research report",
+        author="Pursuit",
     ).build(story, onFirstPage=footer, onLaterPages=footer)
     return output.getvalue()
