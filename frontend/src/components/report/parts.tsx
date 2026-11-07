@@ -18,20 +18,20 @@ const host = (url: string) => {
   }
 };
 
-/** Superscript citation dots; hover shows the page title, click opens the source. */
 export function Cites({ ids }: { ids: string[] }) {
   const map = useContext(SourcesCtx);
-  const found = ids.map((id) => map.get(id)).filter(Boolean) as ReportSource[];
+  const found = [...new Set(ids)].map(id => map.get(id)).filter(
+    (source): source is ReportSource => Boolean(source && /^https?:\/\//i.test(source.url)),
+  );
   if (!found.length) return null;
   return (
-    <span className="ml-0.5 inline-flex items-baseline gap-[3px] align-super" aria-label="Cited sources">
-      {found.slice(0, 4).map((src) => (
+    <span className="ml-1 inline-flex flex-wrap items-baseline gap-1 align-baseline" aria-label="Cited sources">
+      {found.map((src) => (
         <a key={src.id} href={src.url} target="_blank" rel="noopener noreferrer nofollow"
           title={`${src.title || src.url} · ${host(src.url)}`}
           aria-label={`Source: ${src.title || src.url}`}
-          className="inline-block size-[6px] shrink-0 rounded-full bg-trail transition-colors hover:bg-trail-strong focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-trail-strong" />
+          className="inline-block rounded-sm font-mono text-[11px] text-trail underline decoration-trail/40 underline-offset-2 hover:text-trail-strong focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-trail-strong">[{src.id}]</a>
       ))}
-      {found.length > 4 && <span className="font-mono text-[10px] font-medium leading-none text-trail-strong">+{found.length - 4}</span>}
     </span>
   );
 };
@@ -43,6 +43,11 @@ const KIND = {
 };
 
 export function ClaimLine({ c, compact }: { c: Claim; compact?: boolean }) {
+  const sources = useContext(SourcesCtx);
+  const unverified = c.unsourced || (c.kind === "fact" && !c.source_ids.some(id => {
+    const source = sources.get(id);
+    return source && /^https?:\/\//i.test(source.url) && source.retrieval_status !== "failed";
+  }));
   const k = KIND[c.kind];
   return (
     <li className={cx("flex gap-2", compact ? "text-[13px]" : "text-sm")}>
@@ -51,8 +56,8 @@ export function ClaimLine({ c, compact }: { c: Claim; compact?: boolean }) {
         {c.text}
         <Cites ids={c.source_ids} />
         <span className="ml-1.5 inline-flex max-w-full flex-wrap gap-1 align-middle">
-          <Badge tone={k.tone} title={c.unsourced ? "The model called this a fact, but cited no source we retrieved, so Pursuit downgraded it." : undefined}>
-            {c.unsourced ? "Unsourced" : k.label}
+          <Badge tone={unverified ? "flag" : k.tone} title={unverified ? "No usable source receipt supports this claim. Verify it before acting." : undefined}>
+            {unverified ? "Unverified" : k.label}
           </Badge>
           {c.confidence !== "high" && <Badge tone="muted">{c.confidence} confidence</Badge>}
         </span>
