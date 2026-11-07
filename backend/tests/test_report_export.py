@@ -1,6 +1,8 @@
 from copy import deepcopy
+from io import BytesIO
 
 import pytest
+from pypdf import PdfReader
 
 from app.services import report_export
 
@@ -44,3 +46,29 @@ def test_markdown_escapes_untrusted_markup_and_preserves_line_breaks():
 def test_download_filename_cannot_inject_headers_or_paths():
     assert report_export.filename({"company_name": '../Acme\r\n"oops'}, "md") == "pursuit-Acme-oops.md"
     assert report_export.filename({"company_name": "東京"}, "pdf") == "pursuit-report.pdf"
+
+
+def test_pdf_is_readable_with_embedded_unicode_and_all_provenance():
+    saved = document()
+    before = deepcopy(saved)
+    data = report_export.pdf(saved)
+    assert data.startswith(b"%PDF-")
+    reader = PdfReader(BytesIO(data))
+    text = "\n".join(page.extract_text() for page in reader.pages)
+    for expected in ["Café Δοκιμή", "₹49", "Original — quotation", "interpretation", "low", "S5",
+                     "numeric assertion", "Still uncertain", "false", "null", "Exact receipt"]:
+        assert expected in text
+    assert "https://example.com/a_(b)?a=1&b=2" in text
+    fonts = [font.get_object() for page in reader.pages for font in page["/Resources"]["/Font"].values()]
+    assert any("/FontFile2" in font.get("/FontDescriptor", {}) for font in fonts)
+    assert saved == before
+
+
+def test_pdf_keeps_long_text_markup_and_unsupported_characters():
+    data = report_export.pdf({"extra": "<b>literal</b> & uncertainty\n東京\x00", "long": "z" * 10000})
+    reader = PdfReader(BytesIO(data))
+    text = "\n".join(page.extract_text() for page in reader.pages)
+    assert "<b>literal</b> & uncertainty" in text
+    assert r"\u6771\u4eac\x00" in text
+    assert text.count("z") == 10000
+    assert len(reader.pages) > 1
