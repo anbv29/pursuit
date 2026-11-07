@@ -67,7 +67,7 @@ def collect(db, report):
         "experiments": experiments,
         "omitted_items": omitted + max(0, len(linked) - 3),
         "caveat": "Founder testimony is unverified. Recorded outcomes are not independent proof of demand. "
-        "Criteria include sample limits. Linked experiments are workspace associations, not verified provenance.",
+        "Criteria include sample limits. Experiment links are associations, not verified provenance.",
     }
     while len(json.dumps(context, ensure_ascii=False).encode()) > 12000:
         largest = max((observations, tasks, experiments), key=lambda items: len(json.dumps(items)))

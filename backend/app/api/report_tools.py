@@ -109,6 +109,7 @@ def refresh(
         body.sections,
         gtm_constraints=body.gtm_constraints.model_dump() if body.gtm_constraints else None,
         research_urls=[str(url) for url in body.research_urls] if body.research_urls is not None else None,
+        include_saved_learning=body.include_saved_learning,
     )
     return {"id": str(row.id), "status": row.status}
 
