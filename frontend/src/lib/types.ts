@@ -33,7 +33,7 @@ export type ActionStatus =
 
 export interface User { id: string; email: string; name: string }
 export interface Session { user: User; csrf_token: string }
-export interface Workspace { id: string; name: string; is_demo: boolean; created_at: string; role: string }
+export interface Workspace { id: string; name: string; is_demo: boolean; created_at: string; role: string; has_finished_report?: boolean }
 
 export interface Criterion {
   id: string; metric: string; comparator: string; target: number; min_sample: number; description: string;

@@ -6,7 +6,7 @@ from sqlalchemy.orm import Session
 
 from app.api.deps import current_user, workspace_member, workspace_owner
 from app.core.db import get_db
-from app.models import AuditEvent, Membership, User
+from app.models import AuditEvent, Membership, Report, User
 from app.schemas.common import AuditOut, MemberIn, MemberOut, WorkspaceIn, WorkspaceOut, WorkspaceWithRole
 from app.services import workspaces
 
@@ -32,8 +32,24 @@ def create_workspace(body: WorkspaceIn, user: User = Depends(current_user), db: 
 
 
 @router.get("/{workspace_id}", response_model=WorkspaceWithRole)
-def get_workspace(m: Membership = Depends(workspace_member)):
-    return WorkspaceWithRole(**WorkspaceOut.model_validate(m.workspace).model_dump(), role=m.role.value)
+def get_workspace(m: Membership = Depends(workspace_member), db: Session = Depends(get_db)):
+    finished = (
+        db.scalar(
+            select(Report.id)
+            .where(
+                Report.workspace_id == m.workspace_id,
+                Report.status == "SUCCEEDED",
+                Report.content.is_not(None),
+            )
+            .limit(1)
+        )
+        is not None
+    )
+    return WorkspaceWithRole(
+        **WorkspaceOut.model_validate(m.workspace).model_dump(),
+        role=m.role.value,
+        has_finished_report=finished,
+    )
 
 
 @router.delete("/{workspace_id}", status_code=204)

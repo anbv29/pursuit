@@ -33,7 +33,7 @@ const subscribeSidebar = (cb: () => void) => {
   };
 };
 
-type WsCtx ={ workspace: Workspace; base: string; refreshApprovals: () => void };
+type WsCtx ={ workspace: Workspace; base: string; workflowsReady: boolean; refreshApprovals: () => void };
 const WorkspaceCtx = createContext<WsCtx | null>(null);
 export function useWorkspace() {
   const c = useContext(WorkspaceCtx);
@@ -45,17 +45,18 @@ type NavGroup = "Overview" | "Research & strategy" | "Execution" | "Workspace";
 type NavItem = { href: string; label: string; icon: typeof LayoutDashboard; group: NavGroup; exact?: boolean; count?: number };
 
 export function WorkspaceShell({ wsId, children }: { wsId: string; children: ReactNode }) {
-  const ws = useApi<Workspace>(`/workspaces/${wsId}`);
+  const path = usePathname();
+  const ws = useApi<Workspace>(`/workspaces/${wsId}`, path);
   const all = useApi<Workspace[]>("/workspaces");
   const approvals = useApi<unknown[]>(`/workspaces/${wsId}/approvals`);
   const collapsed = useSyncExternalStore(subscribeSidebar, readSidebar, () => false);
-  const path = usePathname();
   const router = useRouter();
   const { user, logout } = useSession();
   const { toast } = useFeedback();
   const theme = useTheme();
   const [paletteOpen, setPaletteOpen] = useState(false);
   const base = `/w/${wsId}`;
+  const workflowsReady = Boolean(ws.data?.is_demo || ws.data?.has_finished_report);
   const toggle = () => {
     try { localStorage.setItem(SIDEBAR_KEY, collapsed ? "0" : "1"); }
     catch { toast("error", "Your browser could not save this preference."); return; }
@@ -66,7 +67,7 @@ export function WorkspaceShell({ wsId, children }: { wsId: string; children: Rea
     catch (e) { toast("error", errorMessage(e)); }
   };
 
-  const nav: NavItem[] = [
+  const allNav: NavItem[] = [
     { href: base, label: "Dashboard", icon: LayoutDashboard, group: "Overview", exact: true },
     { href: `${base}/focus`, label: "Your priorities", icon: ListTodo, group: "Overview" },
     { href: `${base}/reports`, label: "Company reports", icon: FileText, group: "Research & strategy" },
@@ -76,6 +77,7 @@ export function WorkspaceShell({ wsId, children }: { wsId: string; children: Rea
     { href: `${base}/fo`, label: "Fo Assistant", icon: MessageCircle, group: "Execution" },
     { href: `${base}/settings`, label: "Settings", icon: Settings, group: "Workspace" },
   ];
+  const nav = allNav.filter(item => workflowsReady || [base, `${base}/reports`, `${base}/settings`].includes(item.href));
   const isActive = (n: Pick<NavItem, "href" | "exact">) => path === n.href || (!n.exact && path.startsWith(`${n.href}/`));
   const current = nav.find(isActive);
   const contentWidth = path.endsWith("/reports/new") ? "max-w-2xl"
@@ -95,7 +97,7 @@ export function WorkspaceShell({ wsId, children }: { wsId: string; children: Rea
     { id: "theme", label: theme === "dark" ? "Use light theme" : "Use dark theme", run: () => setTheme(theme === "dark" ? "light" : "dark"), icon: <Moon className="size-3.5" /> },
     { id: "signout", label: "Sign out", run: () => void signOut(), icon: <LogOut className="size-3.5" /> },
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  ], [base, theme, ws.data?.role, approvals.data?.length]);
+  ], [base, theme, ws.data?.role, approvals.data?.length, workflowsReady]);
 
   if (ws.error) {
     return (
@@ -210,11 +212,11 @@ export function WorkspaceShell({ wsId, children }: { wsId: string; children: Rea
             </button>
             <button type="button" onClick={() => setPaletteOpen(true)} aria-label="Open command palette"
               className="press grid size-9 place-items-center rounded-xl text-ink-2 hover:bg-[var(--inset)] xl:hidden"><Search className="size-[18px]" /></button>
-            <Link href={`${base}/approvals`} aria-label={`Approvals${approvals.data?.length ? `, ${approvals.data.length} waiting` : ""}`}
+            {workflowsReady && <Link href={`${base}/approvals`} aria-label={`Approvals${approvals.data?.length ? `, ${approvals.data.length} waiting` : ""}`}
               className="press relative grid size-9 place-items-center rounded-xl text-ink-2 hover:bg-[var(--inset)] hover:text-ink">
               <Bell className="size-[18px]" aria-hidden />
               {!!approvals.data?.length && <span className="absolute right-1.5 top-1.5 size-2 rounded-full bg-warning ring-2 ring-[var(--surface-solid)]" />}
-            </Link>
+            </Link>}
             <ThemeToggle />
             <Menu label="Account" items={[{ label: "Account security", onSelect: () => router.push("/account"), icon: <Settings className="size-4" /> },
               { label: "Settings", onSelect: () => router.push(`${base}/settings`), icon: <Settings className="size-4" /> },
@@ -231,7 +233,7 @@ export function WorkspaceShell({ wsId, children }: { wsId: string; children: Rea
 
         <main className="workspace-content min-w-0 flex-1 px-4 pb-[calc(6rem+env(safe-area-inset-bottom))] pt-5 md:px-8 md:pb-10">
           {ws.data ? (
-            <WorkspaceCtx.Provider key={wsId} value={{ workspace: ws.data, base, refreshApprovals: approvals.reload }}>
+            <WorkspaceCtx.Provider key={wsId} value={{ workspace: ws.data, base, workflowsReady, refreshApprovals: approvals.reload }}>
               <div className={cx("mx-auto w-full min-w-0", contentWidth)}>
                 <ReadingControls />
                 <ResearchActivity workspaceId={wsId} base={base} />
@@ -247,7 +249,7 @@ export function WorkspaceShell({ wsId, children }: { wsId: string; children: Rea
         </main>
       </div>
 
-      <MobileNavigation tabs={mobileTabs} menuItems={mobileMenu} newHref={`${base}/experiments/new`} isActive={isActive} switcher={ws.data ? switcher : null}
+      <MobileNavigation tabs={mobileTabs} menuItems={mobileMenu} newHref={`${base}/${workflowsReady ? "experiments/new" : "reports/new"}`} newLabel={workflowsReady ? "New experiment" : "New report"} isActive={isActive} switcher={ws.data ? switcher : null}
         accountName={user?.name}
         accountItems={[
           { label: "Account security", icon: UserCog, onSelect: () => router.push("/account") },

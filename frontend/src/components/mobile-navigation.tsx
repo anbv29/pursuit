@@ -7,12 +7,13 @@ import { Drawer, cx } from "./ui";
 
 type Item = { href: string; label: string; icon: LucideIcon; count?: number };
 
-export function MobileNavigation({ tabs, menuItems, accountItems, accountName, newHref, isActive, switcher }: {
+export function MobileNavigation({ tabs, menuItems, accountItems, accountName, newHref, newLabel = "New experiment", isActive, switcher }: {
   tabs: Item[];
   menuItems: Item[];
   accountItems?: { label: string; icon: LucideIcon; onSelect: () => void; danger?: boolean }[];
   accountName?: string;
   newHref: string;
+  newLabel?: string;
   isActive: (item: Item) => boolean;
   switcher?: ReactNode;
 }) {
@@ -30,7 +31,7 @@ export function MobileNavigation({ tabs, menuItems, accountItems, accountName, n
             <span>{labels[item.label] ?? item.label}</span>
           </Link>;
         })}
-        <Link href={newHref} aria-label="New experiment"
+        <Link href={newHref} aria-label={newLabel}
           className="flex flex-col items-center gap-1 pb-0.5 text-[11px] font-semibold text-ink">
           <span className="press grid size-12 -translate-y-3 place-items-center rounded-full bg-accent text-[var(--primary-ink)]">
             <Plus size={22} aria-hidden="true" />
