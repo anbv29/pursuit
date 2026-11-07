@@ -13,6 +13,7 @@ from app.services import (
     ai_usage,
     prospect_discovery,
     report_chat,
+    report_learning,
     report_plan,
     report_versions,
     reports,
@@ -54,6 +55,32 @@ class Refresh(BaseModel):
     sections: list[str] = Field(min_length=1, max_length=16)
     gtm_constraints: GTMConstraints | None = None
     research_urls: list[HttpUrl] | None = Field(default=None, max_length=6)
+    include_saved_learning: bool = True
+
+
+class LearningNote(BaseModel):
+    text: str = Field(min_length=1, max_length=3000, pattern=r"\S")
+
+
+@router.get("/learning")
+def learning(report=Depends(owned_report), db: Session = Depends(get_db)):
+    return report_learning.collect(db, report)
+
+
+@router.post("/learning", status_code=201)
+def save_learning(
+    body: LearningNote,
+    report=Depends(owned_report),
+    user: User = Depends(current_user),
+    db: Session = Depends(get_db),
+):
+    from app.models.report_entry import ReportEntry
+
+    limiter.check(f"learning:{user.id}", limit=30, window_seconds=3600)
+    row = ReportEntry(report_id=report.id, actor_id=user.id, kind="learning", payload={"text": body.text})
+    db.add(row)
+    db.commit()
+    return entry_out(row)
 
 
 @router.get("/versions")
