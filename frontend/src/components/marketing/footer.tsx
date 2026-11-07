@@ -4,6 +4,7 @@ import { Logo } from "@/components/brand";
 
 const links = [
   { title: "Explore", items: [
+    { label: "Public sample report", href: "/sample" },
     { label: "Process", href: "/#how-it-works" },
     { label: "What you can do", href: "/#capabilities" },
     { label: "The toolkit", href: "/#pricing" },
@@ -23,11 +24,11 @@ export function Footer() {
           <div>
             <p className="mb-4 font-ui text-xs font-semibold uppercase tracking-[0.12em] text-trail">A little less guesswork.</p>
             <h2 className="max-w-lg text-balance font-display text-3xl font-medium leading-tight tracking-[-0.045em] text-ink sm:text-4xl">
-              Make your next move<br className="hidden sm:block" /> an informed one.
+              Every claim<br className="hidden sm:block" /> has a receipt.
             </h2>
-            <p className="mt-4 max-w-sm text-base leading-relaxed text-ink-2">Understand your market. Question your assumptions. Find what deserves your time.</p>
-            <Link href="/#how-it-works" className="group mt-5 inline-flex min-h-11 items-center gap-3 rounded-sm font-ui text-sm font-semibold text-trail underline-offset-4 hover:underline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[var(--focus-ring)]">
-              See how Pursuit works
+            <p className="mt-4 max-w-sm text-base leading-relaxed text-ink-2">Inspect the source. Spot the assumption. Decide what needs testing.</p>
+            <Link href="/sample" className="group mt-5 inline-flex min-h-11 items-center gap-3 rounded-sm font-ui text-sm font-semibold text-trail underline-offset-4 hover:underline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[var(--focus-ring)]">
+              Read a real research brief
               <ArrowRight className="size-4 transition-transform group-hover:translate-x-1 motion-reduce:transform-none" aria-hidden />
             </Link>
           </div>

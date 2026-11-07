@@ -23,16 +23,16 @@ export default function Home() {
           <div aria-hidden className="glow-field -z-10" />
           <div className="enter-rise min-w-0 lg:pt-8">
             <p className="mb-7 flex items-center gap-3 font-ui text-xs font-semibold tracking-[0.08em] text-ink-3">
-              <span className="h-px w-7 bg-accent" aria-hidden /> YOUR NEXT MOVE, RESEARCHED
+              <span className="h-px w-7 bg-accent" aria-hidden /> RESEARCH YOU CAN CHECK
             </p>
             <h1 className="font-display text-[32px] font-medium leading-[38px] tracking-[-0.01em] text-ink sm:text-[44px] sm:leading-[52px]">
-              A clearer picture.<br />A <span className="hero-grad">smarter</span> next move.
+              Every claim<br />has a <span className="hero-grad">receipt.</span>
             </h1>
             <p className="mt-6 max-w-lg text-[17px] leading-7 text-ink-2">
-              Your business has questions. Start with your website and an idea. Get a source-linked view of your customers, competition and pricing, and a practical plan for what to test next.
+              Research your market, customers and competition with sources you can inspect. Pursuit links the evidence, flags what is unverified and helps you decide what to test next.
             </p>
             <div className="mt-8"><HeroCta /></div>
-            <p className="mt-5 text-sm text-ink-3">Explore a sample first. No card needed.</p>
+            <p className="mt-5 text-sm text-ink-3">Real product. Public sources. Read the sample without signing up.</p>
           </div>
           <div className="enter-rise min-w-0" style={{ "--i": 2 } as React.CSSProperties}>
             <div className="hero-frame">

@@ -12,7 +12,7 @@ const code = JetBrains_Mono({ variable: "--font-code", subsets: ["latin"], displ
 
 export const metadata: Metadata = {
   title: { default: "Pursuit", template: "%s · Pursuit" },
-  description: "Research customers, competitors and pricing. Turn findings into measurable experiments, track evidence and decide what to test next with Pursuit.",
+  description: "Every claim has a receipt. Pursuit links research sources, flags unverified claims and keeps your market research and real test results together.",
 };
 
 export const viewport: Viewport = {
