@@ -15,13 +15,21 @@ def saved_report(api):
     api.signup()
     workspace = api.workspace()
     with new_session() as db:
-        row = Report(workspace_id=workspace, company_url="https://example.com", status="SUCCEEDED",
-                     company_name="Café Δοκιμή", content=document()["content"], sources=document()["sources"],
-                     inputs={"private_note": "private input marker",
-                             "founder_reality": {"pricing": "private founder marker"},
-                             "saved_learning": [{"note": "private interview marker"}]},
-                     error="private worker error marker",
-                     checkpoint={"hidden": "checkpoint marker"})
+        row = Report(
+            workspace_id=workspace,
+            company_url="https://example.com",
+            status="SUCCEEDED",
+            company_name="Café Δοκιμή",
+            content=document()["content"],
+            sources=document()["sources"],
+            inputs={
+                "private_note": "private input marker",
+                "founder_reality": {"pricing": "private founder marker"},
+                "saved_learning": [{"note": "private interview marker"}],
+            },
+            error="private worker error marker",
+            checkpoint={"hidden": "checkpoint marker"},
+        )
         db.add(row)
         db.commit()
         return workspace, str(row.id)
@@ -50,8 +58,13 @@ def test_private_exports_require_membership(api, other, app, saved_report, exten
     assert "Café Δοκιμή" in exported
     assert "S5" in exported and "numeric assertion" in exported and "Still uncertain" in exported
     assert "source extra marker" in exported
-    for private in ["private input marker", "private founder marker", "private interview marker",
-                    "private worker error marker", "checkpoint marker"]:
+    for private in [
+        "private input marker",
+        "private founder marker",
+        "private interview marker",
+        "private worker error marker",
+        "checkpoint marker",
+    ]:
         assert private not in exported
     member = api.post(f"/api/workspaces/{workspace}/members", {"email": "intruder@example.com"})
     assert member.status_code == 201
