@@ -12,10 +12,11 @@ export function ReportSharing({ path }: { path: string }) {
   const { confirm } = useFeedback();
   const [days, setDays] = useState(7);
   const [url, setUrl] = useState("");
+  const [copied, setCopied] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const create = useAction(async () => {
     if (!await confirm({ title: "Create a read-only report link?", body: "Anyone with the link can read this report, its GTM strategy, budget and resource assumptions, and cited sources until it expires or you revoke it. It is a snapshot; later report changes are not included. Review the report for private company information first.", confirm: "Create share link" })) return;
-    try { const share = await api<{ url: string }>(`${path}/shares`, { json: { expires_days: days } }); setUrl(share.url); setError(null); await shares.reload(); }
+    try { const share = await api<{ url: string }>(`${path}/shares`, { json: { expires_days: days } }); setUrl(share.url); setCopied(false); setError(null); await shares.reload(); }
     catch (e) { setError(errorMessage(e)); }
   });
   const revoke = useAction(async (id: string) => {
@@ -23,11 +24,16 @@ export function ReportSharing({ path }: { path: string }) {
     catch (e) { setError(errorMessage(e)); }
   });
   return <details className="rounded-lg border border-line bg-surface p-4 print:hidden">
-    <summary className="cursor-pointer font-medium text-trail">Share a read-only snapshot</summary>
+    <summary className="cursor-pointer font-medium text-trail">Share a public report link</summary>
     <div className="mt-3 space-y-3">
+      <p className="text-sm text-ink-2">Anyone with the link can open the snapshot without signing up. You control its expiry and can revoke it.</p>
       <Field label="Link expires after this many days">{(id) => <Input id={id} type="number" min={1} max={30} value={days} onChange={(e) => setDays(Number(e.target.value))} />}</Field>
       <Button loading={create.pending} onClick={() => create.run()}>Create share link</Button>
       {url && <Field label="Copy your share link (shown only now)">{(id) => <Input id={id} readOnly value={url} onFocus={(e) => e.target.select()} />}</Field>}
+      {url && <Button variant="secondary" onClick={async () => {
+        try { await navigator.clipboard.writeText(url); setCopied(true); setError(null); }
+        catch { setError("Copy was unavailable. Select the link above and copy it manually."); }
+      }}>{copied ? "Link copied" : "Copy public link"}</Button>}
       {shares.data?.map((share) => <div key={share.id} className="flex items-center justify-between gap-2 text-sm">
         <p>{share.revoked_at ? "Revoked" : `Expires ${new Date(share.expires_at).toLocaleString()}`}</p>
         {!share.revoked_at && <Button size="sm" variant="secondary" loading={revoke.pending} onClick={() => revoke.run(share.id)}>Revoke link</Button>}

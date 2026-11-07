@@ -17,11 +17,11 @@ for (const width of [390, 820, 1440]) {
     const bandBefore = await bandY();
     expect(before).not.toBeNull();
     expect(bandBefore).not.toBeNull();
-    await preview.getByRole("tab", { name: "Competition", exact: true }).click();
-    await expect(preview.getByRole("heading", { name: "Your competition includes the workaround." })).toBeVisible();
-    await preview.getByRole("tab", { name: "Competition", exact: true }).press("ArrowRight");
-    await expect(preview.getByRole("tab", { name: "Next test", exact: true })).toHaveAttribute("aria-selected", "true");
-    await expect(preview.getByRole("heading", { name: "Trade interest for a concrete commitment." })).toBeVisible();
+    await preview.getByRole("tab", { name: "Interpretation", exact: true }).click();
+    await expect(preview.getByRole("heading", { name: "The upgrade story changes with team size." })).toBeVisible();
+    await preview.getByRole("tab", { name: "Interpretation", exact: true }).press("ArrowRight");
+    await expect(preview.getByRole("tab", { name: "Unverified", exact: true })).toHaveAttribute("aria-selected", "true");
+    await expect(preview.getByRole("heading", { name: "Handoff pain is a hypothesis." })).toBeVisible();
     const after = await preview.boundingBox();
     const bandAfter = await bandY();
     expect(Math.abs(after!.height - before!.height), "preview height changed").toBeLessThanOrEqual(1);
@@ -47,8 +47,8 @@ test("signed-in mobile navigation fits and dark report tabs remain usable", asyn
   expect(bounds!.x + bounds!.width).toBeLessThanOrEqual(375);
   await expect(page.locator("html")).toHaveAttribute("data-theme", "dark");
   const preview = page.getByRole("region", { name: "Example of Pursuit at work" });
-  await preview.getByRole("tab", { name: "Next test", exact: true }).click();
-  await expect(preview.getByRole("heading", { name: "Trade interest for a concrete commitment." })).toBeVisible();
+  await preview.getByRole("tab", { name: "Unverified", exact: true }).click();
+  await expect(preview.getByRole("heading", { name: "Handoff pain is a hypothesis." })).toBeVisible();
   expect(await page.evaluate(() => document.documentElement.scrollWidth - innerWidth)).toBeLessThanOrEqual(1);
   await page.screenshot({ path: "test-results/landing-reference-dark-mobile.png", fullPage: true });
 });

@@ -63,3 +63,21 @@ for (const finished of [false, true]) {
     }
   });
 }
+
+test("sharing explains anonymous access and returns a public snapshot link", async ({ page }) => {
+  await setup(page);
+  await page.route("**/api/workspaces/learning-ws/reports/research/shares", route => {
+    return route.fulfill({ json: route.request().method() === "POST"
+      ? { url: new URL("/shared/public-review", route.request().url()).href }
+      : [] });
+  });
+  await page.goto("/w/learning-ws/reports/research");
+  await page.getByText("Share a public report link", { exact: true }).click();
+  await expect(page.getByText("Anyone with the link can open the snapshot without signing up.", { exact: false })).toBeVisible();
+  await page.getByRole("button", { name: "Create share link", exact: true }).click();
+  const dialog = page.getByRole("dialog");
+  await expect(dialog).toContainText("Review the report for private company information first.");
+  await dialog.getByRole("button", { name: "Create share link", exact: true }).click();
+  await expect(page.getByLabel("Copy your share link (shown only now)")).toHaveValue(/\/shared\/public-review$/);
+  await expect(page.getByRole("button", { name: "Copy public link", exact: true })).toBeEnabled();
+});

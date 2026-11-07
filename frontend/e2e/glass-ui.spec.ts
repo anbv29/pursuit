@@ -12,8 +12,8 @@ const ago = (m: number) => new Date(Date.now() - m * 60_000).toISOString();
 
 const FIXTURES: Record<string, unknown> = {
   "/auth/me": { user: { id: "u1", email: "dana@example.com", name: "Dana Ruiz" }, csrf_token: "t" },
-  "/workspaces": [{ id: WS, name: "Northwind Health", is_demo: false, created_at: now, role: "owner" }],
-  [`/workspaces/${WS}`]: { id: WS, name: "Northwind Health", is_demo: false, created_at: now, role: "owner" },
+  "/workspaces": [{ id: WS, name: "Northwind Health", is_demo: false, has_finished_report: true, created_at: now, role: "owner" }],
+  [`/workspaces/${WS}`]: { id: WS, name: "Northwind Health", is_demo: false, has_finished_report: true, created_at: now, role: "owner" },
   [`/workspaces/${WS}/approvals`]: [{
     id: "a1", experiment_id: "e1", kind: "send_email", mode: "live", target: "ops@clinic.example", payload: {}, status: "PENDING_APPROVAL",
     prospect_id: null, variant_id: null, decided_at: null, started_at: null, finished_at: null, attempts: 0,
