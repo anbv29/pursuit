@@ -8,6 +8,7 @@ import { useApi } from "@/lib/hooks";
 import type { ReportContent, ReportSource } from "@/lib/types";
 import { Empty, Skeleton } from "@/components/ui";
 import { ReadingControls } from "@/components/reading-mode";
+import { ReportExport } from "@/components/report/export";
 import { SourcesProvider, Section } from "@/components/report/parts";
 import { Summary, Snapshot, Segments, Personas, Problems } from "@/components/report/customer-sections";
 import { Competitors, PositioningPricing, Messaging, Prospecting, FunnelRisks, Risks } from "@/components/report/market-sections";
@@ -21,6 +22,7 @@ function SharedReport() {
   return <main className="mx-auto max-w-5xl space-y-6 px-4 py-8">
     <h1 className="text-2xl font-semibold">{r.company_name} · shared report</h1>
     <p className="text-sm text-ink-3">Read-only snapshot · link expires {new Date(r.expires_at).toLocaleString()}</p>
+    <ReportExport path={`/shared-reports/${token}`} />
     <ReadingControls />
     <SourcesProvider sources={r.sources}>
       <Summary c={c} />{r.content.gtm_strategy && <Section id="gtm-strategy" title="Your GTM strategy"><StrategyView strategy={r.content.gtm_strategy} /></Section>}<ResearchData measurements={r.content.measurements} sources={r.sources} /><Snapshot c={c} /><Segments c={c} /><Personas c={c} /><Problems c={c} />
