@@ -20,7 +20,8 @@ def document():
             "future_extra": {"nested": [False, 0, None, [], {}, {"unknown": "Still uncertain"}]},
         },
         "sources": [{"id": "S5", "url": "https://example.com/a_(b)?a=1&b=2",
-                     "retrieved_at": "2026-11-07T00:00:00Z", "excerpt": "Exact receipt"}],
+                     "retrieved_at": "2026-11-07T00:00:00Z", "excerpt": "Exact receipt",
+                     "future_extra": {"quality_note": "source extra marker"}}],
     }
 
 
@@ -33,6 +34,7 @@ def test_markdown_keeps_unicode_provenance_and_nested_extras():
         assert expected in text
     assert "https://example.com/a_%28b%29?a=1&b=2" in text
     assert "future extra" in text and "nested" in text
+    assert "Source reference index" in text and "**S5**:" in text
     assert saved == before
 
 
@@ -59,6 +61,7 @@ def test_pdf_is_readable_with_embedded_unicode_and_all_provenance():
                      "numeric assertion", "Still uncertain", "false", "null", "Exact receipt"]:
         assert expected in text
     assert "https://example.com/a_(b)?a=1&b=2" in text
+    assert "Source reference index" in text and "S5: https://example.com/" in text
     fonts = [font.get_object() for page in reader.pages for font in page["/Resources"]["/Font"].values()]
     assert any("/FontFile2" in font.get("/FontDescriptor", {}) for font in fonts)
     assert saved == before

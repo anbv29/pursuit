@@ -7,11 +7,11 @@ from fastapi.responses import Response
 from app.api.report_sharing import read as shared_report
 from app.api.report_tools import owned_report
 from app.core.errors import Conflict
-from app.schemas.report import ReportOut
 from app.services import report_export
 
 router = APIRouter(tags=["Report exports"])
 Extension = Literal["pdf", "md"]
+ARTIFACT_FIELDS = ("company_name", "company_url", "content", "sources", "model", "finished_at")
 
 
 def download(document: dict, extension: Extension) -> Response:
@@ -30,7 +30,7 @@ def download(document: dict, extension: Extension) -> Response:
 def private_export(extension: Extension, report=Depends(owned_report)):
     if report.status != "SUCCEEDED" or not report.content:
         raise Conflict("Only finished reports can be exported.")
-    document = jsonable_encoder({field: getattr(report, field) for field in ReportOut.model_fields})
+    document = jsonable_encoder({field: getattr(report, field) for field in ARTIFACT_FIELDS})
     return download(document, extension)
 
 

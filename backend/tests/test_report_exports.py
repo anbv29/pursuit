@@ -17,7 +17,10 @@ def saved_report(api):
     with new_session() as db:
         row = Report(workspace_id=workspace, company_url="https://example.com", status="SUCCEEDED",
                      company_name="Café Δοκιμή", content=document()["content"], sources=document()["sources"],
-                     inputs={"private_note": "private input marker"},
+                     inputs={"private_note": "private input marker",
+                             "founder_reality": {"pricing": "private founder marker"},
+                             "saved_learning": [{"note": "private interview marker"}]},
+                     error="private worker error marker",
                      checkpoint={"hidden": "checkpoint marker"})
         db.add(row)
         db.commit()
@@ -44,9 +47,12 @@ def test_private_exports_require_membership(api, other, app, saved_report, exten
     media_type = "application/pdf" if extension == "pdf" else "text/markdown"
     assert response.headers["content-type"].startswith(media_type)
     exported = text(response, extension)
-    assert "Café Δοκιμή" in exported and "private input marker" in exported
+    assert "Café Δοκιμή" in exported
     assert "S5" in exported and "numeric assertion" in exported and "Still uncertain" in exported
-    assert "checkpoint marker" not in exported
+    assert "source extra marker" in exported
+    for private in ["private input marker", "private founder marker", "private interview marker",
+                    "private worker error marker", "checkpoint marker"]:
+        assert private not in exported
     member = api.post(f"/api/workspaces/{workspace}/members", {"email": "intruder@example.com"})
     assert member.status_code == 201
     assert other.get(path).status_code == 200

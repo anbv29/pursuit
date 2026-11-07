@@ -51,6 +51,14 @@ def _markdown_text(value: str) -> str:
     return re.sub(r"([\\`*_{}\[\]<>()#+.!|>~-])", r"\\\1", value).replace("\n", "  \n")
 
 
+def _blocks(document: dict) -> Iterator[Heading | Value]:
+    yield from _walk(document)
+    if document.get("sources"):
+        yield Heading("Source reference index", 2)
+        for source in document["sources"]:
+            yield Value(source["id"], source["url"])
+
+
 def _url(value: str) -> str | None:
     if not value.startswith(("https://", "http://")):
         return None
@@ -65,7 +73,7 @@ def _url(value: str) -> str | None:
 
 def markdown(document: dict) -> bytes:
     lines = ["# Company research report", "", NOTICE, ""]
-    for block in _walk(document):
+    for block in _blocks(document):
         if isinstance(block, Heading):
             lines.extend([f"{'#' * min(block.level, 6)} {_markdown_text(block.text)}", ""])
         else:
@@ -101,7 +109,7 @@ def pdf(document: dict) -> bytes:
     story = [Paragraph("Company research report", title), Paragraph(NOTICE, body),
              Paragraph("Characters outside the embedded font are preserved as Unicode escapes. "
                        "The Markdown download retains all original Unicode text.", body), Spacer(1, 12)]
-    for block in _walk(document):
+    for block in _blocks(document):
         if isinstance(block, Heading):
             story.append(Paragraph(_pdf_text(block.text), heading))
         else:
