@@ -20,10 +20,10 @@ test("founder runs a full experiment loop and an outsider is locked out", async 
   await page.getByLabel("Workspace name", { exact: true }).filter({ visible: true }).fill("Clinic Startup");
   await page.getByRole("button", { name: "Continue", exact: true }).click();
   await page.getByRole("button", { name: "Create workspace" }).click();
-  // Onboarding now opens the company report form; manual experiments are one click away.
   await expect(page).toHaveURL(/reports\/new/);
   await page.getByLabel("Reading style").selectOption("advanced");
-  await page.getByRole("navigation", { name: "Primary", exact: true }).getByRole("link", { name: "New experiment", exact: true }).click();
+  await expect(page.getByRole("navigation", { name: "Primary", exact: true }).getByRole("link", { name: "New experiment", exact: true })).toHaveCount(0);
+  await page.goto(new URL(page.url()).pathname.replace(/reports\/new$/, "experiments/new"));
   await expect(page).toHaveURL(/experiments\/new/);
 
   // Experiment with hypothesis + default criteria
