@@ -63,6 +63,25 @@ def test_small_requests_are_not_rewritten():
     assert fit_payload(small) is small
 
 
+def test_learning_yields_to_complete_request_budget_with_explicit_omissions():
+    learning = {
+        "observations": [{"text": "研究" * 600} for _ in range(5)],
+        "tasks": [],
+        "experiments": [],
+        "omitted_items": 0,
+    }
+    data = {"report": {"finding": "x" * 54000}, "saved_learning": learning}
+    original = {"messages": [{"role": "user", "content": json.dumps(data, ensure_ascii=False)}]}
+    before = copy.deepcopy(original)
+    packed = fit_payload(original)
+    after = json.loads(packed["messages"][0]["content"])
+    assert encoded_size(packed) <= MAX_REQUEST_BYTES
+    assert after["report"] == data["report"]
+    assert after["saved_learning"]["omitted_items"] > 0
+    assert len(after["saved_learning"]["observations"]) < 5
+    assert original == before
+
+
 def test_unavoidable_overflow_never_cuts_instructions_or_founder_input():
     original = payload()
     original["messages"][0]["content"] = "Private instructions" * 6000

@@ -4,7 +4,7 @@ import { GTMSection, ResearchData, SourceReceipt } from "@/components/report/gtm
 import { FounderRealitySummary } from "@/components/founder-reality";
 import { plainCopy } from "@/lib/plain-copy";
 
-import { AlertTriangle, FlaskConical, Printer, RotateCw } from "lucide-react";
+import { AlertTriangle, FlaskConical, RotateCw } from "lucide-react";
 import Link from "next/link";
 import { useParams, useRouter } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
@@ -18,6 +18,7 @@ import { ReportPlan } from "@/components/report/plan";
 import { ReportVersions } from "@/components/report/versions";
 import { ReportProspects } from "@/components/report/prospects";
 import { ReportSharing } from "@/components/report/sharing";
+import { ReportExport } from "@/components/report/export";
 import { useFeedback } from "@/components/feedback";
 import { useWorkspace } from "@/components/shell";
 import { ProcessingFeed, type FeedStep, Elapsed } from "@/components/processing-feed";
@@ -232,8 +233,9 @@ export default function ReportPage() {
               <a href={r.company_url} target="_blank" rel="noopener noreferrer" className="break-all hover:text-trail">{r.company_url}</a>
               {" · "}{r.sources.length} sources · {r.finished_at && new Date(r.finished_at).toLocaleString()}
             </>}
-            action={<Button variant="secondary" onClick={() => window.print()} className="print:hidden"><Printer className="size-4" aria-hidden /> Print or save PDF</Button>} />
+            action={<ReportExport path={reportPath} />} />
           <Notice tone="trail">
+            <b>Every claim has a receipt, or an uncertainty label.</b>{" "}
             AI research from accessible public pages and supplied URLs. No general web search is available. Public statements are not independently verified. Claims are labelled as <b>sourced facts</b>, interpretations or assumptions. Click a source to verify it.
             {v && v.downgraded_facts + v.dropped_source_refs > 0 && ` Pursuit removed ${v.dropped_source_refs} unverifiable citation(s) and downgraded ${v.downgraded_facts} unsourced "fact(s)".`}
           </Notice>
@@ -260,7 +262,7 @@ export default function ReportPage() {
           <Experiments c={c} reportId={r.id} />
           <Risks c={c} />
           <details className="surface group print:hidden rounded-[var(--panel-radius-lg)] p-4 sm:p-5">
-            <summary className="cursor-pointer list-none font-semibold text-trail marker:hidden">Correct facts, refresh sections, or compare versions</summary>
+            <summary className="cursor-pointer list-none font-semibold text-trail marker:hidden">Saved learning, refresh sections, or compare versions</summary>
             <div className="mt-4"><ReportVersions path={reportPath} refresh={reload} /></div>
           </details>
           <Section id="sources" title={`Sources (${r.sources.length})`} kicker="Everything retrieved during research">

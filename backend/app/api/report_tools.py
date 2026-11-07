@@ -13,6 +13,7 @@ from app.services import (
     ai_usage,
     prospect_discovery,
     report_chat,
+    report_learning,
     report_plan,
     report_versions,
     reports,
@@ -33,6 +34,7 @@ def entry_out(entry):
 
 class Question(BaseModel):
     question: str = Field(min_length=3, max_length=2000)
+    include_saved_learning: bool = False
 
 
 @router.get("/prospects")
@@ -54,6 +56,32 @@ class Refresh(BaseModel):
     sections: list[str] = Field(min_length=1, max_length=16)
     gtm_constraints: GTMConstraints | None = None
     research_urls: list[HttpUrl] | None = Field(default=None, max_length=6)
+    include_saved_learning: bool = False
+
+
+class LearningNote(BaseModel):
+    text: str = Field(min_length=1, max_length=3000, pattern=r"\S")
+
+
+@router.get("/learning")
+def learning(report=Depends(owned_report), db: Session = Depends(get_db)):
+    return report_learning.collect(db, report)
+
+
+@router.post("/learning", status_code=201)
+def save_learning(
+    body: LearningNote,
+    report=Depends(owned_report),
+    user: User = Depends(current_user),
+    db: Session = Depends(get_db),
+):
+    from app.models.report_entry import ReportEntry
+
+    limiter.check(f"learning:{user.id}", limit=30, window_seconds=3600)
+    row = ReportEntry(report_id=report.id, actor_id=user.id, kind="learning", payload={"text": body.text})
+    db.add(row)
+    db.commit()
+    return entry_out(row)
 
 
 @router.get("/versions")
@@ -82,6 +110,7 @@ def refresh(
         body.sections,
         gtm_constraints=body.gtm_constraints.model_dump() if body.gtm_constraints else None,
         research_urls=[str(url) for url in body.research_urls] if body.research_urls is not None else None,
+        include_saved_learning=body.include_saved_learning,
     )
     return {"id": str(row.id), "status": row.status}
 
@@ -102,7 +131,15 @@ def ask(
     with (
         ai_usage.scope(report.workspace_id, report.id, ai_usage.preferred_model(db, report.workspace_id)),
     ):
-        return entry_out(report_chat.answer(db, report, user, body.question))
+        return entry_out(
+            report_chat.answer(
+                db,
+                report,
+                user,
+                body.question,
+                include_saved_learning=body.include_saved_learning,
+            )
+        )
 
 
 class TaskUpdate(BaseModel):

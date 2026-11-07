@@ -8,6 +8,7 @@ from app.core.errors import AppError, NotFound
 from app.models import Report, Workspace
 from app.models.report_entry import ReportEntry
 from app.schemas.report import ReportContent
+from app.services import report_learning
 
 SECTIONS = set(ReportContent.model_fields)
 
@@ -21,7 +22,17 @@ def versions(db, report):
     ).all()
 
 
-def refresh(db, report, user, correction, sections, *, gtm_constraints=None, research_urls=None):
+def refresh(
+    db,
+    report,
+    user,
+    correction,
+    sections,
+    *,
+    gtm_constraints=None,
+    research_urls=None,
+    include_saved_learning=False,
+):
     db.execute(select(Workspace.id).where(Workspace.id == report.workspace_id).with_for_update())
     db.refresh(report)
     if report.status != "SUCCEEDED" or not report.content:
@@ -76,6 +87,9 @@ def refresh(db, report, user, correction, sections, *, gtm_constraints=None, res
         "sections": sections,
     }
     inputs = dict(report.inputs, founder_corrections=correction)
+    inputs.pop("saved_learning", None)
+    if include_saved_learning:
+        inputs["saved_learning"] = report_learning.collect(db, report)
     if gtm_constraints is not None:
         inputs["gtm_constraints"] = gtm_constraints
     if research_urls is not None:

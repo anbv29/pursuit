@@ -37,8 +37,8 @@ for (const width of [390, 1280]) {
     await expect(page.getByRole("heading", { level: 1, name: "Your priorities" })).toBeVisible();
     if (width >= 768) {
       const navigation = page.getByRole("navigation", { name: "Primary", exact: true });
-      await expect(navigation.getByRole("link", { name: "Your priorities", exact: true })).toHaveAttribute("aria-current", "page");
-      await expect(navigation.getByRole("link", { name: "Fo Assistant", exact: true })).not.toHaveAttribute("aria-current", "page");
+      await expect(navigation.getByRole("link", { name: "Your priorities", exact: true })).toHaveCount(0);
+      await expect(navigation.getByRole("link", { name: "Fo Assistant", exact: true })).toHaveCount(0);
     }
     await page.getByRole("link", { name: /Add evidence before deciding/ }).click();
     await expect(page.getByRole("tab", { name: "Interview notes", exact: true })).toHaveAttribute("aria-selected", "true");
@@ -118,7 +118,7 @@ for (const width of [390, 1280]) {
       await page.getByLabel("Reminder title", { exact: true }).fill("Private unfinished reminder draft");
       await page.getByLabel("Switch workspace", { exact: true }).filter({ visible: true }).selectOption(otherWorkspace);
       await expect(page).toHaveURL(new RegExp(`/w/${otherWorkspace}`));
-      await page.getByRole("navigation", { name: "Primary", exact: true }).getByRole("link", { name: "Your priorities", exact: true }).click();
+      await page.goto(`/w/${otherWorkspace}/focus`);
       await expect(page.getByLabel("Reminder title", { exact: true })).toHaveValue("");
       await expect(page.getByLabel("Experiment for reminder", { exact: true })).toHaveValue("");
     }

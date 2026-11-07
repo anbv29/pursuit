@@ -44,6 +44,7 @@ class WorkspaceOut(ORM):
 
 class WorkspaceWithRole(WorkspaceOut):
     role: str
+    has_finished_report: bool = False
 
 
 class MemberIn(BaseModel):

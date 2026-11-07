@@ -15,6 +15,7 @@ export function LandingNav() {
         <Logo />
         <nav aria-label="Product" className="hidden items-center gap-1 rounded-full border border-line/70 bg-sunken/50 p-1 font-ui text-[13px] font-medium tracking-[0.01em] text-ink-2 lg:flex">
           {[
+            ["Sample report", "/sample"],
             ["Process", "/#how-it-works"],
             ["What you can do", "/#capabilities"],
             ["The toolkit", "/#pricing"],
@@ -42,7 +43,7 @@ export function HeroCta() {
   return (
     <div className="flex flex-wrap gap-3">
       <Link href={user ? "/w" : "/signup"} className={`shimmer-btn ${buttonStyles("primary", "lg")}`}>{user ? "Go to your workspace" : "Get started"}</Link>
-      <a href="#how-it-works" className={buttonStyles("secondary", "lg")}>See how it works</a>
+      <Link href="/sample" className={buttonStyles("secondary", "lg")}>Read a real report</Link>
     </div>
   );
 }

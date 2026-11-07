@@ -22,6 +22,13 @@ def encoded_size(value):
 
 
 def trim_documents(value, limit, key=""):
+    if key == "saved_learning" and isinstance(value, dict):
+        value = copy.deepcopy(value)
+        keep = max(0, limit // 1000 - 1)
+        for group in ("observations", "tasks", "experiments"):
+            items = value.get(group, [])
+            value["omitted_items"] = value.get("omitted_items", 0) + max(0, len(items) - keep)
+            value[group] = items[:keep]
     if isinstance(value, dict):
         return {k: trim_documents(v, limit, k) for k, v in value.items()}
     if isinstance(value, list):

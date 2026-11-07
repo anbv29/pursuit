@@ -2,6 +2,7 @@
 
 from sqlalchemy import select
 
+from app.core.db import utcnow
 from app.core.errors import AppError, NotFound
 from app.models import Report
 from app.models.report_entry import ReportEntry
@@ -118,6 +119,12 @@ def update_task(db, report, user, task_id, done, notes):
     )
     if row is None:
         raise NotFound("Plan task not found.")
-    row.payload = dict(row.payload, done=done, notes=notes, updated_by=str(user.id))
+    row.payload = dict(
+        row.payload,
+        done=done,
+        notes=notes,
+        updated_by=str(user.id),
+        updated_at=utcnow().isoformat(),
+    )
     db.commit()
     return row

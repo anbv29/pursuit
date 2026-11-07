@@ -23,7 +23,7 @@ type Dash = {
 type Filter = "all" | "open" | "decided";
 
 export default function Dashboard() {
-  const { workspace, base } = useWorkspace();
+  const { workspace, base, workflowsReady } = useWorkspace();
   const { user } = useSession();
   const { data, loading, error, reload } = useApi<Dash>(`/workspaces/${workspace.id}/dashboard`);
   const reports = useApi<ReportListItem[]>(`/workspaces/${workspace.id}/reports`);
@@ -50,7 +50,7 @@ export default function Dashboard() {
     );
   }
 
-  const newBtn = (
+  const newBtn = workflowsReady && (
     <Link href={`${base}/experiments/new`} className={buttonStyles("secondary")}><Plus className="size-4" aria-hidden /> New experiment</Link>
   );
   const analyzeBtn = (
@@ -81,13 +81,13 @@ export default function Dashboard() {
   if (data.experiments.length === 0) {
     return (
       <div className="mx-auto mt-2 max-w-xl space-y-6">
-        <PageHeader title={`Hi ${firstName}`} description="Your research and experiments will live here." />
-        <FounderFocusCard compact />
+        <PageHeader title={`Hi ${firstName}`} description="Every claim has a receipt. Start with research you can check." />
+        {workflowsReady && <FounderFocusCard compact />}
         {reportCard}
         <Glass className="p-2">
-          <Empty icon={<FlaskConical className="size-5" />} title={reports.data?.length ? "No experiments yet" : "Start with a company report"}
-            body={reports.data?.length ? "Open your report and choose “Track this” on a recommended experiment." : "Enter your website and Pursuit researches your market, competitors and customers, then recommends experiments."}
-            action={reports.data?.length ? newBtn : analyzeBtn} />
+          <Empty icon={<FlaskConical className="size-5" />} title={workflowsReady ? "No experiments yet" : "Start with a company report"}
+            body={workflowsReady ? "Open your report and choose “Track this” on a recommended experiment." : "Enter your website and Pursuit researches your market, competitors and customers, then recommends experiments."}
+            action={workflowsReady ? newBtn : analyzeBtn} />
         </Glass>
       </div>
     );
@@ -167,7 +167,7 @@ export default function Dashboard() {
           )}
         </section>
 
-      <section aria-labelledby="wf-h" className="rounded-2xl border border-line bg-surface p-5">
+      {workflowsReady && <section aria-labelledby="wf-h" className="rounded-2xl border border-line bg-surface p-5">
         <h2 id="wf-h" className="mb-3 text-sm font-semibold">What do you want to find out?</h2>
         <ul className="flex flex-wrap gap-2">
           {workflows.map((w) => (
@@ -179,12 +179,12 @@ export default function Dashboard() {
             </li>
           ))}
         </ul>
-      </section>
+      </section>}
 
       {reportCard ?? (<Card className="border border-line bg-surface shadow-none"><CardHeader title="Company reports" /><Empty title="No reports yet" body="Enter your website to get a sourced company report." action={analyzeBtn} /></Card>)}
         </div>
         <div className="min-w-0 space-y-4">
-          <FounderFocusCard compact />
+          {workflowsReady && <FounderFocusCard compact />}
           <Card className="border border-line bg-surface shadow-none">
             <CardHeader title="Needs your attention" action={<Link href={`${base}/approvals`} className="text-[13px] font-semibold text-trail hover:underline">See all</Link>} />
             {data.pending_actions.length === 0 ? (

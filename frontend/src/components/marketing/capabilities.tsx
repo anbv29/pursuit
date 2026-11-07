@@ -14,7 +14,7 @@ export function Capabilities() {
   return <section id="capabilities" aria-labelledby="capabilities-h" className="scroll-mt-28 pb-24">
     <div className="grid gap-8 border-t border-line pt-10 lg:grid-cols-[1fr_1.6fr] lg:gap-16">
       <div>
-        <p className="text-sm font-semibold text-trail">One place to research and learn</p>
+        <p className="text-sm font-semibold text-trail">Every claim has a receipt</p>
         <h2 id="capabilities-h" className="mt-3 font-display text-3xl font-bold tracking-tight sm:text-4xl">A company report is your starting point.</h2>
         <p className="mt-4 leading-relaxed text-ink-2">Enter your website, describe your offer and tell Pursuit who you hope to serve. A research report brings together your market, potential customers, competitors, pricing, positioning and a first-week plan.</p>
         <p className="mt-4 text-sm leading-relaxed text-ink-3">Research suggests what to try. Real interviews, commitments and measured results tell you whether it works. Use the six workflows to keep that evidence together.</p>
@@ -35,8 +35,9 @@ export function Questions() {
     ["Do I need to know startup terminology?", "No. Start with a plain-language description of your business. Reading controls explain terms and let you switch between a guided view and more detail."],
     ["Does research prove that people will buy?", "No. Reports link available sources and highlight assumptions and limitations. Customer conversations, actual commitments and measured outcomes provide stronger evidence."],
     ["Will Pursuit contact people automatically?", "Every external action needs your approval. Real outreach also needs a connected Fo account and the required permissions. Simulated actions are labelled and never send anything."],
-    ["Where should I start?", "Explore the sample report or enter your website to create a company report. You can also start with a focused customer experiment. Research depends on provider availability."],
-    ["What can I do with Pursuit?", "Create company reports, ask follow-up questions, refresh findings, share research and run experiments. Fair-use and provider capacity limits apply."],
+    ["Where should I start?", "Read the public sample without an account, then enter your website to create your first report. Experiment workflows come after the research. Research depends on provider availability."],
+    ["Will it remember what I tested?", "Save learning on your report and track its recommended experiments. Follow-up answers use saved observations and results. Refreshes can include that context while preserving earlier report versions."],
+    ["Can I take the research with me?", "Download reports as PDFs or Markdown files you can import into Notion. Exports retain source receipts and uncertainty labels. Public share links open without an account."],
   ];
   return <section aria-labelledby="questions-h" className="mx-auto max-w-3xl pb-24">
     <h2 id="questions-h" className="mb-6 font-display text-3xl font-bold tracking-tight">Before you start</h2>

@@ -71,12 +71,13 @@ export function AuthForm({ mode }: { mode: "login" | "signup" }) {
       <Glass className="enter-rise w-full max-w-sm p-7 sm:p-8">
         <h1 className="font-display text-2xl font-bold tracking-tight">{mode === "login" ? "Welcome back" : "Create your account"}</h1>
         <p className="mt-1.5 text-sm text-ink-2">
-          {mode === "login" ? "Sign in to pick up where you left off." : "Your workspace for company research, customer experiments and clearer decisions."}
+          {mode === "login" ? "Sign in to pick up where you left off." : "Market research with receipts. Sources linked, unverified claims flagged."}
         </p>
         {mode === "signup" && (
           <div className="mt-5 rounded-xl border border-line bg-surface p-4">
-            <p className="text-sm font-semibold text-ink">Start with a question. Build a clearer plan.</p>
-            <p className="mt-1 text-sm leading-relaxed text-ink-2">Full reports, follow-up questions and all six experiment workflows. No payment details needed.</p>
+            <p className="text-sm font-semibold text-ink">Every claim has a receipt.</p>
+            <p className="mt-1 text-sm leading-relaxed text-ink-2">Start with your first report, then test what it finds. No payment details needed.</p>
+            <Link href="/sample" className="mt-2 inline-block text-sm text-trail underline">Read the public sample first</Link>
             <p className="mt-2 text-xs text-ink-3">Fair-use limits and research availability apply.</p>
           </div>
         )}
