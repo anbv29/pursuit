@@ -112,7 +112,7 @@ export default function Dashboard() {
       {!experimentsOnly && <ul aria-label="Workspace summary" className="grid grid-cols-3 divide-x divide-line rounded-2xl border border-line bg-surface py-4">
         {stats.map((s) => (
           <li key={s.label} className="flex min-w-0 flex-col gap-1 px-4 sm:px-5">
-            <span className="flex min-h-8 items-start gap-2 text-xs text-ink-3 sm:min-h-4 sm:items-center"><s.icon className="hidden size-3.5 shrink-0 sm:block" aria-hidden />{s.label}</span>
+            <span className="flex flex-1 items-start gap-2 text-xs text-ink-3"><s.icon className="hidden size-3.5 shrink-0 sm:block" aria-hidden />{s.label}</span>
             <NumberTicker value={s.value} className="text-2xl font-semibold tabular-nums tracking-tight text-ink" />
           </li>
         ))}

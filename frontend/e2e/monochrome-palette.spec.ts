@@ -19,7 +19,7 @@ for (const theme of ["light", "dark"] as const) {
         for (const element of document.querySelectorAll("*")) {
           if (!element.getClientRects().length) continue;
           const style = getComputedStyle(element);
-          for (const property of ["color", "background-color", "border-top-color", "fill", "stroke"]) {
+          for (const property of ["color", "background-color", "border-top-color", "fill", "stroke", "accent-color"]) {
             const value = style.getPropertyValue(property);
             if (CSS.supports("color", value)) values.add(value);
           }

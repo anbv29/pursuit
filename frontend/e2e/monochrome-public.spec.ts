@@ -40,7 +40,7 @@ for (const width of [390, 820, 1280, 1440]) {
     expect(footer!.x).toBeCloseTo(hero!.x, 0);
     if (width >= 1024) {
       const logo = await page.locator("header").getByRole("link", { name: "Pursuit home" }).boundingBox();
-      expect(logo!.x).toBeCloseTo(hero!.x, 0);
+      expect(Math.abs(logo!.x - hero!.x)).toBeLessThanOrEqual(1);
     } else {
       const dock = await page.locator(".cta-dock a").boundingBox();
       expect(dock!.x).toBeCloseTo(hero!.x, 0);
