@@ -262,12 +262,15 @@
 
 /* ---- base ------------------------------------------------------------------ */
 html {
+  scrollbar-color: var(--hairline-strong) var(--bg);
+  scrollbar-width: thin;
   accent-color: var(--accent-strong);
   background: var(--bg);
   transition: background-color var(--dur-slow) var(--ease-out);
   -webkit-text-size-adjust: 100%;
 }
 body {
+  caret-color: var(--ink);
   background: var(--bg);
   color: var(--ink);
   font-family: var(--font-reading), system-ui, sans-serif;

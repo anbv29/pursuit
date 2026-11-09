@@ -56,7 +56,7 @@ export function ReadingControls() {
       <summary className="w-fit cursor-pointer rounded-full px-3 py-2 text-xs font-medium text-ink-2 hover:bg-[var(--inset)] hover:text-ink">
         Startup terms, explained
       </summary>
-      <dl className="mt-3 grid gap-4 rounded-xl border border-line bg-surface p-4 sm:grid-cols-2 lg:grid-cols-3">
+      <dl className="mt-3 grid gap-4 rounded-lg border border-line bg-surface p-4 sm:grid-cols-2 lg:grid-cols-3">
         {TERMS.map(([term, meaning]) => <div key={term}><dt className="font-medium">{term}</dt><dd className="mt-1 text-xs leading-relaxed text-ink-2">{meaning}</dd></div>)}
       </dl>
     </details>
