@@ -12,9 +12,7 @@ class ReportWatch(IdMixin, TimestampMixin, Base):
     __tablename__ = "report_watches"
     __table_args__ = (Index("ix_report_watches_due", "enabled", "next_check_at"),)
 
-    report_id: Mapped[uuid.UUID] = mapped_column(
-        ForeignKey("reports.id", ondelete="CASCADE"), unique=True
-    )
+    report_id: Mapped[uuid.UUID] = mapped_column(ForeignKey("reports.id", ondelete="CASCADE"), unique=True)
     enabled: Mapped[bool] = mapped_column(default=False)
     snapshots: Mapped[list] = mapped_column(JSON, default=list)
     generation: Mapped[int] = mapped_column(default=1)

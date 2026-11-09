@@ -13,8 +13,13 @@ def upgrade():
     op.create_table(
         "report_watches",
         sa.Column("id", sa.Uuid(), primary_key=True),
-        sa.Column("report_id", sa.Uuid(), sa.ForeignKey("reports.id", ondelete="CASCADE"),
-                  nullable=False, unique=True),
+        sa.Column(
+            "report_id",
+            sa.Uuid(),
+            sa.ForeignKey("reports.id", ondelete="CASCADE"),
+            nullable=False,
+            unique=True,
+        ),
         sa.Column("enabled", sa.Boolean(), nullable=False),
         sa.Column("snapshots", sa.JSON(), nullable=False),
         sa.Column("generation", sa.Integer(), nullable=False),
@@ -29,10 +34,10 @@ def upgrade():
     op.create_table(
         "watch_alerts",
         sa.Column("id", sa.Uuid(), primary_key=True),
-        sa.Column("watch_id", sa.Uuid(), sa.ForeignKey("report_watches.id", ondelete="CASCADE"),
-                  nullable=False),
-        sa.Column("report_id", sa.Uuid(), sa.ForeignKey("reports.id", ondelete="CASCADE"),
-                  nullable=False),
+        sa.Column(
+            "watch_id", sa.Uuid(), sa.ForeignKey("report_watches.id", ondelete="CASCADE"), nullable=False
+        ),
+        sa.Column("report_id", sa.Uuid(), sa.ForeignKey("reports.id", ondelete="CASCADE"), nullable=False),
         sa.Column("dedupe_key", sa.String(64), nullable=False),
         sa.Column("payload", sa.JSON(), nullable=False),
         sa.Column("created_at", sa.DateTime(timezone=True), nullable=False),
