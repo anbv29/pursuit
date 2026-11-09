@@ -318,6 +318,7 @@ h1, h2, h3 { text-wrap: balance; }
 }
 .glass-sheen, .backdrop-orbs { display: none; }
 .workspace-sidebar {
+  color-scheme: dark;
   --sidebar-surface: #171717;
   --surface-solid: #242424;
   --surface: #242424;
