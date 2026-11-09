@@ -79,6 +79,9 @@ for (const width of [320, 820, 1440]) {
       await expect(page.getByRole("heading", { level: 1 }).first()).toBeVisible();
       await contained(page, route);
       await controlsFit(page.locator("main button, main input, main select"));
+      if ([320, 1440].includes(width) && ["/reports/new", "/reports/layout-report"].includes(route)) {
+        await page.screenshot({ path: `test-results/studio-${width}-${route.replaceAll("/", "-")}.png`, fullPage: true });
+      }
       if (route === "") {
         const chrome = await page.locator(".workspace-header > div").evaluate(node => {
           const style = getComputedStyle(node);
