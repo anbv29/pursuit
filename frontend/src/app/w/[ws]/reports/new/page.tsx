@@ -58,8 +58,7 @@ export default function NewReportPage() {
   return (
     <div className="mx-auto min-w-0 max-w-2xl">
       <header className="border-b border-line pb-6">
-        <p className="text-sm text-ink-3">Source-backed company research</p>
-        <h1 className="mt-3 font-display text-[32px] font-semibold leading-tight tracking-tight sm:text-4xl">Analyze your company</h1>
+        <h1 className="font-display text-[32px] font-semibold leading-tight tracking-tight sm:text-4xl">Analyze your company</h1>
         <p className="mt-4 max-w-lg text-sm leading-relaxed text-ink-2">
           Start with your website and what you offer. Get sourced research on your buyers,
           positioning and next experiments. Add context below to make it more specific.

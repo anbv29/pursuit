@@ -55,11 +55,14 @@ export function GTMSection({ report, editor }: { report: Report; editor?: { path
 }
 
 export function SourceReceipt({ source: s }: { source: ReportSource }) {
-  return <div className="min-w-0 space-y-1 text-xs text-ink-2 [overflow-wrap:anywhere]">
-    <a href={/^https?:\/\//i.test(s.url) ? s.url : undefined} target="_blank" rel="noopener noreferrer nofollow" className="font-medium text-trail underline">{s.title || s.url}</a>
-    <p>{s.id} · {s.source_role ?? s.via} · Retrieval status: {s.retrieval_status ?? "not recorded"}</p>
-    <p>Retrieved: {s.retrieved_at ? new Date(s.retrieved_at).toLocaleString() : "not recorded"}</p>
-    {s.excerpt && <details><summary className="cursor-pointer">Retrieved excerpt</summary><blockquote className="mt-2 whitespace-pre-wrap border-l-2 border-line pl-3">{s.excerpt}</blockquote></details>}
+  return <div className="min-w-0 space-y-3 text-xs text-ink-2 [overflow-wrap:anywhere]">
+    <div className="flex items-baseline gap-3"><span className="shrink-0 font-mono text-ink-3">[{s.id}]</span><a href={/^https?:\/\//i.test(s.url) ? s.url : undefined} target="_blank" rel="noopener noreferrer nofollow" className="text-sm font-medium text-trail underline underline-offset-4">{s.title || s.url}</a></div>
+    <dl className="grid gap-x-6 gap-y-2 sm:grid-cols-2">
+      <div><dt className="text-ink-3">Source role</dt><dd className="mt-1">{s.source_role ?? s.via}</dd></div>
+      <div><dt className="text-ink-3">Retrieval status</dt><dd className="mt-1">{s.retrieval_status ?? "not recorded"}</dd></div>
+      <div className="sm:col-span-2"><dt className="text-ink-3">Retrieved</dt><dd className="mt-1">{s.retrieved_at ? new Date(s.retrieved_at).toLocaleString() : "not recorded"}</dd></div>
+    </dl>
+    {s.excerpt && <details><summary className="min-h-11 cursor-pointer py-3 font-medium">Retrieved excerpt</summary><blockquote className="mt-2 whitespace-pre-wrap border-l-2 border-line pl-3 leading-relaxed">{s.excerpt}</blockquote></details>}
   </div>;
 }
 

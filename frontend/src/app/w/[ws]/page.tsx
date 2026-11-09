@@ -104,7 +104,7 @@ export default function Dashboard() {
         <Glass className="border-t border-line p-2">
           <Empty icon={<FlaskConical className="size-5" />} title={workflowsReady ? "No experiments yet" : "Start with a company report"}
             body={workflowsReady ? "Open your report and choose “Track this” on a recommended experiment." : "Enter your website and Pursuit researches your market, competitors and customers, then recommends experiments."}
-            action={workflowsReady ? newBtn : analyzeBtn} />
+            action={workflowsReady ? newBtn : experimentsOnly ? analyzeBtn : undefined} />
         </Glass>
         </div>
       </div>
@@ -138,7 +138,7 @@ export default function Dashboard() {
 
       <div className={experimentsOnly ? "space-y-6" : "grid items-start gap-8 xl:grid-cols-[minmax(0,1fr)_300px]"}>
         <div className="min-w-0 space-y-8">
-        {!experimentsOnly && (reportCard ?? (<Card className="border border-line bg-surface shadow-none"><CardHeader title="Company reports" /><Empty title="No reports yet" body="Enter your website to get a sourced company report." action={analyzeBtn} /></Card>))}
+        {!experimentsOnly && (reportCard ?? (<Card className="border border-line bg-surface shadow-none"><CardHeader title="Company reports" /><Empty title="No reports yet" body="Enter your website to get a sourced company report." /></Card>))}
         <section aria-labelledby="exp-h" className="min-w-0 overflow-hidden rounded-xl border border-line bg-surface">
           <div className="flex flex-wrap items-center justify-between gap-3 border-b border-line px-5 py-4">
             <h2 id="exp-h" className="text-base font-semibold">{experimentsOnly ? "Saved experiments" : "Recent experiments"}</h2>
