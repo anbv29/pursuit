@@ -35,9 +35,7 @@ export default function Home() {
             <p className="mt-5 text-sm text-ink-3">Real product. Public sources. Read the sample without signing up.</p>
           </div>
           <div className="enter-rise min-w-0" style={{ "--i": 2 } as React.CSSProperties}>
-            <div className="hero-frame">
-              <HeroDemo />
-            </div>
+            <HeroDemo />
           </div>
         </section>
 

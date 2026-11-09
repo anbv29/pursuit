@@ -39,8 +39,8 @@ export function Footer() {
                 <ul>
                   {group.items.map((item) => (
                     <li key={item.href}>
-                      <Link href={item.href} className="group inline-flex min-h-11 items-center gap-2 rounded-sm text-sm text-ink-2 transition-colors hover:text-trail focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[var(--focus-ring)]">
-                        {item.label}<ArrowUpRight className="size-3.5 shrink-0 opacity-0 transition-opacity group-hover:opacity-100 group-focus-visible:opacity-100" aria-hidden />
+                      <Link href={item.href} className="group inline-flex min-h-11 items-center gap-2 rounded-sm py-2 text-sm text-ink-2 transition-colors hover:text-trail focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[var(--focus-ring)]">
+                        <span>{item.label}</span><ArrowUpRight className="size-3.5 shrink-0 opacity-0 transition-opacity group-hover:opacity-100 group-focus-visible:opacity-100" aria-hidden />
                       </Link>
                     </li>
                   ))}

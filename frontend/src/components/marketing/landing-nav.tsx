@@ -11,7 +11,7 @@ export function LandingNav() {
   const { user, ready } = useSession();
   return (
     <header className="sticky top-0 z-30 px-4 pt-4 sm:px-6">
-      <Glass as="div" className="landing-nav mx-auto flex h-16 max-w-6xl items-center justify-between gap-3 rounded-[16px] px-4 sm:px-5 lg:grid lg:grid-cols-[1fr_auto_1fr]">
+      <Glass as="div" className="landing-nav mx-auto flex min-h-16 max-w-6xl items-center justify-between gap-3 rounded-[16px] px-4 sm:px-6 lg:grid lg:grid-cols-[1fr_auto_1fr]">
         <Logo />
         <nav aria-label="Product" className="hidden items-center gap-1 rounded-full border border-line/70 bg-sunken/50 p-1 font-ui text-[13px] font-medium tracking-[0.01em] text-ink-2 lg:flex">
           {[
@@ -41,7 +41,7 @@ export function LandingNav() {
 export function HeroCta() {
   const { user } = useSession();
   return (
-    <div className="flex flex-wrap gap-3">
+    <div className="grid gap-3 sm:flex sm:flex-wrap">
       <Link href={user ? "/w" : "/signup"} className={`shimmer-btn ${buttonStyles("primary", "lg")}`}>{user ? "Go to your workspace" : "Get started"}</Link>
       <Link href="/sample" className={buttonStyles("secondary", "lg")}>Read a real report</Link>
     </div>
@@ -52,7 +52,7 @@ export function HeroCta() {
 export function MobileCtaDock() {
   const { user } = useSession();
   return (
-    <div className="cta-dock">
+    <div className="cta-dock sm:mx-2">
       <Link href={user ? "/w" : "/signup"} className={`${buttonStyles("primary", "lg")} w-full`}>
         Analyze a company
       </Link>
