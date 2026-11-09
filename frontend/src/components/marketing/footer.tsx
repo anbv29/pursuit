@@ -1,6 +1,7 @@
 import { ArrowRight, ArrowUpRight } from "lucide-react";
 import Link from "next/link";
 import { Logo } from "@/components/brand";
+import styles from "./studio.module.css";
 
 const links = [
   { title: "Explore", items: [
@@ -18,12 +19,11 @@ const links = [
 
 export function Footer() {
   return (
-    <footer className="border-t border-line bg-sunken/50">
-      <div className="mx-auto max-w-6xl px-4 sm:px-6">
+    <footer className={styles.footer}>
+      <div className={styles.container}>
         <div className="grid gap-12 py-12 sm:py-16 lg:grid-cols-[1.4fr_1fr] lg:gap-20">
           <div>
-            <p className="mb-4 font-ui text-xs font-semibold uppercase tracking-[0.12em] text-trail">A little less guesswork.</p>
-            <h2 className="max-w-lg text-balance font-display text-3xl font-medium leading-tight tracking-[-0.045em] text-ink sm:text-4xl">
+            <h2 className="max-w-lg text-balance font-display text-4xl font-medium leading-tight tracking-[-0.04em] text-ink sm:text-5xl">
               Every claim<br className="hidden sm:block" /> has a receipt.
             </h2>
             <p className="mt-4 max-w-sm text-base leading-relaxed text-ink-2">Inspect the source. Spot the assumption. Decide what needs testing.</p>
@@ -35,7 +35,7 @@ export function Footer() {
           <nav aria-label="Footer" className="grid grid-cols-2 gap-6 lg:pt-2">
             {links.map((group) => (
               <div key={group.title}>
-                <h3 className="mb-3 font-ui text-xs font-semibold uppercase tracking-[0.08em] text-ink-3">{group.title}</h3>
+                <h3 className="mb-3 text-sm font-semibold text-ink-3">{group.title}</h3>
                 <ul>
                   {group.items.map((item) => (
                     <li key={item.href}>

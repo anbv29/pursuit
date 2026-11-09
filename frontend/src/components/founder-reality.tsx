@@ -15,8 +15,8 @@ export type FounderReality = Partial<Record<typeof realityQuestions[number][0], 
 export function FounderRealityCheck({ value, onChange, disabled = false }: {
   value: FounderReality; onChange: (value: FounderReality) => void; disabled?: boolean;
 }) {
-  return <details className="rounded-xl border border-line p-4">
-    <summary className="cursor-pointer font-medium">Founder reality check <span className="text-sm font-normal text-ink-3">(optional, 2 minutes)</span></summary>
+  return <details className="border-b border-line py-3">
+    <summary className="min-h-11 cursor-pointer py-2 text-sm font-semibold">Founder reality check <span className="text-sm font-normal text-ink-3">(optional, 2 minutes)</span></summary>
     <p className="mt-3 text-sm leading-relaxed text-ink-2">Help the research challenge your assumptions using what has actually happened. Answer any question, or skip all five. Your answers are shared with the research provider and saved with this report as founder-reported context. Avoid names, contact details and confidential customer information.</p>
     <div className="mt-5 space-y-5">{realityQuestions.map(([key, label, hint]) =>
       <Field key={key} label={label} hint={hint}>{id => <Textarea id={id} rows={3} maxLength={600}
@@ -29,8 +29,8 @@ export function FounderRealityCheck({ value, onChange, disabled = false }: {
 export function FounderRealitySummary({ value }: { value: FounderReality }) {
   const answered = realityQuestions.filter(([key]) => value[key]?.trim());
   if (!answered.length) return null;
-  return <details className="rounded-xl border border-line p-4 text-sm">
-    <summary className="cursor-pointer font-medium">Your founder context ({answered.length}/5 answered)</summary>
+  return <details className="rounded-lg border border-line p-4 text-sm">
+    <summary className="min-h-11 cursor-pointer py-2 text-sm font-semibold">Your founder context ({answered.length}/5 answered)</summary>
     <p className="mt-3 text-ink-3">Self-reported context used in this preview. These answers are not independently verified evidence.</p>
     <dl className="mt-4 space-y-4">{answered.map(([key, label]) => <div key={key}><dt className="font-medium">{label}</dt><dd className="mt-1 whitespace-pre-wrap text-ink-2 [overflow-wrap:anywhere]">{value[key]}</dd></div>)}</dl>
   </details>;

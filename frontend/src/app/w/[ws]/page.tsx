@@ -58,6 +58,20 @@ export default function Dashboard() {
   const analyzeBtn = (
     <Link href={`${base}/reports/new`} className={buttonStyles("primary")}><FileText className="size-4" aria-hidden /> Analyze your company</Link>
   );
+  const researchStart = (
+    <section aria-labelledby="research-start" className="grid overflow-hidden rounded-xl border border-line bg-surface md:grid-cols-[minmax(0,1fr)_minmax(12rem,0.55fr)]">
+      <div className="min-w-0 p-5 sm:p-8">
+        <FileText className="mb-6 size-7 text-ink" aria-hidden />
+        <h2 id="research-start" className="max-w-lg font-display text-3xl font-semibold leading-tight tracking-tight sm:text-4xl">Start with a company report</h2>
+        <p className="mt-4 max-w-lg text-sm leading-relaxed text-ink-2">Enter your website and Pursuit researches your market, competitors and customers, then recommends experiments.</p>
+        <div className="mt-6 flex flex-wrap gap-2">{analyzeBtn}{newBtn}</div>
+      </div>
+      <div className="flex min-w-0 flex-col justify-end gap-5 border-t border-line bg-sunken p-5 sm:p-8 md:border-l md:border-t-0">
+        <div><h3 className="font-display text-lg font-semibold">Check the evidence</h3><p className="mt-2 text-sm leading-relaxed text-ink-2">Your research, priorities and experiments in one place.</p></div>
+        <Link href={`${base}/reports`} className="inline-flex min-h-11 items-center text-sm font-semibold underline underline-offset-4">See all</Link>
+      </div>
+    </section>
+  );
   const reportCard = reports.data && reports.data.length > 0 && (
     <Card className="border border-line bg-surface shadow-none">
       <CardHeader title="Company reports" action={<Link href={`${base}/reports`} className="text-[13px] font-semibold text-trail hover:underline">See all</Link>} />
@@ -65,7 +79,7 @@ export default function Dashboard() {
         {reports.data.slice(0, 3).map((r) => (
           <li key={r.id}>
             <Link href={`${base}/reports/${r.id}`} className="group flex items-center gap-3 px-5 py-3.5 transition-colors hover:bg-[var(--inset)]">
-              <span className="grid size-9 shrink-0 place-items-center rounded-xl bg-accent-soft text-trail-strong"><FileText className="size-4" aria-hidden /></span>
+              <FileText className="size-5 shrink-0 text-ink-3" aria-hidden />
               <span className="min-w-0 flex-1">
                 <span className="block truncate text-sm font-semibold text-ink">{r.company_name || r.company_url}</span>
                 <span className="block truncate text-xs text-ink-3">{r.company_url}</span>
@@ -82,15 +96,18 @@ export default function Dashboard() {
 
   if (data.experiments.length === 0) {
     return (
-      <div className="mx-auto mt-2 max-w-xl space-y-6">
-        <PageHeader title={experimentsOnly ? "Experiments" : `Hi ${firstName}`} description={experimentsOnly ? "Your saved experiments, evidence and verdicts." : "Your research, priorities and experiments in one place."} />
-        {!experimentsOnly && workflowsReady && <FounderFocusCard compact />}
-        {!experimentsOnly && reportCard}
-        <Glass className="p-2">
+      <div className="mx-auto mt-2 max-w-6xl space-y-6">
+        <PageHeader title={experimentsOnly ? "Experiments" : `Hi ${firstName}`} description={experimentsOnly ? "Your saved experiments, evidence and verdicts." : "Your research, priorities and experiments in one place."}
+          action={!experimentsOnly && reports.data?.length ? analyzeBtn : undefined} />
+        {!experimentsOnly && !reports.data?.length && researchStart}
+        {(experimentsOnly || workflowsReady || reportCard) && <div className={experimentsOnly ? "" : "grid items-start gap-6 lg:grid-cols-2"}>
+        {!experimentsOnly && <div className="min-w-0 space-y-6">{reportCard}{workflowsReady && <FounderFocusCard compact />}</div>}
+        {(experimentsOnly || workflowsReady) && <Glass className="border-t border-line p-2">
           <Empty icon={<FlaskConical className="size-5" />} title={workflowsReady ? "No experiments yet" : "Start with a company report"}
             body={workflowsReady ? "Open your report and choose “Track this” on a recommended experiment." : "Enter your website and Pursuit researches your market, competitors and customers, then recommends experiments."}
-            action={workflowsReady ? newBtn : analyzeBtn} />
-        </Glass>
+            action={workflowsReady ? newBtn : experimentsOnly ? analyzeBtn : undefined} />
+        </Glass>}
+        </div>}
       </div>
     );
   }
@@ -104,23 +121,26 @@ export default function Dashboard() {
   const workflows = Object.entries(USE_CASE_LABEL).map(([id, label]) => ({ id, label }));
 
   return (
-    <div className="mx-auto max-w-7xl space-y-5 text-[13px]">
+    <div className="mx-auto max-w-7xl space-y-8 text-[13px]">
       <PageHeader title={experimentsOnly ? "Experiments" : `Hi ${firstName}`}
         description={`${data.experiments.length} saved experiment${data.experiments.length === 1 ? "" : "s"}${data.pending_actions.length > 0 ? ` · ${data.pending_actions.length} waiting on you` : ""}`}
-        action={<div className="flex flex-wrap gap-2">{newBtn}{!experimentsOnly && analyzeBtn}</div>} />
+        action={experimentsOnly ? newBtn : reports.data?.length ? <>{analyzeBtn}{newBtn}</> : undefined} />
 
-      {!experimentsOnly && <ul aria-label="Workspace summary" className="grid grid-cols-3 divide-x divide-line rounded-2xl border border-line bg-surface py-4">
+      {!experimentsOnly && !reports.data?.length && researchStart}
+
+      {!experimentsOnly && <ul aria-label="Workspace summary" className="grid grid-cols-3 divide-x divide-line border-y border-line py-5">
         {stats.map((s) => (
           <li key={s.label} className="flex min-w-0 flex-col gap-1 px-4 sm:px-5">
             <span className="flex flex-1 items-start gap-2 text-xs text-ink-3"><s.icon className="hidden size-3.5 shrink-0 sm:block" aria-hidden />{s.label}</span>
-            <NumberTicker value={s.value} className="text-2xl font-semibold tabular-nums tracking-tight text-ink" />
+            <NumberTicker value={s.value} className="font-display text-3xl font-semibold tabular-nums tracking-tight text-ink" />
           </li>
         ))}
       </ul>}
 
-      <div className={experimentsOnly ? "space-y-5" : "grid items-start gap-5 xl:grid-cols-[minmax(0,1fr)_320px]"}>
-        <div className="min-w-0 space-y-5">
-        <section aria-labelledby="exp-h" className="min-w-0 overflow-hidden rounded-2xl border border-line bg-surface">
+      <div className={experimentsOnly ? "space-y-6" : "grid items-start gap-8 xl:grid-cols-[minmax(0,1fr)_300px]"}>
+        <div className="min-w-0 space-y-8">
+        {!experimentsOnly && (reportCard ?? (<Card className="border border-line bg-surface shadow-none"><CardHeader title="Company reports" /><Empty title="No reports yet" body="Enter your website to get a sourced company report." /></Card>))}
+        <section aria-labelledby="exp-h" className="min-w-0 overflow-hidden rounded-xl border border-line bg-surface">
           <div className="flex flex-wrap items-center justify-between gap-3 border-b border-line px-5 py-4">
             <h2 id="exp-h" className="text-base font-semibold">{experimentsOnly ? "Saved experiments" : "Recent experiments"}</h2>
             {experimentsOnly ? <Tabs label="Filter experiments" value={filter} onChange={(v) => { if (v === "all" || v === "open" || v === "decided") setFilter(v); }}
@@ -170,13 +190,13 @@ export default function Dashboard() {
           )}
         </section>
 
-      {experimentsOnly && workflowsReady && <section aria-labelledby="wf-h" className="rounded-2xl border border-line bg-surface p-5">
+      {experimentsOnly && workflowsReady && <section aria-labelledby="wf-h" className="border-y border-line py-5">
         <h2 id="wf-h" className="mb-3 text-sm font-semibold">What do you want to find out?</h2>
         <ul className="flex flex-wrap gap-2">
           {workflows.map((w) => (
             <li key={w.id}>
               <Link href={`${base}/experiments/new?type=${w.id}`}
-                className="inline-flex min-h-9 items-center rounded-full border border-line px-3 py-1.5 transition-colors hover:bg-accent-soft">
+                className="inline-flex min-h-11 items-center rounded-lg border border-line px-3 py-2 transition-colors hover:bg-accent-soft">
                 <span className="min-w-0 flex-1 text-xs font-medium text-ink">{w.label}</span>
               </Link>
             </li>
@@ -184,7 +204,6 @@ export default function Dashboard() {
         </ul>
       </section>}
 
-      {!experimentsOnly && (reportCard ?? (<Card className="border border-line bg-surface shadow-none"><CardHeader title="Company reports" /><Empty title="No reports yet" body="Enter your website to get a sourced company report." action={analyzeBtn} /></Card>))}
         </div>
         {!experimentsOnly && <div className="min-w-0 space-y-4">
           {workflowsReady && <FounderFocusCard compact />}

@@ -8,6 +8,8 @@ The October 2026 redesign is frontend-only. Existing requests, permissions, auth
 
 ## Visual direction
 
-The November 2026 update softens the earlier dashboard direction with warm off-white panels, a pale stone canvas, muted sage actions, soft charcoal text, rounded rectangular controls, and a clearly grouped sidebar. Keep the compact Inter typography and existing workspace composition. Dark mode uses green-gray surfaces and desaturated accents. Apply the shared visual language to marketing, authentication, onboarding, reports, experiments, and supporting pages.
+The November 2026 rebuild uses a monochrome research studio identity. Space Grotesk headings, Inter body text, Bauhaus inspired composition, restrained brutalist structure and paper like reports make evidence and next actions easy to find. The desktop navigation rail is dark in both themes. Public pages may be expressive, while the workspace stays practical and reports stay readable.
 
-The quality bar is a useful, compact workspace with real information visible at desktop and phone sizes, readable control boundaries, keyboard focus, and no horizontal page overflow. Phone experiment rows expose stage and verdict together. Desktop supporting content follows the table without waiting for the taller secondary column.
+Keep requests, permissions, authentication, stored content and backend code unchanged. Preserve source receipts, uncertainty labels and demo labels. See DESIGN.md for the shared visual system.
+
+The quality bar is a useful workspace with real information visible at desktop and phone sizes, readable control boundaries, keyboard focus, and no horizontal page overflow. Phone experiment rows expose stage and verdict together. Desktop supporting content follows the table without waiting for the taller secondary column.

@@ -1,32 +1,30 @@
-import { CircleDollarSign, Filter, MessageCircleQuestion, MessageSquare, Scale, Users } from "lucide-react";
-import type { ComponentType } from "react";
+import styles from "./studio.module.css";
 
-const WORKFLOWS: [string, string, ComponentType<{ className?: string }>][] = [
-  ["Find your first customers", "Compare customer groups, keep sourced prospect research and test which audience has the strongest need.", Users],
-  ["Test willingness to pay", "Track budgets, current spending and pricing feedback. Keep verbal interest separate from actual commitments.", CircleDollarSign],
-  ["Compare your message", "Create outreach variants and record replies. Compare rates with sample sizes and uncertainty.", MessageSquare],
-  ["Understand the problem", "Record interviews, workarounds, recurring pain and contradictory answers before deciding what to build.", MessageCircleQuestion],
-  ["Map the competition", "Compare competitors, pricing and positioning with source links. See where information is missing.", Scale],
-  ["Find funnel drop-offs", "Import a CSV or enter stage counts. See conversion rates and design tests for competing explanations.", Filter],
+const WORKFLOWS = [
+  ["Find your first customers", "Compare customer groups, keep sourced prospect research and test which audience has the strongest need."],
+  ["Test willingness to pay", "Track budgets, current spending and pricing feedback. Keep verbal interest separate from actual commitments."],
+  ["Compare your message", "Create outreach variants and record replies. Compare rates with sample sizes and uncertainty."],
+  ["Understand the problem", "Record interviews, workarounds, recurring pain and contradictory answers before deciding what to build."],
+  ["Map the competition", "Compare competitors, pricing and positioning with source links. See where information is missing."],
+  ["Find funnel drop-offs", "Import a CSV or enter stage counts. See conversion rates and design tests for competing explanations."],
 ];
 
 export function Capabilities() {
-  return <section id="capabilities" aria-labelledby="capabilities-h" className="scroll-mt-28 pb-24">
-    <div className="grid gap-8 border-t border-line pt-10 lg:grid-cols-[1fr_1.6fr] lg:gap-16">
+  return <section id="capabilities" aria-labelledby="capabilities-h" className={styles.section}>
+    <div className={styles.sectionHeading}>
       <div>
-        <p className="text-sm font-semibold text-trail">Every claim has a receipt</p>
-        <h2 id="capabilities-h" className="mt-3 font-display text-3xl font-bold tracking-tight sm:text-4xl">A company report is your starting point.</h2>
+        <h2 id="capabilities-h">A company report is your starting point.</h2>
+      </div>
+      <div>
         <p className="mt-4 leading-relaxed text-ink-2">Enter your website, describe your offer and tell Pursuit who you hope to serve. A research report brings together your market, potential customers, competitors, pricing, positioning and a first-week plan.</p>
         <p className="mt-4 text-sm leading-relaxed text-ink-3">Research suggests what to try. Real interviews, commitments and measured results tell you whether it works. Use the six workflows to keep that evidence together.</p>
       </div>
-      <ul className="bento-grid">
-        {WORKFLOWS.map(([title, body, Icon], i) => <li key={title} className={i === 0 ? "bento-tile bento-tile-wide" : "bento-tile"}>
-          <span className="bento-ico"><Icon className="size-[18px]" aria-hidden /></span>
-          <h3 className="font-ui text-base font-semibold">{title}</h3>
-          <p className="mt-2 text-sm leading-relaxed text-ink-2">{body}</p>
-        </li>)}
-      </ul>
     </div>
+    <ul className={styles.workflows}>
+      {WORKFLOWS.map(([title, body]) => <li key={title}>
+        <h3>{title}</h3><p>{body}</p>
+      </li>)}
+    </ul>
   </section>;
 }
 
@@ -39,11 +37,13 @@ export function Questions() {
     ["Will it remember what I tested?", "Save learning on your report and track its recommended experiments. Follow-up answers use saved observations and results. Refreshes can include that context while preserving earlier report versions."],
     ["Can I take the research with me?", "Download reports as PDFs or Markdown files you can import into Notion. Exports retain source receipts and uncertainty labels. Public share links open without an account."],
   ];
-  return <section aria-labelledby="questions-h" className="max-w-3xl pb-24">
-    <h2 id="questions-h" className="mb-6 font-display text-3xl font-bold tracking-tight">Before you start</h2>
+  return <section aria-labelledby="questions-h" className={`${styles.section} ${styles.questions}`}>
+    <h2 id="questions-h">Before you start</h2>
+    <div>
     {answers.map(([q, a]) => <details key={q} className="group border-t border-line py-5">
       <summary className="cursor-pointer font-semibold text-ink">{q}</summary>
       <p className="mt-3 text-sm leading-relaxed text-ink-2">{a}</p>
     </details>)}
+    </div>
   </section>;
 }

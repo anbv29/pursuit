@@ -29,15 +29,15 @@ export function Tabs({ tabs, value, onChange, label, className, idPrefix, panelI
   };
   return (
     <div role="tablist" aria-label={label}
-      className={cx("flex min-w-0 max-w-full gap-1 overflow-x-auto rounded-2xl border border-line bg-sunken p-1 [scrollbar-width:none]", className)}>
+      className={cx("flex min-w-0 max-w-full gap-1 overflow-x-auto rounded-lg border border-line bg-sunken p-1 [scrollbar-width:none]", className)}>
       {tabs.map((t, i) => {
         const active = t.id === value;
         return (
           <button key={t.id} ref={(el) => { refs.current[i] = el; }} role="tab" id={`${base}-${t.id}`} type="button"
             aria-selected={active} aria-controls={panelId} tabIndex={active ? 0 : -1}
             onClick={() => onChange(t.id)} onKeyDown={(e) => onKey(e, i)}
-            className={cx("press whitespace-nowrap rounded-xl px-3.5 py-2 text-sm transition-[background-color,color,box-shadow] duration-200",
-              active ? "bg-surface font-semibold text-ink ring-1 ring-line" : "text-ink-3 hover:text-ink")}>
+            className={cx("press whitespace-nowrap rounded-md px-3.5 py-2 text-sm transition-[background-color,color,box-shadow] duration-200",
+              active ? "bg-ink font-semibold text-bg" : "text-ink-3 hover:text-ink")}>
             {t.label}
           </button>
         );

@@ -11,6 +11,7 @@ import { ConnectionStatus } from "./connection-status";
 import { useSession } from "./session";
 import { ThemeToggle } from "./theme";
 import { Button, Field, Glass, Input, Notice, PasswordInput } from "./ui";
+import styles from "./marketing/public-surfaces.module.css";
 
 const schemas = {
   login: z.object({
@@ -62,19 +63,18 @@ export function AuthForm({ mode }: { mode: "login" | "signup" }) {
     setValues((v) => ({ ...v, [k]: e.target.value }));
 
   return (
-    <main className="relative isolate flex min-h-screen flex-col items-center justify-center px-4 py-12">
-      <div aria-hidden="true" className="dot-field pointer-events-none absolute inset-0 -z-10" />
+    <main className={styles.auth}>
       <div className="mb-8 flex w-full max-w-sm items-center justify-between">
         <Logo />
         <ThemeToggle />
       </div>
-      <Glass className="enter-rise w-full max-w-sm p-7 sm:p-8">
+      <Glass className={styles.formSheet}>
         <h1 className="font-display text-2xl font-bold tracking-tight">{mode === "login" ? "Welcome back" : "Create your account"}</h1>
         <p className="mt-1.5 text-sm text-ink-2">
           {mode === "login" ? "Sign in to pick up where you left off." : "Market research with receipts. Sources linked, unverified claims flagged."}
         </p>
         {mode === "signup" && (
-          <div className="mt-5 rounded-xl border border-line bg-surface p-4">
+          <div className={`mt-5 ${styles.signupNote}`}>
             <p className="text-sm font-semibold text-ink">Every claim has a receipt.</p>
             <p className="mt-1 text-sm leading-relaxed text-ink-2">Start with your first report, then test what it finds. No payment details needed.</p>
             <Link href="/sample" className="mt-2 inline-block text-sm text-trail underline">Read the public sample first</Link>
@@ -102,7 +102,7 @@ export function AuthForm({ mode }: { mode: "login" | "signup" }) {
                 autoComplete={mode === "login" ? "current-password" : "new-password"} value={values.password} onChange={set("password")} />
             )}
           </Field>
-          <Button type="submit" size="lg" className="shimmer-btn w-full" loading={submit.pending} disabled={!ready}>
+          <Button type="submit" size="lg" className="w-full" loading={submit.pending} disabled={!ready}>
             {mode === "login" ? "Sign in" : "Create account"}
           </Button>
         </form>

@@ -21,7 +21,7 @@ export function Field({ label, hint, error, children }: {
 }
 
 const FIELD = cx(
-  "min-w-0 w-full rounded-xl border border-line-strong bg-surface px-3 text-sm text-ink placeholder:text-ink-3 shadow-xs",
+  "min-w-0 w-full rounded-lg border border-line-strong bg-surface px-3 text-sm text-ink placeholder:text-ink-3 shadow-xs",
   "transition-[border-color,box-shadow] duration-150",
   "hover:border-line-strong focus:border-accent-strong focus:outline-none focus:ring-2 focus:ring-[color-mix(in_srgb,var(--accent)_22%,transparent)]",
   "aria-[invalid=true]:border-danger disabled:cursor-not-allowed disabled:opacity-60",
@@ -55,7 +55,7 @@ export function Checkbox({ label, className, ...p }: Omit<InputHTMLAttributes<HT
   return (
     <label className={cx("inline-flex min-w-0 cursor-pointer items-start gap-2.5 text-sm text-ink", className)}>
       <span className="relative mt-0.5 grid size-[18px] shrink-0 place-items-center">
-        <input {...p} type="checkbox" className="peer absolute inset-0 cursor-pointer appearance-none rounded-md border border-line-strong bg-surface transition-colors checked:border-accent-strong checked:bg-accent-strong focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--focus-ring)]" />
+        <input {...p} type="checkbox" className="peer absolute inset-0 cursor-pointer appearance-none rounded border border-line-strong bg-surface transition-colors checked:border-accent-strong checked:bg-accent-strong focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--focus-ring)]" />
         <Check className="pointer-events-none relative size-3 text-accent-ink opacity-0 peer-checked:opacity-100" strokeWidth={3} aria-hidden />
       </span>
       {label}

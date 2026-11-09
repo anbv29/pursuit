@@ -1,6 +1,6 @@
 import type { ReactNode } from "react";
 import type { Metadata, Viewport } from "next";
-import { Inter, JetBrains_Mono } from "next/font/google";
+import { Inter, JetBrains_Mono, Space_Grotesk } from "next/font/google";
 import { FeedbackProvider } from "@/components/feedback";
 import { OfflineNotice } from "@/components/offline-notice";
 import { ReadingProvider } from "@/components/reading-mode";
@@ -8,6 +8,7 @@ import { SessionProvider } from "@/components/session";
 import "./globals.css";
 
 const ui = Inter({ variable: "--font-interface", subsets: ["latin"], display: "swap" });
+const display = Space_Grotesk({ variable: "--font-display-face", subsets: ["latin"], display: "swap" });
 const code = JetBrains_Mono({ variable: "--font-code", subsets: ["latin"], display: "swap" });
 
 export const metadata: Metadata = {
@@ -28,7 +29,7 @@ const themeScript = `try{var t=localStorage.getItem("pursuit.theme");if(t==="lig
 
 export default function RootLayout({ children }: { children: ReactNode }) {
   return (
-    <html lang="en" suppressHydrationWarning className={`${ui.variable} ${code.variable} h-full antialiased`}>
+    <html lang="en" suppressHydrationWarning className={`${ui.variable} ${display.variable} ${code.variable} h-full antialiased`}>
       <head>
         <script dangerouslySetInnerHTML={{ __html: themeScript }} />
       </head>

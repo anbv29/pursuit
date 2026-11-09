@@ -9,7 +9,7 @@ import { Bullets, Cites, Claims, Label, Section } from "./parts";
 export function Competitors({ c }: { c: ReportContent }) {
   return (
     <Section id="competitors" title="Competitive landscape" kicker="Who else they could buy">
-      <div className="-mx-6 overflow-x-auto px-6">
+      <div className="min-w-0 overflow-x-auto" tabIndex={0} role="region" aria-label="Competitor comparison, scroll horizontally if needed">
         <table className="w-full min-w-[760px] text-sm">
           <thead>
             <tr className="border-b border-line text-left text-xs text-ink-3">
@@ -41,7 +41,7 @@ export function Competitors({ c }: { c: ReportContent }) {
 
 export function PositioningPricing({ c }: { c: ReportContent }) {
   return (
-    <div className="grid gap-6 xl:grid-cols-2">
+    <div className="space-y-6">
       <Section id="positioning" title="Positioning" kicker="Where you can win">
         <blockquote className="rounded-lg border-l-4 border-trail bg-paper px-4 py-3 text-[15px] italic">{c.positioning.recommended_statement}</blockquote>
         <div className="mt-4 space-y-4">
@@ -73,15 +73,17 @@ function CopyButton({ text }: { text: string }) {
 export function Messaging({ c }: { c: ReportContent }) {
   return (
     <Section id="messaging" title="Outreach angles" kicker="Drafts to edit, not to send blindly">
-      <div className="grid gap-4 lg:grid-cols-3">
+      <div className="divide-y divide-line">
         {c.messaging.map((m, i) => (
-          <div key={i} className="flex flex-col rounded-lg border border-line p-4">
-            <div className="flex items-start justify-between gap-2">
-              <div><p className="font-medium">{m.name}</p><p className="text-xs text-ink-3">For: {m.segment}</p></div>
-              <CopyButton text={`Subject: ${m.subject}\n\n${m.body}`} />
+          <div key={i} className="grid min-w-0 gap-4 py-5 first:pt-0 sm:grid-cols-[minmax(0,1fr)_minmax(0,1.4fr)]">
+            <div className="min-w-0">
+              <div className="flex items-start justify-between gap-2">
+                <div className="min-w-0"><p className="font-medium">{m.name}</p><p className="text-xs text-ink-3">For: {m.segment}</p></div>
+                <CopyButton text={`Subject: ${m.subject}\n\n${m.body}`} />
+              </div>
+              <p className="mt-2 text-[13px] text-ink-2"><span className="text-ink-3">Hook: </span>{m.hook}</p>
             </div>
-            <p className="mt-2 text-[13px] text-ink-2"><span className="text-ink-3">Hook: </span>{m.hook}</p>
-            <div className="mt-3 flex-1 rounded-md bg-paper p-3 text-[13px]">
+            <div className="min-w-0 border-l-2 border-line pl-4 text-[13px]">
               <p className="font-medium">{m.subject}</p>
               <p className="mt-2 whitespace-pre-line text-ink-2">{m.body}</p>
             </div>
@@ -110,9 +112,9 @@ export function Prospecting({ c }: { c: ReportContent }) {
 export function FunnelRisks({ c }: { c: ReportContent }) {
   return (
     <Section id="funnel" title="Where the funnel will likely leak" kicker="Hypotheses until you have real data">
-      <div className="grid gap-3 md:grid-cols-2">
+      <div className="grid gap-x-6 md:grid-cols-2">
         {c.funnel_risks.map((f, i) => (
-          <div key={i} className="rounded-lg border border-line p-4 text-sm">
+          <div key={i} className="border-t border-line py-4 text-sm">
             <p className="font-medium">{f.stage}</p>
             <p className="mt-1 text-ink-2">{f.risk}</p>
             <p className="mt-2 text-[13px]"><span className="text-ink-3">Watch: </span>{f.leading_metric}</p>

@@ -1,14 +1,14 @@
 "use client";
 
 import { GTMConstraintsForm, defaultConstraints, constraintsSchema, researchUrlsSchema, splitResearchUrls } from "@/components/gtm-constraints";
-import { ChevronDown, Globe, Sparkles } from "lucide-react";
+import { ChevronDown, Globe } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useState, type FormEvent } from "react";
 import { z } from "zod";
 import { useWorkspace } from "@/components/shell";
 import { FounderRealityCheck, type FounderReality } from "@/components/founder-reality";
 import { ResearchAllowance } from "@/components/allowance";
-import { Button, cx, Field, Glass, Input, Notice, Select, Textarea } from "@/components/ui";
+import { Button, cx, Field, Input, Notice, Select, Textarea } from "@/components/ui";
 import { api, ApiError, errorMessage } from "@/lib/api";
 import { useAction } from "@/lib/hooks";
 import type { Report } from "@/lib/types";
@@ -56,22 +56,19 @@ export default function NewReportPage() {
   });
 
   return (
-    <div className="mx-auto max-w-2xl py-4">
-      <div className="text-center">
-        <span className="inline-flex items-center gap-1.5 rounded-full border border-[var(--glass-border)] bg-surface/70 px-3 py-1 text-xs font-medium text-ink-2">
-          <Sparkles className="size-3.5 text-trail" aria-hidden /> Source-backed company research
-        </span>
-        <h1 className="mt-4 font-display text-[32px] font-bold leading-tight tracking-tight sm:text-4xl">Analyze your company</h1>
-        <p className="mx-auto mt-2 max-w-lg text-ink-2">
+    <div className="mx-auto min-w-0 max-w-2xl">
+      <header className="border-b border-line pb-6">
+        <h1 className="font-display text-[32px] font-semibold leading-tight tracking-tight sm:text-4xl">Analyze your company</h1>
+        <p className="mt-4 max-w-lg text-sm leading-relaxed text-ink-2">
           Start with your website and what you offer. Get sourced research on your buyers,
           positioning and next experiments. Add context below to make it more specific.
         </p>
-      </div>
+      </header>
 
-      <form noValidate onSubmit={(e: FormEvent) => { e.preventDefault(); void submit.run(); }} className="mt-8 space-y-5">
-        <Glass className="p-5 sm:p-7">
-          <div className="space-y-5">
-            <Field label="Website" error={errors.company_url}>
+      <form noValidate onSubmit={(e: FormEvent) => { e.preventDefault(); void submit.run(); }} className="mt-6 overflow-hidden rounded-xl border border-line bg-surface">
+        <section aria-label="Company context" className="p-4 sm:p-7">
+          <div className="space-y-6">
+            <Field label="Website" hint="Start with your company website, like acme.com." error={errors.company_url}>
               {(id, d) => (
                 <div className="relative">
                   <Globe className="pointer-events-none absolute left-3 top-1/2 size-4 -translate-y-1/2 text-ink-3" aria-hidden />
@@ -87,8 +84,9 @@ export default function NewReportPage() {
           </div>
 
           <button type="button" onClick={() => setMore(!more)} aria-expanded={more}
-            aria-controls="company-context" className="mt-4 inline-flex min-h-11 items-center gap-1 text-sm font-medium text-trail hover:text-trail-strong">
-            <ChevronDown className={cx("size-4 transition-transform", more && "rotate-180")} /> More context (optional)
+            aria-controls="company-context" className="mt-6 flex min-h-11 w-full items-center justify-between gap-3 border-t border-line pt-4 text-left text-sm font-medium text-trail hover:text-trail-strong">
+            <span>More context (optional)</span>
+            <ChevronDown aria-hidden className={cx("size-4 shrink-0 transition-transform", more && "rotate-180")} />
           </button>
           {more && (
             <div id="company-context" className="mt-4 grid gap-4 border-t border-line pt-4 sm:grid-cols-2">
@@ -108,22 +106,24 @@ export default function NewReportPage() {
               <Field label="Region">{(id) => <Input id={id} value={f.geography} onChange={set("geography")} placeholder="US, EU…" />}</Field>
             </div>
           )}
-        </Glass>
-        <section aria-labelledby="personalize-report" className="space-y-3">
+        </section>
+        <section aria-labelledby="personalize-report" className="space-y-4 border-t border-line p-4 sm:p-7">
           <div><h2 id="personalize-report" className="text-base font-semibold">Personalize your report</h2><p className="mt-1 text-sm text-ink-2">Optional. Add what you know, or leave these for later.</p></div>
-          <details className="rounded-xl border border-line bg-surface p-4">
+          <details className="border-y border-line py-3">
             <summary className="min-h-11 cursor-pointer py-2 text-sm font-semibold">Research sources and strategy constraints <span className="font-normal text-ink-3">(optional)</span></summary>
             <p className="mb-4 mt-2 text-sm text-ink-2">Set your budget, time and channels, or add up to six source URLs. Blank numbers stay unknown; 0 means none.</p>
             <GTMConstraintsForm value={constraints} onChange={setConstraints} urls={researchUrls} onUrlsChange={setResearchUrls} disabled={submit.pending} />
           </details>
           <FounderRealityCheck value={reality} onChange={setReality} disabled={submit.pending} />
         </section>
-        {formError && <Notice tone="bad">{formError}</Notice>}
-        <ResearchAllowance />
-        <Button type="submit" size="lg" loading={submit.pending} className="w-full">Generate report</Button>
-        <p className="text-center text-xs text-ink-3">
+        <footer className="space-y-4 border-t border-line bg-sunken p-4 sm:p-7">
+          {formError && <Notice tone="bad">{formError}</Notice>}
+          <ResearchAllowance />
+          <Button type="submit" size="lg" loading={submit.pending} className="w-full">Generate report</Button>
+          <p className="text-xs leading-relaxed text-ink-3">
           Research uses accessible company pages and source URLs you provide; it does not include a general web-search service. Every claim in the report is labelled as a sourced fact, an interpretation or an assumption.
-        </p>
+          </p>
+        </footer>
       </form>
     </div>
   );

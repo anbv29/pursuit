@@ -66,11 +66,11 @@ function Progress({ r, onCancel, pending }: { r: Report; onCancel: () => void; p
   const step = r.progress.startsWith("Writing") ? 2 : r.progress.startsWith("Researching") ? 1 : 0;
   const sources = Number(r.progress.match(/(\d+)\s+sources/)?.[1] ?? 0);
   return (
-    <Glass className="enter-rise mx-auto mt-4 max-w-xl p-6 sm:p-8">
+    <Glass className="mx-auto mt-4 max-w-2xl p-5 sm:p-8">
       <p className="text-[13px] font-medium text-trail">{r.status === "QUEUED" ? "Queued" : "Working"} · <Elapsed since={r.started_at ?? r.created_at} /></p>
-      <h1 className="mt-1 font-display text-2xl font-bold tracking-tight">Analyzing {r.company_name || r.company_url}</h1>
+      <h1 className="mt-3 font-display text-3xl font-semibold tracking-tight [overflow-wrap:anywhere]">Analyzing {r.company_name || r.company_url}</h1>
       <p className="mt-1.5 text-sm text-ink-2">Research continues in the background when you leave this page. Provider delays can take longer; completed steps are saved.</p>
-      <div className="mt-6" aria-live="polite">
+      <div className="mt-8 border-y border-line py-6" aria-live="polite">
         <ProcessingFeed steps={STEPS} current={step} detail={r.progress} count={sources} countLabel="sources gathered" />
       </div>
       <div className="mt-6 flex flex-wrap items-center gap-3 border-t border-[var(--glass-border)] pt-5">
@@ -97,10 +97,10 @@ function Experiments({ c, reportId }: { c: ReportContent; reportId: string }) {
   });
   return (
     <Section id="experiments" title="Experiments to run, in order" kicker="Turn the report into evidence">
-      <ol className="space-y-3">
+      <ol className="divide-y divide-line">
         {c.experiments.map((e, i) => (
-          <li key={i} className="flex flex-col gap-3 rounded-2xl border border-line bg-surface p-4 transition-colors hover:border-line-strong sm:flex-row sm:items-start">
-            <span className="grid size-8 shrink-0 place-items-center rounded-full bg-accent-soft font-display text-sm font-bold text-trail-strong">{i + 1}</span>
+          <li key={i} className="flex flex-col gap-4 py-5 first:pt-0 sm:flex-row sm:items-start">
+            <span className="w-8 shrink-0 font-display text-3xl font-semibold text-ink-3">{i + 1}</span>
             <div className="min-w-0 flex-1">
               <div className="flex flex-wrap items-center gap-2">
                 <p className="font-semibold text-ink">{e.title}</p>
@@ -195,9 +195,9 @@ export default function ReportPage() {
   const c = plainCopy(r.content);  const v = c.validation;
   return (
     <SourcesProvider sources={r.sources}>
-      <div className="mx-auto flex max-w-6xl flex-col items-start gap-6 xl:flex-row">
+      <div className="mx-auto flex max-w-6xl flex-col items-start gap-6 xl:flex-row xl:gap-8">
         <nav aria-label="Report sections" className="sticky top-24 hidden max-h-[calc(100dvh-7rem)] w-44 shrink-0 overflow-y-auto xl:block print:hidden">
-          <Glass dense className="p-3">
+          <div className="border-l border-line pl-3">
             <p className="mb-2 px-2 text-xs font-semibold text-ink-3">On this page</p>
             <ul className="space-y-0.5 text-sm">
               {TOC.map(([k, label]) => {
@@ -206,29 +206,28 @@ export default function ReportPage() {
                 return (
                   <li key={k}>
                     <a href={`#${k}`} aria-current={active ? "true" : undefined}
-                      className={cx("block rounded-lg px-2 py-1.5 transition-colors", active ? "bg-accent-soft font-semibold text-trail-strong" : "text-ink-2 hover:bg-[var(--inset)] hover:text-ink")}>
+                      className={cx("block border-l-2 px-2 py-2 transition-colors", active ? "border-ink bg-accent-soft font-semibold text-ink" : "border-transparent text-ink-2 hover:bg-[var(--inset)] hover:text-ink")}>
                       {name}
                     </a>
                   </li>
                 );
               })}
             </ul>
-          </Glass>
+          </div>
         </nav>
-        {/* Android: the same TOC as a sticky horizontal chip scroller under the header */}
-        <nav aria-label="Report sections" className="sticky top-[84px] z-20 mx-auto flex w-full min-w-0 max-w-[720px] gap-1.5 overflow-x-auto bg-paper/90 px-1 py-2 backdrop-blur [scrollbar-width:none] md:top-[96px] xl:hidden print:hidden [&::-webkit-scrollbar]:hidden">
+        <nav aria-label="Report sections" className="sticky top-[84px] z-20 mx-auto flex w-full min-w-0 max-w-[800px] gap-1 overflow-x-auto border-y border-line bg-paper py-2 [scrollbar-width:none] md:top-[96px] xl:hidden print:hidden [&::-webkit-scrollbar]:hidden">
           {TOC.map(([k, label]) => {
             const name = !advanced && SECTION_HELP[k]?.[0] ? SECTION_HELP[k][0] : label;
             const active = activeId === k;
             return (
               <a key={k} href={`#${k}`} aria-current={active ? "true" : undefined}
-                className={cx("shrink-0 whitespace-nowrap rounded-full border px-3 py-1.5 text-[13px] transition-colors", active ? "border-trail-strong bg-accent-soft font-semibold text-trail-strong" : "border-line bg-surface text-ink-2")}>
+                className={cx("inline-flex min-h-11 shrink-0 items-center whitespace-nowrap rounded-lg px-3 py-2 text-[13px] transition-colors", active ? "bg-ink font-semibold text-accent-ink" : "text-ink-2 hover:bg-sunken")}>
                 {name}
               </a>
             );
           })}
         </nav>
-        <div className="mx-auto w-full min-w-0 max-w-[720px] flex-1 space-y-6">
+        <article className="mx-auto w-full min-w-0 max-w-[800px] flex-1 space-y-6 rounded-xl border border-line bg-surface p-4 sm:p-8">
           <PageHeader eyebrow={advanced ? "GTM report" : "Your customer and growth report"} title={r.company_name || r.company_url}
             description={<>
               <a href={r.company_url} target="_blank" rel="noopener noreferrer" className="break-all hover:text-trail">{r.company_url}</a>
@@ -247,8 +246,8 @@ export default function ReportPage() {
           <ResearchData measurements={r.content.measurements} sources={r.sources} />
           {workspace.role === "owner" && <ReportSharing path={reportPath} />}
           <ReportPlan path={reportPath} />
-          <details className="surface group print:hidden rounded-[var(--panel-radius-lg)] p-4 sm:p-5">
-            <summary className="cursor-pointer list-none font-semibold text-trail marker:hidden">Ask about the report or explain a term</summary>
+          <details className="group border-y border-line py-4 print:hidden">
+            <summary className="min-h-11 cursor-pointer py-2 font-semibold text-trail">Ask about the report or explain a term</summary>
             <div className="mt-4"><ReportQuestions path={reportPath} /></div>
           </details>
           <Snapshot c={c} />
@@ -263,21 +262,21 @@ export default function ReportPage() {
           <FunnelRisks c={c} />
           <Experiments c={c} reportId={r.id} />
           <Risks c={c} />
-          <details className="surface group print:hidden rounded-[var(--panel-radius-lg)] p-4 sm:p-5">
-            <summary className="cursor-pointer list-none font-semibold text-trail marker:hidden">Saved learning, refresh sections, or compare versions</summary>
+          <details className="group border-y border-line py-4 print:hidden">
+            <summary className="min-h-11 cursor-pointer py-2 font-semibold text-trail">Saved learning, refresh sections, or compare versions</summary>
             <div className="mt-4"><ReportVersions path={reportPath} refresh={reload} /></div>
           </details>
           <Section id="sources" title={`Sources (${r.sources.length})`} kicker="Everything retrieved during research">
-            <ol className="grid gap-1.5 text-[13px] md:grid-cols-2">
+            <ol className="divide-y divide-line text-[13px]">
               {r.sources.map((s) => (
-                <li key={s.id} className="min-w-0 rounded-lg border border-line p-3"><SourceReceipt source={s} /></li>
+                <li key={s.id} className="min-w-0 py-4 first:pt-0"><SourceReceipt source={s} /></li>
               ))}
             </ol>
           </Section>
           <div className="flex justify-center pb-6 print:hidden">
             <Link href={`${base}/reports/new`} className={buttonStyles("secondary")}>Analyze another company</Link>
           </div>
-        </div>
+        </article>
       </div>
     </SourcesProvider>
   );

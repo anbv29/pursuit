@@ -84,11 +84,11 @@ export function Section({ id, title, kicker, children }: { id: string; title: st
   const advanced = useAdvanced();
   const help = SECTION_HELP[id];
   return (
-    <section id={id} aria-labelledby={`${id}-h`} className="scroll-mt-20 rounded-xl border border-line bg-surface p-6 shadow-card print:break-inside-avoid print:shadow-none">
-      <h2 id={`${id}-h`} className="text-lg font-semibold tracking-tight">{!advanced && help?.[0] ? help[0] : title}</h2>
+    <section id={id} aria-labelledby={`${id}-h`} className="min-w-0 scroll-mt-40 border-t border-line py-8 [overflow-wrap:anywhere] xl:scroll-mt-24 print:break-inside-avoid">
+      <h2 id={`${id}-h`} className="font-display text-2xl font-semibold tracking-tight">{!advanced && help?.[0] ? help[0] : title}</h2>
       {!advanced && help && <p className="mt-1 max-w-prose text-sm leading-relaxed text-ink-2">{help[1]}</p>}
       {advanced && kicker && <p className="mt-1 text-sm text-ink-3">{kicker}</p>}
-      <div className="mt-4">{children}</div>
+      <div className="mt-6">{children}</div>
     </section>
   );
 }

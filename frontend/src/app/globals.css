@@ -27,7 +27,7 @@
   --ink-soft: #444444;
   --surface-solid: #ffffff;
   --surface-sunken: #f3f3f3;
-  --hairline: #dedede;
+  --hairline: #d7d7d7;
   --hairline-strong: #808080;
   --success: #333333;
   --success-soft: #eeeeee;
@@ -65,14 +65,14 @@
   --flag-soft: var(--warning-soft);
 
   --font-reading: var(--font-interface);
-  --font-editorial: var(--font-interface);
+  --font-editorial: var(--font-display-face);
 
   /* shape, space, type, motion */
-  --panel-radius-xs: 6px;
-  --panel-radius-sm: 10px;
-  --panel-radius-md: 14px;
-  --panel-radius-lg: 18px;
-  --panel-radius-xl: 22px;
+  --panel-radius-xs: 4px;
+  --panel-radius-sm: 6px;
+  --panel-radius-md: 8px;
+  --panel-radius-lg: 12px;
+  --panel-radius-xl: 16px;
   --space-1: 4px;
   --space-2: 8px;
   --space-3: 12px;
@@ -253,7 +253,7 @@
   --color-d-stop: var(--d-stop);
   --color-d-inconclusive: var(--d-inconclusive);
   --font-sans: var(--font-interface);
-  --font-display: var(--font-interface);
+  --font-display: var(--font-display-face);
   --font-ui: var(--font-interface);
   --font-mono: var(--font-code), ui-monospace, SFMono-Regular, Menlo, monospace;
   --shadow-card: 0 1px 2px rgb(0 0 0 / 3%);
@@ -262,12 +262,15 @@
 
 /* ---- base ------------------------------------------------------------------ */
 html {
+  scrollbar-color: var(--hairline-strong) var(--bg);
+  scrollbar-width: thin;
   accent-color: var(--accent-strong);
   background: var(--bg);
   transition: background-color var(--dur-slow) var(--ease-out);
   -webkit-text-size-adjust: 100%;
 }
 body {
+  caret-color: var(--ink);
   background: var(--bg);
   color: var(--ink);
   font-family: var(--font-reading), system-ui, sans-serif;
@@ -284,12 +287,14 @@ h2, h3, h4, button, input, select, label, nav, .tabular-nums {
   font-family: var(--font-interface), system-ui, sans-serif;
 }
 h2, h3, h4 { letter-spacing: -0.025em; }
-.app-shell :is(h2, h3, h4), .font-ui {
-  font-family: var(--font-interface), system-ui, sans-serif;
+h1, h2, h3 { text-wrap: balance; }
+.app-shell :is(h2, h3, h4) {
+  font-family: var(--font-editorial), var(--font-interface), sans-serif;
   font-weight: 600;
 }
+.font-ui { font-family: var(--font-interface), system-ui, sans-serif; }
 .tabular-nums { font-weight: 600; }
-.app-shell h1 { font-size: clamp(1.65rem, 2.5vw, 2.15rem); line-height: 1.2; }
+.app-shell h1 { font-size: clamp(1.8rem, 2.5vw, 2.4rem); line-height: 1.15; }
 
 :focus-visible {
   outline: 2px solid var(--focus-ring);
@@ -306,13 +311,33 @@ h2, h3, h4 { letter-spacing: -0.025em; }
   .glass, .surface {
     background: var(--surface-solid);
     border: 1px solid var(--hairline);
-    box-shadow: 0 2px 4px -3px var(--shadow), 0 12px 28px -22px var(--shadow);
+    box-shadow: none;
   }
   .glass { position: relative; border-radius: var(--panel-radius-xl); }
   .glass-dense { border-radius: var(--panel-radius-md); }
   .glass-chrome { border-radius: 0; }
 }
 .glass-sheen, .backdrop-orbs { display: none; }
+.workspace-sidebar {
+  color-scheme: dark;
+  --sidebar-surface: #171717;
+  --surface-solid: #242424;
+  --surface: #242424;
+  --ink: #f5f5f5;
+  --ink-soft: #cccccc;
+  --ink-2: #cccccc;
+  --muted: #aaaaaa;
+  --ink-3: #aaaaaa;
+  --accent: #f5f5f5;
+  --accent-strong: #f5f5f5;
+  --accent-ink: #171717;
+  --primary-ink: #171717;
+  --hairline: #383838;
+  --line: #383838;
+  --line-strong: #777777;
+  --focus-ring: #ffffff;
+  --inset: rgba(255, 255, 255, 0.07);
+}
 .workspace-sidebar, .workspace-sidebar > .glass { background: var(--sidebar-surface); }
 .workspace-header, .workspace-header > .glass { background: var(--chrome); }
 .workspace-sidebar > .glass, .workspace-header > .glass { box-shadow: none; }

@@ -171,10 +171,10 @@ export function WorkspaceShell({ wsId, children }: { wsId: string; children: Rea
                     return (
                       <li key={n.href}>
                         <Link href={n.href} title={collapsed ? n.label : undefined} aria-label={collapsed ? n.label : undefined} aria-current={active ? "page" : undefined}
-                          className={cx("press relative flex h-10 items-center gap-3 rounded-xl px-3 py-2 text-sm transition-[background-color,color] duration-150",
-                            active ? "bg-accent-soft font-semibold text-trail-strong ring-1 ring-accent/15" : "text-ink-2 hover:bg-[var(--inset)] hover:text-ink",
+                          className={cx("press relative flex min-h-11 items-center gap-3 rounded-lg px-3 py-2.5 text-sm transition-[background-color,color] duration-150",
+                            active ? "bg-accent font-semibold text-accent-ink" : "text-ink-2 hover:bg-[var(--inset)] hover:text-ink",
                             collapsed && "justify-center px-0")}>
-                          <n.icon className="size-[18px] shrink-0" strokeWidth={1.6} aria-hidden />
+                          <n.icon className="size-[18px] shrink-0" strokeWidth={1.8} aria-hidden />
                           {!collapsed && <span className="flex-1 truncate">{n.label}</span>}
                           {!!n.count && (
                             <span className={cx("rounded-full bg-warning px-1.5 text-[11px] font-bold leading-5 text-bg", collapsed && "absolute right-1.5 top-1")}>
@@ -189,7 +189,7 @@ export function WorkspaceShell({ wsId, children }: { wsId: string; children: Rea
               </div>
             ))}
           </div>
-          <button onClick={toggle} className="press flex h-10 w-full items-center justify-center gap-2 rounded-xl text-sm text-ink-3 hover:bg-[var(--inset)] hover:text-ink"
+          <button onClick={toggle} className="press flex min-h-10 w-full items-center justify-center gap-2 rounded-lg text-sm text-ink-3 hover:bg-[var(--inset)] hover:text-ink"
             aria-label={collapsed ? "Expand sidebar" : "Collapse sidebar"}>
             {collapsed ? <ChevronsRight className="size-4" /> : <><ChevronsLeft className="size-4" /> <span>Collapse</span></>}
           </button>
@@ -199,15 +199,15 @@ export function WorkspaceShell({ wsId, children }: { wsId: string; children: Rea
       <div className="flex min-w-0 flex-1 flex-col">
         {/* Top bar */}
         <header className="workspace-header sticky top-0 z-30 border-b border-line bg-surface px-4 print:hidden md:px-8">
-          <Glass as="div" className="mx-auto flex h-[64px] max-w-6xl items-center gap-2 rounded-none border-0 px-0 shadow-none md:h-[76px]">
+          <Glass as="div" className="mx-auto flex h-[64px] max-w-6xl items-center gap-2 rounded-none border-0 px-0 shadow-none md:h-[72px]">
             <div className="md:hidden"><Logo href={base} compact /></div>
             <div className="min-w-0 flex-1">
               {crumbs ? (
                 <nav aria-label="Breadcrumb">
                   <ol className="flex min-w-0 items-center gap-1 text-sm">
                     {crumbs.map((c, i) => (
-                      <li key={i} className="flex min-w-0 items-center gap-1">
-                        {i > 0 && <ChevronRight className="size-3.5 shrink-0 text-ink-3" aria-hidden />}
+                      <li key={i} className={cx("min-w-0 items-center gap-1", i === crumbs.length - 1 ? "flex" : "hidden md:flex")}>
+                        {i > 0 && <ChevronRight className="hidden size-3.5 shrink-0 text-ink-3 md:block" aria-hidden />}
                         {"href" in c && c.href
                           ? <Link href={c.href} className="truncate text-ink-3 hover:text-ink">{c.label}</Link>
                           : <span aria-current="page" className="truncate font-semibold text-ink">{c.label}</span>}
@@ -216,14 +216,14 @@ export function WorkspaceShell({ wsId, children }: { wsId: string; children: Rea
                   </ol>
                 </nav>
               ) : (
-                <p className="truncate font-display text-[17px] font-semibold tracking-tight text-ink md:text-[20px]">{current?.label ?? "Pursuit"}</p>
+                <p className="truncate font-ui text-sm font-semibold tracking-tight text-ink md:text-base">{current?.label ?? "Pursuit"}</p>
               )}
             </div>
             <div className="hidden items-center gap-2 xl:flex">
               {ws.data?.is_demo ? <DemoBadge label="Demo workspace" /> : ws.data && <Badge tone="trail">Live workspace</Badge>}
             </div>
             <button type="button" onClick={() => setPaletteOpen(true)}
-              className="press hidden h-9 shrink-0 items-center gap-2 rounded-xl border border-line bg-surface/70 px-3 text-sm text-ink-3 hover:text-ink xl:flex"
+              className="press hidden h-9 shrink-0 items-center gap-2 rounded-lg border border-line bg-surface px-3 text-sm text-ink-3 hover:text-ink xl:flex"
               aria-label="Open command palette" aria-keyshortcuts="Control+K Meta+K">
               <Search className="size-4" aria-hidden /> <span>Search</span>
               <kbd className="ml-2 rounded-md border border-line px-1.5 text-[11px]">Ctrl K</kbd>
@@ -231,7 +231,7 @@ export function WorkspaceShell({ wsId, children }: { wsId: string; children: Rea
             <button type="button" onClick={() => setPaletteOpen(true)} aria-label="Open command palette"
               className="press grid size-9 shrink-0 place-items-center rounded-xl text-ink-2 hover:bg-[var(--inset)] xl:hidden"><Search className="size-[18px]" /></button>
             {workflowsReady && <Link href={`${base}/approvals`} aria-label={`Inbox${inboxCount ? `, ${inboxCount} waiting` : ""}`}
-              className="press relative grid size-9 shrink-0 place-items-center rounded-xl text-ink-2 hover:bg-[var(--inset)] hover:text-ink">
+              className="press relative hidden size-9 shrink-0 place-items-center md:grid rounded-xl text-ink-2 hover:bg-[var(--inset)] hover:text-ink">
               <Bell className="size-[18px]" aria-hidden />
               {inboxCount > 0 && <span className="absolute right-1.5 top-1.5 size-2 rounded-full bg-warning ring-2 ring-[var(--surface-solid)]" />}
             </Link>}
@@ -249,7 +249,7 @@ export function WorkspaceShell({ wsId, children }: { wsId: string; children: Rea
           </Glass>
         </header>
 
-        <main className="workspace-content min-w-0 flex-1 px-4 pb-[calc(6rem+env(safe-area-inset-bottom))] pt-5 md:px-8 md:pb-10">
+        <main className="workspace-content min-w-0 flex-1 px-4 pb-[calc(6rem+env(safe-area-inset-bottom))] pt-6 md:px-8 md:pb-12 md:pt-8">
           {ws.data ? (
             <WorkspaceCtx.Provider key={wsId} value={{ workspace: ws.data, base, workflowsReady, refreshApprovals: () => { void approvals.reload(); void alerts.reload(); } }}>
               <div className={cx("mx-auto w-full min-w-0", contentWidth)}>

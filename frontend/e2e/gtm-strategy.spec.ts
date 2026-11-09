@@ -66,7 +66,9 @@ for (const width of [390, 1280]) {
     await expect(page.getByText("0 USD / month · 5 hours / week", {exact:true})).toBeVisible();
     await expect(page.locator("#research-data").getByText(fixture.measurement.quote, {exact:true}).first()).toBeVisible();
     await expect(page.getByRole("link",{name:"Public trial page"}).first()).toHaveAttribute("href","https://example.com/trial");
-    await expect(page.getByText(/S2.*Retrieval status: failed/)).toBeVisible();
+    const receipt = page.locator("#sources").getByRole("group", { name: "Source S2 receipt", exact: true });
+    await expect(receipt.getByText("Retrieval status", { exact: true })).toBeVisible();
+    await expect(receipt.getByText("failed", { exact: true })).toBeVisible();
     await expect(page.getByText(/Public statements are not independently verified/).first()).toBeVisible();
     await page.getByText("Update resources and refresh strategy", {exact:true}).click();
     await expect(page.getByLabel("Monthly budget", {exact:true})).toHaveValue("0");

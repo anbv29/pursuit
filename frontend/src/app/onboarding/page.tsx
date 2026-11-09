@@ -10,6 +10,7 @@ import { Button, Card, cx, Field, Glass, Input, Notice } from "@/components/ui";
 import { api, errorMessage } from "@/lib/api";
 import { useAction } from "@/lib/hooks";
 import type { Workspace } from "@/lib/types";
+import styles from "@/components/marketing/public-surfaces.module.css";
 
 function Onboarding() {
   const { user } = useSession();
@@ -44,9 +45,9 @@ function Onboarding() {
   };
 
   return (
-    <main className="app-shell mx-auto flex min-h-screen max-w-2xl flex-col justify-center px-4 py-12 sm:px-6">
+    <main className={`${styles.utility} flex min-h-screen flex-col justify-center`}>
       <div className="mb-8 flex items-center justify-between"><Logo /><ThemeToggle /></div>
-      <Glass className="enter-rise p-6 sm:p-9">
+      <Glass className={styles.utilitySheet}>
         <ol className="flex items-center gap-3" aria-label="Setup progress">
           {steps.map((label, i) => (
             <li key={label} className="flex flex-1 items-center gap-3" aria-current={i === step ? "step" : undefined}>
@@ -80,9 +81,9 @@ function Onboarding() {
                 {choices.map((c) => (
                   <label key={String(c.demo)} className="cursor-pointer">
                     <input type="radio" name="start" className="peer sr-only" checked={demo === c.demo} onChange={() => setDemo(c.demo)} />
-                    <Card as="div" className={cx("press h-full p-5 transition-[border-color,box-shadow,background-color] duration-200 peer-focus-visible:ring-2 peer-focus-visible:ring-accent",
-                      demo === c.demo ? "border-accent bg-accent-soft/50 shadow-[0_10px_30px_-16px_var(--accent)]" : "hover:border-line-strong")}>
-                      <span className={cx("grid size-10 place-items-center rounded-xl", c.demo ? "bg-demo-soft text-demo" : "bg-accent-soft text-trail-strong")}>
+                    <Card as="div" className={cx(styles.choice, "press h-full p-5 transition-colors duration-200 peer-focus-visible:ring-2 peer-focus-visible:ring-accent",
+                      demo === c.demo ? "border-accent bg-accent-soft/50" : "hover:border-line-strong")}>
+                      <span className={`${styles.choiceMark} grid size-10 place-items-center`}>
                         <c.icon className="size-5" aria-hidden />
                       </span>
                       <p className="mt-3 font-semibold">{c.title}</p>
