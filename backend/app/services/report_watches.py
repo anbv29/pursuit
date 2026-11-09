@@ -15,6 +15,17 @@ SCHEDULE_NOTE = (
 )
 
 
+def alert_out(alert, name):
+    return dict(
+        alert.payload,
+        id=str(alert.id),
+        report_id=str(alert.report_id),
+        company_name=name,
+        checked_at=alert.created_at,
+        acknowledged_at=alert.acknowledged_at,
+    )
+
+
 def alerts_for(db, workspace_id, report_id=None):
     query = (
         select(WatchAlert, Report.company_name)
@@ -24,14 +35,7 @@ def alerts_for(db, workspace_id, report_id=None):
     if report_id:
         query = query.where(Report.id == report_id)
     return [
-        dict(
-            alert.payload,
-            id=str(alert.id),
-            report_id=str(alert.report_id),
-            company_name=name,
-            checked_at=alert.created_at,
-            acknowledged_at=alert.acknowledged_at,
-        )
+        alert_out(alert, name)
         for alert, name in db.execute(query.order_by(WatchAlert.created_at.desc(), WatchAlert.id).limit(100))
     ]
 
@@ -113,4 +117,4 @@ def acknowledge(db, workspace_id, alert_id, acknowledged):
         raise NotFound("Watch alert not found.")
     alert.acknowledged_at = (alert.acknowledged_at or utcnow()) if acknowledged else None
     db.commit()
-    return next(a for a in alerts_for(db, workspace_id, alert.report_id) if a["id"] == str(alert.id))
+    return alert_out(alert, db.get(Report, alert.report_id).company_name)

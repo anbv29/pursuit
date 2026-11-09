@@ -14,6 +14,7 @@ import hashlib
 import ipaddress
 import re
 import socket
+import time
 from dataclasses import dataclass, field
 from html.parser import HTMLParser
 from urllib.parse import urljoin, urlsplit
@@ -136,7 +137,7 @@ def extract(html: str) -> tuple[str, str]:
     return p.title[:300], text
 
 
-def fetch(url: str, client: httpx.Client | None = None) -> Fetched:
+def fetch(url: str, client: httpx.Client | None = None, *, deadline: float | None = None) -> Fetched:
     s = get_settings()
     own = client is None
     client = client or httpx.Client(
@@ -144,13 +145,19 @@ def fetch(url: str, client: httpx.Client | None = None) -> Fetched:
     )
     try:
         for _ in range(MAX_REDIRECTS + 1):
+            if deadline is not None and time.monotonic() >= deadline:
+                raise FetchError("The source check reached its time limit.")
             address = _check_host(url)
             original = httpx.URL(url)
+            request_timeout = s.research_fetch_timeout_seconds
+            if deadline is not None:
+                request_timeout = min(request_timeout, max(0.01, deadline - time.monotonic()))
             with client.stream(
                 "GET",
                 original.copy_with(host=address),
                 headers={"User-Agent": "PursuitResearchBot/0.1", "Host": original.netloc.decode("ascii")},
                 extensions={"sni_hostname": original.host},
+                timeout=request_timeout,
             ) as r:
                 if r.is_redirect:
                     url = urljoin(url, r.headers.get("location", ""))
@@ -162,6 +169,8 @@ def fetch(url: str, client: httpx.Client | None = None) -> Fetched:
                     raise FetchError("Only HTML or plain-text pages can be imported.")
                 body = b""
                 for chunk in r.iter_bytes(chunk_size=65536):
+                    if deadline is not None and time.monotonic() >= deadline:
+                        raise FetchError("The source check reached its time limit.")
                     body += chunk
                     if len(body) > s.research_fetch_max_bytes:
                         raise FetchError("The page is too large to import.")

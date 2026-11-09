@@ -42,7 +42,8 @@ from app.models.identity import (  # noqa: F401
 )
 from app.models.report import Report  # noqa: F401
 from app.models.report_entry import ReportEntry  # noqa: F401
-from app.models.report_watch import ReportWatch, WatchAlert
+from app.models.report_watch import ReportWatch as ReportWatch
+from app.models.report_watch import WatchAlert as WatchAlert
 from app.models.sharing import ReportShare  # noqa: F401
 from app.models.tracking import DeliveryTracking  # noqa: F401
 from app.models.usage import UsageCall, WorkspaceBudget  # noqa: F401

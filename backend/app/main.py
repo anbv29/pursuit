@@ -23,6 +23,7 @@ from app.api import (
     report_exports,
     report_sharing,
     report_tools,
+    report_watches,
     reports,
     workspaces,
 )
@@ -110,6 +111,7 @@ def create_app() -> FastAPI:
     app.include_router(fo_oauth.router)
     app.include_router(fo_chat.router)
     app.include_router(report_tools.router)
+    app.include_router(report_watches.router)
     app.include_router(report_sharing.router)
     app.include_router(report_exports.router)
     app.include_router(founder_workflow.router)
