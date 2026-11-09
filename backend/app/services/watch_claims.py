@@ -45,7 +45,6 @@ def claims_for(report):
                         else [],
                         "receipts": deepcopy(receipts),
                     }
-                    claim["fingerprint"] = fingerprint(claim)
                     claims.append(claim)
                 return
             for key, value in node.items():
@@ -55,6 +54,19 @@ def claims_for(report):
                 walk(value, [*path, str(index)])
 
     walk(report.content or {}, [])
+    recommendations = [
+        (set(c["source_ids"]), c["recommendation_refs"]) for c in claims if c["recommendation_refs"]
+    ]
+    for claim in claims:
+        claim["recommendation_refs"] = sorted(
+            {
+                ref
+                for source_ids, refs in recommendations
+                if set(claim["source_ids"]) & source_ids
+                for ref in refs
+            }
+        )
+        claim["fingerprint"] = fingerprint(claim)
     return claims
 
 
