@@ -32,7 +32,7 @@ export function WatchAlerts() {
   const parsed = watchAlertSchema.array().safeParse(history.data);
   const [error, setError] = useState<string | null>(null);
   const acknowledge = useAction(async (id: string) => {
-    try { await api(`${path}/${id}`, { method: "PATCH", json: { acknowledged: true } }); setError(null); await history.reload(); }
+    try { await api(`${path}/${id}`, { method: "PATCH", json: { acknowledged: true } }); setError(null); await history.reload(); window.dispatchEvent(new Event("pursuit.watch-alerts")); }
     catch (e) { setError(errorMessage(e)); }
   });
   const pending = parsed.success ? parsed.data.filter(alert => !alert.acknowledged_at) : [];

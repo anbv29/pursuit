@@ -11,6 +11,7 @@ export const watchAlertSchema = z.object({
 });
 export const watchSchema = z.object({
   enabled: z.boolean(), checking: z.boolean(),
+  queued: z.boolean().default(false),
   overdue: z.boolean().default(false),
   last_checked_at: z.string().nullable(), next_check_at: z.string().nullable(),
   claim_ids: z.array(z.string()), alerts: z.array(watchAlertSchema),

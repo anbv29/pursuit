@@ -1,4 +1,6 @@
 import { expect, test, type Page } from "@playwright/test";
+import type { z } from "zod";
+import type { watchAlertSchema } from "../src/lib/watch";
 import content from "./fixtures/deep-report.json";
 
 async function setup(page: Page, owner = true) {
@@ -59,4 +61,33 @@ test("members can inspect watch status but cannot configure it", async ({ page }
   await expect(watch.getByText("Watch paused", { exact: true })).toBeVisible();
   await expect(watch.getByRole("button", { name: "Enable weekly watch", exact: true })).toHaveCount(0);
   await expect(watch.getByRole("checkbox")).toHaveCount(0);
+});
+
+test("Inbox compares changed evidence without claiming a contradiction", async ({ page }) => {
+  await setup(page);
+  const alerts: z.input<typeof watchAlertSchema>[] = [{
+    id: "alert-1", report_id: "research", company_name: "Acme", kind: "changed",
+    claim_text: "Competitor plan is $29 per month.", source_url: "https://example.com/pricing", source_title: "Published pricing",
+    previous_excerpt: "Team plan $29 monthly.", current_excerpt: "Team plan $9 with annual billing.",
+    checked_at: "2026-11-09T00:00:00Z", acknowledged_at: null, section: "pricing",
+    reason: "Billing terms need review before concluding the original comparison is wrong.",
+  }];
+  await page.route("**/api/workspaces/watch-ws/watch-alerts**", async route => {
+    if (route.request().method() === "PATCH") {
+      alerts[0].acknowledged_at = "2026-11-09T01:00:00Z";
+      return route.fulfill({ json: alerts[0] });
+    }
+    return route.fulfill({ json: alerts });
+  });
+  await page.goto("/w/watch-ws/approvals");
+  const inbox = page.getByRole("region", { name: /^Research alerts/ });
+  await expect(inbox.getByText("Evidence changed, review the claim", { exact: true })).toBeVisible();
+  await expect(inbox).toContainText("Billing terms need review");
+  await inbox.getByText("Compare the receipts", { exact: true }).click();
+  await expect(inbox).toContainText("Team plan $29 monthly.");
+  await expect(inbox).toContainText("Team plan $9 with annual billing.");
+  await expect(inbox.getByText("New evidence contradicts this claim", { exact: true })).toHaveCount(0);
+  await page.screenshot({ path: "test-results/watches/inbox-receipts.png", fullPage: true });
+  await inbox.getByRole("button", { name: "Mark reviewed", exact: true }).click();
+  await expect(inbox).toContainText("No research alerts need review");
 });
