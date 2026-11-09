@@ -5,21 +5,21 @@ import { Logo } from "../brand";
 import { useSession } from "../session";
 import { ThemeToggle } from "../theme";
 import { buttonStyles, Glass } from "../ui";
+import styles from "./studio.module.css";
 
-/** Session-aware top bar for public pages. */
 export function LandingNav() {
   const { user, ready } = useSession();
   return (
-    <header className="sticky top-0 z-30 px-4 pt-4 sm:px-6">
-      <Glass as="div" className="landing-nav mx-auto flex min-h-16 max-w-6xl items-center justify-between gap-3 rounded-[16px] px-4 sm:px-6 lg:grid lg:grid-cols-[1fr_auto_1fr]">
+    <header className={styles.navHeader}>
+      <Glass as="div" className={`landing-nav ${styles.nav}`}>
         <Logo />
-        <nav aria-label="Product" className="hidden items-center gap-1 rounded-full border border-line/70 bg-sunken/50 p-1 font-ui text-[13px] font-medium tracking-[0.01em] text-ink-2 lg:flex">
+        <nav aria-label="Product" className={styles.productNav}>
           {[
             ["Sample report", "/sample"],
             ["Process", "/#how-it-works"],
             ["What you can do", "/#capabilities"],
             ["The toolkit", "/#pricing"],
-          ].map(([label, href]) => <Link key={href} href={href} className="group relative inline-flex min-h-10 items-center gap-2 rounded-full px-4 transition-colors hover:bg-surface hover:text-ink focus-visible:bg-surface focus-visible:text-ink focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-trail motion-reduce:transition-none"><span className="size-1 rounded-full bg-trail opacity-40 transition-opacity group-hover:opacity-100 group-focus-visible:opacity-100 motion-reduce:transition-none" aria-hidden />{label}</Link>)}
+          ].map(([label, href]) => <Link key={href} href={href}>{label}</Link>)}
         </nav>
         <nav aria-label="Account" className="flex items-center justify-end gap-1.5 sm:gap-2 lg:justify-self-end">
           <ThemeToggle />
@@ -42,17 +42,16 @@ export function HeroCta() {
   const { user } = useSession();
   return (
     <div className="grid gap-3 sm:flex sm:flex-wrap">
-      <Link href={user ? "/w" : "/signup"} className={`shimmer-btn ${buttonStyles("primary", "lg")}`}>{user ? "Go to your workspace" : "Get started"}</Link>
+      <Link href={user ? "/w" : "/signup"} className={buttonStyles("primary", "lg")}>{user ? "Go to your workspace" : "Get started"}</Link>
       <Link href="/sample" className={buttonStyles("secondary", "lg")}>Read a real report</Link>
     </div>
   );
 }
 
-/** Android-style sticky CTA bar for small screens. */
 export function MobileCtaDock() {
   const { user } = useSession();
   return (
-    <div className="cta-dock sm:mx-2">
+    <div className={`cta-dock ${styles.dock}`}>
       <Link href={user ? "/w" : "/signup"} className={`${buttonStyles("primary", "lg")} w-full`}>
         Analyze a company
       </Link>

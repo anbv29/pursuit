@@ -6,6 +6,24 @@
   font-family: var(--font-editorial), sans-serif;
   text-wrap: balance;
 }
+.navHeader { position: sticky; top: 0; z-index: 30; background: var(--bg); }
+.navHeader .nav {
+  display: flex; align-items: center; justify-content: space-between;
+  max-width: 72rem; min-height: 88px; margin-inline: auto; padding-inline: 24px;
+  gap: 16px; border: 0; border-bottom: 1px solid var(--line);
+  border-radius: 0; background: var(--bg); box-shadow: none;
+}
+.productNav { display: none; align-items: center; gap: 4px; white-space: nowrap; }
+.productNav a { padding: 12px 10px; border-radius: 8px; font-size: 13px; color: var(--ink-2); }
+.productNav a:hover { background: var(--sunken); color: var(--ink); }
+.dock a { border-radius: 8px; }
+@media (min-width: 1024px) {
+  .navHeader .nav { display: grid; grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr); }
+  .productNav { display: flex; }
+}
+@media (max-width: 639px) {
+  .navHeader .nav { min-height: 72px; padding-inline: 16px; gap: 8px; }
+}
 .container {
   width: 100%;
   max-width: 72rem;
