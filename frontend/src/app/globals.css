@@ -2,53 +2,53 @@
 
 :root {
   color-scheme: light;
-  --chrome: #f8faf5;
-  --sidebar-surface: #edf1e9;
+  --chrome: #ffffff;
+  --sidebar-surface: #f5f5f5;
 
   /* brand */
-  --bg: #f2f4f0;
-  --ink: #25332b;
-  --muted: #59675d;
-  --glass-1: #fbfcf9;
-  --glass-2: #fbfcf9;
-  --glass-border: #dfe5dc;
-  --shadow: rgba(35, 55, 42, 0.10);
-  --orb-1: #dfebe7;
-  --orb-2: #f0ebe2;
-  --orb-3: #e2ede8;
-  --accent: #547763;
+  --bg: #fafafa;
+  --ink: #171717;
+  --muted: #616161;
+  --glass-1: #ffffff;
+  --glass-2: #ffffff;
+  --glass-border: #dedede;
+  --shadow: rgba(0, 0, 0, 0.10);
+  --orb-1: #eeeeee;
+  --orb-2: #f4f4f4;
+  --orb-3: #e8e8e8;
+  --accent: #171717;
   --accent-ink: #ffffff;
-  --primary-ink: #f7faf5;
-  --inset: rgba(64, 91, 73, 0.06);
+  --primary-ink: #ffffff;
+  --inset: rgba(0, 0, 0, 0.04);
 
   /* semantic */
-  --accent-strong: #426553;
-  --accent-soft: #e6eee4;
-  --ink-soft: #4d5f53;
-  --surface-solid: #fbfcf9;
-  --surface-sunken: #edf1e9;
-  --hairline: #dfe5dc;
-  --hairline-strong: #7b8a80;
-  --success: #47745a;
-  --success-soft: #e7eee7;
-  --warning: #866039;
-  --warning-soft: #f3ecdf;
-  --danger: #a34f60;
-  --danger-soft: #f4e7e9;
-  --demo: #77618f;
-  --demo-soft: #eee9f3;
-  --focus-ring: #426553;
-  --scrim: rgba(26, 39, 30, 0.32);
+  --accent-strong: #171717;
+  --accent-soft: #eeeeee;
+  --ink-soft: #444444;
+  --surface-solid: #ffffff;
+  --surface-sunken: #f3f3f3;
+  --hairline: #dedede;
+  --hairline-strong: #808080;
+  --success: #333333;
+  --success-soft: #eeeeee;
+  --warning: #444444;
+  --warning-soft: #f0f0f0;
+  --danger: #171717;
+  --danger-soft: #e8e8e8;
+  --demo: #555555;
+  --demo-soft: #f1f1f1;
+  --focus-ring: #171717;
+  --scrim: rgba(0, 0, 0, 0.32);
   --orb-opacity: 0;
   --specular: 0.14;
   --shimmer: rgba(255, 255, 255, 0.45);
 
   /* decisions (filled chips with white text; all >= 4.5:1) */
-  --d-continue: #47745a;
-  --d-iterate: #866039;
-  --d-pivot: #77618f;
-  --d-stop: #a34f60;
-  --d-inconclusive: #58675e;
+  --d-continue: #333333;
+  --d-iterate: #555555;
+  --d-pivot: #666666;
+  --d-stop: #171717;
+  --d-inconclusive: #616161;
 
   /* legacy names -> new system */
   --paper: var(--bg);
@@ -59,7 +59,7 @@
   --ink-2: var(--ink-soft);
   --ink-3: var(--muted);
   --trail: var(--accent-strong);
-  --trail-strong: #365544;
+  --trail-strong: #000000;
   --trail-soft: var(--accent-soft);
   --flag: var(--warning);
   --flag-soft: var(--warning-soft);
