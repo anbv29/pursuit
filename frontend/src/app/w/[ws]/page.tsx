@@ -67,7 +67,7 @@ export default function Dashboard() {
         <div className="mt-6 flex flex-wrap gap-2">{analyzeBtn}{newBtn}</div>
       </div>
       <div className="flex min-w-0 flex-col justify-end gap-5 border-t border-line bg-sunken p-5 sm:p-8 md:border-l md:border-t-0">
-        <div><h3 className="font-display text-lg font-semibold">Company reports</h3><p className="mt-2 text-sm leading-relaxed text-ink-2">Your research, priorities and experiments in one place.</p></div>
+        <div><h3 className="font-display text-lg font-semibold">Check the evidence</h3><p className="mt-2 text-sm leading-relaxed text-ink-2">Your research, priorities and experiments in one place.</p></div>
         <Link href={`${base}/reports`} className="inline-flex min-h-11 items-center text-sm font-semibold underline underline-offset-4">See all</Link>
       </div>
     </section>
@@ -97,16 +97,17 @@ export default function Dashboard() {
   if (data.experiments.length === 0) {
     return (
       <div className="mx-auto mt-2 max-w-6xl space-y-6">
-        <PageHeader title={experimentsOnly ? "Experiments" : `Hi ${firstName}`} description={experimentsOnly ? "Your saved experiments, evidence and verdicts." : "Your research, priorities and experiments in one place."} />
-        {!experimentsOnly && researchStart}
-        <div className={experimentsOnly ? "" : "grid items-start gap-6 lg:grid-cols-2"}>
+        <PageHeader title={experimentsOnly ? "Experiments" : `Hi ${firstName}`} description={experimentsOnly ? "Your saved experiments, evidence and verdicts." : "Your research, priorities and experiments in one place."}
+          action={!experimentsOnly && reports.data?.length ? analyzeBtn : undefined} />
+        {!experimentsOnly && !reports.data?.length && researchStart}
+        {(experimentsOnly || workflowsReady || reportCard) && <div className={experimentsOnly ? "" : "grid items-start gap-6 lg:grid-cols-2"}>
         {!experimentsOnly && <div className="min-w-0 space-y-6">{reportCard}{workflowsReady && <FounderFocusCard compact />}</div>}
-        <Glass className="border-t border-line p-2">
+        {(experimentsOnly || workflowsReady) && <Glass className="border-t border-line p-2">
           <Empty icon={<FlaskConical className="size-5" />} title={workflowsReady ? "No experiments yet" : "Start with a company report"}
             body={workflowsReady ? "Open your report and choose “Track this” on a recommended experiment." : "Enter your website and Pursuit researches your market, competitors and customers, then recommends experiments."}
             action={workflowsReady ? newBtn : experimentsOnly ? analyzeBtn : undefined} />
-        </Glass>
-        </div>
+        </Glass>}
+        </div>}
       </div>
     );
   }
@@ -123,9 +124,9 @@ export default function Dashboard() {
     <div className="mx-auto max-w-7xl space-y-8 text-[13px]">
       <PageHeader title={experimentsOnly ? "Experiments" : `Hi ${firstName}`}
         description={`${data.experiments.length} saved experiment${data.experiments.length === 1 ? "" : "s"}${data.pending_actions.length > 0 ? ` · ${data.pending_actions.length} waiting on you` : ""}`}
-        action={experimentsOnly ? newBtn : undefined} />
+        action={experimentsOnly ? newBtn : reports.data?.length ? <>{analyzeBtn}{newBtn}</> : undefined} />
 
-      {!experimentsOnly && researchStart}
+      {!experimentsOnly && !reports.data?.length && researchStart}
 
       {!experimentsOnly && <ul aria-label="Workspace summary" className="grid grid-cols-3 divide-x divide-line border-y border-line py-5">
         {stats.map((s) => (
