@@ -14,7 +14,7 @@ export function Button({
       disabled={disabled || loading}
       aria-busy={loading || undefined}
       className={cx(
-        "press inline-flex items-center justify-center gap-1.5 whitespace-nowrap font-medium",
+        "press inline-flex items-center justify-center max-w-full gap-1.5 whitespace-normal text-center leading-5 font-medium [&>svg]:shrink-0",
         "transition-[background-color,border-color,box-shadow,filter,color,transform] duration-150 ease-[var(--ease-out)]",
         "disabled:cursor-not-allowed disabled:opacity-50 disabled:shadow-none",
         SIZE[size], BTN[variant], className,
@@ -63,7 +63,7 @@ const TONE: Record<Tone, string> = {
 /** Small status pill. Sentence case, never all caps. */
 export function Badge({ tone = "neutral", children, title }: { tone?: Tone; children: ReactNode; title?: string }) {
   return (
-    <span title={title} className={cx("inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-[11.5px] font-semibold leading-5", TONE[tone])}>
+    <span title={title} className={cx("inline-flex max-w-full items-center gap-1 rounded-full break-words px-2 py-0.5 text-[11.5px] font-semibold leading-5", TONE[tone])}>
       {children}
     </span>
   );

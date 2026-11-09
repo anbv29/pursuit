@@ -198,8 +198,8 @@ export function WorkspaceShell({ wsId, children }: { wsId: string; children: Rea
 
       <div className="flex min-w-0 flex-1 flex-col">
         {/* Top bar */}
-        <header className="workspace-header sticky top-0 z-30 border-b border-line bg-surface px-3 print:hidden md:px-8">
-          <Glass as="div" className="mx-auto flex h-[64px] max-w-6xl items-center gap-2 rounded-none border-0 px-1 shadow-none md:h-[76px]">
+        <header className="workspace-header sticky top-0 z-30 border-b border-line bg-surface px-4 print:hidden md:px-8">
+          <Glass as="div" className="mx-auto flex h-[64px] max-w-6xl items-center gap-2 rounded-none border-0 px-0 shadow-none md:h-[76px]">
             <div className="md:hidden"><Logo href={base} compact /></div>
             <div className="min-w-0 flex-1">
               {crumbs ? (
@@ -223,15 +223,15 @@ export function WorkspaceShell({ wsId, children }: { wsId: string; children: Rea
               {ws.data?.is_demo ? <DemoBadge label="Demo workspace" /> : ws.data && <Badge tone="trail">Live workspace</Badge>}
             </div>
             <button type="button" onClick={() => setPaletteOpen(true)}
-              className="press hidden h-9 items-center gap-2 rounded-xl border border-line bg-surface/70 px-3 text-sm text-ink-3 hover:text-ink xl:flex"
+              className="press hidden h-9 shrink-0 items-center gap-2 rounded-xl border border-line bg-surface/70 px-3 text-sm text-ink-3 hover:text-ink xl:flex"
               aria-label="Open command palette" aria-keyshortcuts="Control+K Meta+K">
               <Search className="size-4" aria-hidden /> <span>Search</span>
               <kbd className="ml-2 rounded-md border border-line px-1.5 text-[11px]">Ctrl K</kbd>
             </button>
             <button type="button" onClick={() => setPaletteOpen(true)} aria-label="Open command palette"
-              className="press grid size-9 place-items-center rounded-xl text-ink-2 hover:bg-[var(--inset)] xl:hidden"><Search className="size-[18px]" /></button>
+              className="press grid size-9 shrink-0 place-items-center rounded-xl text-ink-2 hover:bg-[var(--inset)] xl:hidden"><Search className="size-[18px]" /></button>
             {workflowsReady && <Link href={`${base}/approvals`} aria-label={`Inbox${inboxCount ? `, ${inboxCount} waiting` : ""}`}
-              className="press relative grid size-9 place-items-center rounded-xl text-ink-2 hover:bg-[var(--inset)] hover:text-ink">
+              className="press relative grid size-9 shrink-0 place-items-center rounded-xl text-ink-2 hover:bg-[var(--inset)] hover:text-ink">
               <Bell className="size-[18px]" aria-hidden />
               {inboxCount > 0 && <span className="absolute right-1.5 top-1.5 size-2 rounded-full bg-warning ring-2 ring-[var(--surface-solid)]" />}
             </Link>}
@@ -241,7 +241,7 @@ export function WorkspaceShell({ wsId, children }: { wsId: string; children: Rea
               { label: "Sign out", onSelect: () => void signOut(), icon: <LogOut className="size-4" />, danger: true }]}
               trigger={({ open, toggle: t, id }) => (
                 <button type="button" onClick={t} aria-haspopup="menu" aria-expanded={open} aria-controls={id} aria-label="Account menu"
-                  className="press flex items-center gap-2 rounded-xl p-1 pr-1.5 hover:bg-[var(--inset)] sm:pr-2.5">
+                  className="press flex shrink-0 items-center gap-2 rounded-xl p-1 pr-1.5 hover:bg-[var(--inset)] sm:pr-2.5">
                   <Avatar name={user?.name ?? "?"} />
                   <span className="hidden min-w-0 text-left xl:block"><span className="block max-w-[10rem] truncate text-sm font-medium text-ink">{user?.name}</span><span className="block max-w-[12rem] truncate text-xs text-ink-3">{user?.email}</span></span>
                 </button>
