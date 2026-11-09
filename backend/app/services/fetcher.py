@@ -148,6 +148,8 @@ def fetch(url: str, client: httpx.Client | None = None, *, deadline: float | Non
             if deadline is not None and time.monotonic() >= deadline:
                 raise FetchError("The source check reached its time limit.")
             address = _check_host(url)
+            if deadline is not None and time.monotonic() >= deadline:
+                raise FetchError("The source check reached its time limit.")
             original = httpx.URL(url)
             request_timeout = s.research_fetch_timeout_seconds
             if deadline is not None:

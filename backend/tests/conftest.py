@@ -88,9 +88,13 @@ def other(app):
 
 
 @pytest.fixture
-def watched(api):
+def watched(api, monkeypatch):
     from app.models import Report
+    from app.services import watch_worker
+    from app.services.watch_fetch import collect_sources
     from tests.test_watch_claims import report_fixture
+
+    monkeypatch.setattr(watch_worker, "bounded_collect", collect_sources)
 
     user = api.signup()
     workspace_id = api.workspace()

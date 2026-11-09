@@ -1,4 +1,3 @@
-import time
 import uuid
 from datetime import timedelta
 
@@ -7,11 +6,10 @@ from sqlalchemy.dialects.postgresql import insert
 
 from app.core.db import new_session, utcnow
 from app.models import Report, ReportWatch, WatchAlert
-from app.services import fetcher
 from app.services.report_watches import WEEK
-from app.services.watch_claims import MAX_SOURCES, claims_for, compare, fingerprint, normalize
+from app.services.watch_claims import claims_for, compare, fingerprint, normalize
+from app.services.watch_fetch import bounded_collect
 
-CHECK_SECONDS = 30
 LEASE = timedelta(seconds=90)
 RETRY = timedelta(hours=6)
 WORKER_LOCK = 74820153
@@ -36,21 +34,6 @@ def claim_due():
         watch.lease_until = utcnow() + LEASE
         db.commit()
         return watch
-
-
-def collect(watch):
-    deadline = time.monotonic() + CHECK_SECONDS
-    urls = list(dict.fromkeys(r["url"] for c in watch.snapshots for r in c["receipts"]))[:MAX_SOURCES]
-    results = {}
-    for url in urls:
-        if time.monotonic() >= deadline:
-            results[url] = None
-            continue
-        try:
-            results[url] = fetcher.fetch(url, deadline=deadline)
-        except (fetcher.FetchError, OSError, ValueError):
-            results[url] = None
-    return results
 
 
 def publish(claimed, results):
@@ -143,4 +126,4 @@ def run_due():
         claimed = claim_due()
         if claimed is None:
             return False
-        return publish(claimed, collect(claimed))
+        return publish(claimed, bounded_collect(claimed.snapshots))
