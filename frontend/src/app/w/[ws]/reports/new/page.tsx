@@ -63,9 +63,8 @@ export default function NewReportPage() {
         </span>
         <h1 className="mt-4 font-display text-[32px] font-bold leading-tight tracking-tight sm:text-4xl">Analyze your company</h1>
         <p className="mx-auto mt-2 max-w-lg text-ink-2">
-          Drop your website. Pursuit reads it, analyses accessible public pages and source URLs you provide, and
-          builds a sourced report: who to sell to, how to position, what to charge, what to say, and which
-          experiments to run first.
+          Start with your website and what you offer. Get sourced research on your buyers,
+          positioning and next experiments. Add context below to make it more specific.
         </p>
       </div>
 
@@ -85,17 +84,17 @@ export default function NewReportPage() {
               {(id) => <Textarea id={id} rows={3} value={f.description} onChange={set("description")}
                 placeholder="We help independent clinics get paid faster by automating insurance claim reconciliation." />}
             </Field>
-            <Field label="What do you most want to learn?">
-              {(id) => <Input id={id} value={f.goal} onChange={set("goal")} placeholder="e.g. Which segment to target first, and how to price" />}
-            </Field>
           </div>
 
           <button type="button" onClick={() => setMore(!more)} aria-expanded={more}
-            className="mt-4 inline-flex items-center gap-1 text-sm font-medium text-trail hover:text-trail-strong">
+            aria-controls="company-context" className="mt-4 inline-flex min-h-11 items-center gap-1 text-sm font-medium text-trail hover:text-trail-strong">
             <ChevronDown className={cx("size-4 transition-transform", more && "rotate-180")} /> More context (optional)
           </button>
           {more && (
-            <div className="mt-4 grid gap-4 border-t border-line pt-4 sm:grid-cols-2">
+            <div id="company-context" className="mt-4 grid gap-4 border-t border-line pt-4 sm:grid-cols-2">
+              <div className="sm:col-span-2"><Field label="What do you most want to learn?">
+                {(id) => <Input id={id} value={f.goal} onChange={set("goal")} placeholder="e.g. Which segment to target first, and how to price" />}
+              </Field></div>
               <Field label="Company name">{(id) => <Input id={id} value={f.company_name} onChange={set("company_name")} />}</Field>
               <Field label="Stage">{(id) => (
                 <Select id={id} value={f.stage} onChange={set("stage")}>
@@ -110,8 +109,15 @@ export default function NewReportPage() {
             </div>
           )}
         </Glass>
-        <GTMConstraintsForm value={constraints} onChange={setConstraints} urls={researchUrls} onUrlsChange={setResearchUrls} disabled={submit.pending} />
-        <FounderRealityCheck value={reality} onChange={setReality} disabled={submit.pending} />
+        <section aria-labelledby="personalize-report" className="space-y-3">
+          <div><h2 id="personalize-report" className="text-base font-semibold">Personalize your report</h2><p className="mt-1 text-sm text-ink-2">Optional. Add what you know, or leave these for later.</p></div>
+          <details className="rounded-xl border border-line bg-surface p-4">
+            <summary className="min-h-11 cursor-pointer py-2 text-sm font-semibold">Research sources and strategy constraints <span className="font-normal text-ink-3">(optional)</span></summary>
+            <p className="mb-4 mt-2 text-sm text-ink-2">Set your budget, time and channels, or add up to six source URLs. Blank numbers stay unknown; 0 means none.</p>
+            <GTMConstraintsForm value={constraints} onChange={setConstraints} urls={researchUrls} onUrlsChange={setResearchUrls} disabled={submit.pending} />
+          </details>
+          <FounderRealityCheck value={reality} onChange={setReality} disabled={submit.pending} />
+        </section>
         {formError && <Notice tone="bad">{formError}</Notice>}
         <ResearchAllowance />
         <Button type="submit" size="lg" loading={submit.pending} className="w-full">Generate report</Button>

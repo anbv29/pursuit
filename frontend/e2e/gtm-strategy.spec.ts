@@ -28,6 +28,13 @@ for (const width of [390, 1280]) {
     await page.setViewportSize({ width, height: 900 }); await setup(page);
     await page.goto("/w/gtm-project/reports/new");
     await page.getByLabel("Website", { exact: true }).fill("example.com");
+    await page.getByLabel("What do you do, and for whom?", { exact: true }).fill("We help clinics reconcile claims.");
+    await page.getByRole("button", { name: "More context (optional)", exact: true }).click();
+    await page.getByLabel("Company name", { exact: true }).fill("Acme Clinics");
+    await page.getByLabel("What do you most want to learn?", { exact: true }).fill("Which clinic segment to target");
+    await page.getByRole("button", { name: "More context (optional)", exact: true }).click();
+    await expect(page.getByLabel("Monthly budget", { exact: true })).toBeHidden();
+    await page.getByText("Research sources and strategy constraints", { exact: false }).click();
     await page.getByLabel("Monthly budget", { exact: true }).fill("0");
     await page.getByLabel("Currency", { exact: true }).fill("inr");
     await page.getByLabel("Planning horizon").selectOption("30");
@@ -38,9 +45,13 @@ for (const width of [390, 1280]) {
     await page.getByRole("button", { name: "Generate report" }).click();
     await expect(page.getByText("Add no more than six research URLs.")).toBeVisible();
     await page.getByLabel("Research URLs", { exact: true }).fill("https://example.com/data");
+    await page.getByText("Research sources and strategy constraints", { exact: false }).click();
+    await page.getByText("Founder reality check", { exact: false }).click();
+    await page.getByLabel("Who has actually used or paid for this?", { exact: true }).fill("No customers yet.");
+    await page.getByText("Founder reality check", { exact: false }).click();
     const request = page.waitForRequest(r => r.url().endsWith("/reports") && r.method() === "POST");
     await page.getByRole("button", { name: "Generate report" }).click();
-    expect((await request).postDataJSON()).toMatchObject({gtm_constraints:{monthly_budget:0,currency:"INR",weekly_hours:null,team_size:null,horizon_days:30},research_urls:["https://example.com/data"]});
+    expect((await request).postDataJSON()).toMatchObject({ company_url: "https://example.com", company_name: "Acme Clinics", description: "We help clinics reconcile claims.", goal: "Which clinic segment to target", founder_reality: { customers: "No customers yet." }, gtm_constraints:{monthly_budget:0,currency:"INR",weekly_hours:null,team_size:null,horizon_days:30},research_urls:["https://example.com/data"]});
     expect(await page.evaluate(() => document.documentElement.scrollWidth - innerWidth)).toBeLessThanOrEqual(1);
   });
 
