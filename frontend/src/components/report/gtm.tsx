@@ -55,7 +55,7 @@ export function GTMSection({ report, editor }: { report: Report; editor?: { path
 }
 
 export function SourceReceipt({ source: s }: { source: ReportSource }) {
-  return <div className="min-w-0 space-y-3 text-xs text-ink-2 [overflow-wrap:anywhere]">
+  return <div role="group" aria-label={`Source ${s.id} receipt`} className="min-w-0 space-y-3 text-xs text-ink-2 [overflow-wrap:anywhere]">
     <div className="flex items-baseline gap-3"><span className="shrink-0 font-mono text-ink-3">[{s.id}]</span><a href={/^https?:\/\//i.test(s.url) ? s.url : undefined} target="_blank" rel="noopener noreferrer nofollow" className="text-sm font-medium text-trail underline underline-offset-4">{s.title || s.url}</a></div>
     <dl className="grid gap-x-6 gap-y-2 sm:grid-cols-2">
       <div><dt className="text-ink-3">Source role</dt><dd className="mt-1">{s.source_role ?? s.via}</dd></div>

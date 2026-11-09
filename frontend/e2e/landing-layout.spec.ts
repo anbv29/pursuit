@@ -8,6 +8,13 @@ for (const width of [390, 820, 1440]) {
     await page.goto("/");
     await expect(page.getByRole("heading", { level: 1 })).toBeVisible();
     await page.evaluate(() => document.fonts.ready);
+    const process = page.getByRole("tablist", { name: "How Pursuit works" });
+    for (const theme of ["light", "dark"]) {
+      await page.evaluate(value => { document.documentElement.dataset.theme = value; }, theme);
+      const selected = process.getByRole("tab", { selected: true });
+      expect(await selected.locator("span").first().evaluate(node => getComputedStyle(node).color))
+        .toBe(await selected.evaluate(node => getComputedStyle(node).color));
+    }
     const preview = page.getByRole("region", { name: "Example of Pursuit at work" });
     const band = page.getByRole("region", { name: "What you can rely on" });
     // Document-relative Y for the band: viewport-relative boxes move with the
