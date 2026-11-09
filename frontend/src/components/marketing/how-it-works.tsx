@@ -14,7 +14,7 @@ export function HowItWorks() {
   return (
     <div className="space-y-5">
       <Tabs label="How Pursuit works" value={tab} onChange={setTab} className="mobile-process-tabs w-fit max-w-full" idPrefix={id} panelId={`${id}-panel`}
-        tabs={HOW_IT_WORKS.map((s, i) => ({ id: s.id, label: <><span className="mr-1.5 tabular-nums text-ink-3">{i + 1}</span>{s.tab}</> }))} />
+        tabs={HOW_IT_WORKS.map((s, i) => ({ id: s.id, label: <><span className="mr-1.5 tabular-nums">{i + 1}</span>{s.tab}</> }))} />
       <Glass role="tabpanel" id={`${id}-panel`} aria-labelledby={`${id}-${active.id}`} tabIndex={0} className={`process-panel ${styles.process}`}>
         <div key={active.id} className="grid gap-8 md:grid-cols-[1.2fr_1fr] md:items-start">
           <div>

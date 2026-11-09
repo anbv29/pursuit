@@ -206,8 +206,8 @@ export function WorkspaceShell({ wsId, children }: { wsId: string; children: Rea
                 <nav aria-label="Breadcrumb">
                   <ol className="flex min-w-0 items-center gap-1 text-sm">
                     {crumbs.map((c, i) => (
-                      <li key={i} className="flex min-w-0 items-center gap-1">
-                        {i > 0 && <ChevronRight className="size-3.5 shrink-0 text-ink-3" aria-hidden />}
+                      <li key={i} className={cx("min-w-0 items-center gap-1", i === crumbs.length - 1 ? "flex" : "hidden md:flex")}>
+                        {i > 0 && <ChevronRight className="hidden size-3.5 shrink-0 text-ink-3 md:block" aria-hidden />}
                         {"href" in c && c.href
                           ? <Link href={c.href} className="truncate text-ink-3 hover:text-ink">{c.label}</Link>
                           : <span aria-current="page" className="truncate font-semibold text-ink">{c.label}</span>}
@@ -231,7 +231,7 @@ export function WorkspaceShell({ wsId, children }: { wsId: string; children: Rea
             <button type="button" onClick={() => setPaletteOpen(true)} aria-label="Open command palette"
               className="press grid size-9 shrink-0 place-items-center rounded-xl text-ink-2 hover:bg-[var(--inset)] xl:hidden"><Search className="size-[18px]" /></button>
             {workflowsReady && <Link href={`${base}/approvals`} aria-label={`Inbox${inboxCount ? `, ${inboxCount} waiting` : ""}`}
-              className="press relative grid size-9 shrink-0 place-items-center rounded-xl text-ink-2 hover:bg-[var(--inset)] hover:text-ink">
+              className="press relative hidden size-9 shrink-0 place-items-center md:grid rounded-xl text-ink-2 hover:bg-[var(--inset)] hover:text-ink">
               <Bell className="size-[18px]" aria-hidden />
               {inboxCount > 0 && <span className="absolute right-1.5 top-1.5 size-2 rounded-full bg-warning ring-2 ring-[var(--surface-solid)]" />}
             </Link>}
