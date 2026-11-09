@@ -24,7 +24,7 @@ export function MobileNavigation({ tabs, menuItems, accountItems, accountName, n
       <div className="mx-auto grid w-full max-w-lg grid-cols-5 items-end gap-1">
         {tabs.slice(0, 2).map(item => {
           const active = isActive(item);
-          return <Link key={item.href} href={item.href} aria-current={active ? "page" : undefined}
+          return <Link key={item.href} href={item.href} aria-label={`${item.label}${item.count ? `, ${item.count} waiting` : ""}`} aria-current={active ? "page" : undefined}
             className={cx("mobile-tab", active && "mobile-tab-active")}>
             <span className="mobile-tab-icon"><item.icon size={20} aria-hidden="true" /></span>
             <span>{item.label}</span>
@@ -38,7 +38,7 @@ export function MobileNavigation({ tabs, menuItems, accountItems, accountName, n
         </Link>
         {tabs.slice(2).map(item => {
           const active = isActive(item);
-          return <Link key={item.href} href={item.href} aria-current={active ? "page" : undefined}
+          return <Link key={item.href} href={item.href} aria-label={`${item.label}${item.count ? `, ${item.count} waiting` : ""}`} aria-current={active ? "page" : undefined}
             className={cx("mobile-tab", active && "mobile-tab-active")}>
             <span className="mobile-tab-icon"><item.icon size={20} aria-hidden="true" /></span>
             <span className="relative">{item.label}
