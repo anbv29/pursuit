@@ -20,7 +20,7 @@ test("temporary gateway failures restore the session without sending the founder
   await page.goto(`/w/${workspace.id}/reports`);
   await expect(page.getByRole("status").filter({ hasText: "Connecting to Pursuit" })).toContainText("Connecting to Pursuit");
   await expect(page).toHaveURL(new RegExp(`/w/${workspace.id}/reports$`));
-  await expect(page.getByRole("heading", { level: 1, name: "Company reports" })).toBeVisible();
+  await expect(page.getByRole("heading", { level: 1, name: "Reports" })).toBeVisible();
   expect(checks).toBe(3);
   expect(logins).toBe(0);
 });
@@ -94,7 +94,7 @@ for (const recovery of ["retry button", "network reconnect"] as const) {
     available = true;
     if (recovery === "retry button") await page.getByRole("button", { name: "Try connecting again" }).click();
     else await page.evaluate(() => window.dispatchEvent(new Event("online")));
-    await expect(page.getByRole("heading", { level: 1, name: "Company reports" })).toBeVisible();
+    await expect(page.getByRole("heading", { level: 1, name: "Reports" })).toBeVisible();
   });
 }
 
@@ -113,7 +113,7 @@ test("a slow server wake-up keeps the original session request and explains the 
   });
   await page.goto(`/w/${workspace.id}/reports`);
   await expect(page.getByRole("status").filter({ hasText: "Waiting for Pursuit’s server" })).toContainText("continue automatically");
-  await expect(page.getByRole("heading", { level: 1, name: "Company reports" })).toBeVisible({ timeout: 25000 });
+  await expect(page.getByRole("heading", { level: 1, name: "Reports" })).toBeVisible({ timeout: 25000 });
   expect(checks).toBe(1);
   await expect(page).toHaveURL(new RegExp(`/w/${workspace.id}/reports$`));
 });

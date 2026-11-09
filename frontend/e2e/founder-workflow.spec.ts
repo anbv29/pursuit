@@ -37,8 +37,8 @@ for (const width of [390, 1280]) {
     await expect(page.getByRole("heading", { level: 1, name: "Your priorities" })).toBeVisible();
     if (width >= 768) {
       const navigation = page.getByRole("navigation", { name: "Primary", exact: true });
-      await expect(navigation.getByRole("link", { name: "Your priorities", exact: true })).toHaveCount(0);
-      await expect(navigation.getByRole("link", { name: "Fo Assistant", exact: true })).toHaveCount(0);
+      await expect(navigation.getByRole("link", { name: "Experiments", exact: true })).toHaveCount(0);
+      await expect(navigation.getByRole("link", { name: "Assistant", exact: true })).toHaveCount(0);
     }
     await page.getByRole("link", { name: /Add evidence before deciding/ }).click();
     await expect(page.getByRole("tab", { name: "Interview notes", exact: true })).toHaveAttribute("aria-selected", "true");

@@ -1,8 +1,8 @@
 "use client";
 
 import {
-  Bell, ChevronRight, ChevronsLeft, ChevronsRight, CircleDollarSign, FileText, Inbox, LayoutDashboard, LogOut,
-  ListTodo, MessageCircle, Moon, Plus, Search, Settings, UserCog,
+  Bell, ChevronRight, ChevronsLeft, ChevronsRight, CircleDollarSign, FileText, FlaskConical, Inbox, LayoutDashboard, LogOut,
+  MessageCircle, Moon, Search, Settings, UserCog,
 } from "lucide-react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
@@ -41,7 +41,7 @@ export function useWorkspace() {
   return c;
 }
 
-type NavGroup = "Overview" | "Research & strategy" | "Execution" | "Workspace";
+type NavGroup = "Your work" | "Workspace";
 type NavItem = { href: string; label: string; icon: typeof LayoutDashboard; group: NavGroup; exact?: boolean; count?: number };
 
 export function WorkspaceShell({ wsId, children }: { wsId: string; children: ReactNode }) {
@@ -68,17 +68,16 @@ export function WorkspaceShell({ wsId, children }: { wsId: string; children: Rea
   };
 
   const allNav: NavItem[] = [
-    { href: base, label: "Dashboard", icon: LayoutDashboard, group: "Overview", exact: true },
-    { href: `${base}/focus`, label: "Your priorities", icon: ListTodo, group: "Overview" },
-    { href: `${base}/reports`, label: "Company reports", icon: FileText, group: "Research & strategy" },
-    { href: `${base}/gtm`, label: "GTM strategy", icon: FileText, group: "Research & strategy" },
-    { href: `${base}/experiments/new`, label: "New experiment", icon: Plus, group: "Execution" },
-    { href: `${base}/approvals`, label: "Approvals", icon: Inbox, group: "Execution", count: approvals.data?.length },
-    { href: `${base}/fo`, label: "Fo Assistant", icon: MessageCircle, group: "Execution" },
+    { href: base, label: "Home", icon: LayoutDashboard, group: "Your work", exact: true },
+    { href: `${base}/reports`, label: "Reports", icon: FileText, group: "Your work" },
+    { href: `${base}/experiments`, label: "Experiments", icon: FlaskConical, group: "Your work" },
+    { href: `${base}/approvals`, label: "Inbox", icon: Inbox, group: "Your work", count: approvals.data?.length },
+    { href: `${base}/fo`, label: "Assistant", icon: MessageCircle, group: "Your work" },
     { href: `${base}/settings`, label: "Settings", icon: Settings, group: "Workspace" },
   ];
   const nav = allNav.filter(item => workflowsReady || [base, `${base}/reports`, `${base}/settings`].includes(item.href));
-  const isActive = (n: Pick<NavItem, "href" | "exact">) => path === n.href || (!n.exact && path.startsWith(`${n.href}/`));
+  const isActive = (n: Pick<NavItem, "href" | "exact">) => path === n.href || (!n.exact && path.startsWith(`${n.href}/`))
+    || (n.href === base && path === `${base}/focus`) || (n.href === `${base}/reports` && path === `${base}/gtm`);
   const current = nav.find(isActive);
   const contentWidth = path.endsWith("/reports/new") ? "max-w-2xl"
     : /\/(settings|fo|focus)$/.test(path) ? "max-w-3xl"
@@ -86,9 +85,9 @@ export function WorkspaceShell({ wsId, children }: { wsId: string; children: Rea
     : /\/(experiments\/new)$/.test(path) ? "max-w-5xl" : "max-w-6xl";
 
   // Breadcrumbs only below two levels (a single report or experiment).
-  const crumbs = path.match(/\/reports\/(?!new$)[^/]+$/) ? [{ href: `${base}/reports`, label: "Company reports" }, { label: "Report" }]
-    : path.match(/\/experiments\/(?!new$)[^/]+$/) ? [{ href: base, label: "Dashboard" }, { label: "Experiment" }]
-      : path.endsWith("/reports/new") ? [{ href: `${base}/reports`, label: "Company reports" }, { label: "New report" }]
+  const crumbs = path.match(/\/reports\/(?!new$)[^/]+$/) ? [{ href: `${base}/reports`, label: "Reports" }, { label: "Report" }]
+    : path.match(/\/experiments\/(?!new$)[^/]+$/) ? [{ href: `${base}/experiments`, label: "Experiments" }, { label: "Experiment" }]
+      : path.endsWith("/reports/new") ? [{ href: `${base}/reports`, label: "Reports" }, { label: "New report" }]
         : null;
 
   const commands = useMemo<Command[]>(() => [
@@ -118,7 +117,7 @@ export function WorkspaceShell({ wsId, children }: { wsId: string; children: Rea
     </select>
   ) : <Skeleton className="h-9 w-full" />;
 
-  const groupOrder: NavGroup[] = ["Overview", "Research & strategy", "Execution", "Workspace"];
+  const groupOrder: NavGroup[] = ["Your work", "Workspace"];
   const groups = groupOrder.map((label) => ({ label, items: nav.filter((n) => n.group === label) })).filter(group => group.items.length);
   const mobileTabs = nav.filter((n) => n.exact || n.href === `${base}/reports` || n.href === `${base}/approvals`);
   const mobileMenu = [
@@ -142,7 +141,7 @@ export function WorkspaceShell({ wsId, children }: { wsId: string; children: Rea
             {groups.map((group) => (
               <div key={group.label} className={cx(
                 group.label === "Workspace" ? "mt-auto border-t border-line pt-4" : "mb-3",
-                collapsed && group.label !== "Overview" && "border-t border-line pt-3",
+                collapsed && group.label !== "Your work" && "border-t border-line pt-3",
               )}>
                 {!collapsed && (
                   <p className="mb-2 px-3 font-ui text-[11px] font-medium uppercase tracking-[0.07em] text-ink-3">{group.label}</p>
@@ -212,7 +211,7 @@ export function WorkspaceShell({ wsId, children }: { wsId: string; children: Rea
             </button>
             <button type="button" onClick={() => setPaletteOpen(true)} aria-label="Open command palette"
               className="press grid size-9 place-items-center rounded-xl text-ink-2 hover:bg-[var(--inset)] xl:hidden"><Search className="size-[18px]" /></button>
-            {workflowsReady && <Link href={`${base}/approvals`} aria-label={`Approvals${approvals.data?.length ? `, ${approvals.data.length} waiting` : ""}`}
+            {workflowsReady && <Link href={`${base}/approvals`} aria-label={`Inbox${approvals.data?.length ? `, ${approvals.data.length} waiting` : ""}`}
               className="press relative grid size-9 place-items-center rounded-xl text-ink-2 hover:bg-[var(--inset)] hover:text-ink">
               <Bell className="size-[18px]" aria-hidden />
               {!!approvals.data?.length && <span className="absolute right-1.5 top-1.5 size-2 rounded-full bg-warning ring-2 ring-[var(--surface-solid)]" />}

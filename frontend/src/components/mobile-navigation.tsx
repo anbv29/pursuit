@@ -18,7 +18,6 @@ export function MobileNavigation({ tabs, menuItems, accountItems, accountName, n
   switcher?: ReactNode;
 }) {
   const [open, setOpen] = useState(false);
-  const labels: Record<string, string> = { Dashboard: "Home", "Company reports": "Reports" };
   const menuActive = menuItems.some(isActive);
   return <>
     <nav aria-label="Mobile navigation" className="mobile-navigation print:hidden md:hidden">
@@ -28,7 +27,7 @@ export function MobileNavigation({ tabs, menuItems, accountItems, accountName, n
           return <Link key={item.href} href={item.href} aria-current={active ? "page" : undefined}
             className={cx("mobile-tab", active && "mobile-tab-active")}>
             <span className="mobile-tab-icon"><item.icon size={20} aria-hidden="true" /></span>
-            <span>{labels[item.label] ?? item.label}</span>
+            <span>{item.label}</span>
           </Link>;
         })}
         <Link href={newHref} aria-label={newLabel}
@@ -42,7 +41,7 @@ export function MobileNavigation({ tabs, menuItems, accountItems, accountName, n
           return <Link key={item.href} href={item.href} aria-current={active ? "page" : undefined}
             className={cx("mobile-tab", active && "mobile-tab-active")}>
             <span className="mobile-tab-icon"><item.icon size={20} aria-hidden="true" /></span>
-            <span className="relative">{labels[item.label] ?? item.label}
+            <span className="relative">{item.label}
               {!!item.count && <span className="absolute -right-2.5 -top-2 size-2 rounded-full bg-warning ring-2 ring-[var(--surface-solid)]" aria-hidden />}
               {!!item.count && <span className="sr-only">{item.count} waiting</span>}
             </span>

@@ -14,7 +14,7 @@ const LABEL = (s: ReportListItem["status"]) =>
   s === "RUNNING" || s === "QUEUED" ? "Generating…" : s === "SUCCEEDED" ? "Ready" : s === "CANCELLED" ? "Cancelled" : "Failed";
 
 export default function ReportsPage() {
-  const { workspace, base } = useWorkspace();
+  const { workspace, base, workflowsReady } = useWorkspace();
   const { data, error, reload } = useApi<ReportListItem[]>(`/workspaces/${workspace.id}/reports`);
   const generating = data?.some((report) => report.status === "QUEUED" || report.status === "RUNNING");
   useEffect(() => {
@@ -35,13 +35,17 @@ export default function ReportsPage() {
     <div className="mx-auto max-w-4xl space-y-6">
       <div className="flex items-center justify-between gap-3">
         <div className="min-w-0">
-          <PageHeader title="Company reports" description="Sourced go-to-market analyses, generated from a website and your context." />
+          <PageHeader title="Reports" description="Company research and GTM strategies, saved together." />
         </div>
         <div className="flex shrink-0 items-center gap-2">
           <Link href={`${base}/reports/new`} aria-label="Analyze a company" className={buttonStyles("primary") + " size-11 justify-center rounded-full p-0 md:hidden shimmer-btn"}><Plus className="size-5" aria-hidden /></Link>
           <span className="hidden md:inline">{cta}</span>
         </div>
       </div>
+      {workflowsReady && <div className="flex flex-wrap items-center justify-between gap-2 rounded-xl border border-line bg-accent-soft px-4 py-3 text-sm">
+        <p className="text-ink-2">Open a report for its research, strategy and recommended experiments.</p>
+        <Link href={`${base}/gtm`} className="inline-flex min-h-11 items-center font-semibold text-trail hover:underline">Browse GTM strategies</Link>
+      </div>}
       {error && !data ? (
         <Glass className="p-2">
           <Empty icon={<AlertTriangle className="size-5" />} title="Couldn't load reports" body={error.message}

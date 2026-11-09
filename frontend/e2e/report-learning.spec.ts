@@ -50,7 +50,7 @@ for (const finished of [false, true]) {
     await setup(page, finished);
     await page.goto("/w/learning-ws");
     await expect(page.getByRole("heading", { name: "Hi Founder", exact: true })).toBeVisible();
-    const nav = page.getByRole("link", { name: "GTM strategy", exact: true });
+    const nav = page.getByRole("link", { name: "Experiments", exact: true });
     if (finished) {
       await expect(nav).toBeVisible();
       await expect(page.getByRole("link", { name: "New experiment", exact: true }).first()).toBeVisible();
