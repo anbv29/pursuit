@@ -1,4 +1,3 @@
-import { LensLoader } from "@/components/lens-loader";
 import { Footer } from "@/components/marketing/footer";
 import { HeroDemo } from "@/components/marketing/hero-demo";
 import { HowItWorks } from "@/components/marketing/how-it-works";
@@ -11,7 +10,6 @@ import styles from "@/components/marketing/studio.module.css";
 export default function Home() {
   return (
     <div className={`marketing-page ${styles.page}`}>
-      <LensLoader />
       <LandingNav />
 
       <main className={styles.container}>
