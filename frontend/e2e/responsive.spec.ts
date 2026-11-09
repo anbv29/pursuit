@@ -21,7 +21,7 @@ test("demo workspace screens are labelled and responsive", async ({ page }, info
     await page.screenshot({ path: `test-results/screens/${info.project.name}-${name}.png`, fullPage: true });
   };
 
-  await expect(page.getByRole("heading", { name: "Experiments", exact: true })).toBeVisible();
+  await expect(page.getByRole("heading", { name: "Recent experiments", exact: true })).toBeVisible();
   await shot("dashboard");
 
   await page.getByRole("link", { name: /Clinic claims reconciliation/ }).first().click();

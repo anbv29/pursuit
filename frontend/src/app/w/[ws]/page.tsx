@@ -37,14 +37,14 @@ export default function Dashboard() {
   if (error) {
     return (
       <Glass className="mx-auto mt-6 max-w-lg p-2">
-        <Empty icon={<AlertTriangle className="size-5" />} title="Couldn't load the dashboard" body={error.message}
+        <Empty icon={<AlertTriangle className="size-5" />} title={experimentsOnly ? "Couldn't load experiments" : "Couldn't load Home"} body={error.message}
           action={<Button variant="secondary" onClick={() => void reload()}><RotateCw className="size-4" /> Try again</Button>} />
       </Glass>
     );
   }
   if (loading || !data) {
     return (
-      <div className="mx-auto max-w-7xl space-y-5 text-[13px]" aria-busy aria-label="Loading dashboard">
+      <div className="mx-auto max-w-7xl space-y-5 text-[13px]" aria-busy aria-label={experimentsOnly ? "Loading experiments" : "Loading Home"}>
         <Skeleton className="h-10 w-72 max-w-full" />
         <div className="grid gap-3 sm:grid-cols-3">{[0, 1, 2].map((i) => <Skeleton key={i} className="h-[76px]" />)}</div>
         <div className="grid gap-3 md:grid-cols-2">{[0, 1, 2, 3].map((i) => <Skeleton key={i} className="h-36" />)}</div>
@@ -95,7 +95,7 @@ export default function Dashboard() {
     );
   }
 
-  const shown = data.experiments.filter((e) => filter === "all" || (filter === "decided" ? !!e.latest_decision : !e.latest_decision));
+  const shown = experimentsOnly ? data.experiments.filter((e) => filter === "all" || (filter === "decided" ? !!e.latest_decision : !e.latest_decision)) : data.experiments.slice(0, 3);
   const stats = [
     { label: "Saved experiments", value: data.experiments.length, icon: FlaskConical },
     { label: "Waiting on you", value: data.pending_actions.length, icon: Inbox },
@@ -122,9 +122,10 @@ export default function Dashboard() {
         <div className="min-w-0 space-y-5">
         <section aria-labelledby="exp-h" className="min-w-0 overflow-hidden rounded-2xl border border-line bg-surface">
           <div className="flex flex-wrap items-center justify-between gap-3 border-b border-line px-5 py-4">
-            <h2 id="exp-h" className="text-base font-semibold">{experimentsOnly ? "Saved experiments" : "Experiments"}</h2>
-            <Tabs label="Filter experiments" value={filter} onChange={(v) => { if (v === "all" || v === "open" || v === "decided") setFilter(v); }}
+            <h2 id="exp-h" className="text-base font-semibold">{experimentsOnly ? "Saved experiments" : "Recent experiments"}</h2>
+            {experimentsOnly ? <Tabs label="Filter experiments" value={filter} onChange={(v) => { if (v === "all" || v === "open" || v === "decided") setFilter(v); }}
               tabs={[{ id: "all", label: "All" }, { id: "open", label: "No verdict yet" }, { id: "decided", label: "Has a verdict" }]} />
+              : <Link href={`${base}/experiments`} className="inline-flex min-h-11 items-center text-sm font-semibold text-trail hover:underline">View all experiments</Link>}
           </div>
           {shown.length === 0 ? (
             <Card className="border border-line bg-surface shadow-none"><Empty title="Nothing in this view" body="Try another filter." /></Card>
@@ -169,7 +170,7 @@ export default function Dashboard() {
           )}
         </section>
 
-      {workflowsReady && <section aria-labelledby="wf-h" className="rounded-2xl border border-line bg-surface p-5">
+      {experimentsOnly && workflowsReady && <section aria-labelledby="wf-h" className="rounded-2xl border border-line bg-surface p-5">
         <h2 id="wf-h" className="mb-3 text-sm font-semibold">What do you want to find out?</h2>
         <ul className="flex flex-wrap gap-2">
           {workflows.map((w) => (

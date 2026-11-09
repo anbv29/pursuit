@@ -97,6 +97,7 @@ export function WorkspaceShell({ wsId, children }: { wsId: string; children: Rea
 
   const commands = useMemo<Command[]>(() => [
     ...nav.map((n) => ({ id: n.href, label: n.label, hint: "Go to", href: n.href, icon: <n.icon className="size-3.5" /> })),
+    ...(workflowsReady ? [{ id: "new-experiment", label: "New experiment", hint: "Create", href: `${base}/experiments/new`, icon: <FlaskConical className="size-3.5" /> }] : []),
     { id: "new-report", label: "Analyze a company", hint: "New report", href: `${base}/reports/new`, icon: <FileText className="size-3.5" /> },
     { id: "theme", label: theme === "dark" ? "Use light theme" : "Use dark theme", run: () => setTheme(theme === "dark" ? "light" : "dark"), icon: <Moon className="size-3.5" /> },
     { id: "signout", label: "Sign out", run: () => void signOut(), icon: <LogOut className="size-3.5" /> },

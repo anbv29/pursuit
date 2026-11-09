@@ -27,6 +27,8 @@ for (const width of [390, 1280]) {
   test(`new GTM form preserves unknown and zero at ${width}px`, async ({ page }) => {
     await page.setViewportSize({ width, height: 900 }); await setup(page);
     await page.goto("/w/gtm-project/reports/new");
+    await expect(page.getByRole("heading", { name: "Analyze your company", exact: true })).toBeVisible();
+    await page.screenshot({ path: `test-results/report-setup-${width}.png`, fullPage: true });
     await page.getByLabel("Website", { exact: true }).fill("example.com");
     await page.getByLabel("What do you do, and for whom?", { exact: true }).fill("We help clinics reconcile claims.");
     await page.getByRole("button", { name: "More context (optional)", exact: true }).click();
