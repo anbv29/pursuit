@@ -29,20 +29,12 @@ export default function ReportsPage() {
     return () => { stopped = true; clearTimeout(timer); };
   }, [generating, reload]);
   const cta = (
-    <Link href={`${base}/reports/new`} className={`${buttonStyles("primary")} shimmer-btn`}><Plus className="size-4" aria-hidden /> Analyze a company</Link>
+    <Link href={`${base}/reports/new`} className={buttonStyles("primary")}><Plus className="size-4" aria-hidden /> Analyze a company</Link>
   );
   return (
-    <div className="mx-auto max-w-4xl space-y-6">
-      <div className="flex items-center justify-between gap-3">
-        <div className="min-w-0">
-          <PageHeader title="Reports" description="Company research and GTM strategies, saved together." />
-        </div>
-        <div className="flex shrink-0 items-center gap-2">
-          <Link href={`${base}/reports/new`} aria-label="Analyze a company" className={buttonStyles("primary") + " size-11 justify-center rounded-full p-0 md:hidden shimmer-btn"}><Plus className="size-5" aria-hidden /></Link>
-          <span className="hidden md:inline">{cta}</span>
-        </div>
-      </div>
-      {workflowsReady && <div className="flex flex-wrap items-center justify-between gap-2 rounded-xl border border-line bg-accent-soft px-4 py-3 text-sm">
+    <div className="mx-auto max-w-4xl space-y-8">
+      <PageHeader title="Reports" description="Company research and GTM strategies, saved together." action={cta} />
+      {workflowsReady && <div className="grid gap-3 border-b border-line pb-6 text-sm sm:grid-cols-[minmax(0,1fr)_auto] sm:items-center">
         <p className="text-ink-2">Open a report for its research, strategy and recommended experiments.</p>
         <Link href={`${base}/gtm`} className="inline-flex min-h-11 items-center font-semibold text-trail hover:underline">Browse GTM strategies</Link>
       </div>}
@@ -68,22 +60,24 @@ export default function ReportsPage() {
           <Empty icon={<FileText className="size-5" />} title="No reports yet" body="Enter your website to get a full, sourced report in a few minutes." action={cta} />
         </Glass>
       ) : (
-        <Card>
+        <section aria-label="Saved reports" className="overflow-hidden rounded-xl border border-line bg-surface">
+          <div aria-hidden className="hidden grid-cols-[minmax(0,1fr)_8rem_7rem] gap-4 border-b border-line bg-sunken px-6 py-3 text-xs font-medium text-ink-3 sm:grid"><span>Company</span><span>Created</span><span className="text-right">Status</span></div>
           <ul className="divide-y divide-line">
-            {data.map((r, i) => (
-              <li key={r.id} className="enter-rise" style={{ "--i": Math.min(i, 8) } as React.CSSProperties}>
-                <Link href={`${base}/reports/${r.id}`} className="group flex min-h-16 items-center gap-3 px-4 py-3 transition-colors hover:bg-[var(--inset)] sm:px-5 sm:py-4">
-                  <span className="grid size-10 shrink-0 place-items-center rounded-xl bg-accent-soft text-trail-strong"><FileText className="size-[18px]" aria-hidden /></span>
+            {data.map((r) => (
+              <li key={r.id}>
+                <Link href={`${base}/reports/${r.id}`} className="group grid min-h-24 grid-cols-[minmax(0,1fr)_auto] items-center gap-3 px-4 py-5 transition-colors hover:bg-[var(--inset)] sm:grid-cols-[minmax(0,1fr)_8rem_7rem] sm:gap-4 sm:px-6">
                   <div className="min-w-0 flex-1">
-                    <p className="truncate font-semibold text-ink group-hover:text-trail">{r.company_name || r.company_url}</p>
-                    <p className="truncate text-xs text-ink-3">{r.company_url} · {timeAgo(r.created_at)}</p>
+                    <p className="font-display text-lg font-semibold text-ink [overflow-wrap:anywhere] group-hover:underline">{r.company_name || r.company_url}</p>
+                    <p className="mt-1 text-xs text-ink-3 [overflow-wrap:anywhere]">{r.company_url}</p>
+                    <time dateTime={r.created_at} className="mt-2 block text-xs text-ink-3 sm:hidden">{timeAgo(r.created_at)}</time>
                   </div>
-                  <Badge tone={TONE[r.status]}>{LABEL(r.status)}</Badge>
+                  <time dateTime={r.created_at} className="hidden text-xs text-ink-3 sm:block">{timeAgo(r.created_at)}</time>
+                  <span className="justify-self-end"><Badge tone={TONE[r.status]}>{LABEL(r.status)}</Badge></span>
                 </Link>
               </li>
             ))}
           </ul>
-        </Card>
+        </section>
       )}
     </div>
   );
