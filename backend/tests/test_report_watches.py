@@ -1,33 +1,11 @@
 import uuid
 from datetime import timedelta
 
-import pytest
 from sqlalchemy import select
 
 from app.core.db import new_session
-from app.models import Report, ReportWatch
+from app.models import ReportWatch
 from app.services import fetcher, watch_worker
-from tests.test_watch_claims import report_fixture
-
-
-@pytest.fixture
-def watched(api):
-    user = api.signup()
-    ws = api.workspace()
-    fixture = report_fixture()
-    with new_session() as db:
-        report = Report(
-            workspace_id=ws,
-            company_url="https://example.com",
-            company_name="Example",
-            status="SUCCEEDED",
-            content=fixture.content,
-            sources=fixture.sources,
-        )
-        db.add(report)
-        db.commit()
-        rid = str(report.id)
-    return ws, rid, f"/api/workspaces/{ws}/reports/{rid}/watch", user["id"]
 
 
 def enable(api, path):

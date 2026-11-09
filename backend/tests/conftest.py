@@ -85,3 +85,26 @@ def other(app):
     a = Api(app)
     a.signup(email="intruder@example.com", name="Intruder")
     return a
+
+
+@pytest.fixture
+def watched(api):
+    from app.models import Report
+    from tests.test_watch_claims import report_fixture
+
+    user = api.signup()
+    workspace_id = api.workspace()
+    fixture = report_fixture()
+    with dbmod.new_session() as db:
+        report = Report(
+            workspace_id=workspace_id,
+            company_url="https://example.com",
+            company_name="Example",
+            status="SUCCEEDED",
+            content=fixture.content,
+            sources=fixture.sources,
+        )
+        db.add(report)
+        db.commit()
+        report_id = str(report.id)
+    return workspace_id, report_id, f"/api/workspaces/{workspace_id}/reports/{report_id}/watch", user["id"]
