@@ -1,4 +1,5 @@
 from concurrent.futures import ThreadPoolExecutor
+from copy import deepcopy
 from datetime import timedelta
 from threading import Event
 
@@ -6,7 +7,7 @@ from sqlalchemy import select
 
 from app.core.db import new_session, utcnow
 from app.models import Report, ReportWatch
-from app.services import fetcher, watch_worker
+from app.services import fetcher, watch_fetch, watch_worker
 from tests.test_report_watches import changed, enable
 
 
@@ -15,7 +16,7 @@ def test_disable_fences_late_publish_and_preserves_baseline(api, watched, monkey
     enable(api, path)
     changed(monkeypatch)
     claimed = watch_worker.claim_due()
-    evidence = watch_worker.collect(claimed)
+    evidence = watch_fetch.collect_sources(claimed.snapshots)
     assert api.get(path).json()["checking"]
     assert api.post(path, {"enabled": False}).status_code == 200
     assert watch_worker.publish(claimed, evidence) is False
@@ -40,7 +41,7 @@ def test_concurrent_claims_and_expired_lease_recovery_fence_old_worker(api, watc
         db.commit()
     recovered = watch_worker.claim_due()
     assert recovered.lease_token != old.lease_token
-    evidence = watch_worker.collect(recovered)
+    evidence = watch_fetch.collect_sources(recovered.snapshots)
     assert watch_worker.publish(old, evidence) is False
     assert watch_worker.publish(recovered, evidence)
     assert watch_worker.publish(recovered, evidence) is False
@@ -73,7 +74,7 @@ def test_report_refresh_never_rebinds_sources_and_requires_explicit_baseline_res
     config = enable(api, path)
     changed(monkeypatch)
     claimed = watch_worker.claim_due()
-    evidence = watch_worker.collect(claimed)
+    evidence = watch_fetch.collect_sources(claimed.snapshots)
     with new_session() as db:
         report = db.get(Report, rid)
         report.sources = [dict(source, url="https://new.example/pricing") for source in report.sources]
@@ -97,3 +98,23 @@ def test_report_refresh_never_rebinds_sources_and_requires_explicit_baseline_res
     with new_session() as db:
         watch = db.scalar(select(ReportWatch))
         assert watch.snapshots[0]["receipts"][0]["url"] == "https://new.example/pricing"
+
+
+def test_reconfiguring_claim_selection_fences_a_running_check(api, watched, monkeypatch):
+    _, rid, path, _ = watched
+    with new_session() as db:
+        report = db.get(Report, rid)
+        content = deepcopy(report.content)
+        content["snapshot"]["observed_pricing"].append(dict(content["snapshot"]["observed_pricing"][0]))
+        report.content = content
+        db.commit()
+    enable(api, path)
+    changed(monkeypatch)
+    claimed = watch_worker.claim_due()
+    evidence = watch_fetch.collect_sources(claimed.snapshots)
+    config = api.post(path, {"enabled": True, "claim_ids": ["snapshot.observed_pricing.1"]})
+    assert config.status_code == 200
+    assert watch_worker.publish(claimed, evidence) is False
+    assert api.get(path).json()["alerts"] == []
+    assert watch_worker.run_due()
+    assert api.get(path).json()["alerts"][0]["claim_id"] == "snapshot.observed_pricing.1"
