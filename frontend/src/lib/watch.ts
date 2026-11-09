@@ -6,12 +6,15 @@ export const watchAlertSchema = z.object({
   claim_text: z.string(), source_url: z.string(), source_title: z.string(),
   previous_excerpt: z.string(), current_excerpt: z.string(),
   checked_at: z.string(), acknowledged_at: z.string().nullable(), section: z.string(),
+  reason: z.string().default(""), recommendation_refs: z.array(z.string()).default([]),
+  previous_retrieved_at: z.string().nullable().optional(), current_retrieved_at: z.string().nullable().optional(),
 });
 export const watchSchema = z.object({
   enabled: z.boolean(), checking: z.boolean(),
+  overdue: z.boolean().default(false),
   last_checked_at: z.string().nullable(), next_check_at: z.string().nullable(),
   claim_ids: z.array(z.string()), alerts: z.array(watchAlertSchema),
-  claims: z.array(z.object({ id: z.string(), text: z.string(), source_ids: z.array(z.string()), section: z.string() })),
+  claims: z.array(z.object({ id: z.string(), text: z.string(), source_ids: z.array(z.string()), section: z.string(), obsolete: z.boolean().default(false) })),
 });
 export type WatchAlert = z.infer<typeof watchAlertSchema>;
 export const watchAlertLabels = {

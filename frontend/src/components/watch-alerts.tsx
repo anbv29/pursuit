@@ -11,9 +11,12 @@ import { Button, Notice } from "./ui";
 export function ReceiptChange({ alert }: { alert: WatchAlert }) {
   return <div className="space-y-3 text-sm">
     <p className="font-medium">{alert.claim_text}</p>
+    {alert.reason && <p className="text-ink-2">{alert.reason}</p>}
+    {alert.recommendation_refs.length > 0 && <p className="text-ink-2">Review the related recommendation: {alert.recommendation_refs.map(ref => ref.replace(/_/g, " ")).join(", ")}</p>}
     <p className="text-xs text-ink-3">Checked {new Date(alert.checked_at).toLocaleString()} · {alert.section.replace(/_/g, " ")}</p>
     <a href={/^https?:\/\//i.test(alert.source_url) ? alert.source_url : undefined} target="_blank" rel="noopener noreferrer" className="break-all text-trail underline">{alert.source_title || alert.source_url}</a>
     <details><summary className="cursor-pointer font-medium text-trail">Compare the receipts</summary>
+      <p className="mt-2 text-xs text-ink-3">Earlier receipt: {alert.previous_retrieved_at ? new Date(alert.previous_retrieved_at).toLocaleString() : "date not recorded"} · Latest retrieval: {alert.current_retrieved_at ? new Date(alert.current_retrieved_at).toLocaleString() : "not available"}</p>
       <div className="mt-3 grid gap-3 sm:grid-cols-2">
         <div><p className="mb-1 font-medium">Earlier evidence</p><blockquote className="whitespace-pre-wrap break-words border-l-2 border-line pl-3 text-ink-2">{alert.previous_excerpt || "No earlier excerpt recorded."}</blockquote></div>
         <div><p className="mb-1 font-medium">Latest check</p><blockquote className="whitespace-pre-wrap break-words border-l-2 border-line pl-3 text-ink-2">{alert.current_excerpt || "The source could not be read. This does not disprove the claim."}</blockquote></div>

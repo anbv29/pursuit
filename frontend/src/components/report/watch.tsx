@@ -22,7 +22,6 @@ function WatchEditor({ watch, path, owner, reload }: { watch: Watch; path: strin
     try { await api(`${path}/check`, { json: {} }); setError(null); await reload(); }
     catch (e) { setError(errorMessage(e)); }
   });
-  const overdue = watch.enabled && watch.next_check_at && new Date(watch.next_check_at).getTime() < Date.now();
   return <div className="mt-4 space-y-4">
     <div className="flex flex-wrap gap-x-5 gap-y-2 text-sm text-ink-2">
       <p>{watch.enabled ? "Watch enabled" : "Watch paused"}</p>
@@ -30,11 +29,11 @@ function WatchEditor({ watch, path, owner, reload }: { watch: Watch; path: strin
       {watch.enabled && <p>Next check: {watch.next_check_at ? date(watch.next_check_at) : "Queued"}</p>}
     </div>
     {watch.checking && <p role="status" className="text-sm text-trail">A source check is queued or running. You can leave this page.</p>}
-    {overdue && <Notice tone="flag">This check is overdue. Checks resume when the service is running.</Notice>}
+    {watch.overdue && <Notice tone="flag">This check is overdue. Checks resume when the service is running.</Notice>}
     {error && <Notice tone="bad">{error}</Notice>}
     {owner && <>
       {watch.claims.length ? <fieldset className="space-y-3">
-        <legend className="mb-3 text-sm font-medium">Choose up to 5 claims to watch</legend>
+        <legend className="mb-3 text-sm font-medium">Choose up to 5 claims across at most 4 sources</legend>
         {watch.claims.map(claim => <label key={claim.id} className="flex items-start gap-3 rounded-lg border border-line p-3 text-sm">
           <input type="checkbox" checked={selected.includes(claim.id)} disabled={!selected.includes(claim.id) && selected.length >= 5}
             onChange={e => setSelected(current => e.target.checked ? [...current, claim.id] : current.filter(id => id !== claim.id))} />
@@ -64,14 +63,15 @@ export function ReportWatch({ path, owner }: { path: string; owner: boolean }) {
   const parsed = watchSchema.safeParse(state.data);
   const checking = parsed.success && parsed.data.checking;
   const enabled = parsed.success && parsed.data.enabled;
+  const reload = state.reload;
   useEffect(() => {
     if (!enabled && !checking) return;
-    const timer = setInterval(() => void state.reload(), checking ? 4000 : 60000);
+    const timer = setInterval(() => void reload(), checking ? 4000 : 60000);
     return () => clearInterval(timer);
-  }, [enabled, checking, state.reload]);
+  }, [enabled, checking, reload]);
   return <section id="report-watch" aria-labelledby="report-watch-title" className="scroll-mt-24 rounded-xl border border-line bg-surface p-5 print:hidden">
-    <details open={enabled || checking || undefined}>
-    <summary className="cursor-pointer"><h2 id="report-watch-title" className="inline text-lg font-semibold">Watch the evidence behind this report</h2><span className="ml-2 text-xs text-ink-3">Optional</span></summary>
+    <details>
+    <summary className="cursor-pointer"><h2 id="report-watch-title" className="inline text-lg font-semibold">Watch the evidence behind this report</h2><span className="ml-2 text-xs text-ink-3">{checking ? "Checking" : enabled ? "Watching" : "Optional"}</span></summary>
     <p className="mt-2 text-sm text-ink-2">Get workspace alerts when cited evidence changes or becomes unavailable. A changed page needs review, it does not automatically disprove a claim.</p>
     <p className="mt-2 text-xs text-ink-3">Weekly checks run while the service is available. Free hosting can sleep and delay checks. This watch sends no emails and does not monitor sources continuously.</p>
     {state.error && <Notice tone="bad">{errorMessage(state.error)} <button type="button" className="underline" onClick={() => state.reload()}>Try again</button></Notice>}
