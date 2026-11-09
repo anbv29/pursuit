@@ -19,6 +19,7 @@ import { ReportVersions } from "@/components/report/versions";
 import { ReportProspects } from "@/components/report/prospects";
 import { ReportSharing } from "@/components/report/sharing";
 import { ReportExport } from "@/components/report/export";
+import { ReportWatch } from "@/components/report/watch";
 import { useFeedback } from "@/components/feedback";
 import { useWorkspace } from "@/components/shell";
 import { ProcessingFeed, type FeedStep, Elapsed } from "@/components/processing-feed";
@@ -241,6 +242,7 @@ export default function ReportPage() {
           </Notice>
           <FounderRealitySummary value={r.inputs.founder_reality ?? {}} />
           <Summary c={c} />
+          <ReportWatch path={reportPath} owner={workspace.role === "owner"} />
           <GTMSection report={r} editor={workspace.role === "owner" ? { path: reportPath, refresh: reload } : undefined} />
           <ResearchData measurements={r.content.measurements} sources={r.sources} />
           {workspace.role === "owner" && <ReportSharing path={reportPath} />}
