@@ -180,43 +180,43 @@
 }
 :root[data-theme="dark"] {
   color-scheme: dark;
-  --chrome: #1b251f;
-  --sidebar-surface: #19231d;
-  --primary-ink: #18271e;
-  --bg: #151c19;
-  --ink: #e5eae3;
-  --muted: #a3b0a4;
-  --glass-1: #1e2823;
-  --glass-2: #1e2823;
-  --glass-border: #35443a;
+  --chrome: #161616;
+  --sidebar-surface: #171717;
+  --primary-ink: #111111;
+  --bg: #111111;
+  --ink: #f5f5f5;
+  --muted: #aaaaaa;
+  --glass-1: #1c1c1c;
+  --glass-2: #1c1c1c;
+  --glass-border: #383838;
   --shadow: rgba(0, 0, 0, 0.22);
-  --orb-1: #1c3a35;
-  --orb-2: #22252a;
-  --orb-3: #1e3330;
-  --accent: #9dbca6;
-  --accent-ink: #18271e;
-  --inset: rgba(157, 188, 166, 0.08);
-  --accent-strong: #9dbca6;
-  --accent-soft: #2c3f32;
-  --ink-soft: #bcc7bc;
-  --surface-solid: #1e2823;
-  --surface-sunken: #26332b;
-  --hairline: #35443a;
-  --hairline-strong: #7f9485;
-  --success: #91bba2;
-  --success-soft: #263e30;
-  --warning: #d0b181;
-  --warning-soft: #3b3326;
-  --danger: #d49aa5;
-  --danger-soft: #402e35;
-  --demo: #b7adc8;
-  --demo-soft: #352e42;
-  --focus-ring: #9dbca6;
+  --orb-1: #222222;
+  --orb-2: #262626;
+  --orb-3: #202020;
+  --accent: #ededed;
+  --accent-ink: #111111;
+  --inset: rgba(255, 255, 255, 0.06);
+  --accent-strong: #ededed;
+  --accent-soft: #303030;
+  --ink-soft: #c7c7c7;
+  --surface-solid: #1c1c1c;
+  --surface-sunken: #242424;
+  --hairline: #383838;
+  --hairline-strong: #808080;
+  --success: #dddddd;
+  --success-soft: #303030;
+  --warning: #cccccc;
+  --warning-soft: #2c2c2c;
+  --danger: #ffffff;
+  --danger-soft: #333333;
+  --demo: #bbbbbb;
+  --demo-soft: #292929;
+  --focus-ring: #ededed;
   --scrim: rgba(0, 0, 0, 0.32);
   --orb-opacity: 0;
   --specular: 0.1;
   --shimmer: rgba(255, 255, 255, 0.06);
-  --trail-strong: #b9d0bd;
+  --trail-strong: #ffffff;
 }
 
 @theme inline {
@@ -601,7 +601,7 @@ h2, h3, h4 { letter-spacing: -0.025em; }
 }
 .plan-card-featured {
   border-color: color-mix(in srgb, var(--accent) 45%, var(--line));
-  box-shadow: 0 1px 2px rgba(22, 19, 14, 0.06), 0 12px 32px rgba(22, 19, 14, 0.08);
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.06), 0 12px 32px rgba(0, 0, 0, 0.08);
 }
 .plan-name { font-size: 15px; font-weight: 600; }
 .plan-price { font-variation-settings: normal; font-family: var(--font-interface), sans-serif; font-size: 26px; letter-spacing: -0.02em; }
