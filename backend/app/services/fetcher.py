@@ -168,7 +168,7 @@ def fetch(url: str, client: httpx.Client | None = None, *, deadline: float | Non
                 if ctype not in ALLOWED_TYPES:
                     raise FetchError("Only HTML or plain-text pages can be imported.")
                 body = b""
-                for chunk in r.iter_bytes(chunk_size=65536):
+                for chunk in r.iter_bytes(chunk_size=None if deadline is not None else 65536):
                     if deadline is not None and time.monotonic() >= deadline:
                         raise FetchError("The source check reached its time limit.")
                     body += chunk

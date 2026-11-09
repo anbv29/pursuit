@@ -3,7 +3,7 @@ from datetime import timedelta
 from sqlalchemy import select
 
 from app.core.db import utcnow
-from app.core.errors import AppError, NotFound
+from app.core.errors import AppError, Conflict, NotFound
 from app.models import Report, ReportWatch, WatchAlert
 from app.services.watch_claims import MAX_SOURCES, claims_for
 
@@ -82,6 +82,16 @@ def configure(db, report, body):
         if report.status != "SUCCEEDED" or not ids or not set(ids) <= available.keys():
             raise AppError("Choose cited claims from a completed report.")
         previous = {claim["id"]: claim for claim in watch.snapshots}
+        if body.reset_baseline:
+            previous = {}
+        if any(
+            cid in previous and previous[cid]["fingerprint"] != available[cid]["fingerprint"] for cid in ids
+        ):
+            raise Conflict(
+                "A selected claim changed after the report was refreshed. "
+                "Review the current report and explicitly reset its watch baseline.",
+                code="watch_obsolete",
+            )
         snapshots = [previous.get(cid, available[cid]) for cid in ids]
         if len({r["url"] for c in snapshots for r in c["receipts"]}) > MAX_SOURCES:
             raise AppError(f"Choose claims citing at most {MAX_SOURCES} distinct sources.")
