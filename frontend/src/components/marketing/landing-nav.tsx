@@ -51,7 +51,7 @@ export function HeroCta() {
 export function MobileCtaDock() {
   const { user } = useSession();
   return (
-    <div className={`cta-dock ${styles.dock}`}>
+    <div className={`cta-dock sm:mx-2 ${styles.dock}`}>
       <Link href={user ? "/w" : "/signup"} className={`${buttonStyles("primary", "lg")} w-full`}>
         Analyze a company
       </Link>
