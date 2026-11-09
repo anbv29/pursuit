@@ -34,8 +34,8 @@ export function ReportSharing({ path }: { path: string }) {
         try { await navigator.clipboard.writeText(url); setCopied(true); setError(null); }
         catch { setError("Copy was unavailable. Select the link above and copy it manually."); }
       }}>{copied ? "Link copied" : "Copy public link"}</Button>}
-      {shares.data?.map((share) => <div key={share.id} className="flex items-center justify-between gap-2 text-sm">
-        <p>{share.revoked_at ? "Revoked" : `Expires ${new Date(share.expires_at).toLocaleString()}`}</p>
+      {shares.data?.map((share) => <div key={share.id} className="flex flex-wrap items-center justify-between gap-2 text-sm">
+        <p className="min-w-0">{share.revoked_at ? "Revoked" : `Expires ${new Date(share.expires_at).toLocaleString()}`}</p>
         {!share.revoked_at && <Button size="sm" variant="secondary" loading={revoke.pending} onClick={() => revoke.run(share.id)}>Revoke link</Button>}
       </div>)}
       {(error || shares.error) && <Notice tone="bad">{error ?? shares.error?.message}</Notice>}

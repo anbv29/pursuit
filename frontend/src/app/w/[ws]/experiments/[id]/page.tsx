@@ -59,7 +59,7 @@ function ExperimentPage() {
   }, [reload]);
 
   if (error) return <Empty title="Experiment not found" body="It may have been deleted, or it belongs to a workspace you can't access." />;
-  if (!exp) return <div className="space-y-4"><Skeleton className="h-10 w-80" /><Skeleton className="h-28" /><Skeleton className="h-64" /></div>;
+  if (!exp) return <div className="space-y-4"><Skeleton className="h-10 w-80 max-w-full" /><Skeleton className="h-28" /><Skeleton className="h-64" /></div>;
 
   const tabs = tabsFor(exp.use_case);
   const active = tabs.find((t) => t.id === search.get("tab")) ?? tabs[0];
@@ -81,13 +81,13 @@ function ExperimentPage() {
     <ExperimentContext.Provider key={exp.id} value={{ exp, path, reload, version, touch }}>
       <div className="mx-auto max-w-7xl space-y-5">
         <div className="flex flex-wrap items-start justify-between gap-3">
-          <div>
-            <div className="flex items-center gap-2">
+          <div className="min-w-0 flex-1 basis-64">
+            <div className="flex flex-wrap items-center gap-2">
               <Badge tone="trail">{USE_CASE_LABEL[exp.use_case]}</Badge>
               {exp.is_demo && <DemoBadge />}
               {exp.archived_at && <Badge tone="muted">Archived</Badge>}
             </div>
-            <h1 className="mt-1.5 text-2xl font-semibold tracking-tight">{exp.title}</h1>
+            <h1 className="mt-1.5 text-2xl font-semibold tracking-tight [overflow-wrap:anywhere]">{exp.title}</h1>
           </div>
           {!exp.archived_at && <Button variant="ghost" size="sm" onClick={archive}><Archive className="size-3.5" /> Archive</Button>}
         </div>

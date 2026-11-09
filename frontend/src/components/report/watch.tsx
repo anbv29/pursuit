@@ -37,9 +37,9 @@ function WatchEditor({ watch, path, owner, reload }: { watch: Watch; path: strin
       {watch.claims.length ? <fieldset className="space-y-3">
         <legend className="mb-3 text-sm font-medium">Choose up to 5 claims across at most 4 sources</legend>
         {watch.claims.map(claim => <label key={claim.id} className="flex items-start gap-3 rounded-lg border border-line p-3 text-sm">
-          <input type="checkbox" checked={selected.includes(claim.id)} disabled={!selected.includes(claim.id) && selected.length >= 5}
+          <input type="checkbox" className="mt-1 shrink-0" checked={selected.includes(claim.id)} disabled={!selected.includes(claim.id) && selected.length >= 5}
             onChange={e => setSelected(current => e.target.checked ? [...current, claim.id] : current.filter(id => id !== claim.id))} />
-          <span>{claim.text}<span className="mt-1 block text-xs text-ink-3">{claim.section.replace(/_/g, " ")} · {claim.source_ids.join(", ")}{claim.obsolete && " · Earlier watch needs review"}</span></span>
+          <span className="min-w-0 [overflow-wrap:anywhere]">{claim.text}<span className="mt-1 block text-xs text-ink-3">{claim.section.replace(/_/g, " ")} · {claim.source_ids.join(", ")}{claim.obsolete && " · Earlier watch needs review"}</span></span>
         </label>)}
       </fieldset> : <p className="text-sm text-ink-3">No source-linked claims are available to watch. Refresh this report with usable receipts first.</p>}
       <div className="flex flex-wrap gap-2">
