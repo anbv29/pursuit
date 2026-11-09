@@ -314,6 +314,25 @@ h1, h2, h3 { text-wrap: balance; }
   .glass-chrome { border-radius: 0; }
 }
 .glass-sheen, .backdrop-orbs { display: none; }
+.workspace-sidebar {
+  --sidebar-surface: #171717;
+  --surface-solid: #242424;
+  --surface: #242424;
+  --ink: #f5f5f5;
+  --ink-soft: #cccccc;
+  --ink-2: #cccccc;
+  --muted: #aaaaaa;
+  --ink-3: #aaaaaa;
+  --accent: #f5f5f5;
+  --accent-strong: #f5f5f5;
+  --accent-ink: #171717;
+  --primary-ink: #171717;
+  --hairline: #383838;
+  --line: #383838;
+  --line-strong: #777777;
+  --focus-ring: #ffffff;
+  --inset: rgba(255, 255, 255, 0.07);
+}
 .workspace-sidebar, .workspace-sidebar > .glass { background: var(--sidebar-surface); }
 .workspace-header, .workspace-header > .glass { background: var(--chrome); }
 .workspace-sidebar > .glass, .workspace-header > .glass { box-shadow: none; }

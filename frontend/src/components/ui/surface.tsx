@@ -65,7 +65,6 @@ export function PageHeader({ title, description, action, eyebrow }: {
   return (
     <div className="flex flex-wrap items-start justify-between gap-5 border-b border-line pb-6">
       <div className="min-w-0 flex-1 basis-48 break-words">
-        
         <h1 className="font-display text-[24px] font-semibold leading-tight tracking-tight text-ink sm:text-[28px]">{title}</h1>
         {description && <p className="mt-2 max-w-2xl text-sm leading-relaxed text-ink-3">{description}</p>}
         {eyebrow && <p className="mt-2 text-xs text-ink-3">{eyebrow}</p>}

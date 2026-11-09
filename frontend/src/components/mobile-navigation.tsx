@@ -32,7 +32,7 @@ export function MobileNavigation({ tabs, menuItems, accountItems, accountName, n
         })}
         <Link href={newHref} aria-label={newLabel}
           className="flex flex-col items-center gap-1 pb-0.5 text-[11px] font-semibold text-ink">
-          <span className="press grid size-12 -translate-y-3 place-items-center rounded-full bg-accent text-[var(--primary-ink)]">
+          <span className="press grid size-12 -translate-y-2 place-items-center rounded-xl bg-accent text-[var(--primary-ink)]">
             <Plus size={22} aria-hidden="true" />
           </span>
         </Link>
@@ -59,7 +59,7 @@ export function MobileNavigation({ tabs, menuItems, accountItems, accountName, n
         {switcher && <div className="pb-2">{switcher}</div>}
         {menuItems.map(item => <Link key={item.href} href={item.href} onClick={() => setOpen(false)}
           aria-current={isActive(item) ? "page" : undefined}
-          className={cx("flex min-h-14 items-center gap-3 rounded-xl border border-line px-4 py-3 text-sm",
+          className={cx("flex min-h-14 items-center gap-3 rounded-lg border border-line px-4 py-3 text-sm",
             isActive(item) ? "bg-trail-soft font-semibold text-trail-strong" : "bg-surface text-ink")}>
           <item.icon size={20} aria-hidden="true" /><span className="min-w-0 flex-1">{item.label}</span>
           {!!item.count && <span className="rounded-full bg-trail-soft px-2 py-0.5 text-xs font-semibold">{item.count} waiting</span>}
@@ -74,7 +74,7 @@ export function MobileNavigation({ tabs, menuItems, accountItems, accountName, n
           <div className="space-y-2">
             {accountItems.map((item) => (
               <button key={item.label} type="button" onClick={() => { setOpen(false); item.onSelect(); }}
-                className={cx("flex min-h-14 w-full items-center gap-3 rounded-xl border border-line bg-surface px-4 py-3 text-left text-sm",
+                className={cx("flex min-h-14 w-full items-center gap-3 rounded-lg border border-line bg-surface px-4 py-3 text-left text-sm",
                   item.danger ? "text-danger" : "text-ink")}>
                 <item.icon size={20} aria-hidden="true" />
                 <span className="min-w-0 flex-1">{item.label}</span>
