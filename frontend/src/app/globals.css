@@ -288,10 +288,11 @@ h2, h3, h4, button, input, select, label, nav, .tabular-nums {
 }
 h2, h3, h4 { letter-spacing: -0.025em; }
 h1, h2, h3 { text-wrap: balance; }
-.app-shell :is(h2, h3, h4), .font-ui {
-  font-family: var(--font-interface), system-ui, sans-serif;
+.app-shell :is(h2, h3, h4) {
+  font-family: var(--font-editorial), var(--font-interface), sans-serif;
   font-weight: 600;
 }
+.font-ui { font-family: var(--font-interface), system-ui, sans-serif; }
 .tabular-nums { font-weight: 600; }
 .app-shell h1 { font-size: clamp(1.8rem, 2.5vw, 2.4rem); line-height: 1.15; }
 
