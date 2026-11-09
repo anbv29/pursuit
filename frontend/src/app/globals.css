@@ -302,14 +302,16 @@ h2, h3, h4 { letter-spacing: -0.025em; }
   .hover-lift:hover { transform: none; }
 }
 
-.glass, .surface {
-  background: var(--surface-solid);
-  border: 1px solid var(--hairline);
-  box-shadow: 0 2px 4px -3px var(--shadow), 0 12px 28px -22px var(--shadow);
+@layer components {
+  .glass, .surface {
+    background: var(--surface-solid);
+    border: 1px solid var(--hairline);
+    box-shadow: 0 2px 4px -3px var(--shadow), 0 12px 28px -22px var(--shadow);
+  }
+  .glass { position: relative; border-radius: var(--panel-radius-xl); }
+  .glass-dense { border-radius: var(--panel-radius-md); }
+  .glass-chrome { border-radius: 0; }
 }
-.glass { position: relative; border-radius: var(--panel-radius-xl); }
-.glass-dense { border-radius: var(--panel-radius-md); }
-.glass-chrome { border-radius: 0; }
 .glass-sheen, .backdrop-orbs { display: none; }
 .workspace-sidebar, .workspace-sidebar > .glass { background: var(--sidebar-surface); }
 .workspace-header, .workspace-header > .glass { background: var(--chrome); }
