@@ -80,6 +80,11 @@ for (const width of [320, 820, 1440]) {
       await contained(page, route);
       await controlsFit(page.locator("main button, main input, main select"));
       if (route === "") {
+        const chrome = await page.locator(".workspace-header > div").evaluate(node => {
+          const style = getComputedStyle(node);
+          return { radius: style.borderTopLeftRadius, border: style.borderTopWidth, shadow: style.boxShadow, padding: style.paddingLeft };
+        });
+        expect(chrome).toEqual({ radius: "0px", border: "0px", shadow: "none", padding: "0px" });
         const tops = await page.getByRole("list", { name: "Workspace summary" }).locator("li > :last-child")
           .evaluateAll(nodes => nodes.map(node => node.getBoundingClientRect().top));
         expect(Math.max(...tops) - Math.min(...tops), "Summary values share a baseline").toBeLessThanOrEqual(1);

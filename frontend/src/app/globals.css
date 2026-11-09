@@ -532,9 +532,9 @@ h2, h3, h4 { letter-spacing: -0.025em; }
 .mobile-navigation-sheet button[aria-label="Close"] { width: 44px; height: 44px; }
 @media (max-width: 767px) {
   .workspace-header { padding-top: max(12px, env(safe-area-inset-top)); }
-  .workspace-header button, .workspace-header a[aria-label^="Approvals"] { min-width: 44px; min-height: 44px; }
+  .workspace-header button, .workspace-header a[aria-label^="Inbox"] { min-width: 44px; min-height: 44px; }
   .workspace-header select, .reading-controls select { font-size: 16px; min-height: 44px; }
-  .workspace-header > div:first-child { padding-inline: 8px; gap: 2px; }
+  .workspace-header > div:first-child { gap: 2px; }
   .workspace-content { scroll-padding-bottom: calc(6rem + env(safe-area-inset-bottom)); }
   .workspace-content :where(h1, h2, h3, h4, p, dd, li, a) { overflow-wrap: anywhere; }
   :where(input:not([type="checkbox"]):not([type="radio"]), textarea, select) { font-size: 16px; }

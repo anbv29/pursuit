@@ -238,7 +238,7 @@ export default function Dashboard() {
       {!experimentsOnly && data.recent_outcomes.length > 0 && (
         <Card className="border border-line bg-surface shadow-none">
           <CardHeader title="Recently recorded outcomes" description="Only events actually recorded in Pursuit. Demo events are labelled." />
-          <ul className="grid sm:grid-cols-2 lg:grid-cols-4">
+          <ul className="grid grid-cols-[repeat(auto-fit,minmax(min(100%,14rem),1fr))]">
             {data.recent_outcomes.map((o) => (
               <li key={o.id} className="border-b border-line px-5 py-3.5 sm:border-r">
                 <p className="text-sm font-semibold capitalize text-ink">{o.kind.replace(/_/g, " ")}</p>
