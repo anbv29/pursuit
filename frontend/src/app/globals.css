@@ -262,6 +262,7 @@
 
 /* ---- base ------------------------------------------------------------------ */
 html {
+  accent-color: var(--accent-strong);
   background: var(--bg);
   transition: background-color var(--dur-slow) var(--ease-out);
   -webkit-text-size-adjust: 100%;
