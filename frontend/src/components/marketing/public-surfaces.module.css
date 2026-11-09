@@ -1,0 +1,37 @@
+.auth {
+  position: relative; isolation: isolate; display: flex; min-height: 100vh;
+  flex-direction: column; align-items: center; justify-content: center;
+  padding: 48px 16px; background: var(--bg);
+}
+.auth > :is(div, p) { width: 100%; max-width: 28rem; }
+.auth .formSheet {
+  padding: 32px; border: 1px solid var(--line-strong);
+  border-top: 4px solid var(--ink); border-radius: 12px;
+  background: var(--surface); box-shadow: none;
+}
+.auth h1, .utility h1, .document h1 {
+  font-family: var(--font-editorial), sans-serif;
+  font-size: 36px; line-height: 1.08; letter-spacing: -.04em;
+}
+.auth .signupNote { padding: 16px 0; border-block: 1px solid var(--line); border-radius: 0; background: transparent; }
+.auth input, .utility input { border-radius: 8px; }
+.auth button[type="submit"] { border-radius: 8px; }
+.utility { width: 100%; max-width: 42rem; margin-inline: auto; padding: 56px 24px; }
+.utility > div:first-child { padding-bottom: 24px; border-bottom: 2px solid var(--ink); }
+.utility .utilitySheet { padding: 28px; border-radius: 12px; box-shadow: none; }
+.utility .choice { border-radius: 8px; box-shadow: none; }
+.utility .choiceMark { border-radius: 50%; background: var(--ink); color: var(--bg); }
+.document { max-width: 60rem; margin-inline: auto; padding: 56px 24px 80px; overflow-wrap: anywhere; }
+.document > header { padding-block: 0 32px; margin-bottom: 32px; border-bottom: 2px solid var(--ink); }
+.document > header p { max-width: 45rem; line-height: 1.8; }
+.document > section { border: 0; border-top: 1px solid var(--line); border-radius: 0; padding: 28px 0; background: transparent; box-shadow: none; }
+.document > section h2 { font-family: var(--font-editorial), sans-serif; font-size: 24px; letter-spacing: -.03em; }
+.document .documentCta { padding-block: 28px; }
+@media (max-width: 639px) {
+  .auth { padding-block: 32px; }
+  .auth .formSheet { padding: 24px; }
+  .auth h1, .utility h1, .document h1 { font-size: 30px; }
+  .utility { padding: 40px 16px; }
+  .utility .utilitySheet { padding: 24px 20px; }
+  .document { padding: 40px 16px 64px; }
+}

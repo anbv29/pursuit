@@ -8,6 +8,7 @@ import { useFeedback } from "@/components/feedback";
 import { RequireAuth, useSession } from "@/components/session";
 import { Button, Field, Glass, Input, PasswordInput } from "@/components/ui";
 import { api, errorMessage } from "@/lib/api";
+import styles from "@/components/marketing/public-surfaces.module.css";
 
 function AccountSecurity() {
   const { user, logout } = useSession();
@@ -38,11 +39,11 @@ function AccountSecurity() {
 
   return <>
     <LandingNav />
-    <main className="mx-auto max-w-xl space-y-6 px-4 py-12">
+    <main className={`${styles.utility} space-y-6`}>
       <div><Link href="/w" className="text-sm text-trail hover:underline">Back to workspace</Link>
         <h1 className="mt-4 font-display text-3xl font-bold">Account security</h1>
         <p className="mt-2 break-words text-ink-3">Signed in as {user?.email}</p></div>
-      <Glass className="space-y-5 p-6">
+      <Glass className={`${styles.utilitySheet} space-y-5`}>
         <h2 className="font-display text-xl font-bold">Change your password</h2>
         <p className="text-sm text-ink-3">Use at least 8 characters. Changing your password signs out every device.</p>
         <form onSubmit={(e) => void submit(e, false)} className="space-y-4">
@@ -51,7 +52,7 @@ function AccountSecurity() {
           <Button type="submit" disabled={pending}>{pending ? "Working…" : "Change password"}</Button>
         </form>
       </Glass>
-      <Glass className="space-y-5 p-6">
+      <Glass className={`${styles.utilitySheet} space-y-5`}>
         <h2 className="font-display text-xl font-bold">Delete your account</h2>
         <p className="text-sm text-ink-3">First export and delete workspaces you own in workspace settings. Any historical subscription must be cancelled with its provider before workspace deletion. Records belonging to shared workspaces are retained there.</p>
         <form onSubmit={(e) => void submit(e, true)} className="space-y-4">

@@ -6,6 +6,7 @@ import { Claims, Section, SourcesProvider } from "@/components/report/parts";
 import { SourceReceipt } from "@/components/report/gtm";
 import { buttonStyles } from "@/components/ui";
 import { publicSample as sample } from "@/lib/public-sample";
+import styles from "@/components/marketing/public-surfaces.module.css";
 
 export const metadata: Metadata = {
   title: "Cal.com research brief, with receipts",
@@ -15,7 +16,7 @@ export const metadata: Metadata = {
 export default function SampleReport() {
   return <div className="marketing-page min-h-screen">
     <LandingNav />
-    <main className="mx-auto max-w-4xl space-y-6 px-4 py-12 sm:px-6">
+    <main className={`${styles.document} space-y-6`}>
       <header className="space-y-4">
         <p className="text-sm font-semibold text-trail">Every claim has a receipt, or an explicit uncertainty label.</p>
         <h1 className="font-display text-3xl font-semibold sm:text-4xl">{sample.company}: {sample.title}</h1>
@@ -37,7 +38,7 @@ export default function SampleReport() {
           {sample.sources.map(source => <SourceReceipt key={source.id} source={source} />)}
         </Section>
       </SourcesProvider>
-      <div className="space-y-3 border-t border-line pt-6 print:hidden">
+      <div className={`${styles.documentCta} space-y-3 border-t border-line print:hidden`}>
         <p className="text-ink-2">Bring your own product. Keep the sources, uncertainty and next tests together.</p>
         <Link href="/signup" className={buttonStyles("primary")}>Research your product</Link>
       </div>
