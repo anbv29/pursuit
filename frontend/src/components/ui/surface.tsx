@@ -6,17 +6,17 @@ import { cx } from "./styles";
 
 /** Calm, readable surface for content. No backdrop blur (cheap, legible over anything). */
 export function Card({ className, children, as: As = "section" }: { className?: string; children: ReactNode; as?: "section" | "div" | "article" }) {
-  return <As className={cx("surface rounded-[var(--panel-radius-lg)]", className)}>{children}</As>;
+  return <As className={cx("surface min-w-0 rounded-[var(--panel-radius-lg)]", className)}>{children}</As>;
 }
 
 export function CardHeader({ title, description, action }: { title: ReactNode; description?: ReactNode; action?: ReactNode }) {
   return (
     <div className="flex flex-wrap items-start justify-between gap-4 border-b border-line px-5 py-4">
-      <div className="min-w-0 flex-1 basis-48">
+      <div className="min-w-0 flex-1 basis-48 break-words">
         <h2 className="text-[15px] font-semibold text-ink">{title}</h2>
         {description && <p className="mt-0.5 text-[13px] text-ink-3">{description}</p>}
       </div>
-      {action}
+      {action && <div className="flex min-w-0 max-w-full flex-wrap items-center gap-2">{action}</div>}
     </div>
   );
 }
@@ -29,13 +29,13 @@ export function Glass({ className, children, dense, as: As = "div", ...rest }: H
 
 export function Empty({ icon, title, body, action }: { icon?: ReactNode; title: string; body: string; action?: ReactNode }) {
   return (
-    <div className="flex flex-col items-center px-6 py-12 text-center">
+    <div className="flex min-w-0 flex-col items-center break-words px-6 py-12 text-center">
       <div className="mb-4 grid size-12 place-items-center rounded-2xl bg-accent-soft text-trail-strong ring-1 ring-[var(--glass-border)]">
         {icon ?? <Sparkles className="size-5" aria-hidden />}
       </div>
       <p className="font-ui text-base font-medium text-ink">{title}</p>
       <p className="mt-1.5 max-w-sm text-[13.5px] leading-relaxed text-ink-3">{body}</p>
-      {action && <div className="mt-5">{action}</div>}
+      {action && <div className="mt-5 max-w-full">{action}</div>}
     </div>
   );
 }
@@ -64,12 +64,12 @@ export function PageHeader({ title, description, action, eyebrow }: {
 }) {
   return (
     <div className="flex flex-wrap items-start justify-between gap-4">
-      <div className="min-w-0 flex-1 basis-48">
+      <div className="min-w-0 flex-1 basis-48 break-words">
         {eyebrow && <p className="mb-1 text-[13px] font-medium text-trail">{eyebrow}</p>}
         <h1 className="font-display text-[24px] font-semibold leading-tight tracking-tight text-ink sm:text-[28px]">{title}</h1>
         {description && <p className="mt-1.5 max-w-2xl text-[14.5px] text-ink-3">{description}</p>}
       </div>
-      {action && <div className="flex max-w-full flex-wrap items-center gap-2">{action}</div>}
+      {action && <div className="flex min-w-0 max-w-full flex-wrap items-center gap-2">{action}</div>}
     </div>
   );
 }

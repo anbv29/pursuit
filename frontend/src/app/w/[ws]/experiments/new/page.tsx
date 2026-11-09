@@ -194,12 +194,12 @@ function NewExperiment() {
             )}
 
             {/* Sticky footer: Back / Continue (Review swaps Continue for Create) */}
-            <div className="sticky bottom-20 mt-6 flex items-center justify-between gap-3 border-t border-line pt-4 sm:static lg:bottom-4">
+            <div className="sticky bottom-20 mt-6 flex flex-wrap items-center justify-between gap-3 border-t border-line pt-4 sm:static lg:bottom-4">
               <Button variant="ghost" disabled={step === 0} onClick={() => setStep(Math.max(step - 1, 0))}>Back</Button>
               {step < 4 ? (
                 <Button onClick={() => advance(step)} className="shimmer-btn">Continue <ArrowRight className="size-4" aria-hidden /></Button>
               ) : (
-                <Button type="submit" loading={create.pending} onClick={() => void create.run()} className="shimmer-btn">Create experiment</Button>
+                <Button type="submit" loading={create.pending} onClick={() => void create.run()} className="ml-auto shimmer-btn">Create experiment</Button>
               )}
             </div>
           </Card>

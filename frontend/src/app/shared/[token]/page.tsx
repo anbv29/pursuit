@@ -16,11 +16,11 @@ import { Competitors, PositioningPricing, Messaging, Prospecting, FunnelRisks, R
 function SharedReport() {
   const { token } = useParams<{ token: string }>();
   const report = useApi<{ company_name: string; content: ReportContent; sources: ReportSource[]; expires_at: string }>(`/shared-reports/${token}`);
-  if (report.error) return <Empty title="This report link is unavailable" body="It may have expired or been revoked. Ask its owner for a new link." />;
-  if (!report.data) return <Skeleton className="mx-auto mt-12 h-64 max-w-4xl" />;
+  if (report.error) return <main className="mx-auto max-w-5xl px-4 py-8 sm:px-6"><Empty title="This report link is unavailable" body="It may have expired or been revoked. Ask its owner for a new link." /></main>;
+  if (!report.data) return <main className="mx-auto max-w-5xl px-4 py-8 sm:px-6"><Skeleton className="h-64" /></main>;
   const r = report.data, c = plainCopy(r.content);
-  return <main className="mx-auto max-w-5xl space-y-6 px-4 py-8">
-    <h1 className="text-2xl font-semibold">{r.company_name} · shared report</h1>
+  return <main className="mx-auto max-w-5xl space-y-6 px-4 py-8 sm:px-6">
+    <h1 className="break-words text-2xl font-semibold">{r.company_name} · shared report</h1>
     <p className="text-sm text-ink-3">Read-only snapshot · link expires {new Date(r.expires_at).toLocaleString()}</p>
     <ReportExport path={`/shared-reports/${token}`} />
     <ReadingControls />

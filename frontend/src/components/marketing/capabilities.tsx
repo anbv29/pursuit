@@ -39,7 +39,7 @@ export function Questions() {
     ["Will it remember what I tested?", "Save learning on your report and track its recommended experiments. Follow-up answers use saved observations and results. Refreshes can include that context while preserving earlier report versions."],
     ["Can I take the research with me?", "Download reports as PDFs or Markdown files you can import into Notion. Exports retain source receipts and uncertainty labels. Public share links open without an account."],
   ];
-  return <section aria-labelledby="questions-h" className="mx-auto max-w-3xl pb-24">
+  return <section aria-labelledby="questions-h" className="max-w-3xl pb-24">
     <h2 id="questions-h" className="mb-6 font-display text-3xl font-bold tracking-tight">Before you start</h2>
     {answers.map(([q, a]) => <details key={q} className="group border-t border-line py-5">
       <summary className="cursor-pointer font-semibold text-ink">{q}</summary>

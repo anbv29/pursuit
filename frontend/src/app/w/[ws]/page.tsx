@@ -112,7 +112,7 @@ export default function Dashboard() {
       {!experimentsOnly && <ul aria-label="Workspace summary" className="grid grid-cols-3 divide-x divide-line rounded-2xl border border-line bg-surface py-4">
         {stats.map((s) => (
           <li key={s.label} className="flex min-w-0 flex-col gap-1 px-4 sm:px-5">
-            <span className="flex items-center gap-2 text-xs text-ink-3"><s.icon className="hidden size-3.5 shrink-0 sm:block" aria-hidden />{s.label}</span>
+            <span className="flex flex-1 items-start gap-2 text-xs text-ink-3"><s.icon className="hidden size-3.5 shrink-0 sm:block" aria-hidden />{s.label}</span>
             <NumberTicker value={s.value} className="text-2xl font-semibold tabular-nums tracking-tight text-ink" />
           </li>
         ))}
@@ -238,7 +238,7 @@ export default function Dashboard() {
       {!experimentsOnly && data.recent_outcomes.length > 0 && (
         <Card className="border border-line bg-surface shadow-none">
           <CardHeader title="Recently recorded outcomes" description="Only events actually recorded in Pursuit. Demo events are labelled." />
-          <ul className="grid sm:grid-cols-2 lg:grid-cols-4">
+          <ul className="grid grid-cols-[repeat(auto-fit,minmax(min(100%,14rem),1fr))]">
             {data.recent_outcomes.map((o) => (
               <li key={o.id} className="border-b border-line px-5 py-3.5 sm:border-r">
                 <p className="text-sm font-semibold capitalize text-ink">{o.kind.replace(/_/g, " ")}</p>

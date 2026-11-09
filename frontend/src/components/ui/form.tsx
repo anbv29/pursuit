@@ -11,7 +11,7 @@ export function Field({ label, hint, error, children }: {
   const id = useId();
   const desc = error ? `${id}-err` : hint ? `${id}-hint` : undefined;
   return (
-    <div className="space-y-1.5">
+    <div className="min-w-0 space-y-1.5 break-words">
       <label htmlFor={id} className="block text-[13px] font-medium text-ink-2">{label}</label>
       {children(id, desc)}
       {error ? <p id={desc} role="alert" className="text-xs font-medium text-danger">{error}</p>
@@ -21,7 +21,7 @@ export function Field({ label, hint, error, children }: {
 }
 
 const FIELD = cx(
-  "w-full rounded-xl border border-line-strong bg-surface px-3 text-sm text-ink placeholder:text-ink-3 shadow-xs",
+  "min-w-0 w-full rounded-xl border border-line-strong bg-surface px-3 text-sm text-ink placeholder:text-ink-3 shadow-xs",
   "transition-[border-color,box-shadow] duration-150",
   "hover:border-line-strong focus:border-accent-strong focus:outline-none focus:ring-2 focus:ring-[color-mix(in_srgb,var(--accent)_22%,transparent)]",
   "aria-[invalid=true]:border-danger disabled:cursor-not-allowed disabled:opacity-60",
@@ -53,8 +53,8 @@ export function PasswordInput({ className, ...p }: Omit<InputHTMLAttributes<HTML
 
 export function Checkbox({ label, className, ...p }: Omit<InputHTMLAttributes<HTMLInputElement>, "type"> & { label: ReactNode }) {
   return (
-    <label className={cx("inline-flex cursor-pointer items-center gap-2.5 text-sm text-ink", className)}>
-      <span className="relative grid size-[18px] place-items-center">
+    <label className={cx("inline-flex min-w-0 cursor-pointer items-start gap-2.5 text-sm text-ink", className)}>
+      <span className="relative mt-0.5 grid size-[18px] shrink-0 place-items-center">
         <input {...p} type="checkbox" className="peer absolute inset-0 cursor-pointer appearance-none rounded-md border border-line-strong bg-surface transition-colors checked:border-accent-strong checked:bg-accent-strong focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--focus-ring)]" />
         <Check className="pointer-events-none relative size-3 text-accent-ink opacity-0 peer-checked:opacity-100" strokeWidth={3} aria-hidden />
       </span>
@@ -70,7 +70,7 @@ export function Switch({ checked, onChange, label, description, disabled }: {
   const id = useId();
   return (
     <div className="flex items-start justify-between gap-4">
-      <div>
+      <div className="min-w-0 break-words">
         <p id={`${id}-l`} className="text-sm font-medium text-ink">{label}</p>
         {description && <p id={`${id}-d`} className="mt-0.5 text-[13px] text-ink-3">{description}</p>}
       </div>
@@ -78,7 +78,7 @@ export function Switch({ checked, onChange, label, description, disabled }: {
         disabled={disabled} onClick={() => onChange(!checked)}
         className={cx("relative h-6 w-11 shrink-0 rounded-full border transition-colors duration-200 disabled:opacity-50",
           checked ? "border-accent-strong bg-accent-strong" : "border-line-strong bg-[var(--inset)]")}>
-        <span className={cx("absolute left-0.5 top-0.5 size-[18px] rounded-full bg-white shadow transition-transform duration-200 ease-[var(--ease-out)]",
+        <span className={cx("absolute left-0.5 top-0.5 size-[18px] rounded-full bg-surface shadow transition-transform duration-200 ease-[var(--ease-out)]",
           checked && "translate-x-5")} />
       </button>
     </div>

@@ -26,14 +26,14 @@ function FunnelChart({ f }: { f: FunnelAnalysis }) {
                   ↓ {pct(step.conversion.value, 1)} continue · {step.drop_off.toLocaleString()} drop off{worst && " · biggest leak"}
                 </p>
               )}
-              <div className="flex items-center gap-3">
-                <span className="w-36 shrink-0 truncate text-sm">{s.name}</span>
-                <div className="h-7 flex-1 rounded-md bg-sunken">
-                  <div className="flex h-full items-center rounded-md bg-trail px-2 text-xs font-medium text-accent-ink"
+              <div className="grid grid-cols-[minmax(0,1fr)_auto] items-center gap-x-3 gap-y-1.5 sm:grid-cols-[9rem_minmax(0,1fr)_5rem]">
+                <span className="min-w-0 text-sm [overflow-wrap:anywhere]">{s.name}</span>
+                <div className="col-span-2 row-start-2 h-7 min-w-0 rounded-md bg-sunken sm:col-span-1 sm:row-start-auto">
+                  <div className="h-full rounded-md bg-trail"
                     style={{ width: `${Math.max((s.count / top) * 100, 2)}%` }}>
                   </div>
                 </div>
-                <span className="w-20 text-right text-sm tabular-nums">{s.count.toLocaleString()}</span>
+                <span className="col-start-2 row-start-1 text-right text-sm tabular-nums sm:col-start-3">{s.count.toLocaleString()}</span>
               </div>
             </li>
           );
@@ -87,7 +87,7 @@ export function FunnelPanel() {
 
   return (
     <div className="grid gap-6 xl:grid-cols-5">
-      <div className="space-y-6 xl:col-span-3">
+      <div className="min-w-0 space-y-6 xl:col-span-3">
         <Card>
           <CardHeader title="Funnel" description="Conversions are calculated by Pursuit, not by AI." action={exp.is_demo ? <DemoBadge /> : undefined} />
           <div className="p-5">{f ? <FunnelChart f={f} /> : <Empty title="No funnel data yet" body="Upload a CSV or enter stage counts to find the biggest leak." />}</div>
@@ -106,7 +106,7 @@ export function FunnelPanel() {
           </Card>
         )}
       </div>
-      <Card className="xl:col-span-2">
+      <Card className="min-w-0 xl:col-span-2">
         <CardHeader title="Add funnel data" />
         <div className="space-y-4 p-4">
           <div className="rounded-lg border border-dashed border-line-strong p-4 text-center">
@@ -120,10 +120,10 @@ export function FunnelPanel() {
           <p className="text-center text-xs text-ink-3">or enter manually</p>
           <div className="space-y-2">
             {rows.map((r, i) => (
-              <div key={i} className="flex gap-2">
-                <Input aria-label={`Stage ${i + 1} name`} value={r.name} onChange={(e) => setRows(rows.map((x, j) => (j === i ? { ...x, name: e.target.value } : x)))} />
-                <Input aria-label={`Stage ${i + 1} count`} type="number" min={0} className="w-32" value={r.count} onChange={(e) => setRows(rows.map((x, j) => (j === i ? { ...x, count: e.target.value } : x)))} />
-                <button aria-label="Remove stage" disabled={rows.length <= 2} onClick={() => setRows(rows.filter((_, j) => j !== i))} className="px-1 text-ink-3 hover:text-d-stop disabled:opacity-30"><Trash2 className="size-4" /></button>
+              <div key={i} className="grid grid-cols-[minmax(0,1fr)_4.5rem_2.75rem] items-center gap-2 sm:grid-cols-[minmax(0,1fr)_6rem_2.75rem]">
+                <Input aria-label={`Stage ${i + 1} name`} className="min-w-0" value={r.name} onChange={(e) => setRows(rows.map((x, j) => (j === i ? { ...x, name: e.target.value } : x)))} />
+                <Input aria-label={`Stage ${i + 1} count`} type="number" min={0} className="min-w-0" value={r.count} onChange={(e) => setRows(rows.map((x, j) => (j === i ? { ...x, count: e.target.value } : x)))} />
+                <button aria-label={`Remove stage ${i + 1}`} disabled={rows.length <= 2} onClick={() => setRows(rows.filter((_, j) => j !== i))} className="grid size-11 place-items-center rounded-lg text-ink-3 hover:bg-sunken hover:text-d-stop disabled:opacity-30"><Trash2 className="size-4" /></button>
               </div>
             ))}
             <div className="flex justify-between">

@@ -63,13 +63,13 @@ export function StageRail() {
         ))}
       </ol>
       <div className="mt-3 flex flex-wrap items-center justify-between gap-3 border-t border-line pt-3">
-        <p className="flex items-center gap-1.5 text-[13px] text-ink-2">
+        <p className="min-w-0 text-[13px] text-ink-2 [overflow-wrap:anywhere]">
           {next ? (
             next.ready ? <>Ready to move to <b>{STAGE_LABEL[next.stage]}</b>.</>
-              : <><Lock className="size-3.5 text-flag" aria-hidden /> <span>{next.blocker}</span></>
+              : <><Lock className="mr-1.5 inline size-3.5 text-flag" aria-hidden /> <span>{next.blocker}</span></>
           ) : exp.archived_at ? "Archived." : "Lifecycle complete. Go back a stage to iterate."}
         </p>
-        <div className="flex gap-2">
+        <div className="flex max-w-full flex-wrap gap-2">
           {prev && (
             <Button variant="ghost" size="sm" disabled={move.pending || !!exp.archived_at} onClick={() => move.run(prev.stage)}>
               <ChevronLeft className="size-3.5" /> Back to {STAGE_LABEL[prev.stage]}

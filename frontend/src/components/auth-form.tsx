@@ -107,7 +107,7 @@ export function AuthForm({ mode }: { mode: "login" | "signup" }) {
           </Button>
         </form>
       </Glass>
-      <p className="mt-6 text-sm text-ink-2">
+      <p className="mt-6 w-full max-w-sm text-center text-sm text-ink-2">
         {mode === "login" ? (
           <>New to Pursuit? <Link href="/signup" className="font-semibold text-trail hover:underline">Create an account</Link></>
         ) : (
