@@ -1,7 +1,8 @@
 import hashlib
 import json
 import re
-from copy import deepcopy
+
+from app.services.evidence_checks import normalize, quote_matches
 
 MAX_CLAIMS = 5
 MAX_SOURCES = 4
@@ -12,10 +13,6 @@ def fingerprint(value):
     return hashlib.sha256(json.dumps(value, sort_keys=True, ensure_ascii=False).encode()).hexdigest()
 
 
-def normalize(text):
-    return re.sub(r"\s+", " ", text).strip().casefold()
-
-
 def claims_for(report):
     sources = {source["id"]: source for source in report.sources}
     claims = []
@@ -23,16 +20,21 @@ def claims_for(report):
     def walk(node, path):
         if isinstance(node, dict):
             if {"text", "kind", "source_ids"} <= node.keys():
+                if node.get("unsourced"):
+                    return
                 receipts = [
                     {
                         key: source.get(key)
                         for key in ("id", "url", "title", "excerpt", "retrieved_at", "sha256")
                     }
                     for sid in node["source_ids"]
-                    if (source := sources.get(sid)) and source.get("excerpt") and source.get("url")
+                    if (source := sources.get(sid))
+                    and source.get("excerpt")
+                    and source.get("url")
+                    and source.get("retrieval_status") in (None, "available")
                 ]
                 quote = node.get("supporting_quote", "")
-                receipts = [r for r in receipts if quote and normalize(quote) in normalize(r["excerpt"])]
+                receipts = [r for r in receipts if quote_matches(quote, r)]
                 if receipts:
                     claim = {
                         "id": ".".join(path),
@@ -43,7 +45,7 @@ def claims_for(report):
                         "recommendation_refs": [".".join(path[:2])]
                         if path[0] in {"experiments", "gtm_strategy", "positioning", "pricing"}
                         else [],
-                        "receipts": deepcopy(receipts),
+                        "receipts": receipts,
                     }
                     claims.append(claim)
                 return

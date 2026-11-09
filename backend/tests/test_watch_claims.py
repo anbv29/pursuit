@@ -77,3 +77,29 @@ def test_claims_without_retrieved_quotes_are_not_watchable():
     report = report_fixture()
     report.content["snapshot"]["observed_pricing"][0]["supporting_quote"] = "Invented quotation"
     assert claims_for(report) == []
+
+
+def test_recommendation_references_follow_shared_citation_edges():
+    report = report_fixture()
+    report.content["experiments"] = [{"rationale": dict(report.content["snapshot"]["observed_pricing"][0])}]
+    claim = claims_for(report)[0]
+    assert claim["recommendation_refs"] == ["experiments.0"]
+
+
+@pytest.mark.parametrize("status", ["unavailable", "failed"])
+def test_failed_receipts_with_stale_excerpts_are_not_watchable(status):
+    report = report_fixture()
+    report.sources[0]["retrieval_status"] = status
+    assert claims_for(report) == []
+
+
+def test_unsourced_claims_are_excluded_but_quoted_interpretations_remain_watchable():
+    report = report_fixture()
+    claim = report.content["snapshot"]["observed_pricing"][0]
+    claim["unsourced"] = True
+    assert claims_for(report) == []
+    claim["unsourced"] = False
+    claim["kind"] = "interpretation"
+    assert len(claims_for(report)) == 1
+    claim["supporting_quote"] = "   "
+    assert claims_for(report) == []
