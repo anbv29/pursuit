@@ -49,6 +49,11 @@ export function WorkspaceShell({ wsId, children }: { wsId: string; children: Rea
   const ws = useApi<Workspace>(`/workspaces/${wsId}`, path);
   const all = useApi<Workspace[]>("/workspaces");
   const approvals = useApi<unknown[]>(`/workspaces/${wsId}/approvals`);
+  const alerts = useApi<unknown>(`/workspaces/${wsId}/watch-alerts`, path);
+  const unreadAlerts = Array.isArray(alerts.data) ? alerts.data.filter((alert: unknown) =>
+    typeof alert === "object" && alert !== null && "acknowledged_at" in alert && alert.acknowledged_at === null,
+  ).length : 0;
+  const inboxCount = (Array.isArray(approvals.data) ? approvals.data.length : 0) + unreadAlerts;
   const collapsed = useSyncExternalStore(subscribeSidebar, readSidebar, () => false);
   const router = useRouter();
   const { user, logout } = useSession();
@@ -71,7 +76,7 @@ export function WorkspaceShell({ wsId, children }: { wsId: string; children: Rea
     { href: base, label: "Home", icon: LayoutDashboard, group: "Your work", exact: true },
     { href: `${base}/reports`, label: "Reports", icon: FileText, group: "Your work" },
     { href: `${base}/experiments`, label: "Experiments", icon: FlaskConical, group: "Your work" },
-    { href: `${base}/approvals`, label: "Inbox", icon: Inbox, group: "Your work", count: approvals.data?.length },
+    { href: `${base}/approvals`, label: "Inbox", icon: Inbox, group: "Your work", count: inboxCount },
     { href: `${base}/fo`, label: "Assistant", icon: MessageCircle, group: "Your work" },
     { href: `${base}/settings`, label: "Settings", icon: Settings, group: "Workspace" },
   ];
@@ -96,7 +101,7 @@ export function WorkspaceShell({ wsId, children }: { wsId: string; children: Rea
     { id: "theme", label: theme === "dark" ? "Use light theme" : "Use dark theme", run: () => setTheme(theme === "dark" ? "light" : "dark"), icon: <Moon className="size-3.5" /> },
     { id: "signout", label: "Sign out", run: () => void signOut(), icon: <LogOut className="size-3.5" /> },
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  ], [base, theme, ws.data?.role, approvals.data?.length, workflowsReady]);
+  ], [base, theme, ws.data?.role, inboxCount, workflowsReady]);
 
   if (ws.error) {
     return (
@@ -211,10 +216,10 @@ export function WorkspaceShell({ wsId, children }: { wsId: string; children: Rea
             </button>
             <button type="button" onClick={() => setPaletteOpen(true)} aria-label="Open command palette"
               className="press grid size-9 place-items-center rounded-xl text-ink-2 hover:bg-[var(--inset)] xl:hidden"><Search className="size-[18px]" /></button>
-            {workflowsReady && <Link href={`${base}/approvals`} aria-label={`Inbox${approvals.data?.length ? `, ${approvals.data.length} waiting` : ""}`}
+            {workflowsReady && <Link href={`${base}/approvals`} aria-label={`Inbox${inboxCount ? `, ${inboxCount} waiting` : ""}`}
               className="press relative grid size-9 place-items-center rounded-xl text-ink-2 hover:bg-[var(--inset)] hover:text-ink">
               <Bell className="size-[18px]" aria-hidden />
-              {!!approvals.data?.length && <span className="absolute right-1.5 top-1.5 size-2 rounded-full bg-warning ring-2 ring-[var(--surface-solid)]" />}
+              {inboxCount > 0 && <span className="absolute right-1.5 top-1.5 size-2 rounded-full bg-warning ring-2 ring-[var(--surface-solid)]" />}
             </Link>}
             <ThemeToggle />
             <Menu label="Account" items={[{ label: "Account security", onSelect: () => router.push("/account"), icon: <Settings className="size-4" /> },
@@ -232,7 +237,7 @@ export function WorkspaceShell({ wsId, children }: { wsId: string; children: Rea
 
         <main className="workspace-content min-w-0 flex-1 px-4 pb-[calc(6rem+env(safe-area-inset-bottom))] pt-5 md:px-8 md:pb-10">
           {ws.data ? (
-            <WorkspaceCtx.Provider key={wsId} value={{ workspace: ws.data, base, workflowsReady, refreshApprovals: approvals.reload }}>
+            <WorkspaceCtx.Provider key={wsId} value={{ workspace: ws.data, base, workflowsReady, refreshApprovals: () => { void approvals.reload(); void alerts.reload(); } }}>
               <div className={cx("mx-auto w-full min-w-0", contentWidth)}>
                 <ReadingControls />
                 <ResearchActivity workspaceId={wsId} base={base} />

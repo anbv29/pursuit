@@ -105,6 +105,8 @@ for (const vp of [{ name: "desktop", width: 1280, height: 860 }, { name: "tablet
 
     await page.goto(`/w/${WS}`);
     await expect(page.getByRole("heading", { name: "Hi Dana" })).toBeVisible();
+    const cacheBadge = page.getByRole("button", { name: "Collapse Cache disabled badge", exact: true });
+    if (await cacheBadge.isVisible()) await cacheBadge.click();
     if (vp.name === "phone") {
       const experiments = page.getByRole("list", { name: "Saved experiments", exact: true });
       await expect(experiments.getByText("Improve and retry", { exact: true })).toBeVisible();
@@ -142,7 +144,7 @@ test("settings and approvals render cleanly", async ({ page }) => {
   page.on("pageerror", (e) => errors.push(e.message));
   await mockApi(page);
   for (const [path, heading, name] of [
-    ["approvals", "Approvals", "approvals"], ["settings", "Settings", "settings"],
+    ["approvals", "Inbox", "approvals"], ["settings", "Settings", "settings"],
   ] as const) {
     await page.goto(`/w/${WS}/${path}`);
     await expect(page.getByRole("heading", { level: 1, name: heading }).first()).toBeVisible();
