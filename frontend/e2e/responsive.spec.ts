@@ -13,7 +13,7 @@ test("demo workspace screens are labelled and responsive", async ({ page }, info
   await page.getByText("Explore with demo data").click();
   await page.getByRole("button", { name: "Create demo workspace" }).click();
   await expect(page.getByText("Demo workspace").first()).toBeVisible();
-  await page.getByLabel("Reading style").selectOption("advanced");
+  await expect(page.getByLabel("Reading style")).toHaveCount(0);
 
   const shot = async (name: string) => {
     const overflow = await page.evaluate(() => document.documentElement.scrollWidth - window.innerWidth);
@@ -21,11 +21,12 @@ test("demo workspace screens are labelled and responsive", async ({ page }, info
     await page.screenshot({ path: `test-results/screens/${info.project.name}-${name}.png`, fullPage: true });
   };
 
-  await expect(page.getByRole("heading", { name: "Experiments", exact: true })).toBeVisible();
+  await expect(page.getByRole("heading", { name: "Recent experiments", exact: true })).toBeVisible();
   await shot("dashboard");
 
   await page.getByRole("link", { name: /Clinic claims reconciliation/ }).first().click();
   await expect(page.getByRole("heading", { level: 1, name: "Clinic claims reconciliation" })).toBeVisible();
+  await page.getByLabel("Reading style").selectOption("advanced");
   await expect(page.getByText(/confidence ·/)).toBeVisible();
   await shot("experiment-overview");
 

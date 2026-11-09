@@ -1,12 +1,12 @@
 "use client";
 
 import {
-  Bell, ChevronRight, ChevronsLeft, ChevronsRight, CircleDollarSign, FileText, Inbox, LayoutDashboard, LogOut,
-  ListTodo, MessageCircle, Moon, Plus, Search, Settings, UserCog,
+  Bell, ChevronRight, ChevronsLeft, ChevronsRight, CircleDollarSign, FileText, FlaskConical, Inbox, LayoutDashboard, LogOut,
+  MessageCircle, Moon, Search, Settings, UserCog,
 } from "lucide-react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
-import { createContext, useContext, useMemo, useState, useSyncExternalStore, type ReactNode } from "react";
+import { createContext, useContext, useEffect, useMemo, useState, useSyncExternalStore, type ReactNode } from "react";
 import { useApi } from "@/lib/hooks";
 import { errorMessage } from "@/lib/api";
 import type { Workspace } from "@/lib/types";
@@ -41,7 +41,7 @@ export function useWorkspace() {
   return c;
 }
 
-type NavGroup = "Overview" | "Research & strategy" | "Execution" | "Workspace";
+type NavGroup = "Your work" | "Workspace";
 type NavItem = { href: string; label: string; icon: typeof LayoutDashboard; group: NavGroup; exact?: boolean; count?: number };
 
 export function WorkspaceShell({ wsId, children }: { wsId: string; children: ReactNode }) {
@@ -49,6 +49,23 @@ export function WorkspaceShell({ wsId, children }: { wsId: string; children: Rea
   const ws = useApi<Workspace>(`/workspaces/${wsId}`, path);
   const all = useApi<Workspace[]>("/workspaces");
   const approvals = useApi<unknown[]>(`/workspaces/${wsId}/approvals`);
+  const alerts = useApi<unknown>(`/workspaces/${wsId}/watch-alerts`, path);
+  const reloadAlerts = alerts.reload;
+  useEffect(() => {
+    const refresh = () => { if (document.visibilityState === "visible") void reloadAlerts(); };
+    const timer = window.setInterval(refresh, 60000);
+    document.addEventListener("visibilitychange", refresh);
+    window.addEventListener("pursuit.watch-alerts", refresh);
+    return () => {
+      clearInterval(timer);
+      document.removeEventListener("visibilitychange", refresh);
+      window.removeEventListener("pursuit.watch-alerts", refresh);
+    };
+  }, [reloadAlerts]);
+  const unreadAlerts = Array.isArray(alerts.data) ? alerts.data.filter((alert: unknown) =>
+    typeof alert === "object" && alert !== null && "acknowledged_at" in alert && alert.acknowledged_at === null,
+  ).length : 0;
+  const inboxCount = (Array.isArray(approvals.data) ? approvals.data.length : 0) + unreadAlerts;
   const collapsed = useSyncExternalStore(subscribeSidebar, readSidebar, () => false);
   const router = useRouter();
   const { user, logout } = useSession();
@@ -68,36 +85,37 @@ export function WorkspaceShell({ wsId, children }: { wsId: string; children: Rea
   };
 
   const allNav: NavItem[] = [
-    { href: base, label: "Dashboard", icon: LayoutDashboard, group: "Overview", exact: true },
-    { href: `${base}/focus`, label: "Your priorities", icon: ListTodo, group: "Overview" },
-    { href: `${base}/reports`, label: "Company reports", icon: FileText, group: "Research & strategy" },
-    { href: `${base}/gtm`, label: "GTM strategy", icon: FileText, group: "Research & strategy" },
-    { href: `${base}/experiments/new`, label: "New experiment", icon: Plus, group: "Execution" },
-    { href: `${base}/approvals`, label: "Approvals", icon: Inbox, group: "Execution", count: approvals.data?.length },
-    { href: `${base}/fo`, label: "Fo Assistant", icon: MessageCircle, group: "Execution" },
+    { href: base, label: "Home", icon: LayoutDashboard, group: "Your work", exact: true },
+    { href: `${base}/reports`, label: "Reports", icon: FileText, group: "Your work" },
+    { href: `${base}/experiments`, label: "Experiments", icon: FlaskConical, group: "Your work" },
+    { href: `${base}/approvals`, label: "Inbox", icon: Inbox, group: "Your work", count: inboxCount },
+    { href: `${base}/fo`, label: "Assistant", icon: MessageCircle, group: "Your work" },
     { href: `${base}/settings`, label: "Settings", icon: Settings, group: "Workspace" },
   ];
   const nav = allNav.filter(item => workflowsReady || [base, `${base}/reports`, `${base}/settings`].includes(item.href));
-  const isActive = (n: Pick<NavItem, "href" | "exact">) => path === n.href || (!n.exact && path.startsWith(`${n.href}/`));
+  const isActive = (n: Pick<NavItem, "href" | "exact">) => path === n.href || (!n.exact && path.startsWith(`${n.href}/`))
+    || (n.href === base && path === `${base}/focus`) || (n.href === `${base}/reports` && path === `${base}/gtm`);
   const current = nav.find(isActive);
   const contentWidth = path.endsWith("/reports/new") ? "max-w-2xl"
     : /\/(settings|fo|focus)$/.test(path) ? "max-w-3xl"
     : /\/(reports|approvals)$/.test(path) ? "max-w-4xl"
     : /\/(experiments\/new)$/.test(path) ? "max-w-5xl" : "max-w-6xl";
+  const readingContext = path.startsWith(`${base}/reports/`) || path.startsWith(`${base}/experiments/`) || path === `${base}/gtm`;
 
   // Breadcrumbs only below two levels (a single report or experiment).
-  const crumbs = path.match(/\/reports\/(?!new$)[^/]+$/) ? [{ href: `${base}/reports`, label: "Company reports" }, { label: "Report" }]
-    : path.match(/\/experiments\/(?!new$)[^/]+$/) ? [{ href: base, label: "Dashboard" }, { label: "Experiment" }]
-      : path.endsWith("/reports/new") ? [{ href: `${base}/reports`, label: "Company reports" }, { label: "New report" }]
+  const crumbs = path.match(/\/reports\/(?!new$)[^/]+$/) ? [{ href: `${base}/reports`, label: "Reports" }, { label: "Report" }]
+    : path.match(/\/experiments\/(?!new$)[^/]+$/) ? [{ href: `${base}/experiments`, label: "Experiments" }, { label: "Experiment" }]
+      : path.endsWith("/reports/new") ? [{ href: `${base}/reports`, label: "Reports" }, { label: "New report" }]
         : null;
 
   const commands = useMemo<Command[]>(() => [
     ...nav.map((n) => ({ id: n.href, label: n.label, hint: "Go to", href: n.href, icon: <n.icon className="size-3.5" /> })),
+    ...(workflowsReady ? [{ id: "new-experiment", label: "New experiment", hint: "Create", href: `${base}/experiments/new`, icon: <FlaskConical className="size-3.5" /> }] : []),
     { id: "new-report", label: "Analyze a company", hint: "New report", href: `${base}/reports/new`, icon: <FileText className="size-3.5" /> },
     { id: "theme", label: theme === "dark" ? "Use light theme" : "Use dark theme", run: () => setTheme(theme === "dark" ? "light" : "dark"), icon: <Moon className="size-3.5" /> },
     { id: "signout", label: "Sign out", run: () => void signOut(), icon: <LogOut className="size-3.5" /> },
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  ], [base, theme, ws.data?.role, approvals.data?.length, workflowsReady]);
+  ], [base, theme, ws.data?.role, inboxCount, workflowsReady]);
 
   if (ws.error) {
     return (
@@ -118,7 +136,7 @@ export function WorkspaceShell({ wsId, children }: { wsId: string; children: Rea
     </select>
   ) : <Skeleton className="h-9 w-full" />;
 
-  const groupOrder: NavGroup[] = ["Overview", "Research & strategy", "Execution", "Workspace"];
+  const groupOrder: NavGroup[] = ["Your work", "Workspace"];
   const groups = groupOrder.map((label) => ({ label, items: nav.filter((n) => n.group === label) })).filter(group => group.items.length);
   const mobileTabs = nav.filter((n) => n.exact || n.href === `${base}/reports` || n.href === `${base}/approvals`);
   const mobileMenu = [
@@ -142,7 +160,7 @@ export function WorkspaceShell({ wsId, children }: { wsId: string; children: Rea
             {groups.map((group) => (
               <div key={group.label} className={cx(
                 group.label === "Workspace" ? "mt-auto border-t border-line pt-4" : "mb-3",
-                collapsed && group.label !== "Overview" && "border-t border-line pt-3",
+                collapsed && group.label !== "Your work" && "border-t border-line pt-3",
               )}>
                 {!collapsed && (
                   <p className="mb-2 px-3 font-ui text-[11px] font-medium uppercase tracking-[0.07em] text-ink-3">{group.label}</p>
@@ -212,10 +230,10 @@ export function WorkspaceShell({ wsId, children }: { wsId: string; children: Rea
             </button>
             <button type="button" onClick={() => setPaletteOpen(true)} aria-label="Open command palette"
               className="press grid size-9 place-items-center rounded-xl text-ink-2 hover:bg-[var(--inset)] xl:hidden"><Search className="size-[18px]" /></button>
-            {workflowsReady && <Link href={`${base}/approvals`} aria-label={`Approvals${approvals.data?.length ? `, ${approvals.data.length} waiting` : ""}`}
+            {workflowsReady && <Link href={`${base}/approvals`} aria-label={`Inbox${inboxCount ? `, ${inboxCount} waiting` : ""}`}
               className="press relative grid size-9 place-items-center rounded-xl text-ink-2 hover:bg-[var(--inset)] hover:text-ink">
               <Bell className="size-[18px]" aria-hidden />
-              {!!approvals.data?.length && <span className="absolute right-1.5 top-1.5 size-2 rounded-full bg-warning ring-2 ring-[var(--surface-solid)]" />}
+              {inboxCount > 0 && <span className="absolute right-1.5 top-1.5 size-2 rounded-full bg-warning ring-2 ring-[var(--surface-solid)]" />}
             </Link>}
             <ThemeToggle />
             <Menu label="Account" items={[{ label: "Account security", onSelect: () => router.push("/account"), icon: <Settings className="size-4" /> },
@@ -233,9 +251,9 @@ export function WorkspaceShell({ wsId, children }: { wsId: string; children: Rea
 
         <main className="workspace-content min-w-0 flex-1 px-4 pb-[calc(6rem+env(safe-area-inset-bottom))] pt-5 md:px-8 md:pb-10">
           {ws.data ? (
-            <WorkspaceCtx.Provider key={wsId} value={{ workspace: ws.data, base, workflowsReady, refreshApprovals: approvals.reload }}>
+            <WorkspaceCtx.Provider key={wsId} value={{ workspace: ws.data, base, workflowsReady, refreshApprovals: () => { void approvals.reload(); void alerts.reload(); } }}>
               <div className={cx("mx-auto w-full min-w-0", contentWidth)}>
-                <ReadingControls />
+                {readingContext && <ReadingControls />}
                 <ResearchActivity workspaceId={wsId} base={base} />
                 {children}
               </div>

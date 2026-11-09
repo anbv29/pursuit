@@ -42,8 +42,13 @@ def heartbeat(report_id, owner, stop):
 
 def work(stop):
     from app.services.reports import run
+    from app.services.watch_worker import run_due
 
     while not stop.is_set():
+        try:
+            run_due()
+        except Exception:
+            logger.exception("Report watch iteration failed")
         try:
             with new_session() as db:
                 report_id = db.scalar(

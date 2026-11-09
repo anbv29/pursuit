@@ -2,6 +2,7 @@
 
 import { AlertTriangle, FileText, FlaskConical, Inbox, Plus, RotateCw } from "lucide-react";
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
 import { DecisionChip } from "@/components/bits";
 import { useWorkspace } from "@/components/shell";
@@ -23,6 +24,7 @@ type Dash = {
 type Filter = "all" | "open" | "decided";
 
 export default function Dashboard() {
+  const experimentsOnly = usePathname().endsWith("/experiments");
   const { workspace, base, workflowsReady } = useWorkspace();
   const { user } = useSession();
   const { data, loading, error, reload } = useApi<Dash>(`/workspaces/${workspace.id}/dashboard`);
@@ -35,14 +37,14 @@ export default function Dashboard() {
   if (error) {
     return (
       <Glass className="mx-auto mt-6 max-w-lg p-2">
-        <Empty icon={<AlertTriangle className="size-5" />} title="Couldn't load the dashboard" body={error.message}
+        <Empty icon={<AlertTriangle className="size-5" />} title={experimentsOnly ? "Couldn't load experiments" : "Couldn't load Home"} body={error.message}
           action={<Button variant="secondary" onClick={() => void reload()}><RotateCw className="size-4" /> Try again</Button>} />
       </Glass>
     );
   }
   if (loading || !data) {
     return (
-      <div className="mx-auto max-w-7xl space-y-5 text-[13px]" aria-busy aria-label="Loading dashboard">
+      <div className="mx-auto max-w-7xl space-y-5 text-[13px]" aria-busy aria-label={experimentsOnly ? "Loading experiments" : "Loading Home"}>
         <Skeleton className="h-10 w-72 max-w-full" />
         <div className="grid gap-3 sm:grid-cols-3">{[0, 1, 2].map((i) => <Skeleton key={i} className="h-[76px]" />)}</div>
         <div className="grid gap-3 md:grid-cols-2">{[0, 1, 2, 3].map((i) => <Skeleton key={i} className="h-36" />)}</div>
@@ -81,9 +83,9 @@ export default function Dashboard() {
   if (data.experiments.length === 0) {
     return (
       <div className="mx-auto mt-2 max-w-xl space-y-6">
-        <PageHeader title={`Hi ${firstName}`} description="Every claim has a receipt. Start with research you can check." />
-        {workflowsReady && <FounderFocusCard compact />}
-        {reportCard}
+        <PageHeader title={experimentsOnly ? "Experiments" : `Hi ${firstName}`} description={experimentsOnly ? "Your saved experiments, evidence and verdicts." : "Your research, priorities and experiments in one place."} />
+        {!experimentsOnly && workflowsReady && <FounderFocusCard compact />}
+        {!experimentsOnly && reportCard}
         <Glass className="p-2">
           <Empty icon={<FlaskConical className="size-5" />} title={workflowsReady ? "No experiments yet" : "Start with a company report"}
             body={workflowsReady ? "Open your report and choose “Track this” on a recommended experiment." : "Enter your website and Pursuit researches your market, competitors and customers, then recommends experiments."}
@@ -93,7 +95,7 @@ export default function Dashboard() {
     );
   }
 
-  const shown = data.experiments.filter((e) => filter === "all" || (filter === "decided" ? !!e.latest_decision : !e.latest_decision));
+  const shown = experimentsOnly ? data.experiments.filter((e) => filter === "all" || (filter === "decided" ? !!e.latest_decision : !e.latest_decision)) : data.experiments.slice(0, 3);
   const stats = [
     { label: "Saved experiments", value: data.experiments.length, icon: FlaskConical },
     { label: "Waiting on you", value: data.pending_actions.length, icon: Inbox },
@@ -103,26 +105,27 @@ export default function Dashboard() {
 
   return (
     <div className="mx-auto max-w-7xl space-y-5 text-[13px]">
-      <PageHeader title={`Hi ${firstName}`}
+      <PageHeader title={experimentsOnly ? "Experiments" : `Hi ${firstName}`}
         description={`${data.experiments.length} saved experiment${data.experiments.length === 1 ? "" : "s"}${data.pending_actions.length > 0 ? ` · ${data.pending_actions.length} waiting on you` : ""}`}
-        action={<div className="flex flex-wrap gap-2">{newBtn}{analyzeBtn}</div>} />
+        action={<div className="flex flex-wrap gap-2">{newBtn}{!experimentsOnly && analyzeBtn}</div>} />
 
-      <ul aria-label="Workspace summary" className="grid grid-cols-3 divide-x divide-line rounded-2xl border border-line bg-surface py-4">
+      {!experimentsOnly && <ul aria-label="Workspace summary" className="grid grid-cols-3 divide-x divide-line rounded-2xl border border-line bg-surface py-4">
         {stats.map((s) => (
           <li key={s.label} className="flex min-w-0 flex-col gap-1 px-4 sm:px-5">
             <span className="flex items-center gap-2 text-xs text-ink-3"><s.icon className="hidden size-3.5 shrink-0 sm:block" aria-hidden />{s.label}</span>
             <NumberTicker value={s.value} className="text-2xl font-semibold tabular-nums tracking-tight text-ink" />
           </li>
         ))}
-      </ul>
+      </ul>}
 
-      <div className="grid items-start gap-5 xl:grid-cols-[minmax(0,1fr)_320px]">
+      <div className={experimentsOnly ? "space-y-5" : "grid items-start gap-5 xl:grid-cols-[minmax(0,1fr)_320px]"}>
         <div className="min-w-0 space-y-5">
         <section aria-labelledby="exp-h" className="min-w-0 overflow-hidden rounded-2xl border border-line bg-surface">
           <div className="flex flex-wrap items-center justify-between gap-3 border-b border-line px-5 py-4">
-            <h2 id="exp-h" className="text-base font-semibold">Experiments</h2>
-            <Tabs label="Filter experiments" value={filter} onChange={(v) => { if (v === "all" || v === "open" || v === "decided") setFilter(v); }}
+            <h2 id="exp-h" className="text-base font-semibold">{experimentsOnly ? "Saved experiments" : "Recent experiments"}</h2>
+            {experimentsOnly ? <Tabs label="Filter experiments" value={filter} onChange={(v) => { if (v === "all" || v === "open" || v === "decided") setFilter(v); }}
               tabs={[{ id: "all", label: "All" }, { id: "open", label: "No verdict yet" }, { id: "decided", label: "Has a verdict" }]} />
+              : <Link href={`${base}/experiments`} className="inline-flex min-h-11 items-center text-sm font-semibold text-trail hover:underline">View all experiments</Link>}
           </div>
           {shown.length === 0 ? (
             <Card className="border border-line bg-surface shadow-none"><Empty title="Nothing in this view" body="Try another filter." /></Card>
@@ -167,7 +170,7 @@ export default function Dashboard() {
           )}
         </section>
 
-      {workflowsReady && <section aria-labelledby="wf-h" className="rounded-2xl border border-line bg-surface p-5">
+      {experimentsOnly && workflowsReady && <section aria-labelledby="wf-h" className="rounded-2xl border border-line bg-surface p-5">
         <h2 id="wf-h" className="mb-3 text-sm font-semibold">What do you want to find out?</h2>
         <ul className="flex flex-wrap gap-2">
           {workflows.map((w) => (
@@ -181,9 +184,9 @@ export default function Dashboard() {
         </ul>
       </section>}
 
-      {reportCard ?? (<Card className="border border-line bg-surface shadow-none"><CardHeader title="Company reports" /><Empty title="No reports yet" body="Enter your website to get a sourced company report." action={analyzeBtn} /></Card>)}
+      {!experimentsOnly && (reportCard ?? (<Card className="border border-line bg-surface shadow-none"><CardHeader title="Company reports" /><Empty title="No reports yet" body="Enter your website to get a sourced company report." action={analyzeBtn} /></Card>))}
         </div>
-        <div className="min-w-0 space-y-4">
+        {!experimentsOnly && <div className="min-w-0 space-y-4">
           {workflowsReady && <FounderFocusCard compact />}
           <Card className="border border-line bg-surface shadow-none">
             <CardHeader title="Needs your attention" action={<Link href={`${base}/approvals`} className="text-[13px] font-semibold text-trail hover:underline">See all</Link>} />
@@ -229,10 +232,10 @@ export default function Dashboard() {
               </ul>
             )}
           </Card>
-        </div>
+        </div>}
       </div>
 
-      {data.recent_outcomes.length > 0 && (
+      {!experimentsOnly && data.recent_outcomes.length > 0 && (
         <Card className="border border-line bg-surface shadow-none">
           <CardHeader title="Recently recorded outcomes" description="Only events actually recorded in Pursuit. Demo events are labelled." />
           <ul className="grid sm:grid-cols-2 lg:grid-cols-4">
