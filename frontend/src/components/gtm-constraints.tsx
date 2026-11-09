@@ -16,8 +16,8 @@ export const splitResearchUrls = (text: string) => text.split(/\r?\n/).map(s => 
 export function GTMConstraintsForm({ value, onChange, urls, onUrlsChange, disabled = false }: {
   value: GTMConstraints; onChange: (value: GTMConstraints) => void; urls: string; onUrlsChange: (value: string) => void; disabled?: boolean;
 }) {
-  return <fieldset disabled={disabled} className="[&_input]:min-h-11 [&_select]:min-h-11 min-w-0 space-y-4 rounded-xl border border-line bg-surface p-4 sm:p-6">
-    <legend className="px-2 font-semibold">Your GTM resources</legend>
+  return <fieldset disabled={disabled} className="[&_input]:min-h-11 [&_select]:min-h-11 min-w-0 space-y-5">
+    <legend className="mb-3 text-sm font-semibold">Your GTM resources</legend>
     <p className="text-sm text-ink-2">Make the plan fit your reality. Leave numbers blank if unknown. Enter 0 for no budget or no available hours.</p>
     <div className="grid gap-4 sm:grid-cols-2">
       <Field label="Monthly budget">{id => <Input id={id} type="number" min={0} max={1_000_000_000} step="any" value={value.monthly_budget ?? ""} placeholder="Unknown" onChange={e => onChange({ ...value, monthly_budget: e.target.value === "" ? null : Number(e.target.value) })} />}</Field>
