@@ -6,7 +6,7 @@ import {
 } from "lucide-react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
-import { createContext, useContext, useMemo, useState, useSyncExternalStore, type ReactNode } from "react";
+import { createContext, useContext, useEffect, useMemo, useState, useSyncExternalStore, type ReactNode } from "react";
 import { useApi } from "@/lib/hooks";
 import { errorMessage } from "@/lib/api";
 import type { Workspace } from "@/lib/types";
@@ -50,6 +50,18 @@ export function WorkspaceShell({ wsId, children }: { wsId: string; children: Rea
   const all = useApi<Workspace[]>("/workspaces");
   const approvals = useApi<unknown[]>(`/workspaces/${wsId}/approvals`);
   const alerts = useApi<unknown>(`/workspaces/${wsId}/watch-alerts`, path);
+  const reloadAlerts = alerts.reload;
+  useEffect(() => {
+    const refresh = () => { if (document.visibilityState === "visible") void reloadAlerts(); };
+    const timer = window.setInterval(refresh, 60000);
+    document.addEventListener("visibilitychange", refresh);
+    window.addEventListener("pursuit.watch-alerts", refresh);
+    return () => {
+      clearInterval(timer);
+      document.removeEventListener("visibilitychange", refresh);
+      window.removeEventListener("pursuit.watch-alerts", refresh);
+    };
+  }, [reloadAlerts]);
   const unreadAlerts = Array.isArray(alerts.data) ? alerts.data.filter((alert: unknown) =>
     typeof alert === "object" && alert !== null && "acknowledged_at" in alert && alert.acknowledged_at === null,
   ).length : 0;
@@ -88,6 +100,7 @@ export function WorkspaceShell({ wsId, children }: { wsId: string; children: Rea
     : /\/(settings|fo|focus)$/.test(path) ? "max-w-3xl"
     : /\/(reports|approvals)$/.test(path) ? "max-w-4xl"
     : /\/(experiments\/new)$/.test(path) ? "max-w-5xl" : "max-w-6xl";
+  const readingContext = path.startsWith(`${base}/reports/`) || path.startsWith(`${base}/experiments/`) || path === `${base}/gtm`;
 
   // Breadcrumbs only below two levels (a single report or experiment).
   const crumbs = path.match(/\/reports\/(?!new$)[^/]+$/) ? [{ href: `${base}/reports`, label: "Reports" }, { label: "Report" }]
@@ -240,7 +253,7 @@ export function WorkspaceShell({ wsId, children }: { wsId: string; children: Rea
           {ws.data ? (
             <WorkspaceCtx.Provider key={wsId} value={{ workspace: ws.data, base, workflowsReady, refreshApprovals: () => { void approvals.reload(); void alerts.reload(); } }}>
               <div className={cx("mx-auto w-full min-w-0", contentWidth)}>
-                <ReadingControls />
+                {readingContext && <ReadingControls />}
                 <ResearchActivity workspaceId={wsId} base={base} />
                 {children}
               </div>

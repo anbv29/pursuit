@@ -13,17 +13,22 @@ for (const width of [390, 820, 1440]) {
     await page.getByText("Explore with demo data").click();
     await page.getByRole("button", { name: "Create demo workspace" }).click();
     await expect(page).toHaveURL(/\/w\/[a-f0-9-]+$/);
-    await expect(page.getByLabel("Reading style")).toBeVisible();
+    await expect(page.getByLabel("Reading style")).toHaveCount(0);
     const base = new URL(page.url()).pathname;
-    for (const route of ["", "/focus", "/reports", "/reports/new", "/fo", "/settings", "/approvals", "/experiments/new"]) {
+    for (const route of ["", "/focus", "/reports", "/reports/new", "/experiments", "/fo", "/settings", "/approvals", "/experiments/new", "/gtm"]) {
       await page.goto(base + route);
       await expect(page.getByRole("heading", { level: 1 }).first()).toBeVisible();
       await page.evaluate(() => document.fonts.ready);
       expect(await page.evaluate(() => document.documentElement.scrollWidth - innerWidth), route).toBeLessThanOrEqual(1);
       const controls = page.getByLabel("Reading style");
-      const bounds = await controls.boundingBox();
-      expect(bounds!.x).toBeGreaterThanOrEqual(0);
-      expect(bounds!.x + bounds!.width).toBeLessThanOrEqual(width);
+      if (["/reports/new", "/experiments/new", "/gtm"].includes(route)) {
+        await expect(controls).toBeVisible();
+        const bounds = await controls.boundingBox();
+        expect(bounds!.x).toBeGreaterThanOrEqual(0);
+        expect(bounds!.x + bounds!.width).toBeLessThanOrEqual(width);
+      } else {
+        await expect(controls).toHaveCount(0);
+      }
       await page.screenshot({ path: `test-results/layout-${width}-${route.replaceAll("/", "-") || "dashboard"}.png`, fullPage: true });
     }
     if (width === 1440) {
