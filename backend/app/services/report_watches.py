@@ -45,7 +45,7 @@ def status(db, report):
     current = {claim["id"]: claim for claim in claims_for(report)}
     selected = {claim["id"]: claim for claim in watch.snapshots} if watch else {}
     public = []
-    for claim_id, claim in (current | selected).items():
+    for claim_id, claim in (selected | current).items():
         old = selected.get(claim_id)
         now = current.get(claim_id)
         public.append(
@@ -59,6 +59,13 @@ def status(db, report):
     return {
         "enabled": bool(watch and watch.enabled),
         "checking": checking,
+        "queued": bool(
+            watch
+            and watch.enabled
+            and not checking
+            and watch.next_check_at
+            and watch.next_check_at <= utcnow()
+        ),
         "claim_ids": list(selected),
         "claims": public,
         "last_checked_at": watch.last_checked_at if watch else None,
