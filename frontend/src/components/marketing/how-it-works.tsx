@@ -4,8 +4,8 @@ import { Check } from "lucide-react";
 import { useId, useState } from "react";
 import { HOW_IT_WORKS } from "@/lib/ui-demo/demo-data";
 import { Glass, Tabs } from "../ui";
+import styles from "./studio.module.css";
 
-/** Tabbed walkthrough of the product, with a matching tabpanel per step. */
 export function HowItWorks() {
   const [tab, setTab] = useState(HOW_IT_WORKS[0].id);
   const id = useId();
@@ -15,10 +15,10 @@ export function HowItWorks() {
     <div className="space-y-5">
       <Tabs label="How Pursuit works" value={tab} onChange={setTab} className="mobile-process-tabs w-fit max-w-full" idPrefix={id} panelId={`${id}-panel`}
         tabs={HOW_IT_WORKS.map((s, i) => ({ id: s.id, label: <><span className="mr-1.5 tabular-nums text-ink-3">{i + 1}</span>{s.tab}</> }))} />
-      <Glass role="tabpanel" id={`${id}-panel`} aria-labelledby={`${id}-${active.id}`} tabIndex={0} className="process-panel p-6 sm:p-10">
-        <div key={active.id} className="enter-rise grid gap-8 md:grid-cols-[1.2fr_1fr] md:items-start">
+      <Glass role="tabpanel" id={`${id}-panel`} aria-labelledby={`${id}-${active.id}`} tabIndex={0} className={`process-panel ${styles.process}`}>
+        <div key={active.id} className="grid gap-8 md:grid-cols-[1.2fr_1fr] md:items-start">
           <div>
-            <p className="hiw-step-chip"><span aria-hidden className="size-1.5 rounded-full bg-accent" />STEP 0{index + 1} / 0{HOW_IT_WORKS.length}</p>
+            <p className={styles.step}>Step {index + 1} of {HOW_IT_WORKS.length}</p>
             <h3 className="mt-4 font-display text-2xl font-bold tracking-tight sm:text-[30px]">{active.title}</h3>
             <p className="mt-3 text-[15px] leading-relaxed text-ink-2">{active.body}</p>
           </div>

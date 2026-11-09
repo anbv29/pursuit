@@ -35,7 +35,7 @@
 .sheet::before { display: none; }
 .heading { display: flex; justify-content: space-between; gap: 16px; padding: 24px; border-bottom: 1px solid var(--line); }
 .heading p { font-size: 12px; color: var(--ink-3); }
-.heading h2 { margin-top: 12px; font-size: 26px; line-height: 1.1; letter-spacing: -.045em; }
+.heading h2 { margin-top: 12px; font-size: 26px; line-height: 1.1; letter-spacing: -.04em; }
 .mark { width: 36px; height: 36px; border: 9px solid var(--ink); border-radius: 50%; flex-shrink: 0; }
 .tabs { padding: 16px 24px 0; }
 .panels { display: grid; padding: 24px; }
