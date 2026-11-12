@@ -22,7 +22,7 @@ async function recoverReads<T>(read: (signal: AbortSignal) => Promise<T>, caller
       return await read(signal);
     } catch (error) {
       caller?.throwIfAborted();
-      if (!(error instanceof ApiError) || ![0, 500, 502, 503, 504].includes(error.status)) throw error;
+      if (!(error instanceof ApiError) || ![0, 429, 500, 502, 503, 504].includes(error.status)) throw error;
       try { await pause(signal); } catch { break; }
     }
   }
